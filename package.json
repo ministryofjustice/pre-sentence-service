@@ -1,8 +1,8 @@
 {
-  "name": "hmpps-template-typescript",
+  "name": "pre-sentence-service",
   "version": "0.0.1",
-  "description": "HMPPS Typescript Template",
-  "repository": "git@github.com:ministryofjustice/hmpps-template-typescript.git",
+  "description": "Pre Sentence Service",
+  "repository": "git@github.com:ministryofjustice/pre-sentence-service.git",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
