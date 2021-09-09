@@ -1,6 +1,6 @@
 import type { Express } from 'express'
 import request from 'supertest'
-import appWithAllRoutes from './testutils/appSetup'
+import appWithAllRoutes from '../testutils/appSetup'
 
 let app: Express
 
@@ -12,13 +12,13 @@ afterEach(() => {
   jest.resetAllMocks()
 })
 
-describe('GET /', () => {
+describe('GET /short-format', () => {
   it('should render index page', () => {
     return request(app)
-      .get('/')
+      .get('/short-format')
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('Pre-sentence Service')
+        expect(res.text).toContain('Short format pre-sentence report')
       })
   })
 })

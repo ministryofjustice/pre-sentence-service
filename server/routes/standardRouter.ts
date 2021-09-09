@@ -4,6 +4,8 @@ import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import type UserService from '../services/userService'
+import shortFormatRoutes from './short-format'
+import recordOfOralRoutes from './record-of-oral'
 
 const testMode = process.env.NODE_ENV === 'test'
 
@@ -12,6 +14,8 @@ export default function standardRouter(userService: UserService): Router {
 
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
+  router.use(shortFormatRoutes())
+  router.use(recordOfOralRoutes())
 
   // CSRF protection
   if (!testMode) {

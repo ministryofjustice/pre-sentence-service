@@ -6,12 +6,9 @@ generic-service:
 
   ingress:
     host: pre-sentence-service-dev.hmpps.service.justice.gov.uk
+    tlsSecretName: court-probation-dev-cert-secret
 
   env:
     INGRESS_URL: "https://pre-sentence-service-dev.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
-
-generic-prometheus-alerts:
-  alertSeverity: digital-prison-service-dev
-
