@@ -56,3 +56,4 @@ generic-service:
 
 generic-prometheus-alerts:
   targetApplication: pre-sentence-service
+  alertSeverity: prepare-a-case
