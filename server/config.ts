@@ -55,8 +55,6 @@ export default {
       agent: new AgentConfig(),
       apiClientId: get('API_CLIENT_ID', 'clientid', requiredInProduction),
       apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
-      systemClientId: get('SYSTEM_CLIENT_ID', 'clientid'),
-      systemClientSecret: get('SYSTEM_CLIENT_SECRET', 'clientsecret'),
     },
     tokenVerification: {
       url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:8100', requiredInProduction),
