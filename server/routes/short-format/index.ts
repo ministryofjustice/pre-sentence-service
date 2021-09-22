@@ -5,14 +5,13 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 export default function Index(): Router {
   const router = Router()
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-
-  router.use((req, res, next) => {
-    res.locals.preSentenceType = 'Short format pre-sentence report'
-    next()
-  })
+  const templateValues = {
+    preSentenceType: 'Short Format Pre-Sentence Report',
+    timestamp: '', // @TODO: When integration with NDelius set timestamp as e.g. '1 hour ago'
+  }
 
   get('/short-format', (req, res, next) => {
-    res.render('short-format/landing')
+    res.render('short-format/landing', templateValues)
   })
 
   return router

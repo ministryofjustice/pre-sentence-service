@@ -18,7 +18,7 @@ describe('GET /short-format', () => {
       .get('/short-format')
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('Short format pre-sentence report')
+        expect(res.text).toContain('Short Format Pre-Sentence Report')
       })
   })
 })

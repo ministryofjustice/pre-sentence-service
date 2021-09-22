@@ -5,8 +5,32 @@
 {% block content %}
 
   <main class="app-container govuk-body">
-    <h1>{{ preSentenceType }}</h1>
-    <p>Please check back later when there is content to view.</p>
+    <h1 class="govuk-heading-l">{{ preSentenceType }}</h1>
+    <p class="govuk-body">Use this service to:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>Save and close your report at any point<br/>
+        <span class="govuk-caption-m">You can save and close your report so you don't have to complete the whole thing at once.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Save as you write<br/>
+        <span class="govuk-caption-m">Your report will be saved as you write so you'll never lose your work.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Return to complete your report later<br/>
+        <span class="govuk-caption-m">You can finish your report when it suits you.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Edit your completed report<br/>
+        <span class="govuk-caption-m">You can edit your report whenever you want, even after you've finished.</span>
+      </li>
+    </ul>
+
+    {% if timestamp | length %}
+      <p class="govkuk-body qa-last-saved">This draft report was last saved: {{ timestamp }}.</p>
+    {% endif %}
+
+    <p class="govuk-body govuk-!-margin-top-4">
+      <a href="#" class="govuk-button">{{ "Continue" if timestamp | length else "Start" }} now</a>
+    </p>
+
   </main>
 
 {% endblock %}

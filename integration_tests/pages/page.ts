@@ -13,5 +13,9 @@ export default abstract class Page {
     cy.get('h1').contains(this.title)
   }
 
+  govukBulletList = (): PageElement => cy.get('.govuk-list.govuk-list--bullet')
+
+  govukButton = (): PageElement => cy.get('.govuk-button')
+
   signOut = (): PageElement => cy.get('[data-qa=signOut]')
 }

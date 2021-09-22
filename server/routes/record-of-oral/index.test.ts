@@ -18,7 +18,7 @@ describe('GET /record-of-oral', () => {
       .get('/record-of-oral')
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('Record of oral pre-sentence report')
+        expect(res.text).toContain('Record of Oral Pre-Sentence Report')
       })
   })
 })
