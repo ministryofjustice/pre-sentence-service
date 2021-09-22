@@ -9,7 +9,7 @@ context('SignIn', () => {
     cy.signIn()
   })
 
-  it('Unauthenticated user directed to auth', () => {
+  it('Authenticated user accesses Short Format Pre-Sentence Report', () => {
     cy.visit('/short-format')
     Page.verifyOnPage(LandingPage)
   })
