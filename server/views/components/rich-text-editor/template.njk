@@ -1,0 +1,58 @@
+{# @SEE: https://github.com/alphagov/govuk-frontend/blob/main/package/govuk/components/textarea/template.njk #}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components//label/macro.njk" import govukLabel %}
+{% from "govuk/components/hint/macro.njk" import govukHint %}
+{% from "govuk/components/error-message/macro.njk" import govukErrorMessage %}
+
+{% set describedBy = params.describedBy if params.describedBy else "" %}
+<div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
+{{ govukLabel({
+    html: params.label.html,
+    text: params.label.text,
+    classes: params.label.classes,
+    isPageHeading: params.label.isPageHeading,
+    attributes: params.label.attributes,
+    for: params.id
+  }) | indent(2) | trim }}
+
+  {% if params.hint %}
+    {% set hintId = params.id + '-hint' %}
+    {% set describedBy = describedBy + ' ' + hintId if describedBy else hintId %}
+    {{ govukHint({
+      id: hintId,
+      classes: params.hint.classes,
+      attributes: params.hint.attributes,
+      html: params.hint.html,
+      text: params.hint.text
+    }) | indent(2) | trim }}
+  {% endif %}
+
+  {% if params.whatToInclude %}
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+    {{ govukDetails({
+      summaryText: "What to include",
+      text: params.whatToInclude | safe,
+      classes: "govuk-!-margin-bottom-2"
+    }) }}
+  {% endif %}
+
+  {% if params.errorMessage %}
+    {% set errorId = params.id + '-error' %}
+    {% set describedBy = describedBy + ' ' + errorId if describedBy else errorId %}
+    {{ govukErrorMessage({
+      id: errorId,
+      classes: params.errorMessage.classes,
+      attributes: params.errorMessage.attributes,
+      html: params.errorMessage.html,
+      text: params.errorMessage.text,
+      visuallyHiddenText: params.errorMessage.visuallyHiddenText
+    }) | indent(2) | trim }}
+  {% endif %}
+
+  <textarea class="govuk-textarea {{- ' govuk-textarea--error' if params.errorMessage }} {{- ' ' + params.classes if params.classes}}" id="{{ params.id }}" name="{{ params.name }}" rows="{%if params.rows %} {{- params.rows -}} {% else %}5{%endif %}"
+  {%- if (params.spellcheck === false) or (params.spellcheck === true) %} spellcheck="{{ params.spellcheck }}"{% endif %}
+    {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
+    {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
+  {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value }}</textarea>
+</div>

@@ -1,0 +1,77 @@
+{% extends "./layout.njk" %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+
+        {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
+
+        {# @TODO: Sign your report should only display when all other sections are "completed" #}
+        {{ mojSideNavigation({
+          label: 'Side navigation',
+          classes: 'govuk-!-padding-top-0',
+          sections: [{
+            heading: {
+              text: 'Report sections'
+            },
+            items: [{
+              text: 'Offender details',
+              href: '/record-of-oral/offender-details',
+              active: currentPage === 'Offender details'
+            }, {
+              text: 'Sentencing court details',
+              href: '/record-of-oral/court-details',
+              active: currentPage === 'Sentencing court details'
+            }, {
+              text: 'Offence details',
+              href: '/record-of-oral/offence-details',
+              active: currentPage === 'Offence details'
+            }, {
+              text: 'Offence analysis',
+              href: '/record-of-oral/offence-analysis',
+              active: currentPage === 'Offence analysis'
+            }, {
+              text: 'Offender assessment',
+              href: '/record-of-oral/offender-assessment',
+              active: currentPage === 'Offender assessment'
+            }, {
+              text: 'Risk assessment',
+              href: '/record-of-oral/risk-assessment',
+              active: currentPage === 'Risk assessment'
+            }, {
+              text: 'Proposal',
+              href: '/record-of-oral/proposal',
+              active: currentPage === 'Proposal'
+            }, {
+              text: 'Sources of information',
+              href: '/record-of-oral/sources-of-information',
+              active: currentPage === 'Sources of information'
+            }, {
+              text: 'Check your report',
+              href: '/record-of-oral/check-report',
+              active: currentPage === 'Check your report'
+            }, {
+              text: 'Sign your report',
+              href: '/record-of-oral/sign-report',
+              active: currentPage === 'Sign your report'
+            }]
+          }]
+        }) }}
+
+        <p class="govuk-body govuk-!-margin-top-8">
+          <a class="govuk-button govuk-button--secondary" href="/record-of-oral/report-saved">Save draft report</a>
+        </p>
+
+      </div>
+      <div class="govuk-grid-column-two-thirds govuk-!-padding-top-2">
+
+        {% block reportForm %}
+        {% endblock %}
+
+      </div>
+    </div>
+  </main>
+
+{% endblock %}

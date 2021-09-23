@@ -1,0 +1,167 @@
+{% extends "../partials/oralPageLayout.njk" %}
+
+{% set currentPage = 'Risk assessment' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set pageWhatToInclude %}
+  <p class="govuk-body">You should include the scores of any static assessments are supported in the scoring section e.g. OGRS, OVP, RM2000, RSR scores.</p>
+  <p class="govuk-body">Your assessment should include any evidence of the risk of reoffending. If your assessment differs from static scores, there should be a brief account.</p>
+{% endset %}
+
+{% set roshEvidenceHint %}
+  <p class="govuk-body">You should provide evidence on the nature and imminence of harm.</p>
+  <p class="govuk-body">You should include if you have made a referral to other agencies or attempted contact and not
+    received a satisfactory response.</p>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <h2 class="govuk-caption-xl">Likelihood of further general offending</h2>
+  <p class="govuk-body">You can include up to 4 static assessment tool scores.</p>
+
+  {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+  {{ govukDetails({
+    summaryText: "What to include",
+    text: pageWhatToInclude | safe
+  }) }}
+
+  <h2 class="govuk-heading-m">Static Assessment Scores</h2>
+
+  <form method="post" novalidate>
+
+    {% from "govuk/components/input/macro.njk" import govukInput %}
+    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+    {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+    {% set numberOfRiskTools = 4 %}
+    {% for i in range(1, numberOfRiskTools + 1) %}
+      {{ govukInput({
+        label: {
+          text: "Tool name"
+        },
+        id: "likelihoodTool" + i,
+        name: "likelihoodTool" + i
+      }) }}
+
+      {{ govukRadios({
+        idPrefix: "likelihoodLevel" + i,
+        name: "likelihoodLevel" + i,
+        fieldset: {
+          legend: {
+            text: "Level"
+          }
+        },
+        items: [
+          {
+            value: "High",
+            text: "High"
+          },
+          {
+            value: "Medium",
+            text: "Medium"
+          },
+          {
+            value: "Low",
+            text: "Low"
+          },
+          {
+            value: "N/A",
+            text: "N/A"
+          }
+        ]
+      }) }}
+    {% endfor %}
+
+    {{ picRichTextEditor({
+      name: "likelihoodAssessment",
+      id: "likelihoodAssessment",
+      label: {
+        text: "Your assessment"
+      }
+    }) }}
+
+    <h2 class="govuk-heading-m">Risk of serious harm</h2>
+
+    {{ govukWarningText({
+      text: "Very high risk is not included as an option. If the person is assessed as having a very high risk of serious harm, an oral report is not the appropriate means for assessment.",
+      iconFallbackText: "Warning"
+    }) }}
+
+    {{ govukRadios({
+      idPrefix: "riskOfSeriousHarm",
+      name: "riskOfSeriousHarm",
+      fieldset: {
+        legend: {
+          text: "Level"
+        }
+      },
+      items: [
+        {
+          value: "High",
+          text: "High"
+        },
+        {
+          value: "Medium",
+          text: "Medium"
+        },
+        {
+          value: "Low",
+          text: "Low"
+        }
+      ]
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "roshEvidence",
+      id: "roshEvidence",
+      label: {
+        text: "Evidence for risk level"
+      },
+      hint: {
+        text: "Only for medium or high risk of serious harm"
+      },
+      whatToInclude: roshEvidenceHint
+    }) }}
+
+    <h2 class="govuk-heading-m">Response to previous supervision</h2>
+
+    {{ govukRadios({
+      idPrefix: "previousSupervisionResponse",
+      name: "previousSupervisionResponse",
+      fieldset: {
+        legend: {
+          text: "Response"
+        }
+      },
+      items: [
+        {
+          value: "Good",
+          text: "Good"
+        },
+        {
+          value: "Satisfactory",
+          text: "Satisfactory"
+        },
+        {
+          value: "Low engagement",
+          text: "Low engagement"
+        },
+        {
+          value: "Non-compliance",
+          text: "Non-compliance"
+        },
+        {
+          value: "N/A",
+          text: "N/A"
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

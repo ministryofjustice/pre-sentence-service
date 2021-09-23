@@ -1,0 +1,35 @@
+{% extends "../partials/oralPageLayout.njk" %}
+
+{% set currentPage = 'Offence details' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {{ picRichTextEditor({
+      name: "mainOffence",
+      id: "mainOffence",
+      label: {
+        text: "Main offence and date"
+      },
+      value: data.mainOffence
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "otherOffences",
+      id: "otherOffences",
+      label: {
+        text: "Other offence(s) and dates (if applicable)"
+      },
+      value: data.otherOffences
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

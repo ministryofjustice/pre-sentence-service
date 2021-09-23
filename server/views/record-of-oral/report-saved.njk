@@ -1,0 +1,32 @@
+{% extends "../partials/layout.njk" %}
+
+{% set currentPage = 'Report completed' if reportCompleted else 'Draft report saved' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    {% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+    {{ govukPanel({
+      titleText: currentPage,
+      html: "Your report has been saved<br>and uploaded successfully to Delius"
+    }) }}
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-8">What to do next</h2>
+
+    <p class="govuk-body">Review and print your 'Record of Oral Pre-Sentence Report'<br>
+      <a class="govuk-link govuk-link--no-visited-state" href="#">View your {{ "completed" if reportCompleted else "draft" }} PDF report</a>
+    </p>
+
+    <p class="govuk-body">Check or edit your report again<br>
+      <a class="govuk-link govuk-link--no-visited-state" href="/record-of-oral/check-report">Select a section to update or change</a>
+    </p>
+
+    <p class="govuk-body">Close this report<br>
+      <a class="govuk-link govuk-link--no-visited-state" href="#">Return back to the main Delius window</a>
+    </p>
+
+  </main>
+
+{% endblock %}
