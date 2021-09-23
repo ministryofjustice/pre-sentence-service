@@ -12,11 +12,11 @@ export default class BaseController {
     preSentenceType: 'Record of Oral Pre-Sentence Report',
   }
 
-  get = async (req: Request, res: Response): Promise<void> => {
+  get = async (_req: Request, _res: Response): Promise<void> => {
     return null
   }
 
-  post = async (req: Request, res: Response): Promise<void> => {
+  post = async (_req: Request, _res: Response): Promise<void> => {
     return null
   }
 }

@@ -15,13 +15,13 @@ export default class CourtDetailsController extends BaseController {
   }
 
   get = async (req: Request, res: Response): Promise<void> => {
-    res.render('record-of-oral/court-details', {
+    res.render(`${this.path}/court-details`, {
       ...this.templateValues,
       data: this.tempDummyCourtData,
     })
   }
 
   post = async (req: Request, res: Response): Promise<void> => {
-    res.redirect('/record-of-oral/offence-details')
+    res.redirect(`/${this.path}/offence-details`)
   }
 }
