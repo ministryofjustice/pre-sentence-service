@@ -7,6 +7,20 @@
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
+  {% if validationError %}
+    {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: [
+        {
+          text: "Enter the main offence and date",
+          href: "#mainOffence"
+        }
+      ]
+    }) }}
+  {% endif %}
+
   <form method="post" novalidate>
 
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
@@ -17,7 +31,10 @@
       label: {
         text: "Main offence and date"
       },
-      value: data.mainOffence
+      value: data.mainOffence,
+      errorMessage: {
+        text: "Enter the main offence and date"
+      } if validationError
     }) }}
 
     {{ picRichTextEditor({

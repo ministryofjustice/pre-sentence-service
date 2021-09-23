@@ -2,140 +2,47 @@ import { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 
+import BaseController from '../../controllers/record-of-oral/baseController'
+import LandingPageController from '../../controllers/record-of-oral/landingPageController'
+import OffenderDetailsController from '../../controllers/record-of-oral/offenderDetailsController'
+import OffenceDetailsController from '../../controllers/record-of-oral/offenceDetailsController'
+import CourtDetailsController from '../../controllers/record-of-oral/courtDetailsController'
+import OffenceAnalysisController from '../../controllers/record-of-oral/offenceAnalysisController'
+import OffenderAssessmentController from '../../controllers/record-of-oral/offenderAssessmentController'
+import RiskAssessmentController from '../../controllers/record-of-oral/riskAssessmentController'
+import ProposalController from '../../controllers/record-of-oral/proposalController'
+import SourcesOfInformationController from '../../controllers/record-of-oral/sourcesOfInformationController'
+import CheckReportController from '../../controllers/record-of-oral/checkReportController'
+import SignReportController from '../../controllers/record-of-oral/signReportController'
+import ReportSavedController from '../../controllers/record-of-oral/reportSavedController'
+import ReportCompletedController from '../../controllers/record-of-oral/reportCompletedController'
+
 export default function Index(): Router {
   const router = Router()
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) => router.post(path, asyncMiddleware(handler))
-  const templateValues = {
-    preSentenceType: 'Record of Oral Pre-Sentence Report',
-    timestamp: '', // @TODO: When integration with NDelius set timestamp as e.g. '1 hour ago'
+  const routePrefix = (path: string) => `/${new BaseController().path}${path}`
+
+  const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
+  const getAndPost = (path: string, handler: BaseController) => {
+    get(path, handler.get)
+    post(path, handler.post)
   }
 
-  get('/record-of-oral', (req, res, next) => {
-    res.render('record-of-oral/landing', templateValues)
-  })
+  get('', new LandingPageController().get)
 
-  get('/record-of-oral/offender-details', (req, res, next) => {
-    const tempDummyOffenderData = {
-      // @TODO: Consume data when integrated with NDelius
-      name: 'Lenore Marquez',
-      dateOfBirth: '18/08/1979',
-      age: 45,
-      crn: 'DX12340A',
-      address: '',
-      pnc: '',
-    }
-    res.render('record-of-oral/offender-details', {
-      ...templateValues,
-      data: tempDummyOffenderData,
-    })
-  })
-  post('/record-of-oral/offender-details', (req, res, next) => {
-    res.redirect('/record-of-oral/court-details')
-  })
+  getAndPost('/offender-details', new OffenderDetailsController())
+  getAndPost('/court-details', new CourtDetailsController())
+  getAndPost('/offence-details', new OffenceDetailsController())
+  getAndPost('/offence-analysis', new OffenceAnalysisController())
+  getAndPost('/offender-assessment', new OffenderAssessmentController())
+  getAndPost('/risk-assessment', new RiskAssessmentController())
+  getAndPost('/proposal', new ProposalController())
+  getAndPost('/sources-of-information', new SourcesOfInformationController())
+  getAndPost('/sign-report', new SignReportController())
 
-  get('/record-of-oral/court-details', (req, res, next) => {
-    const today = new Date()
-    const tempDummyCourtData = {
-      // @TODO: Consume data when integrated with NDelius
-      court: "Sheffield Magistrate's Court",
-      localJusticeArea: 'South Yorkshire',
-      dateOfHearing: {
-        day: today.getDate(),
-        month: today.getMonth() + 1,
-        year: today.getFullYear(),
-      },
-    }
-
-    res.render('record-of-oral/court-details', {
-      ...templateValues,
-      data: tempDummyCourtData,
-    })
-  })
-  post('/record-of-oral/court-details', (req, res, next) => {
-    res.redirect('/record-of-oral/offence-details')
-  })
-
-  get('/record-of-oral/offence-details', (req, res, next) => {
-    res.render('record-of-oral/offence-details', templateValues)
-  })
-  post('/record-of-oral/offence-details', (req, res, next) => {
-    res.redirect('/record-of-oral/offence-analysis')
-  })
-
-  get('/record-of-oral/offence-analysis', (req, res, next) => {
-    res.render('record-of-oral/offence-analysis', templateValues)
-  })
-  post('/record-of-oral/offence-analysis', (req, res, next) => {
-    res.redirect('/record-of-oral/offender-assessment')
-  })
-
-  get('/record-of-oral/offender-assessment', (req, res, next) => {
-    res.render('record-of-oral/offender-assessment', templateValues)
-  })
-  post('/record-of-oral/offender-assessment', (req, res, next) => {
-    res.redirect('/record-of-oral/risk-assessment')
-  })
-
-  get('/record-of-oral/risk-assessment', (req, res, next) => {
-    res.render('record-of-oral/risk-assessment', templateValues)
-  })
-  post('/record-of-oral/risk-assessment', (req, res, next) => {
-    res.redirect('/record-of-oral/proposal')
-  })
-
-  get('/record-of-oral/proposal', (req, res, next) => {
-    res.render('record-of-oral/proposal', templateValues)
-  })
-  post('/record-of-oral/proposal', (req, res, next) => {
-    res.redirect('/record-of-oral/sources-of-information')
-  })
-
-  get('/record-of-oral/sources-of-information', (req, res, next) => {
-    res.render('record-of-oral/sources-of-information', templateValues)
-  })
-  post('/record-of-oral/sources-of-information', (req, res, next) => {
-    res.redirect('/record-of-oral/check-report')
-  })
-
-  get('/record-of-oral/check-report', (req, res, next) => {
-    res.render('record-of-oral/check-report', templateValues)
-  })
-  post('/record-of-oral/check-report', (req, res, next) => {
-    res.redirect('/record-of-oral/sign-report')
-  })
-
-  get('/record-of-oral/sign-report', (req, res, next) => {
-    const today = new Date()
-    const tmpDummySignReportData = {
-      // @TODO: Consume data when integrated with NDelius
-      court: "Sheffield Magistrate's Court",
-      localJusticeArea: 'South Yorkshire',
-      completionDate: {
-        day: today.getDate(),
-        month: today.getMonth() + 1,
-        year: today.getFullYear(),
-      },
-    }
-    res.render('record-of-oral/sign-report', {
-      ...templateValues,
-      data: tmpDummySignReportData,
-    })
-  })
-  post('/record-of-oral/sign-report', (req, res, next) => {
-    res.redirect('/record-of-oral/report-completed')
-  })
-
-  get('/record-of-oral/report-completed', (req, res, next) => {
-    res.render('record-of-oral/report-saved', {
-      ...templateValues,
-      reportCompleted: true,
-    })
-  })
-
-  get('/record-of-oral/report-saved', (req, res, next) => {
-    res.render('record-of-oral/report-saved', templateValues)
-  })
+  get('/check-report', new CheckReportController().get)
+  get('/report-saved', new ReportSavedController().get)
+  get('/report-completed', new ReportCompletedController().get)
 
   return router
 }
