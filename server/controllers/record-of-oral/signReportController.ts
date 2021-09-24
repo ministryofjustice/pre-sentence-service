@@ -4,7 +4,7 @@ import BaseController from './baseController'
 export default class SignReportController extends BaseController {
   today = new Date()
 
-  tmpDummySignReportData = {
+  tempDummySignReportData = {
     author: 'Arthur Author',
     office: "Probation office, Sheffield Magistrate's Court",
     telephone: '0114 276 0760',
@@ -18,7 +18,7 @@ export default class SignReportController extends BaseController {
   get = async (req: Request, res: Response): Promise<void> => {
     res.render(`${this.path}/sign-report`, {
       ...this.templateValues,
-      data: this.tmpDummySignReportData,
+      data: this.tempDummySignReportData,
     })
   }
 
