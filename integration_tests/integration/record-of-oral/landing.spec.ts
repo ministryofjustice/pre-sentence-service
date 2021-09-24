@@ -1,7 +1,10 @@
+import BaseController from '../../../server/controllers/record-of-oral/baseController'
 import LandingPage from '../../record-of-oral/landing'
 import Page from '../../pages/page'
 
-context('SignIn', () => {
+context('Report landing page', () => {
+  const path = `/${new BaseController().path}`
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
@@ -11,26 +14,26 @@ context('SignIn', () => {
 
   describe('Authenticated user accesses Record of Oral Pre-Sentence Report', () => {
     it('should display the landing page', () => {
-      cy.visit('/record-of-oral')
+      cy.visit(path)
       Page.verifyOnPage(LandingPage)
     })
 
     it('should include a list of features', () => {
-      cy.visit('/record-of-oral')
-      const landingPage = Page.verifyOnPage(LandingPage)
-      landingPage.govukBulletList().should('exist')
+      cy.visit(path)
+      const currentPage = Page.verifyOnPage(LandingPage)
+      currentPage.govukBulletList().should('exist')
     })
 
     it('should NOT display the last saved timestamp', () => {
-      cy.visit('/record-of-oral')
-      const landingPage = Page.verifyOnPage(LandingPage)
-      landingPage.lastSaved().should('not.exist')
+      cy.visit(path)
+      const currentPage = Page.verifyOnPage(LandingPage)
+      currentPage.lastSaved().should('not.exist')
     })
 
     it('should include the primary call to action button', () => {
-      cy.visit('/record-of-oral')
-      const landingPage = Page.verifyOnPage(LandingPage)
-      landingPage.govukButton().should('contain.text', 'Start now')
+      cy.visit(path)
+      const currentPage = Page.verifyOnPage(LandingPage)
+      currentPage.govukButton().should('contain.text', 'Start now')
     })
   })
 })

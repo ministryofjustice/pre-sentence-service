@@ -5,7 +5,7 @@ export default abstract class Page {
     return new constructor()
   }
 
-  constructor(private readonly title: string) {
+  constructor(readonly title: string) {
     this.checkOnPage()
   }
 
@@ -13,9 +13,23 @@ export default abstract class Page {
     cy.get('h1').contains(this.title)
   }
 
+  headingL2 = (): PageElement => cy.get('h2')
+
+  inputText = (): PageElement => cy.get('.govuk-input')
+
+  textArea = (): PageElement => cy.get('.govuk-textarea')
+
+  radioButtons = (): PageElement => cy.get('.govuk-radios')
+
+  checkboxes = (): PageElement => cy.get('.govuk-checkboxes')
+
+  govukBody = (): PageElement => cy.get('.govuk-body')
+
   govukBulletList = (): PageElement => cy.get('.govuk-list.govuk-list--bullet')
 
   govukButton = (): PageElement => cy.get('.govuk-button')
+
+  mojSideNavigation = (): PageElement => cy.get('.moj-side-navigation')
 
   signOut = (): PageElement => cy.get('[data-qa=signOut]')
 }
