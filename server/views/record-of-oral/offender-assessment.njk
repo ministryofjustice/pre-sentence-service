@@ -1,0 +1,148 @@
+{% extends "../partials/oralPageLayout.njk" %}
+
+{% set currentPage = 'Offender assessment' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set pageWhatToInclude %}
+  <p class="govuk-body">You should:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>select all factors that impact offending and may impact on any future risk of reoffending</li>
+    <li>include information on protective factors that may support desistance
+    </li>
+    <li>provide an explanation of the offender's motivation and readiness to change
+    </li>
+    <li>use bullet points to outline key information
+    </li>
+  </ul>
+
+  <p class="govuk-body">You should also consider:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>diversity issues in terms of the offender’s own experiences or protected characteristics
+    </li>
+    <li>the person’s circumstances, particularly those linked to offending behaviour
+    </li>
+    <li>factors which may not be directly linked but cause difficulties for the person and impact on their desistance
+      from crime
+    </li>
+  </ul>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+    {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {{ govukDetails({
+      summaryText: "What to include",
+      text: pageWhatToInclude | safe,
+      classes: "govuk-!-margin-bottom-2"
+    }) }}
+
+    {{ govukCheckboxes({
+      idPrefix: "waste",
+      name: "waste",
+      fieldset: {
+        legend: {
+          text: "Select any factors relating to offending behaviour and the individual’s need, including any protective factors."
+        }
+      },
+      items: [
+        {
+          value: "issueAccommodation",
+          text: "Accommodation"
+        },
+        {
+          value: "issueEmployment",
+          text: "Employment, training and education"
+        },
+        {
+          value: "issueFinance",
+          text: "Finance"
+        },
+        {
+          value: "issueRelationships",
+          text: "Relationships"
+        },
+        {
+          value: "issueSubstanceMisuse",
+          text: "Substance misuse"
+        },
+        {
+          value: "issueHealth",
+          text: "Physical & mental health"
+        },
+        {
+          value: "issueBehaviour",
+          text: "hinking & behaviour"
+        },
+        {
+          value: "issueMaturity",
+          text: "Maturity"
+        },
+        {
+          value: "issueOther",
+          text: "Other"
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "experienceTrauma",
+      name: "experienceTrauma",
+      fieldset: {
+        legend: {
+          text: "Is there evidence of the offender experiencing trauma?"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "caringResponsibilities",
+      name: "caringResponsibilities",
+      fieldset: {
+        legend: {
+          text: "Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "offenderAssessmentEvidence",
+      id: "offenderAssessmentEvidence",
+      label: {
+        text: "Evidence for assessment"
+      }
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

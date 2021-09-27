@@ -1,0 +1,78 @@
+{% extends "../partials/oralPageLayout.njk" %}
+
+{% set currentPage = 'Sign your report' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+    {% from "govuk/components/input/macro.njk" import govukInput %}
+
+    {{ govukInput({
+      label: {
+        text: "Report author"
+      },
+      id: "reportAuthor",
+      name: "reportAuthor",
+      value: data.author
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Office"
+      },
+      id: "office",
+      name: "office",
+      value: data.office
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Court office phone number"
+      },
+      id: "courtOfficePhoneNumber",
+      name: "courtOfficePhoneNumber",
+      value: data.telephone
+    }) }}
+
+    <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Start date</h2>
+    <p class="govuk-body">{{ data.startDate }}</p>
+
+    {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+    {{ govukDateInput({
+      id: "reportDate",
+      namePrefix: "reportDate",
+      fieldset: {
+        legend: {
+          text: "Completion date"
+        }
+      },
+      hint: {
+        text: "For example, 31 3 2021"
+      },
+      items: [
+        {
+          classes: "govuk-input--width-2",
+          name: "day",
+          value: data.completionDate.day
+        },
+        {
+          classes: "govuk-input--width-2",
+          name: "month",
+          value: data.completionDate.month
+        },
+        {
+          classes: "govuk-input--width-4",
+          name: "year",
+          value: data.completionDate.year
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Submit and view your report</button>
+  </form>
+
+{% endblock %}

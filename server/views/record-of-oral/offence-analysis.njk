@@ -1,0 +1,107 @@
+{% extends "../partials/oralPageLayout.njk" %}
+
+{% set currentPage = 'Offence analysis' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set analysisHint %}
+  <p class="govuk-body">Use bullet points to outline key information.</p>
+  <p class="govuk-body">You should include:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>The person’s account, motivation and understanding of their own behaviour</li>
+    <li>Their attitude to the offence and any previous offending behaviour, interventions or supervision
+    </li>
+    <li>Whether the person accepts responsibility for the offence
+    </li>
+    <li>Whether they show any remorse or any reason for an inability to show remorse such as autism or a learning
+      disability
+    </li>
+    <li>Whether they have any history of trauma and the impact of it
+    </li>
+    <li>Whether they have been a victim of domestic or racial abuse
+    </li>
+    <li>If maturity is an issue if the person is aged 18-24</li>
+  </ul>
+
+  <p class="govuk-body">You should also consider whether the person:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>Had emotional or cognitive factors that underpin the crime, such as sexual motivations, financial gain or
+      addition
+    </li>
+    <li>Is aware of the impact on the victim and any lasting impacts (physical, psychological or emotional)
+    </li>
+    <li>Premeditated or planned the offence
+    </li>
+    <li>Shows any patterns suggesting likelihood of similar offending
+    </li>
+    <li>Shows evidence of discrimination in their attitude or behaviour</li>
+    <li>Deliberately targeted a specific group or victim
+    </li>
+  </ul>
+
+  <p class="govuk-body">This section should lead to some potential considerations of rehabilitative interventions.</p>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+    {{ picRichTextEditor({
+      name: "offenceAnalysis",
+      id: "offenceAnalysis",
+      label: {
+        text: "Provide an analysis of the offence(s), including victim impact."
+      },
+      whatToInclude: analysisHint
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "patternOfOffending",
+      name: "patternOfOffending",
+      fieldset: {
+        legend: {
+          text: "Is current offending part of a pattern of offending behaviour?"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "escalationInSeriousness",
+      name: "escalationInSeriousness",
+      fieldset: {
+        legend: {
+          text: "Does current offending represent an escalation in seriousness?"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}
