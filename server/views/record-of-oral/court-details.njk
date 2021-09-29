@@ -26,23 +26,26 @@
         }
       },
       hint: {
-        text: "For example, 21 10 2021"
+        text: "For example, 21 9 2021"
       },
+      errorMessage: {
+        text: "Enter a valid date, month and year"
+      } if 'dateOfHearing-day' in elementsWithError or 'dateOfHearing-month' in elementsWithError or 'dateOfHearing-year' in elementsWithError,
       items: [
         {
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'dateOfHearing-day' in elementsWithError),
           name: "day",
-          value: data.dateOfHearing.day
+          value: data['dateOfHearing-day']
         },
         {
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'dateOfHearing-month' in elementsWithError),
           name: "month",
-          value: data.dateOfHearing.month
+          value: data['dateOfHearing-month']
         },
         {
-          classes: "govuk-input--width-4",
+          classes: "govuk-input--width-4" + (" govuk-input--error" if 'dateOfHearing-year' in elementsWithError),
           name: "year",
-          value: data.dateOfHearing.year
+          value: data['dateOfHearing-year']
         }
       ]
     }) }}

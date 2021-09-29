@@ -8,7 +8,9 @@ describe('Route Handlers - Report Completed Controller', () => {
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
+    req = {
+      body: {},
+    } as Request
     res = {
       render: jest.fn(),
     } as unknown as Response
@@ -17,9 +19,11 @@ describe('Route Handlers - Report Completed Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/report-saved`, {
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        reportCompleted: true,
+        data: {
+          ...handler.data,
+        },
       })
     })
   })

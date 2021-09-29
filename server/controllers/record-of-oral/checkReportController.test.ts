@@ -17,7 +17,12 @@ describe('Route Handlers - Check Report Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/check-report`, handler.templateValues)
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
+        ...handler.templateValues,
+        data: {
+          ...handler.data,
+        },
+      })
     })
   })
 })

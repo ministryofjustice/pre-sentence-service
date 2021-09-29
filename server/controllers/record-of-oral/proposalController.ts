@@ -1,12 +1,22 @@
-import { Request, Response } from 'express'
 import BaseController from './baseController'
+import { FormValidation } from '../../utils/formValidation'
 
 export default class ProposalController extends BaseController {
-  get = async (req: Request, res: Response): Promise<void> => {
-    res.render(`${this.path}/proposal`, this.templateValues)
-  }
+  override templatePath = 'proposal'
 
-  post = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/${this.path}/sources-of-information`)
+  override redirectPath = 'sources-of-information'
+
+  override formValidation: FormValidation = {
+    required: [
+      {
+        id: 'confirmEIF',
+        errorMessage:
+          'Confirm that equalities and diversity information has been considered as part of preparing the report and proposal',
+      },
+      {
+        id: 'proposal',
+        errorMessage: 'Enter a proposed sentence (including length and any sentence components)',
+      },
+    ],
   }
 }

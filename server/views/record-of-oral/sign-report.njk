@@ -14,15 +14,21 @@
       label: {
         text: "Report author"
       },
+      errorMessage: {
+        text: "Enter the report author"
+      } if "reportAuthor" in elementsWithError,
       id: "reportAuthor",
       name: "reportAuthor",
-      value: data.author
+      value: data.reportAuthor
     }) }}
 
     {{ govukInput({
       label: {
         text: "Office"
       },
+      errorMessage: {
+        text: "Enter the office"
+      } if "office" in elementsWithError,
       id: "office",
       name: "office",
       value: data.office
@@ -32,9 +38,12 @@
       label: {
         text: "Court office phone number"
       },
+      errorMessage: {
+        text: "Enter the court office phone number"
+      } if "courtOfficePhoneNumber" in elementsWithError,
       id: "courtOfficePhoneNumber",
       name: "courtOfficePhoneNumber",
-      value: data.telephone
+      value: data.courtOfficePhoneNumber
     }) }}
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Start date</h2>
@@ -50,24 +59,27 @@
           text: "Completion date"
         }
       },
+      errorMessage: {
+        text: "Enter a valid date, month and year"
+      } if 'reportDate-day' in elementsWithError or 'reportDate-month' in elementsWithError or 'reportDate-year' in elementsWithError,
       hint: {
         text: "For example, 31 3 2021"
       },
       items: [
         {
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'reportDate-day' in elementsWithError),
           name: "day",
-          value: data.completionDate.day
+          value: data["reportDate-day"]
         },
         {
-          classes: "govuk-input--width-2",
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'reportDate-month' in elementsWithError),
           name: "month",
-          value: data.completionDate.month
+          value: data["reportDate-month"]
         },
         {
-          classes: "govuk-input--width-4",
+          classes: "govuk-input--width-4" + (" govuk-input--error" if 'reportDate-year' in elementsWithError),
           name: "year",
-          value: data.completionDate.year
+          value: data["reportDate-year"]
         }
       ]
     }) }}

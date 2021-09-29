@@ -8,7 +8,9 @@ describe('Route Handlers - Offender Details Controller', () => {
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
+    req = {
+      body: {},
+    } as Request
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
@@ -18,9 +20,11 @@ describe('Route Handlers - Offender Details Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/offender-details`, {
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        data: handler.tempDummyOffenderData,
+        data: {
+          ...handler.data,
+        },
       })
     })
   })
@@ -28,7 +32,7 @@ describe('Route Handlers - Offender Details Controller', () => {
   describe('POST', () => {
     it('should redirect to the correct view', async () => {
       await handler.post(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/court-details`)
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${handler.redirectPath}`)
     })
   })
 })

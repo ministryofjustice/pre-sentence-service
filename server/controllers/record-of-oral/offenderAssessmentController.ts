@@ -1,12 +1,26 @@
-import { Request, Response } from 'express'
 import BaseController from './baseController'
+import { FormValidation } from '../../utils/formValidation'
 
 export default class OffenderAssessmentController extends BaseController {
-  get = async (req: Request, res: Response): Promise<void> => {
-    res.render(`${this.path}/offender-assessment`, this.templateValues)
-  }
+  override templatePath = 'offender-assessment'
 
-  post = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/${this.path}/risk-assessment`)
+  override redirectPath = 'risk-assessment'
+
+  override formValidation: FormValidation = {
+    required: [
+      {
+        id: 'experienceTrauma',
+        errorMessage: 'Select whether there is evidence of the offender experiencing trauma',
+      },
+      {
+        id: 'caringResponsibilities',
+        errorMessage:
+          'Select whether the offender has caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults',
+      },
+      {
+        id: 'offenderAssessmentEvidence',
+        errorMessage: 'Enter the evidence for assessment',
+      },
+    ],
   }
 }

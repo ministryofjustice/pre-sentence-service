@@ -8,7 +8,9 @@ describe('Route Handlers - Sources of Information Controller', () => {
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
+    req = {
+      body: {},
+    } as Request
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
@@ -18,14 +20,19 @@ describe('Route Handlers - Sources of Information Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/sources-of-information`, handler.templateValues)
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
+        ...handler.templateValues,
+        data: {
+          ...handler.data,
+        },
+      })
     })
   })
 
   describe('POST', () => {
     it('should redirect to the correct view', async () => {
       await handler.post(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/check-report`)
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${handler.redirectPath}`)
     })
   })
 })
