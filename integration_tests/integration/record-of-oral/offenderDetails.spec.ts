@@ -64,6 +64,7 @@ context('Offender details report page', () => {
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CourtDetails)
     })

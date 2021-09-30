@@ -29,6 +29,8 @@ export default abstract class Page {
 
   govukButton = (): PageElement => cy.get('.govuk-button')
 
+  govukErrorSummary = (): PageElement => cy.get('.govuk-error-summary')
+
   mojSideNavigation = (): PageElement => cy.get('.moj-side-navigation')
 
   signOut = (): PageElement => cy.get('[data-qa=signOut]')
