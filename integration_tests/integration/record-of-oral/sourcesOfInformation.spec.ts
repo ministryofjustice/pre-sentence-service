@@ -5,7 +5,7 @@ import CheckReport from '../../record-of-oral/checkReport'
 
 context('Sources of information report page', () => {
   const path = `/${new BaseController().path}/sources-of-information`
-  let currentPage
+  let currentPage: SourcesOfInformation
 
   beforeEach(() => {
     cy.task('reset')

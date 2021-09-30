@@ -5,7 +5,7 @@ import OffenceAnalysis from '../../record-of-oral/offenceAnalysis'
 
 context('Offence details report page', () => {
   const path = `/${new BaseController().path}/offence-details`
-  let currentPage
+  let currentPage: OffenceDetails
 
   beforeEach(() => {
     cy.task('reset')

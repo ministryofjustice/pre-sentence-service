@@ -5,7 +5,7 @@ import SourcesOfInformation from '../../record-of-oral/sourcesOfInformation'
 
 context('Proposal report page', () => {
   const path = `/${new BaseController().path}/proposal`
-  let currentPage
+  let currentPage: Proposal
 
   beforeEach(() => {
     cy.task('reset')

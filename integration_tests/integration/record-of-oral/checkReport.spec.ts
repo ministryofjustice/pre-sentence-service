@@ -5,7 +5,7 @@ import SignReport from '../../record-of-oral/signReport'
 
 context('Check report page', () => {
   const path = `/${new BaseController().path}/check-report`
-  let currentPage
+  let currentPage: CheckReport
 
   beforeEach(() => {
     cy.task('reset')
