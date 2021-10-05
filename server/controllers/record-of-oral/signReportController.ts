@@ -1,28 +1,49 @@
-import { Request, Response } from 'express'
 import BaseController from './baseController'
+import { FormValidation } from '../../utils/formValidation'
 
 export default class SignReportController extends BaseController {
+  override templatePath = 'sign-report'
+
+  override redirectPath = 'report-completed'
+
+  override formValidation: FormValidation = {
+    required: [
+      {
+        id: 'reportAuthor',
+        errorMessage: 'Enter the report author',
+      },
+      {
+        id: 'office',
+        errorMessage: 'Enter the office',
+      },
+      {
+        id: 'courtOfficePhoneNumber',
+        errorMessage: 'Enter the court office phone number',
+      },
+      {
+        id: 'reportDate-day',
+        errorMessage: 'Enter a valid day',
+      },
+      {
+        id: 'reportDate-month',
+        errorMessage: 'Enter a valid month',
+      },
+      {
+        id: 'reportDate-year',
+        errorMessage: 'Enter a valid year',
+        minLength: 4,
+      },
+    ],
+  }
+
   today = new Date()
 
-  tempDummySignReportData = {
-    author: 'Arthur Author',
+  override data = {
+    reportAuthor: 'Arthur Author',
     office: "Probation office, Sheffield Magistrate's Court",
-    telephone: '0114 276 0760',
-    completionDate: {
-      day: this.today.getDate(),
-      month: this.today.getMonth() + 1,
-      year: this.today.getFullYear(),
-    },
-  }
-
-  get = async (req: Request, res: Response): Promise<void> => {
-    res.render(`${this.path}/sign-report`, {
-      ...this.templateValues,
-      data: this.tempDummySignReportData,
-    })
-  }
-
-  post = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/${this.path}/report-completed`)
+    courtOfficePhoneNumber: '0114 276 0760',
+    'reportDate-day': this.today.getDate(),
+    'reportDate-month': this.today.getMonth() + 1,
+    'reportDate-year': this.today.getFullYear(),
   }
 }

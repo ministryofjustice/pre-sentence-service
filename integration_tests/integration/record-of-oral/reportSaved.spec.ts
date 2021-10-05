@@ -4,7 +4,7 @@ import ReportSaved from '../../record-of-oral/reportSaved'
 
 context('Draft report saved page', () => {
   const path = `/${new BaseController().path}/report-saved`
-  let currentPage
+  let currentPage: ReportSaved
 
   beforeEach(() => {
     cy.task('reset')

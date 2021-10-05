@@ -1,12 +1,25 @@
-import { Request, Response } from 'express'
 import BaseController from './baseController'
+import { FormValidation } from '../../utils/formValidation'
 
 export default class OffenceAnalysisController extends BaseController {
-  get = async (req: Request, res: Response): Promise<void> => {
-    res.render(`${this.path}/offence-analysis`, this.templateValues)
-  }
+  override templatePath = 'offence-analysis'
 
-  post = async (req: Request, res: Response): Promise<void> => {
-    res.redirect(`/${this.path}/offender-assessment`)
+  override redirectPath = 'offender-assessment'
+
+  override formValidation: FormValidation = {
+    required: [
+      {
+        id: 'offenceAnalysis',
+        errorMessage: 'Provide an analysis of the offence(s), including victim impact',
+      },
+      {
+        id: 'patternOfOffending',
+        errorMessage: 'Select whether current offending is part of a pattern of offending behaviour',
+      },
+      {
+        id: 'escalationInSeriousness',
+        errorMessage: 'Select whether current offending represents an escalation in seriousness',
+      },
+    ],
   }
 }

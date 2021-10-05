@@ -8,8 +8,13 @@ describe('Route Handlers - Base Controller', () => {
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
-    res = {} as Response
+    req = {
+      body: {},
+    } as Request
+    res = {
+      render: jest.fn(),
+      redirect: jest.fn(),
+    } as unknown as Response
   })
 
   describe('values', () => {
@@ -23,19 +28,39 @@ describe('Route Handlers - Base Controller', () => {
       expect(typeof handler.templateValues.preSentenceType).toEqual('string')
       expect(handler.templateValues.preSentenceType.length).toBeGreaterThan(0)
     })
+
+    it('should declare empty template path', async () => {
+      expect(typeof handler.templatePath).toBe('string')
+      expect(handler.templatePath.length).toBe(0)
+    })
+
+    it('should declare empty redirect path', async () => {
+      expect(typeof handler.redirectPath).toBe('string')
+      expect(handler.redirectPath.length).toBe(0)
+    })
+
+    it('should declare empty form validation object', async () => {
+      expect(typeof handler.formValidation).toBe('object')
+      expect(handler.formValidation.required.length).toBe(0)
+    })
   })
 
   describe('GET', () => {
-    it('method declaration for override - should return null', async () => {
-      const response = await handler.get(req, res)
-      expect(response).toBeNull()
+    it('should render view', async () => {
+      await handler.get(req, res)
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
+        ...handler.templateValues,
+        data: {
+          ...handler.data,
+        },
+      })
     })
   })
 
   describe('POST', () => {
-    it('method declaration for override - should return null', async () => {
-      const response = await handler.get(req, res)
-      expect(response).toBeNull()
+    it('should redirect to the correct view', async () => {
+      await handler.post(req, res)
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${handler.redirectPath}`)
     })
   })
 })

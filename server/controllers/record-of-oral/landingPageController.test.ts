@@ -17,9 +17,11 @@ describe('Route Handlers - Landing Page Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/landing`, {
+      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        timestamp: '',
+        data: {
+          ...handler.data,
+        },
       })
     })
   })

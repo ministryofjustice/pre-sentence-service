@@ -56,7 +56,11 @@
       label: {
         text: "Provide an analysis of the offence(s), including victim impact."
       },
-      whatToInclude: analysisHint
+      errorMessage: {
+        text: "Provide an analysis of the offence(s), including victim impact"
+      } if 'offenceAnalysis' in elementsWithError,
+      whatToInclude: analysisHint,
+      value: data.offenceAnalysis
     }) }}
 
     {{ govukRadios({
@@ -68,14 +72,19 @@
           text: "Is current offending part of a pattern of offending behaviour?"
         }
       },
+      errorMessage: {
+        text: "Select whether current offending is part of a pattern of offending behaviour"
+      } if 'patternOfOffending' in elementsWithError,
       items: [
         {
           value: "yes",
-          text: "Yes"
+          text: "Yes",
+          checked: data.patternOfOffending === "yes"
         },
         {
           value: "no",
-          text: "No"
+          text: "No",
+          checked: data.patternOfOffending === "no"
         }
       ]
     }) }}
@@ -89,14 +98,19 @@
           text: "Does current offending represent an escalation in seriousness?"
         }
       },
+      errorMessage: {
+        text: "Select whether current offending represents an escalation in seriousness"
+      } if 'escalationInSeriousness' in elementsWithError,
       items: [
         {
           value: "yes",
-          text: "Yes"
+          text: "Yes",
+          checked: data.escalationInSeriousness === "yes"
         },
         {
           value: "no",
-          text: "No"
+          text: "No",
+          checked: data.escalationInSeriousness === "no"
         }
       ]
     }) }}

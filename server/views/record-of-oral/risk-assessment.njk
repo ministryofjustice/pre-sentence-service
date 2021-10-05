@@ -4,8 +4,10 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% set pageWhatToInclude %}
-  <p class="govuk-body">You should include the scores of any static assessments are supported in the scoring section e.g. OGRS, OVP, RM2000, RSR scores.</p>
-  <p class="govuk-body">Your assessment should include any evidence of the risk of reoffending. If your assessment differs from static scores, there should be a brief account.</p>
+  <p class="govuk-body">You should include the scores of any static assessments are supported in the scoring section
+    e.g. OGRS, OVP, RM2000, RSR scores.</p>
+  <p class="govuk-body">Your assessment should include any evidence of the risk of reoffending. If your assessment
+    differs from static scores, there should be a brief account.</p>
 {% endset %}
 
 {% set roshEvidenceHint %}
@@ -43,8 +45,12 @@
         label: {
           text: "Tool name"
         },
+        errorMessage: {
+          text: "Enter the tool name"
+        } if "likelihoodTool" + i in elementsWithError,
         id: "likelihoodTool" + i,
-        name: "likelihoodTool" + i
+        name: "likelihoodTool" + i,
+        value: data["likelihoodTool" + i]
       }) }}
 
       {{ govukRadios({
@@ -55,22 +61,29 @@
             text: "Level"
           }
         },
+        errorMessage: {
+          text: "Specify the level"
+        } if "likelihoodLevel" + i in elementsWithError,
         items: [
           {
             value: "High",
-            text: "High"
+            text: "High",
+            checked: data["likelihoodLevel" + i] === "High"
           },
           {
             value: "Medium",
-            text: "Medium"
+            text: "Medium",
+            checked: data["likelihoodLevel" + i] === "Medium"
           },
           {
             value: "Low",
-            text: "Low"
+            text: "Low",
+            checked: data["likelihoodLevel" + i] === "Low"
           },
           {
             value: "N/A",
-            text: "N/A"
+            text: "N/A",
+            checked: data["likelihoodLevel" + i] === "N/A"
           }
         ]
       }) }}
@@ -81,7 +94,11 @@
       id: "likelihoodAssessment",
       label: {
         text: "Your assessment"
-      }
+      },
+      value: data.likelihoodAssessment,
+      errorMessage: {
+        text: "Enter your assessment"
+      } if "likelihoodAssessment" in elementsWithError
     }) }}
 
     <h2 class="govuk-heading-m">Risk of serious harm</h2>
@@ -99,18 +116,24 @@
           text: "Level"
         }
       },
+      errorMessage: {
+        text: "Specify the risk of serious harm level"
+      } if "riskOfSeriousHarm" in elementsWithError,
       items: [
         {
           value: "High",
-          text: "High"
+          text: "High",
+          checked: data.riskOfSeriousHarm === "High"
         },
         {
           value: "Medium",
-          text: "Medium"
+          text: "Medium",
+          checked: data.riskOfSeriousHarm === "Medium"
         },
         {
           value: "Low",
-          text: "Low"
+          text: "Low",
+          checked: data.riskOfSeriousHarm === "Low"
         }
       ]
     }) }}
@@ -124,7 +147,11 @@
       hint: {
         text: "Only for medium or high risk of serious harm"
       },
-      whatToInclude: roshEvidenceHint
+      errorMessage: {
+        text: "Enter the evidence for risk level"
+      } if "roshEvidence" in elementsWithError,
+      whatToInclude: roshEvidenceHint,
+      value: data.roshEvidence
     }) }}
 
     <h2 class="govuk-heading-m">Response to previous supervision</h2>
@@ -137,26 +164,34 @@
           text: "Response"
         }
       },
+      errorMessage: {
+        text: "Specify the Response to previous supervision"
+      } if "previousSupervisionResponse" in elementsWithError,
       items: [
         {
           value: "Good",
-          text: "Good"
+          text: "Good",
+          checked: data.previousSupervisionResponse === "Good"
         },
         {
           value: "Satisfactory",
-          text: "Satisfactory"
+          text: "Satisfactory",
+          checked: data.previousSupervisionResponse === "Satisfactory"
         },
         {
           value: "Low engagement",
-          text: "Low engagement"
+          text: "Low engagement",
+          checked: data.previousSupervisionResponse === "Low engagement"
         },
         {
           value: "Non-compliance",
-          text: "Non-compliance"
+          text: "Non-compliance",
+          checked: data.previousSupervisionResponse === "Non-compliance"
         },
         {
           value: "N/A",
-          text: "N/A"
+          text: "N/A",
+          checked: data.previousSupervisionResponse === "N/A"
         }
       ]
     }) }}

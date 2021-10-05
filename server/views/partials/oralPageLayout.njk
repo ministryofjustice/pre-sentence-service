@@ -1,5 +1,12 @@
 {% extends "./layout.njk" %}
 
+{% set errorList = [] %}
+{% set elementsWithError = [] %}
+{% for item in formValidation.errors %}
+  {{ errorList.push({ text: item.errorMessage, href: "#" + item.id }) }}
+  {{ elementsWithError.push(item.id) }}
+{% endfor %}
+
 {% block content %}
 
   <main class="app-container govuk-body">
@@ -66,6 +73,15 @@
 
       </div>
       <div class="govuk-grid-column-two-thirds govuk-!-padding-top-2">
+
+        {% if formValidation.errors | length %}
+          {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
 
         {% block reportForm %}
         {% endblock %}

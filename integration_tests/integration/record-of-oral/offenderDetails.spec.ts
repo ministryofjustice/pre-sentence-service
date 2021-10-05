@@ -5,7 +5,7 @@ import CourtDetails from '../../record-of-oral/courtDetails'
 
 context('Offender details report page', () => {
   const path = `/${new BaseController().path}/offender-details`
-  let currentPage
+  let currentPage: OffenderDetails
 
   beforeEach(() => {
     cy.task('reset')
@@ -64,6 +64,7 @@ context('Offender details report page', () => {
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CourtDetails)
     })
