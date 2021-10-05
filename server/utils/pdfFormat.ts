@@ -9,7 +9,6 @@ interface FooterData {
   version: string
 }
 
-//  const footerStyle = `display: flex; align-items: flex-end; font-size: 8px; width: 100%; padding: 0 60px`
 const footerDivStyle = 'width: 90%'
 const pStyle = 'font-size: 8px; margin: 0; padding: 0'
 const headerFooterStyle =
