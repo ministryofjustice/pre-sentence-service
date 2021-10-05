@@ -15,7 +15,6 @@ const pStyle = 'font-size: 8px; margin: 0; padding: 0'
 const headerFooterStyle =
   'font-family: Arial; font-size: 10px; font-weight: bold; width: 100%; height: 15px; text-align: center; padding: 10px;'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
 export function getHeader(): string {
   return `
     <span style="${headerFooterStyle}">
@@ -24,7 +23,6 @@ export function getHeader(): string {
   `
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/explicit-module-boundary-types
 export function getFooter(data: FooterData): string {
   return `
     <span style="${headerFooterStyle}">
