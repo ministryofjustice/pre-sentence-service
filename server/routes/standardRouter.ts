@@ -1,17 +1,19 @@
 import { Router } from 'express'
 import csurf from 'csurf'
+import { Repository } from 'typeorm'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import type UserService from '../services/userService'
+import config from '../config'
+import Report from '../repositories/entities/report'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
-import config from '../config'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(userService: UserService): Router {
+export default function standardRouter(userService: UserService, reportRepository: Repository<Report>): Router {
   const router = Router({ mergeParams: true })
 
   router.use((req, res, next) => {
@@ -22,7 +24,7 @@ export default function standardRouter(userService: UserService): Router {
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
   router.use(shortFormatRoutes())
-  router.use(recordOfOralRoutes())
+  router.use(recordOfOralRoutes(reportRepository))
   router.use(pdfRoutes())
 
   // CSRF protection

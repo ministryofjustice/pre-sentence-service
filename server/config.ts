@@ -83,4 +83,13 @@ export default {
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
+  db: {
+    username: get('DB_USER', 'pre-sentence-service'),
+    password: get('DB_PASS', 'pre-sentence-service'),
+    server: get('DB_SERVER', 'localhost'),
+    database: get('DB_NAME', 'pre-sentence-service'),
+    port: get('DB_PORT', 5432),
+    sslEnabled: get('DB_SSL_ENABLED', 'false'),
+    schema: get('DB_SCHEMA', 'public'),
+  },
 }

@@ -10,7 +10,7 @@ export default function Index(): Router {
     timestamp: '', // @TODO: When integration with NDelius set timestamp as e.g. '1 hour ago'
   }
 
-  get('/short-format', (req, res, next) => {
+  get('/short-format', async (req, res, next) => {
     res.render('short-format/landing', templateValues)
   })
 
