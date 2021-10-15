@@ -28,6 +28,10 @@ parameters:
     type: string
     default: probation_in_court_dev
 
+  node-version:
+    type: string
+    default: 14.17-browsers
+
 
 jobs:
   build:
