@@ -1,11 +1,18 @@
-import createApp from './app'
+import { Application } from 'express'
+import configureApplication from './app'
 import HmppsAuthClient from './data/hmppsAuthClient'
 import TokenStore from './data/tokenStore'
 import UserService from './services/userService'
+import getDatabaseConnection from './repositories/db'
 
-const hmppsAuthClient = new HmppsAuthClient(new TokenStore())
-const userService = new UserService(hmppsAuthClient)
+export default async function createApplication(): Promise<Application> {
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore())
+  const userService = new UserService(hmppsAuthClient)
+  const [error, databaseConnection] = await getDatabaseConnection()
 
-const app = createApp(userService)
+  if (error) {
+    throw new Error('Unable to create database connection')
+  }
 
-export default app
+  return configureApplication(userService, databaseConnection)
+}

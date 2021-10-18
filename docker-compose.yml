@@ -9,7 +9,20 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '6379:6379'
+      - "6379:6379"
+
+  postgres:
+    image: postgres
+    networks:
+      - hmpps
+    container_name: pre-sentence-service-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=pre-sentence-service
+      - POSTGRES_USER=pre-sentence-service
+      - POSTGRES_DB=pre-sentence-service
 
   hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
@@ -39,7 +52,7 @@ services:
     build: .
     networks:
       - hmpps
-    depends_on: [redis]
+    depends_on: [redis, postgres]
     ports:
       - "3000:3000"
     environment:

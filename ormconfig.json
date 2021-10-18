@@ -1,0 +1,3 @@
+{
+  "migrations": ["db/migrations/*.sql"]
+}
