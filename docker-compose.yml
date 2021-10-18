@@ -52,7 +52,7 @@ services:
     build: .
     networks:
       - hmpps
-    depends_on: [redis, postgres]
+    depends_on: [redis, postgres, gotenberg]
     ports:
       - "3000:3000"
     environment:
