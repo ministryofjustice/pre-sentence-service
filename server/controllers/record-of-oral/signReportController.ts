@@ -39,6 +39,7 @@ export default class SignReportController extends BaseController {
   today = new Date()
 
   override data = {
+    startDate: new Intl.DateTimeFormat('en-GB').format(new Date()),
     reportAuthor: 'Arthur Author',
     office: "Probation office, Sheffield Magistrate's Court",
     courtOfficePhoneNumber: '0114 276 0760',
