@@ -46,7 +46,7 @@ export default function Index(reportRepository: Repository<Report>): Router {
   get('/report-saved', new ReportSavedController().get)
   get('/report-completed', new ReportCompletedController().get)
 
-  router.get('/questions', async (req, res) => {
+  get('/questions', async (req, res) => {
     try {
       const results = await reportRepository.find()
       res.json(results)
