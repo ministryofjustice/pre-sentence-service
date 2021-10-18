@@ -1,8 +1,10 @@
-import express from 'express'
+import express, { Application } from 'express'
 
 import path from 'path'
 import createError from 'http-errors'
+import 'reflect-metadata'
 
+import { Connection } from 'typeorm'
 import indexRoutes from './routes'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
@@ -19,8 +21,9 @@ import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
+import Report from './repositories/entities/report'
 
-export default function createApp(userService: UserService): express.Application {
+export default function createApplication(userService: UserService, databaseConnection: Connection): Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -37,7 +40,9 @@ export default function createApp(userService: UserService): express.Application
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(authorisationMiddleware())
 
-  app.use('/', indexRoutes(standardRouter(userService)))
+  const reportRepository = databaseConnection.getRepository(Report)
+
+  app.use('/', indexRoutes(standardRouter(userService, reportRepository)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
