@@ -13,14 +13,16 @@ The easiest way to run the app is to use docker compose to create the service an
 The app requires: 
 * hmpps-auth - for authentication
 * redis - session store and token caching
+* postgres - database
+* gotenberg - PDF generator
 
 ### Runing the app for development
 
-To start the main services excluding the example typescript template app: 
+To start the main services excluding the typescript app: 
 
-`docker-compose up`
+`docker-compose up --remove-orphans hmpps-auth redis postgres gotenberg`
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v14.x`
+Install dependencies using `npm install`, ensuring you are using >= `Node v14.18.1` LTS or >= `Node v16.11.1` Current
 
 And then, to build the assets and start the app with nodemon:
 
