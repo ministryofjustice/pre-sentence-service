@@ -38,7 +38,7 @@ services:
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
 
   gotenberg:
-    image: thecodingmachine/gotenberg:6.4.3
+    image: thecodingmachine/gotenberg:6.4.4
     networks:
       - hmpps
     container_name: gotenberg
