@@ -29,6 +29,7 @@ generic-service:
     REDIS_TLS_ENABLED: "true"
     TOKEN_VERIFICATION_ENABLED: "true"
     DATABASE_SCHEMA: "presentenceservice"
+    DB_SSL_ENABLED: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
@@ -49,7 +50,6 @@ generic-service:
       DB_USER: "database_username"
       DB_PASS: "database_password"
       DB_SERVER: "rds_instance_address"
-      DB_SSL_ENABLED: "true"
 
   allowlist:
     office: "217.33.148.210/32"
