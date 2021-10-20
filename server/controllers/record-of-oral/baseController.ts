@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 export interface TemplateValues {
+  id: string
   preSentenceType: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
@@ -17,6 +18,7 @@ export default class BaseController {
   data = {}
 
   templateValues: TemplateValues = {
+    id: '',
     preSentenceType: 'Record of Oral Pre-Sentence Report',
   }
 
@@ -24,7 +26,7 @@ export default class BaseController {
     required: [],
   }
 
-  private renderTemplate(res: Response, templateValues: TemplateValues) {
+  protected renderTemplate(res: Response, templateValues: TemplateValues) {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 

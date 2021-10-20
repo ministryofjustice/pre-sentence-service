@@ -1,7 +1,12 @@
 import { Connection, ConnectionOptions, createConnection } from 'typeorm'
+
 import logger from '../../logger'
 import config from '../config'
+import Field from './entities/field'
+import FieldValue from './entities/fieldValue'
 import Report from './entities/report'
+import ReportDefinition from './entities/reportDefinition'
+import ReportDefinitionFields from './entities/reportDefinitionFields'
 
 type ConnectionResult = [Error?, Connection?]
 
@@ -13,7 +18,7 @@ const connectionOptions: ConnectionOptions = {
   username: String(config.db.username),
   password: String(config.db.password),
   database: String(config.db.database),
-  entities: [Report],
+  entities: [ReportDefinition, Field, ReportDefinitionFields, Report, FieldValue],
   synchronize: true,
   logging: true,
 }

@@ -17,9 +17,9 @@ import CheckReportController from '../../controllers/record-of-oral/checkReportC
 import SignReportController from '../../controllers/record-of-oral/signReportController'
 import ReportSavedController from '../../controllers/record-of-oral/reportSavedController'
 import ReportCompletedController from '../../controllers/record-of-oral/reportCompletedController'
-import Report from '../../repositories/entities/report'
+import ReportDefinition from '../../repositories/entities/reportDefinition'
 
-export default function Index(reportRepository: Repository<Report>): Router {
+export default function Index(reportRepository: Repository<ReportDefinition>): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
 
