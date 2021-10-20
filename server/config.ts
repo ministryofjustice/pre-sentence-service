@@ -89,7 +89,7 @@ export default {
     server: get('DB_SERVER', 'localhost'),
     database: get('DB_NAME', 'pre-sentence-service'),
     port: get('DB_PORT', 5432),
-    sslEnabled: get('DB_SSL_ENABLED', 'true'),
+    sslEnabled: get('DB_SSL_ENABLED', 'false'),
     schema: get('DB_SCHEMA', 'public'),
   },
 }
