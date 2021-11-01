@@ -13,6 +13,7 @@ const connectionOptions: ConnectionOptions = {
   username: String(config.db.username),
   password: String(config.db.password),
   database: String(config.db.database),
+  ssl: Boolean(config.db.sslEnabled),
   entities: [Report],
   synchronize: true,
   logging: true,
