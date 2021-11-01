@@ -4,6 +4,7 @@ import HmppsAuthClient from './data/hmppsAuthClient'
 import TokenStore from './data/tokenStore'
 import UserService from './services/userService'
 import getDatabaseConnection from './repositories/db'
+import logger from '../logger'
 
 export default async function createApplication(): Promise<Application> {
   const hmppsAuthClient = new HmppsAuthClient(new TokenStore())
@@ -11,7 +12,7 @@ export default async function createApplication(): Promise<Application> {
   const [error, databaseConnection] = await getDatabaseConnection()
 
   if (error) {
-    throw new Error('Unable to create database connection')
+    logger.error('Database connection error, continue app and report.')
   }
 
   return configureApplication(userService, databaseConnection)
