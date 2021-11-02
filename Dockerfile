@@ -43,6 +43,10 @@ RUN npm prune --no-audit --production
 # Stage: copy production assets and dependencies
 FROM base
 
+RUN mkdir -p /app/certs
+ADD https://truststore.pki.rds.amazonaws.com/eu-west-2/eu-west-2-bundle.pem /app/certs/eu-west-2-bundle.pem
+RUN chown appuser:appgroup /app/certs/eu-west-2-bundle.pem
+
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
         /app/package-lock.json \
