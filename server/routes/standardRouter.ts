@@ -6,17 +6,14 @@ import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import type UserService from '../services/userService'
 import config from '../config'
-import ReportDefinition from '../repositories/entities/reportDefinition'
+import Report from '../repositories/entities/report'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(
-  userService: UserService,
-  reportRepository: Repository<ReportDefinition>
-): Router {
+export default function standardRouter(userService: UserService, reportRepository: Repository<Report>): Router {
   const router = Router({ mergeParams: true })
 
   router.use((req, res, next) => {

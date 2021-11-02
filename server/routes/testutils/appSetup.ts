@@ -11,7 +11,7 @@ import errorHandler from '../../errorHandler'
 import standardRouter from '../standardRouter'
 import UserService from '../../services/userService'
 import * as auth from '../../authentication/auth'
-import ReportDefinition from '../../repositories/entities/reportDefinition'
+import Report from '../../repositories/entities/report'
 
 const user = {
   name: 'john smith',
@@ -34,7 +34,7 @@ class MockUserService extends UserService {
   }
 }
 
-class MockRepository extends Repository<ReportDefinition> {
+class MockRepository extends Repository<Report> {
   constructor() {
     super()
   }

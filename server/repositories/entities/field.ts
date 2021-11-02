@@ -14,6 +14,6 @@ export default class Field {
   @Column({ name: 'required' })
   required: boolean
 
-  @Column({ name: 'validation' })
+  @Column({ name: 'validation', nullable: true })
   validation: string
 }

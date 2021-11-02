@@ -10,6 +10,6 @@ export default class Report {
   status: string
 
   @ManyToOne(() => ReportDefinition)
-  @JoinColumn({ name: 'report_definition_id' })
-  report_definition_id: ReportDefinition
+  @JoinColumn({ name: 'report_definition_id', referencedColumnName: 'id' })
+  reportDefinition: ReportDefinition
 }

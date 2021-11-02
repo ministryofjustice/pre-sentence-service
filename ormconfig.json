@@ -1,3 +1,5 @@
 {
-  "migrations": ["db/migrations/*.sql"]
+  "cli": {
+    "migrationsDir": "db/migrations/"
+  }
 }

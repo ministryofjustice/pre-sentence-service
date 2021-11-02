@@ -11,7 +11,7 @@ export default class FieldValue {
   @Column({ name: 'field_id' })
   field_id: number
 
-  @Column({ name: 'value' })
+  @Column({ name: 'value', nullable: true })
   value: string
 
   @Column({ name: 'version' })

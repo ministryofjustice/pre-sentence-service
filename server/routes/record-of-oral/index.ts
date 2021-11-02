@@ -17,9 +17,9 @@ import CheckReportController from '../../controllers/record-of-oral/checkReportC
 import SignReportController from '../../controllers/record-of-oral/signReportController'
 import ReportSavedController from '../../controllers/record-of-oral/reportSavedController'
 import ReportCompletedController from '../../controllers/record-of-oral/reportCompletedController'
-import ReportDefinition from '../../repositories/entities/reportDefinition'
+import Report from '../../repositories/entities/report'
 
-export default function Index(reportRepository: Repository<ReportDefinition>): Router {
+export default function Index(reportRepository: Repository<Report>): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
 
@@ -46,9 +46,12 @@ export default function Index(reportRepository: Repository<ReportDefinition>): R
   get('/report-saved', new ReportSavedController().get)
   get('/report-completed', new ReportCompletedController().get)
 
-  get('/questions', async (req, res) => {
+  get('/reports', async (req, res) => {
     try {
-      const results = await reportRepository.find()
+      const results = await reportRepository
+        .createQueryBuilder('report')
+        .innerJoinAndSelect('report.reportDefinition', 'reportDefinition')
+        .getMany()
       res.json(results)
     } catch (error) {
       res.status(error.status || 500).send(error.message)
