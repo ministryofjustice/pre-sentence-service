@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 
 import logger from '../../logger'
@@ -18,6 +19,13 @@ const connectionOptions: ConnectionOptions = {
   username: String(config.db.username),
   password: String(config.db.password),
   database: String(config.db.database),
+  ssl:
+    config.db.sslEnabled === 'true'
+      ? {
+          rejectUnauthorized: true,
+          ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
+        }
+      : false,
   entities: [ReportDefinition, Field, ReportDefinitionFields, Report, FieldValue],
   synchronize: true,
   logging: true,
