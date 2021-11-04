@@ -1,18 +1,15 @@
 import { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+import LandingPageController from '../../controllers/short-format/landingPageController'
+import BaseController from '../../controllers/short-format/baseController'
 
 export default function Index(): Router {
   const router = Router()
-  const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-  const templateValues = {
-    preSentenceType: 'Short Format Pre-Sentence Report',
-    timestamp: '', // @TODO: When integration with NDelius set timestamp as e.g. '1 hour ago'
-  }
+  const routePrefix = (path: string) => `/${new BaseController().path}${path}`
+  const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
 
-  get('/short-format', async (req, res, next) => {
-    res.render('short-format/landing', templateValues)
-  })
+  get('', new LandingPageController().get)
 
   return router
 }

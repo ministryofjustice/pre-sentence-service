@@ -5,11 +5,11 @@ describe('Route Handlers - Base Controller', () => {
 
   describe('values', () => {
     it('should declare path as string', async () => {
-      expect(handler.path).toBe('record-of-oral')
+      expect(handler.path).toBe('short-format')
     })
 
     it('should declare default templateValues', async () => {
-      expect(handler.templateValues.preSentenceType).toBe('Record of Oral Pre-Sentence Report')
+      expect(handler.templateValues.preSentenceType).toBe('Short Format Pre-Sentence Report')
     })
   })
 })

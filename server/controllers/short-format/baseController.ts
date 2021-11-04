@@ -1,9 +1,9 @@
 import SharedController, { TemplateValues } from '../shared/sharedController'
 
 export default class BaseController extends SharedController {
-  override path = 'record-of-oral'
+  override path = 'short-format'
 
   override templateValues: TemplateValues = {
-    preSentenceType: 'Record of Oral Pre-Sentence Report',
+    preSentenceType: 'Short Format Pre-Sentence Report',
   }
 }

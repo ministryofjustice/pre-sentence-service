@@ -12,7 +12,7 @@ executors:
         environment:
           POSTGRES_PASSWORD: pre-sentence-service
           POSTGRES_USER: pre-sentence-service
-          POSTGRES_DB: pre-sentence-service-int
+          POSTGRES_DB: pre-sentence-service
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
