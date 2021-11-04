@@ -28,16 +28,18 @@ export class Setup1635852419286 implements MigrationInterface {
         (
             id                   SERIAL PRIMARY KEY,
             report_definition_id INTEGER REFERENCES report_definition (id),
-            field_id             INTEGER REFERENCES field (id)
+            field_id             INTEGER NOT NULL UNIQUE,
+            FOREIGN KEY (field_id) REFERENCES field (id)
         );
     `)
 
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS report
         (
-            id                   UUID          DEFAULT gen_random_uuid() PRIMARY KEY,
-            report_definition_id INTEGER REFERENCES report_definition (id),
-            status               TEXT NOT NULL DEFAULT 'NOT_STARTED'
+            id                   UUID             DEFAULT gen_random_uuid() PRIMARY KEY,
+            report_definition_id INTEGER NOT NULL UNIQUE,
+            status               TEXT    NOT NULL DEFAULT 'NOT_STARTED',
+            FOREIGN KEY (report_definition_id) REFERENCES report_definition (id)
         );
     `)
 
@@ -45,10 +47,12 @@ export class Setup1635852419286 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS field_value
         (
             id        SERIAL PRIMARY KEY,
-            report_id UUID REFERENCES report (id),
-            field_id  INTEGER REFERENCES field (id),
+            report_id UUID    NOT NULL UNIQUE,
+            field_id  INTEGER NOT NULL UNIQUE,
             value     TEXT,
-            version   INTEGER NOT NULL DEFAULT 1
+            version   INTEGER NOT NULL DEFAULT 1,
+            FOREIGN KEY (report_id) REFERENCES report (id),
+            FOREIGN KEY (field_id) REFERENCES field (id)
         );
     `)
   }
