@@ -5,8 +5,36 @@
 {% block content %}
 
   <main class="app-container govuk-body">
-    <h1>{{ preSentenceType }}</h1>
-    <p>Please check back later when there is content to view.</p>
+    <h1 class="govuk-heading-l">{{ preSentenceType }}</h1>
+    <p class="govuk-body">Use this service to:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>Save and close your report at any point<br/>
+        <span class="govuk-caption-m">You can save and close your report so you don't have to complete the whole thing at once.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Save as you write<br/>
+        <span class="govuk-caption-m">Your report will be saved as you write so you'll never lose your work.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Return to complete your report later<br/>
+        <span class="govuk-caption-m">You can finish your report when it suits you.</span>
+      </li>
+      <li class="govuk-!-margin-top-3">Edit your completed report<br/>
+        <span class="govuk-caption-m">You can edit your report whenever you want, even after you've finished.</span>
+      </li>
+    </ul>
+
+    {% if timestamp | length %}
+      <p class="govkuk-body qa-last-saved">This draft report was last saved: {{ timestamp }}.</p>
+    {% endif %}
+
+    <p class="govuk-body govuk-!-margin-top-4">
+      <a href="/short-format/offender-details" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+        {{ "Continue" if timestamp | length else "Start" }} now
+        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+        </svg></a>
+    </p>
+
   </main>
 
 {% endblock %}

@@ -2,7 +2,7 @@ import BaseController from '../../../server/controllers/record-of-oral/baseContr
 import LandingPage from '../../record-of-oral/landing'
 import Page from '../../pages/page'
 
-context('Report landing page', () => {
+context('Record of Oral Pre-Sentence Report landing page', () => {
   const path = `/${new BaseController().path}`
   let currentPage: LandingPage
 
