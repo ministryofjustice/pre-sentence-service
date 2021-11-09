@@ -15,7 +15,7 @@ export default class ProposalController extends BaseController {
       },
       {
         id: 'proposal',
-        errorMessage: 'Enter a proposed sentence',
+        errorMessage: 'Enter a proposed sentence (including length and any sentence components)',
       },
     ],
   }

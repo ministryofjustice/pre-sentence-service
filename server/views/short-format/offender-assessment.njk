@@ -1,0 +1,139 @@
+{% extends "../partials/shortFormatPageLayout.njk" %}
+
+{% set currentPage = 'Offender assessment' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+{% set factors = data.factors or [] %}
+
+{% set pageWhatToInclude %}
+  <p class="govuk-body">You should consider diversity issues for each factor in terms of the offender’s own experiences or protected characteristics.</p>
+  <p class="govuk-body">Key aspects of the person’s circumstances should be detailed. Those which are linked to their offending behaviour should be highlighted.</p>
+  <p class="govuk-body">Make sure that you select all of the factors that have impacted on offending, and that may impact on future risk of re offending.</p>
+  <p class="govuk-body">Also, consider if there are factors that are not directly linked. These may cause difficulties for the offender and impact on their desistance from crime.</p>
+  <p class="govuk-body">Include information on protective factors that may support desistance.</p>
+  <p class="govuk-body">Provide an explanation of the offender's motivation and readiness to change.</p>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+    {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+    {{ govukDetails({
+      summaryText: "What to include",
+      text: pageWhatToInclude | safe,
+      classes: "govuk-!-margin-bottom-2"
+    }) }}
+
+    {{ govukCheckboxes({
+      idPrefix: "factors",
+      name: "factors",
+      fieldset: {
+        legend: {
+          text: "Select any factors relating to offending behaviour and the individual’s need, including any protective factors."
+        }
+      },
+      items: [
+        {
+          value: "issueAccommodation",
+          text: "Accommodation",
+          checked: true if 'issueAccommodation' in factors
+        },
+        {
+          value: "issueEmployment",
+          text: "Employment, training and education",
+          checked: true if 'issueEmployment' in factors
+        },
+        {
+          value: "issueFinance",
+          text: "Finance",
+          checked: true if 'issueFinance' in factors
+        },
+        {
+          value: "issueRelationships",
+          text: "Relationships",
+          checked: true if 'issueRelationships' in factors
+        },
+        {
+          value: "issueSubstanceMisuse",
+          text: "Substance misuse",
+          checked: true if 'issueSubstanceMisuse' in factors
+        },
+        {
+          value: "issueHealth",
+          text: "Physical & mental health",
+          checked: true if 'issueHealth' in factors
+        },
+        {
+          value: "issueBehaviour",
+          text: "Thinking & behaviour",
+          checked: true if 'issueBehaviour' in factors
+        },
+        {
+          value: "issueOther",
+          text: "Other",
+          checked: true if 'issueOther' in factors
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "experienceTrauma",
+      name: "experienceTrauma",
+      fieldset: {
+        legend: {
+          text: "Is there evidence of the offender experiencing trauma?"
+        }
+      },
+      errorMessage: {
+        text: "Select whether there is evidence of the offender experiencing trauma"
+      } if 'experienceTrauma' in elementsWithError,
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          checked: data.experienceTrauma === 'yes'
+        },
+        {
+          value: "no",
+          text: "No",
+          checked: data.experienceTrauma === 'no'
+        }
+      ]
+    }) }}
+
+    {{ govukRadios({
+      classes: "govuk-radios--inline",
+      idPrefix: "caringResponsibilities",
+      name: "caringResponsibilities",
+      fieldset: {
+        legend: {
+          text: "Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?"
+        }
+      },
+      errorMessage: {
+        text: "Select whether the offender has caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults"
+      } if 'caringResponsibilities' in elementsWithError,
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          checked: data.caringResponsibilities === 'yes'
+        },
+        {
+          value: "no",
+          text: "No",
+          checked: data.caringResponsibilities === 'no'
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}
