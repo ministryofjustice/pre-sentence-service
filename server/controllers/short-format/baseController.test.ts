@@ -9,6 +9,7 @@ describe('Route Handlers - Base Controller', () => {
     })
 
     it('should declare default templateValues', async () => {
+      expect(handler.templateValues.reportPath).toBe('short-format')
       expect(handler.templateValues.preSentenceType).toBe('Short Format Pre-Sentence Report')
     })
   })
