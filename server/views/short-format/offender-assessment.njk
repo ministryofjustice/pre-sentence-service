@@ -21,7 +21,7 @@
 
     {% from "govuk/components/details/macro.njk" import govukDetails %}
     {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
 
     {{ govukDetails({
       summaryText: "What to include",
@@ -81,7 +81,7 @@
       ]
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "experienceTrauma",
       name: "experienceTrauma",
@@ -107,7 +107,7 @@
       ]
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "caringResponsibilities",
       name: "caringResponsibilities",

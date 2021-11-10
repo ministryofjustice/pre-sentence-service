@@ -27,6 +27,14 @@
   <p class="govuk-body">Identify who is at risk and be clear about what the risk is and how imminent that risk is.</p>
 {% endset %}
 
+{% set previousSupervisionResponseHelp %}
+  <p class="govuk-body">Include their compliance with any youth offending supervision orders.</p>
+  <p class="govuk-body">Remember to make clear in the text boxes previous periods of supervision and whether or not they were completed successfully.</p>
+  <p class="govuk-body">Include information about the effectiveness of previous interventions, and make links to likely compliance with further interventions.</p>
+  <p class="govuk-body">If you select not applicable, make clear in the text box whether or not the person has been involved with other agencies who have provided interventions, for example, substance misuse agencies.</p>
+  <p class="govuk-body">Detail what level of compliance there was with these, and make links to likely compliance with future interventions.</p>
+{% endset %}
+
 {% block reportForm %}
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
@@ -34,7 +42,7 @@
   <form method="post" novalidate>
 
     {% from "govuk/components/input/macro.njk" import govukInput %}
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
     {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
@@ -64,7 +72,7 @@
       } if "riskOfSeriousHarm" in elementsWithError
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       idPrefix: "previousSupervisionResponse",
       name: "previousSupervisionResponse",
       fieldset: {
@@ -72,6 +80,7 @@
           text: "Response to previous supervision"
         }
       },
+      whatToInclude: previousSupervisionResponseHelp,
       errorMessage: {
         text: "Specify the Response to previous supervision"
       } if "previousSupervisionResponse" in elementsWithError,

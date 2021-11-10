@@ -12,6 +12,7 @@ import RiskAssessmentController from '../../controllers/short-format/riskAssessm
 import ProposalController from '../../controllers/short-format/proposalController'
 import SourcesOfInformationController from '../../controllers/short-format/sourcesOfInformationController'
 import SignReportController from '../../controllers/short-format/signReportController'
+import CheckReportController from '../../controllers/short-format/checkReportController'
 
 export default function Index(): Router {
   const router = Router()
@@ -34,6 +35,8 @@ export default function Index(): Router {
   getAndPost('/proposal', new ProposalController())
   getAndPost('/sources-of-information', new SourcesOfInformationController())
   getAndPost('/sign-report', new SignReportController())
+
+  get('/check-report', new CheckReportController().get)
 
   return router
 }

@@ -1,8 +1,9 @@
 import BaseController from '../../../server/controllers/short-format/baseController'
 import LandingPage from '../../short-format/landing'
 import Page from '../../pages/page'
+import OffenderDetails from '../../short-format/offenderDetails'
 
-context('Short Format Pre-Sentence Report landing page', () => {
+context('Record of Oral Pre-Sentence Report landing page', () => {
   const path = `/${new BaseController().path}`
   let currentPage: LandingPage
 
@@ -16,7 +17,7 @@ context('Short Format Pre-Sentence Report landing page', () => {
     currentPage = Page.verifyOnPage(LandingPage)
   })
 
-  describe('Authenticated user accesses Short Format Pre-Sentence Report', () => {
+  describe('Authenticated user accesses Record of Oral Pre-Sentence Report', () => {
     it('should include a list of features', () => {
       currentPage.govukBulletList().should('exist')
     })
@@ -27,6 +28,11 @@ context('Short Format Pre-Sentence Report landing page', () => {
 
     it('should include the primary call to action button', () => {
       currentPage.govukButton().should('contain.text', 'Start now')
+    })
+
+    it('should move to the first page of the report', () => {
+      currentPage.govukButton().should('contain.text', 'Start now').click()
+      Page.verifyOnPage(OffenderDetails)
     })
   })
 })
