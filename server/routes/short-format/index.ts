@@ -13,6 +13,8 @@ import ProposalController from '../../controllers/short-format/proposalControlle
 import SourcesOfInformationController from '../../controllers/short-format/sourcesOfInformationController'
 import SignReportController from '../../controllers/short-format/signReportController'
 import CheckReportController from '../../controllers/short-format/checkReportController'
+import ReportSavedController from '../../controllers/short-format/reportSavedController'
+import ReportCompletedController from '../../controllers/short-format/reportCompletedController'
 
 export default function Index(): Router {
   const router = Router()
@@ -37,6 +39,8 @@ export default function Index(): Router {
   getAndPost('/sign-report', new SignReportController())
 
   get('/check-report', new CheckReportController().get)
+  get('/report-saved', new ReportSavedController().get)
+  get('/report-completed', new ReportCompletedController().get)
 
   return router
 }

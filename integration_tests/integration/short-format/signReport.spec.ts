@@ -1,7 +1,7 @@
 import BaseController from '../../../server/controllers/short-format/baseController'
 import Page from '../../pages/page'
 import SignReport from '../../short-format/signReport'
-// import ReportCompleted from '../../short-format/reportCompleted'
+import ReportCompleted from '../../short-format/reportCompleted'
 
 context('Check report page', () => {
   const path = `/${new BaseController().path}/sign-report`
@@ -77,7 +77,7 @@ context('Check report page', () => {
 
     it('should move to correct screen upon valid form submission', () => {
       currentPage.govukButton().contains('Submit and view your report').click()
-      // Page.verifyOnPage(ReportCompleted)
+      Page.verifyOnPage(ReportCompleted)
     })
   })
 })

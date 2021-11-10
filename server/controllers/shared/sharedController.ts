@@ -3,6 +3,7 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 
 export interface TemplateValues {
   preSentenceType: string
+  reportPath: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
 }
@@ -17,6 +18,7 @@ export default class SharedController {
   data = {}
 
   templateValues: TemplateValues = {
+    reportPath: '',
     preSentenceType: '',
   }
 
