@@ -1,0 +1,56 @@
+{% extends "../partials/shortFormatPageLayout.njk" %}
+
+{% set currentPage = 'Sentencing court details' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Court</h2>
+    <p class="govuk-body">{{ data.court }}</p>
+
+    <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Local justice area</h2>
+    <p class="govuk-body">{{ data.localJusticeArea }}</p>
+
+    {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+    {{ govukDateInput({
+      id: "dateOfHearing",
+      namePrefix: "dateOfHearing",
+      fieldset: {
+        legend: {
+          text: "Date of hearing"
+        }
+      },
+      hint: {
+        text: "For example, 21 9 2021"
+      },
+      errorMessage: {
+        text: "Enter a valid date, month and year"
+      } if 'dateOfHearing-day' in elementsWithError or 'dateOfHearing-month' in elementsWithError or 'dateOfHearing-year' in elementsWithError,
+      items: [
+        {
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'dateOfHearing-day' in elementsWithError),
+          name: "day",
+          value: data['dateOfHearing-day']
+        },
+        {
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'dateOfHearing-month' in elementsWithError),
+          name: "month",
+          value: data['dateOfHearing-month']
+        },
+        {
+          classes: "govuk-input--width-4" + (" govuk-input--error" if 'dateOfHearing-year' in elementsWithError),
+          name: "year",
+          value: data['dateOfHearing-year']
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

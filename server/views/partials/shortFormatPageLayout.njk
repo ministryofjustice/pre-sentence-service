@@ -1,0 +1,93 @@
+{% extends "./layout.njk" %}
+
+{% set errorList = [] %}
+{% set elementsWithError = [] %}
+{% for item in formValidation.errors %}
+  {{ errorList.push({ text: item.errorMessage, href: "#" + item.id }) }}
+  {{ elementsWithError.push(item.id) }}
+{% endfor %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+
+        {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
+
+        {# @TODO: Sign your report should only display when all other sections are "completed" #}
+        {{ mojSideNavigation({
+          label: 'Side navigation',
+          classes: 'govuk-!-padding-top-0',
+          sections: [{
+            heading: {
+              text: 'Report sections'
+            },
+            items: [{
+              text: 'Offender details',
+              href: '/short-format/offender-details',
+              active: currentPage === 'Offender details'
+            }, {
+              text: 'Sentencing court details',
+              href: '/short-format/court-details',
+              active: currentPage === 'Sentencing court details'
+            }, {
+              text: 'Offence details',
+              href: '/short-format/offence-details',
+              active: currentPage === 'Offence details'
+            }, {
+              text: 'Offence analysis',
+              href: '/short-format/offence-analysis',
+              active: currentPage === 'Offence analysis'
+            }, {
+              text: 'Offender assessment',
+              href: '/short-format/offender-assessment',
+              active: currentPage === 'Offender assessment'
+            }, {
+              text: 'Risk assessment',
+              href: '/short-format/risk-assessment',
+              active: currentPage === 'Risk assessment'
+            }, {
+              text: 'Proposal',
+              href: '/short-format/proposal',
+              active: currentPage === 'Proposal'
+            }, {
+              text: 'Sources of information',
+              href: '/short-format/sources-of-information',
+              active: currentPage === 'Sources of information'
+            }, {
+              text: 'Check your report',
+              href: '/short-format/check-report',
+              active: currentPage === 'Check your report'
+            }, {
+              text: 'Sign your report',
+              href: '/short-format/sign-report',
+              active: currentPage === 'Sign your report'
+            }]
+          }]
+        }) }}
+
+        <p class="govuk-body govuk-!-margin-top-8">
+          <a class="govuk-button govuk-button--secondary" href="/short-format/report-saved">Save draft report</a>
+        </p>
+
+      </div>
+      <div class="govuk-grid-column-two-thirds govuk-!-padding-top-2">
+
+        {% if formValidation.errors | length %}
+          {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
+
+        {% block reportForm %}
+        {% endblock %}
+
+      </div>
+    </div>
+  </main>
+
+{% endblock %}

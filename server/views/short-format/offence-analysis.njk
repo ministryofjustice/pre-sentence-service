@@ -1,0 +1,75 @@
+{% extends "../partials/shortFormatPageLayout.njk" %}
+
+{% set currentPage = 'Offence analysis' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set offenceAnalysisHelp %}
+  <p class="govuk-body">Your analysis needs to go beyond the facts provided by the CPS. It needs to reflect motivation
+    and the person’s own understanding of their behaviour.</p>
+  <p class="govuk-body">Consider the offender’s account and attitude, and make links to any previous offending behaviour
+    and previous reports, interventions and periods of supervision.</p>
+  <p class="govuk-body">Do they accept responsibility? Is the offence admitted or denied? It is important to be clear
+    where lack of remorse differs from any inability to show remorse. There could be a reason for an inability to show
+    remorse, for example, autism, or learning disability. People who have suffered trauma may also present very
+    differently, so it is important to consider a person’s history and the impact of any trauma.</p>
+  <p class="govuk-body">To what extent is the offender aware of the impact on the victim? Reference should be made to
+    lasting impacts, whether physical, psychological or emotional. Has there been any deliberate targeting of specific
+    groups? Is there repeat victimisation?</p>
+  <p class="govuk-body">Outline the emotional or cognitive factors that underpin the crime. Were there sexual
+    motivations, financial gains or addictions? What level of premeditation or planning was involved? Are there any
+    patterns suggesting likelihood of similar offending?</p>
+  <p class="govuk-body">Is there any evidence of discrimination in their attitude or behaviour?</p>
+  <p class="govuk-body">Consider whether the offender’s own experience as a victim of others is relevant to their
+    commission of this offence. Has this person been a victim of domestic abuse? What impact has that had? Has this
+    person been subject to racism? Have they suffered trauma in their past that has impacted upon their ability to
+    engage and respond?</p>
+  <p class="govuk-body">If this report is about a person aged 18-24, consider whether their maturity is an issue in this
+    offence. Are they easily led or influenced by a peer group?</p>
+  <p class="govuk-body">This section should lead to some potential considerations of rehabilitative interventions.</p>
+{% endset %}
+
+{% set patternOfOffendingHelp %}
+  <p class="govuk-body">Previous behaviour is an indicator of future behaviour. Specify if this is an escalation in
+    severity.</p>
+  <p class="govuk-body">Detail any gaps in offending, consider lapse and relapse in any addictions and make clear the
+    triggers that initiate the behaviours.</p>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {{ picRichTextEditor({
+      name: "offenceAnalysis",
+      id: "offenceAnalysis",
+      label: {
+        text: "Offence analysis"
+      },
+      value: data.offenceAnalysis,
+      whatToInclude: offenceAnalysisHelp,
+      errorMessage: {
+        text: "Enter the offence analysis"
+      } if 'offenceAnalysis' in elementsWithError
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "patternOfOffending",
+      id: "patternOfOffending",
+      label: {
+        text: "Patterns of offending behaviour"
+      },
+      value: data.patternOfOffending,
+      whatToInclude: patternOfOffendingHelp,
+      errorMessage: {
+        text: "Enter the patterns of offending behaviour"
+      } if 'patternOfOffending' in elementsWithError
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

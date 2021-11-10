@@ -1,6 +1,7 @@
 import BaseController from '../../../server/controllers/record-of-oral/baseController'
 import LandingPage from '../../record-of-oral/landing'
 import Page from '../../pages/page'
+import OffenderDetails from '../../record-of-oral/offenderDetails'
 
 context('Record of Oral Pre-Sentence Report landing page', () => {
   const path = `/${new BaseController().path}`
@@ -27,6 +28,11 @@ context('Record of Oral Pre-Sentence Report landing page', () => {
 
     it('should include the primary call to action button', () => {
       currentPage.govukButton().should('contain.text', 'Start now')
+    })
+
+    it('should move to the first page of the report', () => {
+      currentPage.govukButton().should('contain.text', 'Start now').click()
+      Page.verifyOnPage(OffenderDetails)
     })
   })
 })
