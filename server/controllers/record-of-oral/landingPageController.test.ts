@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 
 import LandingPageController from './landingPageController'
 
-describe('Route Handlers - Landing Page Controller', () => {
+describe('Route Handlers - Record of Oral Pre-Sentence Report Landing Page Controller', () => {
   const handler = new LandingPageController()
   let req: Request
   let res: Response

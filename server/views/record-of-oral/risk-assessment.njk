@@ -33,7 +33,7 @@
   <form method="post" novalidate>
 
     {% from "govuk/components/input/macro.njk" import govukInput %}
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
     {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
@@ -51,7 +51,7 @@
         value: data["likelihoodTool" + i]
       }) }}
 
-      {{ govukRadios({
+      {{ picRadioButtons({
         idPrefix: "likelihoodLevel" + i,
         name: "likelihoodLevel" + i,
         fieldset: {
@@ -106,7 +106,7 @@
       iconFallbackText: "Warning"
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       idPrefix: "riskOfSeriousHarm",
       name: "riskOfSeriousHarm",
       fieldset: {
@@ -154,7 +154,7 @@
 
     <h2 class="govuk-heading-m">Response to previous supervision</h2>
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       idPrefix: "previousSupervisionResponse",
       name: "previousSupervisionResponse",
       fieldset: {

@@ -30,7 +30,7 @@
 
     {% from "govuk/components/details/macro.njk" import govukDetails %}
     {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
 
     {{ govukDetails({
@@ -96,7 +96,7 @@
       ]
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "experienceTrauma",
       name: "experienceTrauma",
@@ -122,7 +122,7 @@
       ]
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "caringResponsibilities",
       name: "caringResponsibilities",

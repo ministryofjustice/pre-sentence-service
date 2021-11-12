@@ -28,10 +28,10 @@
 
   <form method="post" novalidate>
 
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "confirmEIF",
       name: "confirmEIF",

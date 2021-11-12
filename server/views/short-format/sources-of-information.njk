@@ -1,0 +1,90 @@
+{% extends "../partials/shortFormatPageLayout.njk" %}
+
+{% set currentPage = 'Sources of information' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+    {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {% set otherOptionHtml %}
+      {{ picRichTextEditor({
+        name: "otherInformationDetails",
+        id: "otherInformationDetails",
+        label: {
+          text: "Other source(s) of information"
+        }
+      }) }}
+    {% endset %}
+
+    {{ govukCheckboxes({
+      idPrefix: "waste",
+      name: "waste",
+      fieldset: {
+        legend: {
+          text: "Select the relevant options"
+        }
+      },
+      items: [
+        {
+          value: "interviewInformationSource",
+          text: "Interview"
+        },
+        {
+          value: "serviceRecordsInformationSource",
+          text: "Service records"
+        },
+        {
+          value: "cpsSummaryInformationSource",
+          text: "CPS summary"
+        },
+        {
+          value: "oasysAssessmentsInformationSource",
+          text: "Previous OASys assessments"
+        },
+        {
+          value: "previousConvictionsInformationSource",
+          text: "Previous convictions"
+        },
+        {
+          value: "victimStatementInformationSource",
+          text: "Victim statement"
+        },
+        {
+          value: "childrenServicesInformationSource",
+          text: "Safeguarding checks"
+        },
+        {
+          value: "policeInformationSource",
+          text: "Police information"
+        },
+        {
+          value: "sentencingGuidelinesInformationSource",
+          text: "Sentencing guidelines"
+        },
+        {
+          value: "domesticAbuseInformationSource",
+          text: "Domestic abuse call out information"
+        },
+        {
+          value: "equalityInformationFormInformationSource",
+          text: "Equalities Information"
+        },
+        {
+          value: "otherInformationSource",
+          text: "Other (please specify below)",
+          conditional: {
+            html: otherOptionHtml
+          }
+        }
+      ]
+    }) }}
+
+    <button class="govuk-button govuk-!-margin-top-6">Continue</button>
+  </form>
+
+{% endblock %}

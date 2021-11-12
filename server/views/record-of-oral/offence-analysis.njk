@@ -48,7 +48,7 @@
   <form method="post" novalidate>
 
     {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
-    {% from "govuk/components/radios/macro.njk" import govukRadios %}
+    {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
 
     {{ picRichTextEditor({
       name: "offenceAnalysis",
@@ -63,7 +63,7 @@
       value: data.offenceAnalysis
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "patternOfOffending",
       name: "patternOfOffending",
@@ -89,7 +89,7 @@
       ]
     }) }}
 
-    {{ govukRadios({
+    {{ picRadioButtons({
       classes: "govuk-radios--inline",
       idPrefix: "escalationInSeriousness",
       name: "escalationInSeriousness",

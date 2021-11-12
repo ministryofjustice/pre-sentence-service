@@ -1,0 +1,64 @@
+{% extends "../partials/layout.njk" %}
+
+{% set currentPage = 'Check your report' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+    {% from "components/task-list/macro.njk" import picTaskList %}
+
+    {{ picTaskList({
+      sections: [
+        {
+          items: [
+          {
+            text: 'Offender details',
+            href: '/short-format/offender-details',
+            state: 'saved'
+          },
+          {
+            text: 'Sentencing court details',
+            href: '/short-format/court-details',
+            state: 'saved'
+          },
+          {
+            text: 'Offence details',
+            href: '/short-format/offence-details',
+            state: 'saved'
+          },
+          {
+            text: 'Offence analysis',
+            href: '/short-format/offence-alaysis',
+            state: 'saved'
+          },
+          {
+            text: 'Offender assessment',
+            href: '/short-format/offender-assessment'
+          },
+          {
+            text: 'Risk assessment',
+            href: '/short-format/risk-assessment'
+          },
+          {
+            text: 'Proposal',
+            href: '/short-format/proposal'
+          },
+          {
+            text: 'Sources of information',
+            href: '/short-format/sources-of-information'
+          },
+          {
+            text: 'Sign your report',
+            href: '/short-format/sign-report'
+          }]
+        }
+      ]
+    }) }}
+
+    <a class="govuk-button govuk-!-margin-top-6" href="/short-format/sign-report">Sign your report</a>
+  </main>
+
+{% endblock %}
