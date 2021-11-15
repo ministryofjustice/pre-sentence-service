@@ -48,10 +48,7 @@ export default function Index(reportRepository: Repository<Report>): Router {
 
   get('/reports', async (req, res) => {
     try {
-      const results = await reportRepository
-        .createQueryBuilder('report')
-        .innerJoinAndSelect('report.reportDefinition', 'reportDefinition')
-        .getMany()
+      const results = await reportRepository.find()
       res.json(results)
     } catch (error) {
       res.status(error.status || 500).send(error.message)

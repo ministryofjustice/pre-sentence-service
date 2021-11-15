@@ -1,19 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
-@Entity({ name: 'field' })
+@Entity('field')
 export default class Field {
-  @PrimaryGeneratedColumn({ name: 'id' })
+  @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ name: 'type' })
+  @Column()
   type: string
 
-  @Column({ name: 'name' })
+  @Column()
   name: string
 
-  @Column({ name: 'required' })
+  @Column()
   required: boolean
 
-  @Column({ name: 'validation', nullable: true })
+  @Column({ nullable: true })
   validation: string
+
+  @OneToMany('Field', 'id')
+  field: Array<Field> | null
 }

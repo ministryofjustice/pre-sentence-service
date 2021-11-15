@@ -1,15 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import ReportDefinition from './reportDefinition'
+import FieldValue from './fieldValue'
 
-@Entity({ name: 'report' })
+@Entity('report')
 export default class Report {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ name: 'status', default: 'NOT_STARTED' })
+  @Column({ default: 'NOT_STARTED' })
   status: string
 
-  @ManyToOne(() => ReportDefinition)
-  @JoinColumn({ name: 'report_definition_id', referencedColumnName: 'id' })
+  @ManyToOne('ReportDefinition', 'reports', { eager: true })
   reportDefinition: ReportDefinition
+
+  @OneToMany('FieldValue', 'report', { eager: true })
+  fieldValues: Array<FieldValue> | null
 }

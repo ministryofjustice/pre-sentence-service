@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class PopulateReportDefinitionFields1635854322522 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        INSERT INTO report_definition_fields (report_definition_id, field_id)
+        INSERT INTO report_definition_fields ("reportDefinitionId", "fieldId")
         VALUES (1, 1),
                (1, 2),
                (1, 3),
