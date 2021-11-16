@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('field')
 export default class Field {
@@ -17,6 +17,6 @@ export default class Field {
   @Column({ nullable: true })
   validation: string
 
-  @OneToMany('Field', 'id')
-  field: Array<Field> | null
+  @OneToOne('Field', 'id')
+  field: Field
 }

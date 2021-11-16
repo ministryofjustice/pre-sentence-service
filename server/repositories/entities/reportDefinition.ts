@@ -14,8 +14,8 @@ export default class ReportDefinition {
   version: number
 
   @OneToMany('Report', 'id')
-  reports: Array<Report> | null
+  reports: Array<Report> | []
 
   @OneToMany('ReportDefinitionFields', 'reportDefinition', { eager: true })
-  fields: Array<ReportDefinitionFields> | null
+  fields: Array<ReportDefinitionFields> | []
 }
