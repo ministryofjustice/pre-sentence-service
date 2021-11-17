@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import Report from './report'
 import Field from './field'
 
-@Entity('field_value')
+@Entity()
 export default class FieldValue {
   @PrimaryGeneratedColumn()
   id: number

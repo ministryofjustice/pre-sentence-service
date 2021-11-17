@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import ReportDefinition from './reportDefinition'
 import FieldValue from './fieldValue'
 
-@Entity('report')
+@Entity()
 export default class Report {
   @PrimaryGeneratedColumn('uuid')
   id: string

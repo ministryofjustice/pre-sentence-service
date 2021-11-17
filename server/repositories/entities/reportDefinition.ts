@@ -1,7 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
-import ReportDefinitionFields from './reportDefinitionFields'
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm'
+import Field from './field'
 
-@Entity('report_definition')
+@Entity()
 export default class ReportDefinition {
   @PrimaryGeneratedColumn()
   id: number
@@ -12,6 +12,7 @@ export default class ReportDefinition {
   @Column()
   version: number
 
-  @OneToMany(() => ReportDefinitionFields, entity => entity.reportDefinition, { eager: true })
-  fields: Array<ReportDefinitionFields>
+  @ManyToMany(() => Field, { eager: true })
+  @JoinTable({ name: 'report_definition_fields' })
+  fields: Array<Field>
 }

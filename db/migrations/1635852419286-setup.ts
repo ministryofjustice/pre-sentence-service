@@ -6,7 +6,7 @@ export class Setup1635852419286 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS report_definition
         (
             id      SERIAL PRIMARY KEY,
-            type    TEXT    NOT NULL,
+            type    TEXT,
             version INTEGER NOT NULL DEFAULT 1
         );
     `)
@@ -15,8 +15,8 @@ export class Setup1635852419286 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS field
         (
             id         SERIAL PRIMARY KEY,
-            type       TEXT    NOT NULL,
-            name       TEXT    NOT NULL,
+            type       TEXT,
+            name       TEXT,
             required   BOOLEAN NOT NULL DEFAULT false,
             validation TEXT
         );
@@ -26,7 +26,7 @@ export class Setup1635852419286 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS report_definition_fields
         (
             id                 SERIAL PRIMARY KEY,
-            reportDefinitionId INTEGER,
+            reportDefinitionId INTEGER NOT NULL,
             fieldId            INTEGER NOT NULL,
             FOREIGN KEY (reportDefinitionId) REFERENCES report_definition (id),
             FOREIGN KEY (fieldId) REFERENCES field (id)
@@ -36,9 +36,9 @@ export class Setup1635852419286 implements MigrationInterface {
     await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS report
         (
-            id                 UUID          DEFAULT gen_random_uuid() PRIMARY KEY,
-            reportDefinitionId INTEGER,
-            status             TEXT NOT NULL DEFAULT 'NOT_STARTED',
+            id                 UUID             DEFAULT gen_random_uuid() PRIMARY KEY,
+            reportDefinitionId INTEGER NOT NULL,
+            status             TEXT    NOT NULL DEFAULT 'NOT_STARTED',
             FOREIGN KEY (reportDefinitionId) REFERENCES report_definition (id)
         );
     `)
@@ -47,7 +47,7 @@ export class Setup1635852419286 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS field_value
         (
             id       SERIAL PRIMARY KEY,
-            reportId UUID,
+            reportId UUID    NOT NULL,
             fieldId  INTEGER NOT NULL,
             value    TEXT,
             version  INTEGER NOT NULL DEFAULT 1,
