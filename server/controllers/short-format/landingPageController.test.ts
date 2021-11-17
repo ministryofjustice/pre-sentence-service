@@ -8,7 +8,9 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
+    req = {
+      params: {},
+    } as Request
     res = {
       render: jest.fn(),
     } as unknown as Response

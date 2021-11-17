@@ -16,49 +16,49 @@
           items: [
           {
             text: 'Offender details',
-            href: '/record-of-oral/offender-details',
+            href: '/record-of-oral/' + reportId + '/offender-details',
             state: 'saved'
           },
           {
             text: 'Sentencing court details',
-            href: '/record-of-oral/court-details',
+            href: '/record-of-oral/' + reportId + '/court-details',
             state: 'saved'
           },
           {
             text: 'Offence details',
-            href: '/record-of-oral/offence-details',
+            href: '/record-of-oral/' + reportId + '/offence-details',
             state: 'saved'
           },
           {
             text: 'Offence analysis',
-            href: '/record-of-oral/offence-alaysis',
+            href: '/record-of-oral/' + reportId + '/offence-alaysis',
             state: 'saved'
           },
           {
             text: 'Offender assessment',
-            href: '/record-of-oral/offender-assessment'
+            href: '/record-of-oral/' + reportId + '/offender-assessment'
           },
           {
             text: 'Risk assessment',
-            href: '/record-of-oral/risk-assessment'
+            href: '/record-of-oral/' + reportId + '/risk-assessment'
           },
           {
             text: 'Proposal',
-            href: '/record-of-oral/proposal'
+            href: '/record-of-oral/' + reportId + '/proposal'
           },
           {
             text: 'Sources of information',
-            href: '/record-of-oral/sources-of-information'
+            href: '/record-of-oral/' + reportId + '/sources-of-information'
           },
           {
             text: 'Sign your report',
-            href: '/record-of-oral/sign-report'
+            href: '/record-of-oral/' + reportId + '/sign-report'
           }]
         }
       ]
     }) }}
 
-    <a class="govuk-button govuk-!-margin-top-6" href="/record-of-oral/sign-report">Sign your report</a>
+    <a class="govuk-button govuk-!-margin-top-6" href="/record-of-oral/{{ reportId }}/sign-report">Sign your report</a>
   </main>
 
 {% endblock %}

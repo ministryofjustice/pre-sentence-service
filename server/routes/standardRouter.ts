@@ -27,6 +27,27 @@ export default function standardRouter(userService: UserService, reportRepositor
   router.use(recordOfOralRoutes(reportRepository))
   router.use(pdfRoutes())
 
+  // @FIXME: Implemented to debug created reports. Remove this after completing data integration
+  router.get('/reports/:reportType', async (req, res) => {
+    try {
+      const results = await reportRepository.find({
+        where: {
+          reportDefinition: {
+            type: req.params.reportType,
+          },
+        },
+        relations: ['reportDefinition'],
+      })
+      res.json({
+        request: req.params.reportType,
+        found: results && results.length,
+        results,
+      })
+    } catch (error) {
+      res.status(error.status || 500).send(error.message)
+    }
+  })
+
   // CSRF protection
   if (!testMode) {
     router.use(csurf())

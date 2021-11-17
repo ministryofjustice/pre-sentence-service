@@ -26,21 +26,21 @@ export default function Index(): Router {
     post(path, handler.post)
   }
 
-  get('', new LandingPageController().get)
+  get('/:reportId', new LandingPageController().get)
 
-  getAndPost('/offender-details', new OffenderDetailsController())
-  getAndPost('/court-details', new CourtDetailsController())
-  getAndPost('/offence-details', new OffenceDetailsController())
-  getAndPost('/offence-analysis', new OffenceAnalysisController())
-  getAndPost('/offender-assessment', new OffenderAssessmentController())
-  getAndPost('/risk-assessment', new RiskAssessmentController())
-  getAndPost('/proposal', new ProposalController())
-  getAndPost('/sources-of-information', new SourcesOfInformationController())
-  getAndPost('/sign-report', new SignReportController())
+  getAndPost('/:reportId/offender-details', new OffenderDetailsController())
+  getAndPost('/:reportId/court-details', new CourtDetailsController())
+  getAndPost('/:reportId/offence-details', new OffenceDetailsController())
+  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController())
+  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController())
+  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController())
+  getAndPost('/:reportId/proposal', new ProposalController())
+  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController())
+  getAndPost('/:reportId/sign-report', new SignReportController())
 
-  get('/check-report', new CheckReportController().get)
-  get('/report-saved', new ReportSavedController().get)
-  get('/report-completed', new ReportCompletedController().get)
+  get('/:reportId/check-report', new CheckReportController().get)
+  get('/:reportId/report-saved', new ReportSavedController().get)
+  get('/:reportId/report-completed', new ReportCompletedController().get)
 
   return router
 }
