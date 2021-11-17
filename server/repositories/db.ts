@@ -28,7 +28,6 @@ const connectionOptions: ConnectionOptions = {
   entities: [Field, FieldValue, Report, ReportDefinition],
   migrationsRun: config.db.migrations === 'true',
   migrations: ['dist/db/migrations/*.js'],
-  synchronize: true,
   logging: true,
 }
 
