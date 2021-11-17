@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('field')
 export default class Field {
@@ -16,7 +16,4 @@ export default class Field {
 
   @Column({ nullable: true })
   validation: string
-
-  @OneToOne('Field', 'id')
-  field: Field
 }

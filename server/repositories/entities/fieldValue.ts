@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import Report from './report'
 import Field from './field'
 
@@ -16,10 +16,9 @@ export default class FieldValue {
   @Column()
   version: number
 
-  @OneToOne('Field', 'id', { eager: true })
-  @JoinColumn()
+  @ManyToOne(() => Field, entity => entity.id, { eager: true })
   field: Field
 
-  @ManyToOne('Report', 'id')
+  @ManyToOne(() => Report, entity => entity.id)
   report: Report
 }

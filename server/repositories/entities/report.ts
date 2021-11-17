@@ -10,9 +10,9 @@ export default class Report {
   @Column({ default: 'NOT_STARTED' })
   status: string
 
-  @ManyToOne('ReportDefinition', 'reports', { eager: true })
+  @ManyToOne(() => ReportDefinition, entity => entity.id, { eager: true })
   reportDefinition: ReportDefinition
 
-  @OneToMany('FieldValue', 'report', { eager: true })
+  @OneToMany(() => FieldValue, entity => entity.report, { eager: true })
   fieldValues: Array<FieldValue> | []
 }
