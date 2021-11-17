@@ -14,5 +14,5 @@ export default class Report {
   reportDefinition: ReportDefinition
 
   @OneToMany(() => FieldValue, entity => entity.report, { eager: true })
-  fieldValues: Array<FieldValue> | []
+  fieldValues: Array<FieldValue>
 }

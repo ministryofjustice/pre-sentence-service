@@ -13,5 +13,5 @@ export default class ReportDefinition {
   version: number
 
   @OneToMany(() => ReportDefinitionFields, entity => entity.reportDefinition, { eager: true })
-  fields: Array<ReportDefinitionFields> | []
+  fields: Array<ReportDefinitionFields>
 }
