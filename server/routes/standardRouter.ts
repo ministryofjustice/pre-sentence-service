@@ -24,7 +24,7 @@ export default function standardRouter(userService: UserService, reportRepositor
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
   router.use(shortFormatRoutes())
-  router.use(recordOfOralRoutes(reportRepository))
+  router.use(recordOfOralRoutes())
   router.use(pdfRoutes())
 
   // @FIXME: Implemented to debug created reports. Remove this after completing data integration
