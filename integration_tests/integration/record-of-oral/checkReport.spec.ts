@@ -4,7 +4,7 @@ import CheckReport from '../../record-of-oral/checkReport'
 import SignReport from '../../record-of-oral/signReport'
 
 context('Check report page', () => {
-  const path = `/${new BaseController().path}/check-report`
+  const path = `/${new BaseController().path}/123456789/check-report`
   let currentPage: CheckReport
 
   beforeEach(() => {

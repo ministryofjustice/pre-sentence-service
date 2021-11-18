@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import ReportSaved from '../../record-of-oral/reportSaved'
 
 context('Draft report saved page', () => {
-  const path = `/${new BaseController().path}/report-saved`
+  const path = `/${new BaseController().path}/123456789/report-saved`
   let currentPage: ReportSaved
 
   beforeEach(() => {
