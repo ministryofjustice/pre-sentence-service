@@ -3,6 +3,10 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class Setup1635852419286 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+        DROP TABLE IF EXISTS report;
+    `)
+
+    await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS report_definition
         (
             id      SERIAL PRIMARY KEY,
@@ -49,7 +53,7 @@ export class Setup1635852419286 implements MigrationInterface {
             id         SERIAL PRIMARY KEY,
             "reportId" UUID    NOT NULL,
             "fieldId"  INTEGER NOT NULL,
-            value TEXT,
+            value      TEXT,
             version    INTEGER NOT NULL DEFAULT 1,
             FOREIGN KEY ("reportId") REFERENCES report (id),
             FOREIGN KEY ("fieldId") REFERENCES field (id)
