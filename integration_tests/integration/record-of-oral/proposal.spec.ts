@@ -4,7 +4,7 @@ import Proposal from '../../record-of-oral/proposal'
 import SourcesOfInformation from '../../record-of-oral/sourcesOfInformation'
 
 context('Proposal report page', () => {
-  const path = `/${new BaseController().path}/proposal`
+  const path = `/${new BaseController().path}/123456789/proposal`
   let currentPage: Proposal
 
   beforeEach(() => {

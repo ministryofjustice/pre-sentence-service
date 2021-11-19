@@ -9,6 +9,7 @@ describe('Route Handlers - Shared Controller', () => {
 
   beforeEach(() => {
     req = {
+      params: {},
       body: {},
     } as Request
     res = {
@@ -60,7 +61,7 @@ describe('Route Handlers - Shared Controller', () => {
   describe('POST', () => {
     it('should redirect to the correct view', async () => {
       await handler.post(req, res)
-      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${handler.redirectPath}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/${handler.redirectPath}`)
     })
   })
 })

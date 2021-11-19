@@ -15,6 +15,7 @@ describe('Route Handlers - Sign Report Controller', () => {
 
   beforeEach(() => {
     req = {
+      params: {},
       body: {},
     } as Request
     res = {
@@ -57,7 +58,7 @@ describe('Route Handlers - Sign Report Controller', () => {
       })
       await handler.post(req, res)
       expect(validateFormMock).toHaveBeenCalled()
-      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${handler.redirectPath}`)
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/${handler.redirectPath}`)
     })
   })
 })

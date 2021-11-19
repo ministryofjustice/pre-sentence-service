@@ -16,49 +16,49 @@
           items: [
           {
             text: 'Offender details',
-            href: '/short-format/offender-details',
+            href: '/short-format/' + reportId + '/offender-details',
             state: 'saved'
           },
           {
             text: 'Sentencing court details',
-            href: '/short-format/court-details',
+            href: '/short-format/' + reportId + '/court-details',
             state: 'saved'
           },
           {
             text: 'Offence details',
-            href: '/short-format/offence-details',
+            href: '/short-format/' + reportId + '/offence-details',
             state: 'saved'
           },
           {
             text: 'Offence analysis',
-            href: '/short-format/offence-alaysis',
+            href: '/short-format/' + reportId + '/offence-alaysis',
             state: 'saved'
           },
           {
             text: 'Offender assessment',
-            href: '/short-format/offender-assessment'
+            href: '/short-format/' + reportId + '/offender-assessment'
           },
           {
             text: 'Risk assessment',
-            href: '/short-format/risk-assessment'
+            href: '/short-format/' + reportId + '/risk-assessment'
           },
           {
             text: 'Proposal',
-            href: '/short-format/proposal'
+            href: '/short-format/' + reportId + '/proposal'
           },
           {
             text: 'Sources of information',
-            href: '/short-format/sources-of-information'
+            href: '/short-format/' + reportId + '/sources-of-information'
           },
           {
             text: 'Sign your report',
-            href: '/short-format/sign-report'
+            href: '/short-format/' + reportId + '/sign-report'
           }]
         }
       ]
     }) }}
 
-    <a class="govuk-button govuk-!-margin-top-6" href="/short-format/sign-report">Sign your report</a>
+    <a class="govuk-button govuk-!-margin-top-6" href="/short-format/{{ reportId }}/sign-report">Sign your report</a>
   </main>
 
 {% endblock %}
