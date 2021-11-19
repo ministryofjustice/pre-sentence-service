@@ -4,7 +4,7 @@ import SignReport from '../../short-format/signReport'
 import ReportCompleted from '../../short-format/reportCompleted'
 
 context('Report completed page', () => {
-  const path = `/${new BaseController().path}/sign-report`
+  const path = `/${new BaseController().path}/123456789/sign-report`
   let currentPage: SignReport | ReportCompleted
 
   beforeEach(() => {

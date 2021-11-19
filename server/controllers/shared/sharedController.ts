@@ -4,6 +4,7 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 export interface TemplateValues {
   preSentenceType: string
   reportPath: string
+  reportId?: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
 }
@@ -32,6 +33,7 @@ export default class SharedController {
 
   get = async (req: Request, res: Response): Promise<void> => {
     this.renderTemplate(res, {
+      reportId: req.params.reportId,
       ...this.templateValues,
       data: {
         ...this.data,
@@ -42,9 +44,10 @@ export default class SharedController {
   post = async (req: Request, res: Response): Promise<void> => {
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid) {
-      res.redirect(`/${this.path}/${this.redirectPath}`)
+      res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
     } else {
       this.renderTemplate(res, {
+        reportId: req.params.reportId,
         ...this.templateValues,
         data: {
           ...this.data,
