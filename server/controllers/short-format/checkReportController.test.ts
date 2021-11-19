@@ -8,7 +8,9 @@ describe('Route Handlers - Check Report Controller', () => {
   let res: Response
 
   beforeEach(() => {
-    req = {} as Request
+    req = {
+      params: {},
+    } as Request
     res = {
       render: jest.fn(),
     } as unknown as Response

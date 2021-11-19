@@ -9,7 +9,7 @@ describe('Route Handlers - Report Saved Controller', () => {
 
   beforeEach(() => {
     req = {
-      body: {},
+      params: {},
     } as Request
     res = {
       render: jest.fn(),
