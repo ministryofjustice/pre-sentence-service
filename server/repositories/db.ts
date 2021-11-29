@@ -1,8 +1,12 @@
 import fs from 'fs'
 import { Connection, ConnectionOptions, createConnection } from 'typeorm'
+
 import logger from '../../logger'
 import config from '../config'
+import Field from './entities/field'
+import FieldValue from './entities/fieldValue'
 import Report from './entities/report'
+import ReportDefinition from './entities/reportDefinition'
 
 type ConnectionResult = [Error?, Connection?]
 
@@ -21,8 +25,9 @@ const connectionOptions: ConnectionOptions = {
           ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
         }
       : false,
-  entities: [Report],
-  synchronize: true,
+  entities: [Field, FieldValue, Report, ReportDefinition],
+  migrationsRun: config.db.migrations === 'true',
+  migrations: ['dist/db/migrations/*.js'],
   logging: true,
 }
 

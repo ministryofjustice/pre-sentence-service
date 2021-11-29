@@ -91,5 +91,6 @@ export default {
     port: get('DB_PORT', 5432),
     sslEnabled: get('DB_SSL_ENABLED', 'false'),
     schema: get('DB_SCHEMA', 'public'),
+    migrations: get('DB_RUN_MIGRATIONS', 'true'),
   },
 }
