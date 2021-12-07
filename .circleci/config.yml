@@ -8,7 +8,7 @@ executors:
   integration-tests:
     docker:
       - image: cimg/node:16.13.0-browsers
-      - image: circleci/postgres:latest-ram
+      - image: circleci/postgres:13.3-ram
         environment:
           POSTGRES_PASSWORD: pre-sentence-service
           POSTGRES_USER: pre-sentence-service

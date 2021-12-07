@@ -32,7 +32,7 @@ services:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:3000/ping' ]
 
   postgres:
-    image: postgres
+    image: postgres:13.3
     networks:
       - hmpps_int
     container_name: pre-sentence-service-db

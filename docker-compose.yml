@@ -12,7 +12,7 @@ services:
       - "6379:6379"
 
   postgres:
-    image: postgres
+    image: postgres:13.3
     networks:
       - hmpps
     container_name: pre-sentence-service-db
