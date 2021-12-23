@@ -1,0 +1,5 @@
+generic-service:
+  ingress:
+    contextColour: blue
+    annotations:
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
