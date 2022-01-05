@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import csurf from 'csurf'
-import { InsertResult } from 'typeorm'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
@@ -10,7 +9,7 @@ import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
-import ReportService, { IReport } from '../services/reportService'
+import ReportService from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
