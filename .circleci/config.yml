@@ -167,53 +167,8 @@ workflows:
             branches:
               only:
                 - main
-#     TODO: DELETE after live migration
       - hmpps/deploy_env:
           name: deploy_dev
-          env: "dev"
-          helm_additional_args: --values ./pre-sentence-service/values-live1.yaml
-          context: hmpps-common-vars
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - helm_lint
-            - unit_test
-            - integration_test
-            - build_docker
-
-      - request-preprod-approval:
-          type: approval
-          requires:
-            - deploy_dev
-      - hmpps/deploy_env:
-          name: deploy_preprod
-          env: "preprod"
-          helm_additional_args: --values ./pre-sentence-service/values-live1.yaml
-          context:
-            - hmpps-common-vars
-            - pre-sentence-service-preprod
-          requires:
-            - request-preprod-approval
-      - request-prod-approval:
-          type: approval
-          requires:
-            - deploy_preprod
-      - hmpps/deploy_env:
-          name: deploy_prod
-          env: "prod"
-          helm_additional_args: --values ./pre-sentence-service/values-live1.yaml
-          slack_notification: true
-          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-          context:
-            - hmpps-common-vars
-            - pre-sentence-service-prod
-          requires:
-            - request-prod-approval
-#          TODO: END
-      - hmpps/deploy_env:
-          name: deploy_live_dev
           env: "dev"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
           context:
@@ -228,8 +183,12 @@ workflows:
             - unit_test
             - integration_test
             - build_docker
+      - request-preprod-approval:
+          type: approval
+          requires:
+            - deploy_dev
       - hmpps/deploy_env:
-          name: deploy_live_preprod
+          name: deploy_preprod
           env: "preprod"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
           context:
@@ -237,8 +196,12 @@ workflows:
             - court-probation-live-preprod
           requires:
             - request-preprod-approval
+      - request-prod-approval:
+          type: approval
+          requires:
+            - deploy_preprod
       - hmpps/deploy_env:
-          name: deploy_live_prod
+          name: deploy_prod
           env: "prod"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
           slack_notification: true
