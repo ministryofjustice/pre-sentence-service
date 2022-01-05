@@ -1,19 +1,19 @@
 import { Router } from 'express'
 import csurf from 'csurf'
-import { Repository } from 'typeorm'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import type UserService from '../services/userService'
 import config from '../config'
-import Report from '../repositories/entities/report'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
+import ReportService from '../services/reportService'
+
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(userService: UserService, reportRepository: Repository<Report>): Router {
+export default function standardRouter(userService: UserService, reportService: ReportService): Router {
   const router = Router({ mergeParams: true })
 
   router.use((req, res, next) => {
@@ -23,26 +23,30 @@ export default function standardRouter(userService: UserService, reportRepositor
 
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes())
-  router.use(recordOfOralRoutes())
+  router.use(shortFormatRoutes(reportService))
+  router.use(recordOfOralRoutes(reportService))
   router.use(pdfRoutes())
 
   // @FIXME: Implemented to debug created reports. Remove this after completing data integration
   router.get('/reports/:reportType', async (req, res) => {
     try {
-      const results = await reportRepository.find({
-        where: {
-          reportDefinition: {
-            type: req.params.reportType,
-          },
-        },
-        relations: ['reportDefinition'],
-      })
+      const results = await reportService.getAllReportsByType(req.params.reportType)
       res.json({
         request: req.params.reportType,
         found: results && results.length,
         results,
       })
+    } catch (error) {
+      res.status(error.status || 500).send(error.message)
+    }
+  })
+
+  // @FIXME: Allows the creation of a report in the database from the frontend. This functionality will be replaced with the NDelius integration
+  router.get('/create/:reportType', async (req, res) => {
+    try {
+      const reportDefinition = await reportService.getDefinitionByType(req.params.reportType)
+      const report = await reportService.createReport(reportDefinition.id)
+      res.redirect(`/${req.params.reportType}/${report.identifiers[0].id}`)
     } catch (error) {
       res.status(error.status || 500).send(error.message)
     }

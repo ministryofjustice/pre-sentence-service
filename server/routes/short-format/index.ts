@@ -16,7 +16,9 @@ import CheckReportController from '../../controllers/short-format/checkReportCon
 import ReportSavedController from '../../controllers/short-format/reportSavedController'
 import ReportCompletedController from '../../controllers/short-format/reportCompletedController'
 
-export default function Index(): Router {
+import ReportService from '../../services/reportService'
+
+export default function Index(reportService: ReportService): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
@@ -26,21 +28,21 @@ export default function Index(): Router {
     post(path, handler.post)
   }
 
-  get('/:reportId', new LandingPageController().get)
+  get('/:reportId', new LandingPageController(reportService).get)
 
-  getAndPost('/:reportId/offender-details', new OffenderDetailsController())
-  getAndPost('/:reportId/court-details', new CourtDetailsController())
-  getAndPost('/:reportId/offence-details', new OffenceDetailsController())
-  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController())
-  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController())
-  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController())
-  getAndPost('/:reportId/proposal', new ProposalController())
-  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController())
-  getAndPost('/:reportId/sign-report', new SignReportController())
+  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService))
+  getAndPost('/:reportId/court-details', new CourtDetailsController(reportService))
+  getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService))
+  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService))
+  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController(reportService))
+  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService))
+  getAndPost('/:reportId/proposal', new ProposalController(reportService))
+  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService))
+  getAndPost('/:reportId/sign-report', new SignReportController(reportService))
 
-  get('/:reportId/check-report', new CheckReportController().get)
-  get('/:reportId/report-saved', new ReportSavedController().get)
-  get('/:reportId/report-completed', new ReportCompletedController().get)
+  get('/:reportId/check-report', new CheckReportController(reportService).get)
+  get('/:reportId/report-saved', new ReportSavedController(reportService).get)
+  get('/:reportId/report-completed', new ReportCompletedController(reportService).get)
 
   return router
 }

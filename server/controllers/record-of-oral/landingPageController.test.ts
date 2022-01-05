@@ -1,11 +1,34 @@
 import { Request, Response } from 'express'
 
 import LandingPageController from './landingPageController'
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
 
 describe('Route Handlers - Record of Oral Pre-Sentence Report Landing Page Controller', () => {
-  const handler = new LandingPageController()
+  let mockedReportService: ReportService
+  let handler: LandingPageController
   let req: Request
   let res: Response
+
+  beforeAll(() => {
+    mockedReportService = new ReportService()
+    handler = new LandingPageController(mockedReportService)
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
   beforeEach(() => {
     req = {

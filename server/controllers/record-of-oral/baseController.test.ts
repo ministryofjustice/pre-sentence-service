@@ -1,7 +1,15 @@
 import BaseController from './baseController'
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService')
 
 describe('Route Handlers - Base Controller', () => {
-  const handler = new BaseController()
+  let handler: BaseController
+
+  beforeAll(() => {
+    const mockedReportService = new ReportService()
+    handler = new BaseController(mockedReportService)
+  })
 
   describe('values', () => {
     it('should declare path as string', async () => {

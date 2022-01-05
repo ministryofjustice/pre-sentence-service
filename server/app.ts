@@ -21,7 +21,8 @@ import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
-import Report from './repositories/entities/report'
+
+import ReportService from './services/reportService'
 
 export default function createApplication(userService: UserService, databaseConnection: Connection): Application {
   const app = express()
@@ -40,9 +41,9 @@ export default function createApplication(userService: UserService, databaseConn
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(authorisationMiddleware())
 
-  const reportRepository = databaseConnection.getRepository(Report)
+  const reportService = new ReportService(databaseConnection)
 
-  app.use('/', indexRoutes(standardRouter(userService, reportRepository)))
+  app.use('/', indexRoutes(standardRouter(userService, reportService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
