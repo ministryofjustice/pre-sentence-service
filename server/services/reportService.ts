@@ -3,11 +3,16 @@ import { Connection, getConnection, InsertResult } from 'typeorm'
 import Report from '../repositories/entities/report'
 import ReportDefinition from '../repositories/entities/reportDefinition'
 
+export interface IReport {
+  id?: string
+  reportDefinitionId: number
+}
+
 export default class ReportService {
   constructor(private databaseConnection: Connection = null) {}
 
-  public createReport(reportDefinitionId: number): Promise<InsertResult> {
-    return getConnection().createQueryBuilder().insert().into(Report).values({ reportDefinitionId }).execute()
+  public createReport(report: IReport): Promise<InsertResult> {
+    return getConnection().createQueryBuilder().insert().into(Report).values(report).execute()
   }
 
   public getReportById(id: string): Promise<Report> {

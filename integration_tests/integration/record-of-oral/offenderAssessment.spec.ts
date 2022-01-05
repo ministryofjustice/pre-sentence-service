@@ -4,7 +4,7 @@ import OffenderAssessment from '../../record-of-oral/offenderAssessment'
 import RiskAssessment from '../../record-of-oral/riskAssessment'
 
 context('Offender assessment report page', () => {
-  const path = `/${new BaseController().path}/123456789/offender-assessment`
+  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/offender-assessment`
   let currentPage: OffenderAssessment
 
   beforeEach(() => {

@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import csurf from 'csurf'
+import { InsertResult } from 'typeorm'
 import auth from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
@@ -9,7 +10,7 @@ import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
-import ReportService from '../services/reportService'
+import ReportService, { IReport } from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
@@ -41,12 +42,23 @@ export default function standardRouter(userService: UserService, reportService: 
     }
   })
 
-  // @FIXME: Allows the creation of a report in the database from the frontend. This functionality will be replaced with the NDelius integration
-  router.get('/create/:reportType', async (req, res) => {
+  router.get('/api/v1/report/:id', async (req, res) => {
+    try {
+      const report = await reportService.getReportById(req.params.id)
+      res.json(report)
+    } catch (error) {
+      res.status(error.status || 500).send(error.message)
+    }
+  })
+
+  router.post('/api/v1/report/:reportType', async (req, res) => {
     try {
       const reportDefinition = await reportService.getDefinitionByType(req.params.reportType)
-      const report = await reportService.createReport(reportDefinition.id)
-      res.redirect(`/${req.params.reportType}/${report.identifiers[0].id}`)
+      const report = await reportService.createReport({
+        ...req.body,
+        reportDefinitionId: reportDefinition.id,
+      })
+      res.json(report)
     } catch (error) {
       res.status(error.status || 500).send(error.message)
     }

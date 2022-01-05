@@ -1,6 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import Field from './field'
-import Report from './report'
 
 @Entity()
 export default class ReportDefinition {
