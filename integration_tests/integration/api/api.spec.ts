@@ -32,7 +32,7 @@ context('API v1', () => {
       })
     })
 
-    it('should access to the created report in the UI', () => {
+    it('should allow access to the created report in the UI', () => {
       cy.visit(`/record-of-oral/${reportId}`).as('request')
       cy.get('h1').contains('Record of Oral Pre-Sentence Report')
     })
@@ -64,7 +64,7 @@ context('API v1', () => {
       })
     })
 
-    it('should access to the created report in the UI', () => {
+    it('should allow access to the created report in the UI', () => {
       cy.visit(`/short-format/${reportId}`).as('request')
       cy.get('h1').contains('Short Format Pre-Sentence Report')
     })
