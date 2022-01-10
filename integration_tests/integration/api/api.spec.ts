@@ -14,10 +14,11 @@ context('API v1', () => {
       cy.get('@request').then(response => {
         expect(response.status).to.eq(200)
         assert.isObject(response.body, 'Response is Object')
-        cy.wrap(response.body.raw[0]).should('include', {
+        cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
+          reportDefinitionId: 1,
         })
-        reportId = response.body.raw[0].id
+        reportId = response.body.id
       })
     })
 
@@ -28,6 +29,7 @@ context('API v1', () => {
         assert.isObject(response.body, 'Response is Object')
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
+          reportDefinitionId: 1,
         })
       })
     })
@@ -46,10 +48,11 @@ context('API v1', () => {
       cy.get('@request').then(response => {
         expect(response.status).to.eq(200)
         assert.isObject(response.body, 'Response is Object')
-        cy.wrap(response.body.raw[0]).should('include', {
+        cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
+          reportDefinitionId: 2,
         })
-        reportId = response.body.raw[0].id
+        reportId = response.body.id
       })
     })
 
@@ -60,6 +63,7 @@ context('API v1', () => {
         assert.isObject(response.body, 'Response is Object')
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
+          reportDefinitionId: 2,
         })
       })
     })
