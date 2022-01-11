@@ -34,12 +34,6 @@ class MockUserService extends UserService {
   }
 }
 
-class MockReportService extends ReportService {
-  constructor() {
-    super(undefined)
-  }
-}
-
 function appSetup(route: Router, production: boolean): Express {
   const app = express()
 
@@ -65,5 +59,5 @@ function appSetup(route: Router, production: boolean): Express {
 
 export default function appWithAllRoutes({ production = false }: { production?: boolean }): Express {
   auth.default.authenticationMiddleware = () => (req, res, next) => next()
-  return appSetup(allRoutes(standardRouter(new MockUserService(), new MockReportService())), production)
+  return appSetup(allRoutes(standardRouter(new MockUserService())), production)
 }
