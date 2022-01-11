@@ -2,6 +2,19 @@ import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import RiskAssessmentController from './riskAssessmentController'
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
 
 jest.mock('../../utils/formValidation')
 
@@ -9,9 +22,19 @@ describe('Route Handlers - Risk Assessment Controller', () => {
   const validateFormMock = validateForm as jest.MockedFunction<
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
-  const handler = new RiskAssessmentController()
+  let mockedReportService: ReportService
+  let handler: RiskAssessmentController
   let req: Request
   let res: Response
+
+  beforeAll(() => {
+    mockedReportService = new ReportService()
+    handler = new RiskAssessmentController(mockedReportService)
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
   beforeEach(() => {
     req = {

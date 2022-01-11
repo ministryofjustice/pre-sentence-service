@@ -4,14 +4,14 @@ import cookieSession from 'cookie-session'
 import createError from 'http-errors'
 import path from 'path'
 
-import { Repository } from 'typeorm'
 import allRoutes from '../index'
 import nunjucksSetup from '../../utils/nunjucksSetup'
 import errorHandler from '../../errorHandler'
 import standardRouter from '../standardRouter'
 import UserService from '../../services/userService'
 import * as auth from '../../authentication/auth'
-import Report from '../../repositories/entities/report'
+
+import ReportService from '../../services/reportService'
 
 const user = {
   name: 'john smith',
@@ -34,9 +34,9 @@ class MockUserService extends UserService {
   }
 }
 
-class MockRepository extends Repository<Report> {
+class MockReportService extends ReportService {
   constructor() {
-    super()
+    super(undefined)
   }
 }
 
@@ -65,5 +65,5 @@ function appSetup(route: Router, production: boolean): Express {
 
 export default function appWithAllRoutes({ production = false }: { production?: boolean }): Express {
   auth.default.authenticationMiddleware = () => (req, res, next) => next()
-  return appSetup(allRoutes(standardRouter(new MockUserService(), new MockRepository())), production)
+  return appSetup(allRoutes(standardRouter(new MockUserService(), new MockReportService())), production)
 }

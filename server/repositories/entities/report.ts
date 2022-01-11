@@ -10,6 +10,9 @@ export default class Report {
   @Column({ default: 'NOT_STARTED' })
   status: string
 
+  @Column()
+  reportDefinitionId: number
+
   @ManyToOne(() => ReportDefinition, entity => entity.id, { eager: true })
   reportDefinition: ReportDefinition
 

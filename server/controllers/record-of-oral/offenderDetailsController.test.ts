@@ -1,11 +1,34 @@
 import { Request, Response } from 'express'
 
 import OffenderDetailsController from './offenderDetailsController'
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
 
 describe('Route Handlers - Offender Details Controller', () => {
-  const handler = new OffenderDetailsController()
+  let mockedReportService: ReportService
+  let handler: OffenderDetailsController
   let req: Request
   let res: Response
+
+  beforeAll(() => {
+    mockedReportService = new ReportService()
+    handler = new OffenderDetailsController(mockedReportService)
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
   beforeEach(() => {
     req = {

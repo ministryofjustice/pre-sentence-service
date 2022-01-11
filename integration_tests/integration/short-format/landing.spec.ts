@@ -4,7 +4,7 @@ import Page from '../../pages/page'
 import OffenderDetails from '../../short-format/offenderDetails'
 
 context('Record of Oral Pre-Sentence Report landing page', () => {
-  const path = `/${new BaseController().path}/123456789`
+  const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7`
   let currentPage: LandingPage
 
   beforeEach(() => {

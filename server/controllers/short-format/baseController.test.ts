@@ -1,7 +1,30 @@
 import BaseController from './baseController'
 
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
+
 describe('Route Handlers - Base Controller', () => {
-  const handler = new BaseController()
+  let handler: BaseController
+
+  beforeAll(() => {
+    const mockedReportService = new ReportService()
+    handler = new BaseController(mockedReportService)
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
   describe('values', () => {
     it('should declare path as string', async () => {
