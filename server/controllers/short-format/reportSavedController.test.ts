@@ -1,11 +1,34 @@
 import { Request, Response } from 'express'
 
 import ReportSavedController from './reportSavedController'
+import ReportService from '../../services/reportService'
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
 
 describe('Route Handlers - Report Saved Controller', () => {
-  const handler = new ReportSavedController()
+  let mockedReportService: ReportService
+  let handler: ReportSavedController
   let req: Request
   let res: Response
+
+  beforeAll(() => {
+    mockedReportService = new ReportService()
+    handler = new ReportSavedController(mockedReportService)
+  })
+
+  afterAll(() => {
+    jest.resetAllMocks()
+  })
 
   beforeEach(() => {
     req = {

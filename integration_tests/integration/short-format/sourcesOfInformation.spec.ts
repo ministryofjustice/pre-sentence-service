@@ -4,7 +4,7 @@ import SourcesOfInformation from '../../short-format/sourcesOfInformation'
 import CheckReport from '../../short-format/checkReport'
 
 context('Sources of information report page', () => {
-  const path = `/${new BaseController().path}/123456789/sources-of-information`
+  const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/sources-of-information`
   let currentPage: SourcesOfInformation
 
   beforeEach(() => {

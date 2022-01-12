@@ -4,7 +4,7 @@ import SourcesOfInformation from '../../record-of-oral/sourcesOfInformation'
 import CheckReport from '../../record-of-oral/checkReport'
 
 context('Sources of information report page', () => {
-  const path = `/${new BaseController().path}/123456789/sources-of-information`
+  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/sources-of-information`
   let currentPage: SourcesOfInformation
 
   beforeEach(() => {

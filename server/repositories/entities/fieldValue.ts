@@ -16,6 +16,9 @@ export default class FieldValue {
   @Column()
   version: number
 
+  @Column()
+  reportId: string
+
   @ManyToOne(() => Field, entity => entity.id, { eager: true })
   field: Field
 

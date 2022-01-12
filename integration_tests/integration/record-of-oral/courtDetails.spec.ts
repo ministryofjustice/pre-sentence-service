@@ -4,7 +4,7 @@ import CourtDetails from '../../record-of-oral/courtDetails'
 import OffenceDetails from '../../record-of-oral/offenceDetails'
 
 context('Sentencing court details report page', () => {
-  const path = `/${new BaseController().path}/123456789/court-details`
+  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/court-details`
   let currentPage: CourtDetails
 
   beforeEach(() => {
