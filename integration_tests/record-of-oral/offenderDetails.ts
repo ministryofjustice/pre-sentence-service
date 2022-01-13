@@ -6,7 +6,7 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#address').type('Some address')
-    cy.get('#pnc').type('A123467B')
+    cy.get('#address').clear().type('Some address')
+    cy.get('#pnc').clear().type('A123467B')
   }
 }

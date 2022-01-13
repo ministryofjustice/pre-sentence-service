@@ -36,21 +36,18 @@ context('Check report page', () => {
         .within(() => {
           cy.get('label').contains('Report author').should('exist')
         })
-
       currentPage
         .inputText()
         .parent()
         .within(() => {
           cy.get('label').contains('Office').should('exist')
         })
-
       currentPage
         .inputText()
         .parent()
         .within(() => {
           cy.get('label').contains('Court office phone number').should('exist')
         })
-
       currentPage
         .inputText()
         .parent()
@@ -75,7 +72,15 @@ context('Check report page', () => {
       currentPage.govukButton().contains('Submit and view your report').should('exist')
     })
 
+    it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
+      currentPage.govukButton().contains('Submit and view your report').click()
+      Page.verifyOnPage(SignReport)
+      currentPage.govukErrorSummary().should('exist')
+    })
+
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.completeForm()
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
     })

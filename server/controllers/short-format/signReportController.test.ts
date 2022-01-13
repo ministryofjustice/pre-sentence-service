@@ -62,7 +62,9 @@ describe('Route Handlers - Sign Report Controller', () => {
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        data: handler.data,
+        data: {
+          ...handler.defaultTemplateData,
+        },
       })
     })
   })

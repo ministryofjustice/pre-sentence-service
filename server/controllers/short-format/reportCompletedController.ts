@@ -5,7 +5,7 @@ export default class ReportCompletedController extends BaseController {
 
   override templatePath = 'report-saved'
 
-  override data = {
+  override defaultTemplateData = {
     reportCompleted: true,
   }
 

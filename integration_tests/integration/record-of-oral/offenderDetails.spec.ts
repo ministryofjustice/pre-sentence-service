@@ -36,9 +36,6 @@ context('Offender details report page', () => {
       currentPage.headingL2().contains('Date of birth').should('exist')
       currentPage.govukBody().contains('18/08/1979').should('exist')
 
-      currentPage.headingL2().contains('Age').should('exist')
-      currentPage.govukBody().contains('42').should('exist')
-
       currentPage.headingL2().contains('Delius CRN').should('exist')
       currentPage.govukBody().contains('DX12340A').should('exist')
     })

@@ -57,6 +57,7 @@ context('Offence analysis report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
       currentPage.govukErrorSummary().should('exist')

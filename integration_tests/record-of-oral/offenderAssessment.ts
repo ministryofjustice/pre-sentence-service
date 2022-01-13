@@ -15,8 +15,21 @@ export default class IndexPage extends Page {
     cy.get('.govuk-checkboxes__input').check('issueBehaviour')
     cy.get('.govuk-checkboxes__input').check('issueMaturity')
     cy.get('.govuk-checkboxes__input').check('issueOther')
-    cy.get('#experienceTrauma').click()
+    cy.get('#experienceOfTrauma').click()
     cy.get('#caringResponsibilities').click()
-    cy.get('#offenderAssessmentEvidence').type('Some evidence')
+    cy.get('#evidenceForAssessment').clear().type('Some evidence')
+  }
+
+  clearForm(): void {
+    cy.get('.govuk-checkboxes__input').uncheck('issueAccommodation')
+    cy.get('.govuk-checkboxes__input').uncheck('issueEmployment')
+    cy.get('.govuk-checkboxes__input').uncheck('issueFinance')
+    cy.get('.govuk-checkboxes__input').uncheck('issueRelationships')
+    cy.get('.govuk-checkboxes__input').uncheck('issueSubstanceMisuse')
+    cy.get('.govuk-checkboxes__input').uncheck('issueHealth')
+    cy.get('.govuk-checkboxes__input').uncheck('issueBehaviour')
+    cy.get('.govuk-checkboxes__input').uncheck('issueMaturity')
+    cy.get('.govuk-checkboxes__input').uncheck('issueOther')
+    cy.get('#evidenceForAssessment').clear()
   }
 }

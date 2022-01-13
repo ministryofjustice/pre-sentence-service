@@ -5,8 +5,8 @@ export class SeedReportData1642090824185 implements MigrationInterface {
     await queryRunner.query(`
         INSERT INTO field_value ("reportId", "fieldId", "value", "version")
         VALUES ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 1, 'Lenore Marquez', 1),
-               ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 2, '12/04/1973', 1),
-               ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 3, 'A12345B', 1),
+               ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 2, '18/08/1979', 1),
+               ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 3, 'DX12340A', 1),
                ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 6, 'Sheffield Magistrates Court', 1),
                ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 7, 'South Yorkshire', 1),
                ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 8, '23', 1),

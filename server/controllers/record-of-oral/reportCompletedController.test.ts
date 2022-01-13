@@ -50,7 +50,7 @@ describe('Route Handlers - Report Completed Controller', () => {
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
-          ...handler.data,
+          ...handler.defaultTemplateData,
         },
       })
     })

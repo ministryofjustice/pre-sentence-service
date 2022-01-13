@@ -19,6 +19,6 @@ export default class IndexPage extends Page {
     cy.get('.govuk-checkboxes__input').check('medicalInformationSource')
     cy.get('.govuk-checkboxes__input').check('equalityInformationFormInformationSource')
     cy.get('.govuk-checkboxes__input').check('otherInformationSource')
-    cy.get('#otherInformationDetails').type('Some other information source')
+    cy.get('#otherSourceOfInformation').clear().type('Some other information source')
   }
 }

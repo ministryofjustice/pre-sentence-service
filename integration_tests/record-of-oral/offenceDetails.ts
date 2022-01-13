@@ -6,7 +6,12 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#mainOffence').type('Some main offence')
-    cy.get('#otherOffences').type('Some other offences')
+    cy.get('#mainOffence').clear().type('Some main offence')
+    cy.get('#otherOffences').clear().type('Some other offences')
+  }
+
+  clearForm(): void {
+    cy.get('#mainOffence').clear()
+    cy.get('#otherOffences').clear()
   }
 }
