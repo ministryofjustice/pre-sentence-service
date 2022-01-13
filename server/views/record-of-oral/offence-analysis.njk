@@ -65,8 +65,8 @@
 
     {{ picRadioButtons({
       classes: "govuk-radios--inline",
-      idPrefix: "patternOfOffending",
-      name: "patternOfOffending",
+      idPrefix: "patternOfOffendingBehaviour",
+      name: "patternOfOffendingBehaviour",
       fieldset: {
         legend: {
           text: "Is current offending part of a pattern of offending behaviour?"
@@ -74,17 +74,17 @@
       },
       errorMessage: {
         text: "Select whether current offending is part of a pattern of offending behaviour"
-      } if 'patternOfOffending' in elementsWithError,
+      } if 'patternOfOffendingBehaviour' in elementsWithError,
       items: [
         {
           value: "yes",
           text: "Yes",
-          checked: data.patternOfOffending === "yes"
+          checked: data.patternOfOffendingBehaviour === "yes"
         },
         {
           value: "no",
           text: "No",
-          checked: data.patternOfOffending === "no"
+          checked: data.patternOfOffendingBehaviour === "no"
         }
       ]
     }) }}

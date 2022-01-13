@@ -13,7 +13,7 @@ export default class OffenceAnalysisController extends BaseController {
         errorMessage: 'Provide an analysis of the offence(s), including victim impact',
       },
       {
-        id: 'patternOfOffending',
+        id: 'patternOfOffendingBehaviour',
         errorMessage: 'Select whether current offending is part of a pattern of offending behaviour',
       },
       {
@@ -22,4 +22,6 @@ export default class OffenceAnalysisController extends BaseController {
       },
     ],
   }
+
+  override pageFields = ['offenceAnalysis', 'patternOfOffendingBehaviour', 'escalationInSeriousness']
 }

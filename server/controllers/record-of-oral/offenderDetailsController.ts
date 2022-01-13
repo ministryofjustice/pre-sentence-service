@@ -5,12 +5,11 @@ export default class OffenderDetailsController extends BaseController {
 
   override redirectPath = 'court-details'
 
-  override data = {
-    name: 'Lenore Marquez',
-    dateOfBirth: '18/08/1979',
-    age: 42,
-    crn: 'DX12340A',
-    address: '',
-    pnc: '',
+  override pageFields = ['name', 'dateOfBirth', 'crn', 'address', 'pnc']
+
+  override updateReport = async () => {
+    if (this.report && this.report.status === 'NOT_STARTED') {
+      await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
+    }
   }
 }

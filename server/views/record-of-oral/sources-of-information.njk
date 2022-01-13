@@ -2,6 +2,7 @@
 
 {% set currentPage = 'Sources of information' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
+{% set informationSources = data.sourcesOfInformation or '' %}
 
 {% block reportForm %}
 
@@ -13,17 +14,18 @@
 
     {% set otherOptionHtml %}
       {{ picRichTextEditor({
-        name: "otherInformationDetails",
-        id: "otherInformationDetails",
+        name: "otherSourceOfInformation",
+        id: "otherSourceOfInformation",
         label: {
           text: "Other source(s) of information"
-        }
+        },
+        value: data.otherSourceOfInformation
       }) }}
     {% endset %}
 
     {{ govukCheckboxes({
-      idPrefix: "waste",
-      name: "waste",
+      idPrefix: "sourcesOfInformation",
+      name: "sourcesOfInformation",
       fieldset: {
         legend: {
           text: "Select the relevant options"
@@ -32,55 +34,68 @@
       items: [
         {
           value: "interviewInformationSource",
-          text: "Interview"
+          text: "Interview",
+          checked: true if 'interviewInformationSource' in informationSources
         },
         {
           value: "serviceRecordsInformationSource",
-          text: "Service records"
+          text: "Service records",
+          checked: true if 'serviceRecordsInformationSource' in informationSources
         },
         {
           value: "cpsSummaryInformationSource",
-          text: "CPS summary"
+          text: "CPS summary",
+          checked: true if 'cpsSummaryInformationSource' in informationSources
         },
         {
           value: "oasysAssessmentsInformationSource",
-          text: "Previous OASys assessments"
+          text: "Previous OASys assessments",
+          checked: true if 'oasysAssessmentsInformationSource' in informationSources
         },
         {
           value: "previousConvictionsInformationSource",
-          text: "Previous convictions"
+          text: "Previous convictions",
+          checked: true if 'previousConvictionsInformationSource' in informationSources
         },
         {
           value: "witnessStatementInformationSource",
-          text: "Witness statement"
+          text: "Witness statement",
+          checked: true if 'witnessStatementInformationSource' in informationSources
         },
         {
           value: "childrenServicesInformationSource",
-          text: "Safeguarding checks"
+          text: "Safeguarding checks",
+          checked: true if 'childrenServicesInformationSource' in informationSources
         },
         {
           value: "policeInformationSource",
-          text: "Police information"
+          text: "Police information",
+          checked: true if 'policeInformationSource' in informationSources
         },
         {
           value: "sentencingGuidelinesInformationSource",
-          text: "Sentencing guidelines"
+          text: "Sentencing guidelines",
+          checked: true if 'sentencingGuidelinesInformationSource' in informationSources
         },
         {
           value: "domesticAbuseInformationSource",
-          text: "Domestic abuse call out information"
+          text: "Domestic abuse call out information",
+          checked: true if 'domesticAbuseInformationSource' in informationSources
         },
         {
           value: "medicalInformationSource",
-          text: "Medical information"
+          text: "Medical information",
+          checked: true if 'medicalInformationSource' in informationSources
         },
         {
           value: "equalityInformationFormInformationSource",
-          text: "Equalities Information"
+          text: "Equalities Information",
+          checked: true if 'equalityInformationFormInformationSource' in informationSources
         },
         {
           value: "otherInformationSource",
           text: "Other (please specify below)",
+          checked: true if 'otherInformationSource' in informationSources,
           conditional: {
             html: otherOptionHtml
           }

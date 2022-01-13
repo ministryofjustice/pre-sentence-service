@@ -11,8 +11,6 @@ import standardRouter from '../standardRouter'
 import UserService from '../../services/userService'
 import * as auth from '../../authentication/auth'
 
-import ReportService from '../../services/reportService'
-
 const user = {
   name: 'john smith',
   firstName: 'john',

@@ -9,7 +9,7 @@ export default class OffenderAssessmentController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
-        id: 'experienceTrauma',
+        id: 'experienceOfTrauma',
         errorMessage: 'Select whether there is evidence of the offender experiencing trauma',
       },
       {
@@ -18,9 +18,11 @@ export default class OffenderAssessmentController extends BaseController {
           'Select whether the offender has caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults',
       },
       {
-        id: 'offenderAssessmentEvidence',
+        id: 'evidenceForAssessment',
         errorMessage: 'Enter the evidence for assessment',
       },
     ],
   }
+
+  override pageFields = ['assessmentFactors', 'experienceOfTrauma', 'caringResponsibilities', 'evidenceForAssessment']
 }

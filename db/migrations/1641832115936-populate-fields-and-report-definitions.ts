@@ -6,7 +6,9 @@ export class PopulateFieldsAndReportDefinitions1641832115936 implements Migratio
         INSERT INTO field (type, name, required)
         VALUES ('text', 'court', true),
                ('text', 'localJusticeArea', true),
-               ('date', 'dateOfHearing', true),
+               ('text', 'dateOfHearing-day', true),
+               ('text', 'dateOfHearing-month', true),
+               ('text', 'dateOfHearing-year', true),
                ('text', 'mainOffence', true),
                ('text', 'otherOffences', false),
                ('text', 'offenceAnalysis', true),
@@ -35,8 +37,12 @@ export class PopulateFieldsAndReportDefinitions1641832115936 implements Migratio
                ('text', 'reportAuthor', true),
                ('text', 'office', true),
                ('text', 'officePhoneNumber', true),
-               ('date', 'startDate', true),
-               ('date', 'completionDate', true);
+               ('text', 'startDate-day', true),
+               ('text', 'startDate-month', true),
+               ('text', 'startDate-year', true),
+               ('text', 'completionDate-day', true),
+               ('text', 'completionDate-month', true),
+               ('text', 'completionDate-year', true);
     `)
 
     await queryRunner.query(`
@@ -73,7 +79,13 @@ export class PopulateFieldsAndReportDefinitions1641832115936 implements Migratio
                (1, 35),
                (1, 36),
                (1, 37),
-               (1, 38);
+               (1, 38),
+               (1, 39),
+               (1, 40),
+               (1, 41),
+               (1, 42),
+               (1, 43),
+               (1, 44);
     `)
   }
 

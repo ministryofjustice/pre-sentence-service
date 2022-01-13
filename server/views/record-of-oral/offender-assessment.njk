@@ -2,7 +2,7 @@
 
 {% set currentPage = 'Offender assessment' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
-{% set factors = data.factors or [] %}
+{% set factors = data.assessmentFactors or '' %}
 
 {% set pageWhatToInclude %}
   <p class="govuk-body">You should:</p>
@@ -40,8 +40,8 @@
     }) }}
 
     {{ govukCheckboxes({
-      idPrefix: "factors",
-      name: "factors",
+      idPrefix: "assessmentFactors",
+      name: "assessmentFactors",
       fieldset: {
         legend: {
           text: "Select any factors relating to offending behaviour and the individual’s need, including any protective factors."
@@ -98,8 +98,8 @@
 
     {{ picRadioButtons({
       classes: "govuk-radios--inline",
-      idPrefix: "experienceTrauma",
-      name: "experienceTrauma",
+      idPrefix: "experienceOfTrauma",
+      name: "experienceOfTrauma",
       fieldset: {
         legend: {
           text: "Is there evidence of the offender experiencing trauma?"
@@ -107,17 +107,17 @@
       },
       errorMessage: {
         text: "Select whether there is evidence of the offender experiencing trauma"
-      } if 'experienceTrauma' in elementsWithError,
+      } if 'experienceOfTrauma' in elementsWithError,
       items: [
         {
           value: "yes",
           text: "Yes",
-          checked: data.experienceTrauma === 'yes'
+          checked: data.experienceOfTrauma === 'yes'
         },
         {
           value: "no",
           text: "No",
-          checked: data.experienceTrauma === 'no'
+          checked: data.experienceOfTrauma === 'no'
         }
       ]
     }) }}
@@ -149,15 +149,15 @@
     }) }}
 
     {{ picRichTextEditor({
-      name: "offenderAssessmentEvidence",
-      id: "offenderAssessmentEvidence",
+      name: "evidenceForAssessment",
+      id: "evidenceForAssessment",
       label: {
         text: "Evidence for assessment"
       },
       errorMessage: {
         text: "Enter the evidence for assessment"
-      } if 'offenderAssessmentEvidence' in elementsWithError,
-      value: data.offenderAssessmentEvidence
+      } if 'evidenceForAssessment' in elementsWithError,
+      value: data.evidenceForAssessment
     }) }}
 
     <button class="govuk-button govuk-!-margin-top-6">Continue</button>

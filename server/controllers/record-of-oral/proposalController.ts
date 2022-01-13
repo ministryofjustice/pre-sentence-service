@@ -9,7 +9,7 @@ export default class ProposalController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
-        id: 'confirmEIF',
+        id: 'equalityAndDiversity',
         errorMessage:
           'Confirm that equalities and diversity information has been considered as part of preparing the report and proposal',
       },
@@ -19,4 +19,6 @@ export default class ProposalController extends BaseController {
       },
     ],
   }
+
+  override pageFields = ['equalityAndDiversity', 'proposal']
 }

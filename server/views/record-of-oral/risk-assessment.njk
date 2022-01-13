@@ -45,15 +45,15 @@
         },
         errorMessage: {
           text: "Enter the tool name"
-        } if "likelihoodTool" + i in elementsWithError,
-        id: "likelihoodTool" + i,
-        name: "likelihoodTool" + i,
-        value: data["likelihoodTool" + i]
+        } if "assessmentTool" + i in elementsWithError,
+        id: "assessmentTool" + i,
+        name: "assessmentTool" + i,
+        value: data["assessmentTool" + i]
       }) }}
 
       {{ picRadioButtons({
-        idPrefix: "likelihoodLevel" + i,
-        name: "likelihoodLevel" + i,
+        idPrefix: "assessmentLevel" + i,
+        name: "assessmentLevel" + i,
         fieldset: {
           legend: {
             text: "Level"
@@ -61,42 +61,42 @@
         },
         errorMessage: {
           text: "Specify the level"
-        } if "likelihoodLevel" + i in elementsWithError,
+        } if "assessmentLevel" + i in elementsWithError,
         items: [
           {
             value: "High",
             text: "High",
-            checked: data["likelihoodLevel" + i] === "High"
+            checked: data["assessmentLevel" + i] === "High"
           },
           {
             value: "Medium",
             text: "Medium",
-            checked: data["likelihoodLevel" + i] === "Medium"
+            checked: data["assessmentLevel" + i] === "Medium"
           },
           {
             value: "Low",
             text: "Low",
-            checked: data["likelihoodLevel" + i] === "Low"
+            checked: data["assessmentLevel" + i] === "Low"
           },
           {
             value: "N/A",
             text: "N/A",
-            checked: data["likelihoodLevel" + i] === "N/A"
+            checked: data["assessmentLevel" + i] === "N/A"
           }
         ]
       }) }}
     {% endfor %}
 
     {{ picRichTextEditor({
-      name: "likelihoodAssessment",
-      id: "likelihoodAssessment",
+      name: "yourAssessment",
+      id: "yourAssessment",
       label: {
         text: "Your assessment"
       },
-      value: data.likelihoodAssessment,
+      value: data.yourAssessment,
       errorMessage: {
         text: "Enter your assessment"
-      } if "likelihoodAssessment" in elementsWithError
+      } if "yourAssessment" in elementsWithError
     }) }}
 
     <h2 class="govuk-heading-m">Risk of serious harm</h2>
@@ -137,8 +137,8 @@
     }) }}
 
     {{ picRichTextEditor({
-      name: "roshEvidence",
-      id: "roshEvidence",
+      name: "evidenceForRiskLevel",
+      id: "evidenceForRiskLevel",
       label: {
         text: "Evidence for risk level"
       },
@@ -147,16 +147,16 @@
       },
       errorMessage: {
         text: "Enter the evidence for risk level"
-      } if "roshEvidence" in elementsWithError,
+      } if "evidenceForRiskLevel" in elementsWithError,
       whatToInclude: roshEvidenceHint,
-      value: data.roshEvidence
+      value: data.evidenceForRiskLevel
     }) }}
 
     <h2 class="govuk-heading-m">Response to previous supervision</h2>
 
     {{ picRadioButtons({
-      idPrefix: "previousSupervisionResponse",
-      name: "previousSupervisionResponse",
+      idPrefix: "responseToPreviousSupervision",
+      name: "responseToPreviousSupervision",
       fieldset: {
         legend: {
           text: "Response"
@@ -164,32 +164,32 @@
       },
       errorMessage: {
         text: "Specify the Response to previous supervision"
-      } if "previousSupervisionResponse" in elementsWithError,
+      } if "responseToPreviousSupervision" in elementsWithError,
       items: [
         {
           value: "Good",
           text: "Good",
-          checked: data.previousSupervisionResponse === "Good"
+          checked: data.responseToPreviousSupervision === "Good"
         },
         {
           value: "Satisfactory",
           text: "Satisfactory",
-          checked: data.previousSupervisionResponse === "Satisfactory"
+          checked: data.responseToPreviousSupervision === "Satisfactory"
         },
         {
           value: "Low engagement",
           text: "Low engagement",
-          checked: data.previousSupervisionResponse === "Low engagement"
+          checked: data.responseToPreviousSupervision === "Low engagement"
         },
         {
           value: "Non-compliance",
           text: "Non-compliance",
-          checked: data.previousSupervisionResponse === "Non-compliance"
+          checked: data.responseToPreviousSupervision === "Non-compliance"
         },
         {
           value: "N/A",
           text: "N/A",
-          checked: data.previousSupervisionResponse === "N/A"
+          checked: data.responseToPreviousSupervision === "N/A"
         }
       ]
     }) }}

@@ -33,8 +33,8 @@
 
     {{ picRadioButtons({
       classes: "govuk-radios--inline",
-      idPrefix: "confirmEIF",
-      name: "confirmEIF",
+      idPrefix: "equalityAndDiversity",
+      name: "equalityAndDiversity",
       fieldset: {
         legend: {
           text: "I confirm that equalities and diversity information has been considered as part of preparing the report and proposal"
@@ -42,17 +42,17 @@
       },
       errorMessage: {
         text: "Confirm that equalities and diversity information has been considered as part of preparing the report and proposal"
-      } if "confirmEIF" in elementsWithError,
+      } if "equalityAndDiversity" in elementsWithError,
       items: [
         {
           value: "yes",
           text: "Yes",
-          checked: data.confirmEIF === "yes"
+          checked: data.equalityAndDiversity === "yes"
         },
         {
           value: "no",
           text: "No",
-          checked: data.confirmEIF === "no"
+          checked: data.equalityAndDiversity === "no"
         }
       ]
     }) }}

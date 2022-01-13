@@ -9,6 +9,12 @@ export default class ReportCompletedController extends BaseController {
     reportCompleted: true,
   }
 
+  override updateReport = async () => {
+    if (this.report) {
+      await this.reportService.updateReport({ ...this.report, status: 'COMPLETED' })
+    }
+  }
+
   override post = async (): Promise<void> => {
     return null
   }

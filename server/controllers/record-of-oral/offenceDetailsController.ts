@@ -6,6 +6,8 @@ export default class OffenceDetailsController extends BaseController {
 
   override redirectPath = 'offence-analysis'
 
+  override pageFields = ['mainOffence', 'otherOffences']
+
   override formValidation: FormValidation = {
     required: [
       {
