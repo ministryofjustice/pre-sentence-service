@@ -48,9 +48,11 @@ export default class SignReportController extends BaseController {
     'completionDate-year',
   ]
 
+  private today = new Date()
+
   override defaultTemplateData = {
-    'completionDate-day': `0${new Date().getDate()}`.slice(-2),
-    'completionDate-month': `0${new Date().getMonth() + 1}`.slice(-2),
-    'completionDate-year': new Date().getFullYear(),
+    'completionDate-day': `0${this.today.getDate()}`.slice(-2),
+    'completionDate-month': `0${this.today.getMonth() + 1}`.slice(-2),
+    'completionDate-year': this.today.getFullYear(),
   }
 }
