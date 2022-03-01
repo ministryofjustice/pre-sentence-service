@@ -85,15 +85,9 @@ context('Offender assessment report page', () => {
     })
 
     it('should retain submitted data', () => {
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
-      cy.get('.govuk-checkboxes__input').should('be.checked')
+      cy.get('.govuk-checkboxes__input').each($el => {
+        cy.wrap($el).should('be.checked')
+      })
 
       cy.get('legend')
         .contains('Is there evidence of the offender experiencing trauma?')
