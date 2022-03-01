@@ -22,7 +22,7 @@ To start the main services excluding the typescript app:
 
 `docker-compose up --remove-orphans hmpps-auth redis postgres gotenberg`
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v16.13.2` (Gallium) LTS
+Install dependencies using `npm install`, ensuring you are using >= `Node v16.14.0` (Gallium) LTS
 
 And then, to build the assets and start the app with nodemon:
 
