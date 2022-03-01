@@ -29,6 +29,11 @@ context('Sentencing court details report page', () => {
       })
     })
 
+    it('should display the pre-stored data', () => {
+      cy.get('p').contains('Sheffield Magistrates Court').should('exist')
+      cy.get('p').contains('South Yorkshire').should('exist')
+    })
+
     it('should include the required form elements', () => {
       currentPage
         .inputText()
@@ -56,6 +61,19 @@ context('Sentencing court details report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceDetails)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('p').contains('Sheffield Magistrates Court').should('exist')
+      cy.get('p').contains('South Yorkshire').should('exist')
+      currentPage
+        .inputText()
+        .parent()
+        .within(() => {
+          cy.get('#dateOfHearing-day').should('have.value', '27')
+          cy.get('#dateOfHearing-month').should('have.value', '10')
+          cy.get('#dateOfHearing-year').should('have.value', '2021')
+        })
     })
   })
 })

@@ -84,5 +84,14 @@ context('Check report page', () => {
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
     })
+
+    it('should retain inputted data', () => {
+      cy.get('#reportAuthor').should('have.value', 'Arthur Author')
+      cy.get('#office').should('have.value', 'Sheffield Probation Office')
+      cy.get('#officePhoneNumber').should('have.value', '0114 276 0760')
+      cy.get('#completionDate-day').should('have.value', '27')
+      cy.get('#completionDate-month').should('have.value', '10')
+      cy.get('#completionDate-year').should('have.value', '2021')
+    })
   })
 })

@@ -67,5 +67,22 @@ context('Proposal report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(SourcesOfInformation)
     })
+
+    it('should retain inputted data', () => {
+      cy.get('legend')
+        .contains(
+          'I confirm that equalities and diversity information has been considered as part of preparing the report and proposal'
+        )
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
+
+      cy.get('#proposal').should('have.value', 'Some proposal text')
+    })
   })
 })
