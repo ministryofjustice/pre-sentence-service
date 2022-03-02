@@ -7,7 +7,7 @@ orbs:
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:16.13.0-browsers
+      - image: cimg/node:16.14.0-browsers
       - image: circleci/postgres:13.3-ram
         environment:
           POSTGRES_PASSWORD: pre-sentence-service
@@ -30,7 +30,7 @@ parameters:
 
   node-version:
     type: string
-    default: 16.13.0-browsers
+    default: 16.14.0-browsers
 
 
 jobs:
