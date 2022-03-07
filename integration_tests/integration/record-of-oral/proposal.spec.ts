@@ -56,6 +56,7 @@ context('Proposal report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(Proposal)
       currentPage.govukErrorSummary().should('exist')
@@ -65,6 +66,23 @@ context('Proposal report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(SourcesOfInformation)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('legend')
+        .contains(
+          'I confirm that equalities and diversity information has been considered as part of preparing the report and proposal'
+        )
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
+
+      cy.get('#proposal').should('have.value', 'Some proposal text')
     })
   })
 })

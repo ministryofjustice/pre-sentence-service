@@ -9,11 +9,11 @@ import getDatabaseConnection from './repositories/db'
 export default async function createApplication(): Promise<Application> {
   const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient()))
   const userService = new UserService(hmppsAuthClient)
-  const [error, databaseConnection] = await getDatabaseConnection()
+  const [error] = await getDatabaseConnection()
 
   if (error) {
     throw new Error('Unable to create database connection')
   }
 
-  return configureApplication(userService, databaseConnection)
+  return configureApplication(userService)
 }

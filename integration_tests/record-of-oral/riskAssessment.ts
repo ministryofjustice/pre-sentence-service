@@ -6,17 +6,26 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#likelihoodTool1').type('Some tool name')
-    cy.get('#likelihoodLevel1').click()
-    cy.get('#likelihoodTool2').type('Some tool name')
-    cy.get('#likelihoodLevel2').click()
-    cy.get('#likelihoodTool3').type('Some tool name')
-    cy.get('#likelihoodLevel3').click()
-    cy.get('#likelihoodTool4').type('Some tool name')
-    cy.get('#likelihoodLevel4').click()
-    cy.get('#likelihoodAssessment').type('Some assessment')
+    cy.get('#assessmentTool1').clear().type('Some tool name')
+    cy.get('#assessmentLevel1').click()
+    cy.get('#assessmentTool2').clear().type('Some tool name')
+    cy.get('#assessmentLevel2').click()
+    cy.get('#assessmentTool3').clear().type('Some tool name')
+    cy.get('#assessmentLevel3').click()
+    cy.get('#assessmentTool4').clear().type('Some tool name')
+    cy.get('#assessmentLevel4').click()
+    cy.get('#yourAssessment').clear().type('Some assessment')
     cy.get('#riskOfSeriousHarm').click()
-    cy.get('#roshEvidence').type('Some RoSH evidence')
-    cy.get('#previousSupervisionResponse').click()
+    cy.get('#evidenceForRiskLevel').clear().type('Some RoSH evidence')
+    cy.get('#responseToPreviousSupervision').click()
+  }
+
+  clearForm(): void {
+    cy.get('#assessmentTool1').clear()
+    cy.get('#assessmentTool2').clear()
+    cy.get('#assessmentTool3').clear()
+    cy.get('#assessmentTool4').clear()
+    cy.get('#yourAssessment').clear()
+    cy.get('#evidenceForRiskLevel').clear()
   }
 }

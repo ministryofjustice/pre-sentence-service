@@ -13,8 +13,9 @@ import ReportService from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(userService: UserService, reportService: ReportService): Router {
+export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
+  const reportService = new ReportService()
 
   router.use((req, res, next) => {
     res.locals.nonce = config.nonce

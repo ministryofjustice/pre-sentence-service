@@ -5,8 +5,14 @@ export default class ReportCompletedController extends BaseController {
 
   override templatePath = 'report-saved'
 
-  override data = {
+  override defaultTemplateData = {
     reportCompleted: true,
+  }
+
+  override updateReport = async () => {
+    if (this.report) {
+      await this.reportService.updateReport({ ...this.report, status: 'COMPLETED' })
+    }
   }
 
   override post = async (): Promise<void> => {

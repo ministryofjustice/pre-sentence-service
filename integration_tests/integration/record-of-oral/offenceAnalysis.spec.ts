@@ -57,6 +57,7 @@ context('Offence analysis report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
       currentPage.govukErrorSummary().should('exist')
@@ -66,6 +67,30 @@ context('Offence analysis report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenderAssessment)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#offenceAnalysis').should('have.value', 'Some offence analysis')
+      cy.get('legend')
+        .contains('Is current offending part of a pattern of offending behaviour?')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
+      cy.get('legend')
+        .contains('Does current offending represent an escalation in seriousness?')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
     })
   })
 })

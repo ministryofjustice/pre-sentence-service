@@ -9,15 +9,15 @@ export default class RiskAssessmentController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
-        id: 'likelihoodTool1',
+        id: 'assessmentTool1',
         errorMessage: 'Enter the tool name',
       },
       {
-        id: 'likelihoodLevel1',
+        id: 'assessmentLevel1',
         errorMessage: 'Specify the level',
       },
       {
-        id: 'likelihoodAssessment',
+        id: 'yourAssessment',
         errorMessage: 'Enter the assessment',
       },
       {
@@ -25,13 +25,28 @@ export default class RiskAssessmentController extends BaseController {
         errorMessage: 'Specify the risk of serious harm level',
       },
       {
-        id: 'roshEvidence',
+        id: 'evidenceForRiskLevel',
         errorMessage: 'Enter the evidence for risk level',
       },
       {
-        id: 'previousSupervisionResponse',
+        id: 'responseToPreviousSupervision',
         errorMessage: 'Specify the Response to previous supervision',
       },
     ],
   }
+
+  override pageFields = [
+    'assessmentTool1',
+    'assessmentLevel1',
+    'assessmentTool2',
+    'assessmentLevel2',
+    'assessmentTool3',
+    'assessmentLevel3',
+    'assessmentTool4',
+    'assessmentLevel4',
+    'yourAssessment',
+    'riskOfSeriousHarm',
+    'evidenceForRiskLevel',
+    'responseToPreviousSupervision',
+  ]
 }

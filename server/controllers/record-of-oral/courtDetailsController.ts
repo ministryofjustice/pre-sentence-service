@@ -6,15 +6,7 @@ export default class CourtDetailsController extends BaseController {
 
   override redirectPath = 'offence-details'
 
-  today = new Date()
-
-  override data = {
-    court: "Sheffield Magistrate's Court",
-    localJusticeArea: 'South Yorkshire',
-    'dateOfHearing-day': this.today.getDate(),
-    'dateOfHearing-month': this.today.getMonth() + 1,
-    'dateOfHearing-year': this.today.getFullYear(),
-  }
+  override pageFields = ['court', 'localJusticeArea', 'dateOfHearing-day', 'dateOfHearing-month', 'dateOfHearing-year']
 
   override formValidation: FormValidation = {
     required: [

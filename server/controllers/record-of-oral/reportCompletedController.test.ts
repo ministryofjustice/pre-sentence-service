@@ -11,6 +11,11 @@ jest.mock('../../services/reportService', () => {
           process.nextTick(() => resolve({}))
         })
       },
+      updateReport: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
     }
   })
 })
@@ -45,7 +50,7 @@ describe('Route Handlers - Report Completed Controller', () => {
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
-          ...handler.data,
+          ...handler.defaultTemplateData,
         },
       })
     })

@@ -72,6 +72,7 @@ context('Offender assessment report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenderAssessment)
       currentPage.govukErrorSummary().should('exist')
@@ -81,6 +82,38 @@ context('Offender assessment report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(RiskAssessment)
+    })
+
+    it('should retain submitted data', () => {
+      cy.get('.govuk-checkboxes__input').each($el => {
+        cy.wrap($el).should('be.checked')
+      })
+
+      cy.get('legend')
+        .contains('Is there evidence of the offender experiencing trauma?')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
+
+      cy.get('legend')
+        .contains(
+          'Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?'
+        )
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Yes')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'yes')
+            .should('be.checked')
+        })
+
+      cy.get('#evidenceForAssessment').should('have.value', 'Some evidence')
     })
   })
 })

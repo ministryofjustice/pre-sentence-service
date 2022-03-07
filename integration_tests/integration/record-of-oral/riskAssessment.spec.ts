@@ -70,6 +70,7 @@ context('Risk assessment report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(RiskAssessment)
       currentPage.govukErrorSummary().should('exist')
@@ -79,6 +80,75 @@ context('Risk assessment report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(Proposal)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#assessmentTool1').should('have.value', 'Some tool name')
+      cy.get('legend')
+        .eq(0)
+        .contains('Level')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'High')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'High')
+            .should('be.checked')
+        })
+
+      cy.get('#assessmentTool2').should('have.value', 'Some tool name')
+      cy.get('legend')
+        .eq(1)
+        .contains('Level')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'High')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'High')
+            .should('be.checked')
+        })
+
+      cy.get('#assessmentTool3').should('have.value', 'Some tool name')
+      cy.get('legend')
+        .eq(2)
+        .contains('Level')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'High')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'High')
+            .should('be.checked')
+        })
+
+      cy.get('#assessmentTool4').should('have.value', 'Some tool name')
+      cy.get('legend')
+        .eq(3)
+        .contains('Level')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'High')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'High')
+            .should('be.checked')
+        })
+
+      cy.get('#yourAssessment').should('have.value', 'Some assessment')
+
+      cy.get('#evidenceForRiskLevel').should('have.value', 'Some RoSH evidence')
+      cy.get('legend')
+        .contains('Response')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Good')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'Good')
+            .should('be.checked')
+        })
+      cy.get('#responseToPreviousSupervision').click()
     })
   })
 })

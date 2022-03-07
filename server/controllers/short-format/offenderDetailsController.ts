@@ -5,10 +5,9 @@ export default class OffenderDetailsController extends BaseController {
 
   override redirectPath = 'court-details'
 
-  override data = {
+  override defaultTemplateData = {
     name: 'Lenore Marquez',
     dateOfBirth: '18/08/1979',
-    age: 42,
     crn: 'DX12340A',
     address: '',
     pnc: '',

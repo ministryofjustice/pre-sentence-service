@@ -40,20 +40,20 @@
       },
       errorMessage: {
         text: "Enter the court office phone number"
-      } if "courtOfficePhoneNumber" in elementsWithError,
-      id: "courtOfficePhoneNumber",
-      name: "courtOfficePhoneNumber",
-      value: data.courtOfficePhoneNumber
+      } if "officePhoneNumber" in elementsWithError,
+      id: "officePhoneNumber",
+      name: "officePhoneNumber",
+      value: data.officePhoneNumber
     }) }}
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Start date</h2>
-    <p class="govuk-body">{{ data.startDate }}</p>
+    <p class="govuk-body">{{ data['startDate-day'] }}/{{ data['startDate-month'] }}/{{ data['startDate-year'] }}</p>
 
     {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 
     {{ govukDateInput({
-      id: "reportDate",
-      namePrefix: "reportDate",
+      id: "completionDate",
+      namePrefix: "completionDate",
       fieldset: {
         legend: {
           text: "Completion date"
@@ -61,25 +61,25 @@
       },
       errorMessage: {
         text: "Enter a valid date, month and year"
-      } if 'reportDate-day' in elementsWithError or 'reportDate-month' in elementsWithError or 'reportDate-year' in elementsWithError,
+      } if 'completionDate-day' in elementsWithError or 'completionDate-month' in elementsWithError or 'completionDate-year' in elementsWithError,
       hint: {
         text: "For example, 31 3 2021"
       },
       items: [
         {
-          classes: "govuk-input--width-2" + (" govuk-input--error" if 'reportDate-day' in elementsWithError),
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'completionDate-day' in elementsWithError),
           name: "day",
-          value: data["reportDate-day"]
+          value: data["completionDate-day"]
         },
         {
-          classes: "govuk-input--width-2" + (" govuk-input--error" if 'reportDate-month' in elementsWithError),
+          classes: "govuk-input--width-2" + (" govuk-input--error" if 'completionDate-month' in elementsWithError),
           name: "month",
-          value: data["reportDate-month"]
+          value: data["completionDate-month"]
         },
         {
-          classes: "govuk-input--width-4" + (" govuk-input--error" if 'reportDate-year' in elementsWithError),
+          classes: "govuk-input--width-4" + (" govuk-input--error" if 'completionDate-year' in elementsWithError),
           name: "year",
-          value: data["reportDate-year"]
+          value: data["completionDate-year"]
         }
       ]
     }) }}

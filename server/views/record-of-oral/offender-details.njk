@@ -15,15 +15,12 @@
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Date of birth</h2>
     <p class="govuk-body">{{ data.dateOfBirth }}</p>
 
-    <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Age</h2>
-    <p class="govuk-body">{{ data.age }}</p>
-
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Delius CRN</h2>
     <p class="govuk-body">{{ data.crn }}</p>
 
     {% if data.address | length %}
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Address</p>
-      <p class="govuk-body">{{ data.address }}</p>
+      <p class="govuk-body">{{ data.address | replace('\n', '<br/>') | safe }}</p>
     {% else %}
       {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 

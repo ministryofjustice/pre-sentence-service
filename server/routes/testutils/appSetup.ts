@@ -11,8 +11,6 @@ import standardRouter from '../standardRouter'
 import UserService from '../../services/userService'
 import * as auth from '../../authentication/auth'
 
-import ReportService from '../../services/reportService'
-
 const user = {
   name: 'john smith',
   firstName: 'john',
@@ -31,12 +29,6 @@ class MockUserService extends UserService {
       token,
       ...user,
     }
-  }
-}
-
-class MockReportService extends ReportService {
-  constructor() {
-    super(undefined)
   }
 }
 
@@ -65,5 +57,5 @@ function appSetup(route: Router, production: boolean): Express {
 
 export default function appWithAllRoutes({ production = false }: { production?: boolean }): Express {
   auth.default.authenticationMiddleware = () => (req, res, next) => next()
-  return appSetup(allRoutes(standardRouter(new MockUserService(), new MockReportService())), production)
+  return appSetup(allRoutes(standardRouter(new MockUserService())), production)
 }

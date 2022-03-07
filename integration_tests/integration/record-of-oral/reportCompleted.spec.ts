@@ -1,11 +1,10 @@
 import BaseController from '../../../server/controllers/record-of-oral/baseController'
 import Page from '../../pages/page'
-import SignReport from '../../record-of-oral/signReport'
 import ReportCompleted from '../../record-of-oral/reportCompleted'
 
 context('Report completed page', () => {
-  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/sign-report`
-  let currentPage: SignReport | ReportCompleted
+  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/report-completed`
+  let currentPage: ReportCompleted
 
   beforeEach(() => {
     cy.task('reset')
@@ -14,8 +13,6 @@ context('Report completed page', () => {
     cy.signIn()
 
     cy.visit(path)
-    currentPage = Page.verifyOnPage(SignReport)
-    currentPage.govukButton().contains('Submit and view your report').click()
     currentPage = Page.verifyOnPage(ReportCompleted)
   })
 

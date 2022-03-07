@@ -4,7 +4,6 @@ import path from 'path'
 import createError from 'http-errors'
 import 'reflect-metadata'
 
-import { Connection } from 'typeorm'
 import indexRoutes from './routes'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
@@ -22,9 +21,7 @@ import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
 
-import ReportService from './services/reportService'
-
-export default function createApplication(userService: UserService, databaseConnection: Connection): Application {
+export default function createApplication(userService: UserService): Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -41,9 +38,7 @@ export default function createApplication(userService: UserService, databaseConn
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(authorisationMiddleware())
 
-  const reportService = new ReportService(databaseConnection)
-
-  app.use('/', indexRoutes(standardRouter(userService, reportService)))
+  app.use('/', indexRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))

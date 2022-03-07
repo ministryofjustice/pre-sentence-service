@@ -50,6 +50,7 @@ context('Offence details report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceDetails)
       currentPage.govukErrorSummary().should('exist')
@@ -59,6 +60,11 @@ context('Offence details report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#mainOffence').should('have.value', 'Some main offence')
+      cy.get('#otherOffences').should('have.value', 'Some other offences')
     })
   })
 })

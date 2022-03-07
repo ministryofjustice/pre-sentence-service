@@ -59,10 +59,16 @@ describe('Route Handlers - Sign Report Controller', () => {
 
   describe('GET', () => {
     it('should render view', async () => {
+      const today = new Date()
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        data: handler.data,
+        data: {
+          ...handler.data,
+          'completionDate-day': `0${today.getDate()}`.slice(-2),
+          'completionDate-month': `0${today.getMonth() + 1}`.slice(-2),
+          'completionDate-year': today.getFullYear(),
+        },
       })
     })
   })

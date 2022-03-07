@@ -36,9 +36,6 @@ context('Offender details report page', () => {
       currentPage.headingL2().contains('Date of birth').should('exist')
       currentPage.govukBody().contains('18/08/1979').should('exist')
 
-      currentPage.headingL2().contains('Age').should('exist')
-      currentPage.govukBody().contains('42').should('exist')
-
       currentPage.headingL2().contains('Delius CRN').should('exist')
       currentPage.govukBody().contains('DX12340A').should('exist')
     })
@@ -67,6 +64,14 @@ context('Offender details report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CourtDetails)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('p').contains('Lenore Marquez').should('exist')
+      cy.get('p').contains('18/08/1979').should('exist')
+      cy.get('p').contains('DX12340A').should('exist')
+      cy.get('p').contains('Some address').should('exist')
+      cy.get('p').contains('A123467B').should('exist')
     })
   })
 })
