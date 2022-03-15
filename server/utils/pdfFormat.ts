@@ -6,7 +6,7 @@ export const pdfOptions = {
 }
 
 interface FooterData {
-  version: string
+  version: number | string
 }
 
 const footerDivStyle = 'width: 90%'
