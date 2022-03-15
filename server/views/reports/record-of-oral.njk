@@ -271,7 +271,7 @@
 
   <h1 class="center">Record of Oral Pre-Sentence Report</h1>
 
-  <p>This is a record of the oral presentation of a Pre-Sentence Report as defined in Section 158 of the Criminal Justice Act 2003.</p>
+  <p id="qa-sub-heading">This is a record of the oral presentation of a Pre-Sentence Report as defined in Section 158 of the Criminal Justice Act 2003.</p>
 
   <table class="margin-top medium keep-together-section">
     <tr class="table-header">
@@ -279,7 +279,7 @@
     </tr>
     <tr>
       <td width="25%" class="heading">Name:</td>
-      <td colspan="3">{{ data.name }}</td>
+      <td colspan="3" id="qa-name">{{ data.name }}</td>
     </tr>
     <tr>
       <td class="heading">Date of Birth:</td>
@@ -311,7 +311,7 @@
     </tr>
     <tr>
       <td class="heading">Date of Hearing:</td>
-      <td>{{ data['dateOfHearing-day'] | zero }}/{{ data['dateOfHearing-month'] | zero }}/{{ data['dateOfHearing-year'] }}</td>
+      <td id="qa-dateOfHearing">{{ data['dateOfHearing-day'] | zero }}/{{ data['dateOfHearing-month'] | zero }}/{{ data['dateOfHearing-year'] }}</td>
     </tr>
     <tr>
       <td class="heading">Local Justice Area:</td>

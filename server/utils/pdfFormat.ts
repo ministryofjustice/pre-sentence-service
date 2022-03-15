@@ -16,7 +16,7 @@ const headerFooterStyle =
 
 export function getHeader(): string {
   return `
-    <span style="${headerFooterStyle}">
+    <span id="qa-official" style="${headerFooterStyle}">
       <span>OFFICIAL</span>
     </span>
   `
