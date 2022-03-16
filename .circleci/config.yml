@@ -16,9 +16,6 @@ executors:
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
-      - image: thecodingmachine/gotenberg:6.4.4
-        ports:
-          - "3001:3000"
     working_directory: ~/app
 
 
@@ -114,21 +111,20 @@ jobs:
           path: test-results/unit-test-reports.html
 
   integration_test:
-    executor: integration-tests
+    executor:
+      name: hmpps/node
+      tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
       - attach_workspace:
           at: ~/app
       - run:
+          command: |
+            set -x
+            docker-compose -f docker-compose-test.yml up
+      - run:
           name: Install missing OS dependency
           command: sudo apt-get install libxss1
-      - run:
-          name: Get wiremock
-          command: curl -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.27.1/wiremock-standalone-2.27.1.jar
-      - run:
-          name: Run wiremock
-          command: java -jar wiremock.jar --port 9091
-          background: true
       - run:
           name: Run the node app.
           command: npm run start-feature
