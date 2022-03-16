@@ -1,3 +1,6 @@
+{% set assessmentFactors = data.assessmentFactors if data.assessmentFactors else "" %}
+{% set sourcesOfInformation = data.sourcesOfInformation if data.sourcesOfInformation else "" %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -438,21 +441,21 @@
       </tr>
       <tr>
         <td width="40%">Accommodation</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueAccommodation" in data.assessmentFactors }}"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueAccommodation" in assessmentFactors }}"></span></td>
         <td width="40%">Employment &amp; Training</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueEmployment" in data.assessmentFactors }}"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueEmployment" in assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Finances</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueFinance" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueFinance" in assessmentFactors }}"></span></td>
         <td>Relationships</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueRelationships" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueRelationships" in assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Substance misuse</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueSubstanceMisuse" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueSubstanceMisuse" in assessmentFactors }}"></span></td>
         <td>Physical &amp; Mental Health</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueHealth" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueHealth" in assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Experience of Trauma</td>
@@ -462,13 +465,13 @@
       </tr>
       <tr>
         <td>Thinking and Behaviour</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueBehaviour" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueBehaviour" in assessmentFactors }}"></span></td>
         <td>Maturity</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueMaturity" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueMaturity" in assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Other</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueOther" in data.assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueOther" in assessmentFactors }}"></span></td>
       </tr>
     </table>
 
@@ -486,42 +489,42 @@
       </tr>
       <tr>
         <td width="40%">Interview</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "interviewInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "interviewInformationSource" in sourcesOfInformation }}"></span></td>
         <td width="40%">Service Records</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "serviceRecordsInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "serviceRecordsInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>CPS Summary</td>
-        <td class="check-padding"><span class="check {{ "yes" if "cpsSummaryInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "cpsSummaryInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Previous OASys Assessments</td>
-        <td class="check-padding"><span class="check {{ "yes" if "oasysAssessmentsInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "oasysAssessmentsInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Previous Convictions</td>
-        <td class="check-padding"><span class="check {{ "yes" if "previousConvictionsInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "previousConvictionsInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Witness Statement</td>
-        <td class="check-padding"><span class="check {{ "yes" if "witnessStatementInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "witnessStatementInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Safeguarding checks</td>
-        <td class="check-padding"><span class="check {{ "yes" if "childrenServicesInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "childrenServicesInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Police Information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "policeInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "policeInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Sentencing guidelines</td>
-        <td class="check-padding"><span class="check {{ "yes" if "sentencingGuidelinesInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "sentencingGuidelinesInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Domestic abuse call out information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "domesticAbuseInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "domesticAbuseInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Medical information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "medicalInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "medicalInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Equalities information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "equalityInformationFormInformationSource" in data.sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "equalityInformationFormInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
     </table>
-    <div class="sub-section optional-section {{ "yes" if "otherInformationSource" in data.sourcesOfInformation }}">
+    <div class="sub-section optional-section {{ "yes" if "otherInformationSource" in sourcesOfInformation }}">
       <h3>Other sources of information:</h3>
       <div class="formatted-text">{{ data.otherSourceOfInformation }}</div>
     </div>
