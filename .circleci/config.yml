@@ -8,7 +8,7 @@ executors:
   integration-tests:
     docker:
       - image: cimg/node:16.14.0-browsers
-      - image: cimg/postgres:13.5
+      - image: cimg/postgres:13.3
         environment:
           POSTGRES_PASSWORD: pre-sentence-service
           POSTGRES_USER: pre-sentence-service
@@ -117,9 +117,15 @@ jobs:
       - attach_workspace:
           at: ~/app
       - run:
-          command: |
-            set -x
-            docker-compose -f docker-compose-test.yml up
+          name: Install missing OS dependency
+          command: sudo apt-get install libxss1
+      - run:
+          name: Get wiremock
+          command: curl -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.27.1/wiremock-standalone-2.27.1.jar
+      - run:
+          name: Run wiremock
+          command: java -jar wiremock.jar --port 9091
+          background: true
       - run:
           name: Run the node app.
           command: npm run start-feature
