@@ -112,8 +112,7 @@ jobs:
 
   integration_test:
     executor:
-      name: hmpps/node
-      tag: << pipeline.parameters.node-version >>
+      name: cimg/node:16.14.0-browsers
     steps:
       - checkout
       - attach_workspace:
@@ -122,9 +121,6 @@ jobs:
           command: |
             set -x
             docker-compose -f docker-compose-test.yml up
-      - run:
-          name: Install missing OS dependency
-          command: sudo apt-get install libxss1
       - run:
           name: Run the node app.
           command: npm run start-feature
