@@ -159,6 +159,7 @@ workflows:
       - integration_test:
           requires:
             - build
+          store_artifacts: true
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:

@@ -1,5 +1,5 @@
 context('Preview report', () => {
-  const path = `/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/preview`
+  const path = '/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/preview'
 
   beforeEach(() => {
     cy.task('reset')
@@ -8,12 +8,15 @@ context('Preview report', () => {
     cy.signIn()
 
     cy.visit(path)
-    cy.get('h1').contains('Record of Oral Pre-Sentence Report').should('exist')
   })
 
   describe('Authenticated user accesses report preview', () => {
     it('should NOT include official wording', () => {
       cy.get('#qa-official').should('not.exist')
+    })
+
+    it('should include the correct heading', () => {
+      cy.get('h1').contains('Record of Oral Pre-Sentence Report').should('exist')
     })
 
     it('should include the correct sub heading', () => {
