@@ -1,17 +1,50 @@
 import { Request, Response } from 'express'
 
-import PdfRoutes, { tempData } from '../../controllers/pdf/pdf'
+import PdfRoutes from '../../controllers/pdf/pdf'
+import ReportService from '../../services/reportService'
+
+const mockReportData = {
+  status: 'NOT_STARTED',
+  fieldValues: [
+    {
+      value: 'Some field value',
+      field: {
+        name: 'some_field_name',
+      },
+    },
+  ],
+  reportDefinition: {
+    type: 'some_report_type',
+    version: 1,
+  },
+}
+
+jest.mock('../../services/reportService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      getReportById: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve(mockReportData))
+        })
+      },
+    }
+  })
+})
 
 describe('Route Handlers - View Report - PDF', () => {
-  const handler = new PdfRoutes()
+  let handler: PdfRoutes
   let req: Request
   let res: Response
+
+  beforeAll(() => {
+    const mockedReportService = new ReportService()
+    handler = new PdfRoutes(mockedReportService)
+  })
 
   beforeEach(() => {
     req = {
       params: {
-        reportType: 'some_report_type',
-        id: 'some_id',
+        reportId: 'some_id',
       },
     } as unknown as Request
 
@@ -32,8 +65,13 @@ describe('Route Handlers - View Report - PDF', () => {
         'reports/some_report_type',
         expect.objectContaining({
           data: {
-            ...tempData, // @TODO: Replace with mock database response
+            preview: true,
+            reportStatus: 'NOT_STARTED',
+            reportType: 'some_report_type',
+            reportVersion: 1,
+            some_field_name: 'Some field value',
           },
+          footerHtml: expect.any(String),
         })
       )
     })
@@ -46,7 +84,10 @@ describe('Route Handlers - View Report - PDF', () => {
         'reports/some_report_type',
         expect.objectContaining({
           data: {
-            ...tempData, // @TODO: Replace with mock database response
+            reportStatus: 'NOT_STARTED',
+            reportType: 'some_report_type',
+            reportVersion: 1,
+            some_field_name: 'Some field value',
           },
         }),
         expect.any(Object)

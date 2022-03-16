@@ -99,19 +99,10 @@
 
       .check.true, .check.yes {
           background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAABS2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDAgNzkuMTYwNDUxLCAyMDE3LzA1LzA2LTAxOjA4OjIxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+LUNEtwAAAI5JREFUKJGd0LENwyAQRuE/qZnDg9wU3oEZYCB7Mvpz/VJEiW2BccJJVNz3hHgAaHCeo3AYb9s2hnPOCiFoXVeJPyalhKT9DMMPdneWZcHdf4bTNCF3x8yQhJlVgStYSkHzPJ8ujoEeBFCMsVows1sIvJ/dCtxBYP+wXqAFv7gXuIIn3Ar0YIWPATPrQoAXBP/KUW8DFl4AAAAASUVORK5CYII=');
-
       }
 
       .check.false, .check.no {
           width: 30px;
-      }
-
-      .optional-blank, .alternative-blank, .optional-blank.no, .alternative-blank.yes {
-          display: none;
-      }
-
-      .optional-blank.yes, .alternative-blank.no {
-          display: block;
       }
 
       .optional-section, .alternative-section.yes {
@@ -256,12 +247,16 @@
           margin-right:1.2cm;
           margin-bottom:2cm;
       }
+      .preview {
+        width: 690px;
+        margin: 25px auto;
+      }
   </style>
 
 </head>
 <body>
-<div class="watermark">{{ data.reportStatus }}</div>
-<div class="page">
+<div class="watermark">{{ "DRAFT" if data.reportStatus !== "COMPLETED" }}{{ "PREVIEW" if data.preview }}</div>
+<div class="page {{ "preview" if data.preview }}">
 
   <table class="first-page-header">
     <tr>
@@ -290,7 +285,7 @@
       <td class="heading">Date of Birth:</td>
       <td width="25%">{{ data.dateOfBirth }}</td>
       <td width="15%" class="heading">Age:</td>
-      <td width="25%">{{ data.age }}</td>
+      <td width="25%">{{ data.dateOfBirth | age }}</td>
     </tr>
     <tr>
       <td class="heading">Address:</td>
@@ -312,15 +307,15 @@
     </tr>
     <tr>
       <td width="25%" class="heading">Court:</td>
-      <td width="75%">_COURT_</td>
+      <td width="75%">{{ data.court }}</td>
     </tr>
     <tr>
       <td class="heading">Date of Hearing:</td>
-      <td>_DATE_OF_HEARING_</td>
+      <td>{{ data['dateOfHearing-day'] | zero }}/{{ data['dateOfHearing-month'] | zero }}/{{ data['dateOfHearing-year'] }}</td>
     </tr>
     <tr>
       <td class="heading">Local Justice Area:</td>
-      <td>_LOCAL_JUSTICE_AREA_</td>
+      <td>{{ data.localJusticeArea }}</td>
     </tr>
   </table>
 
@@ -331,13 +326,13 @@
     <tr>
       <td>
         <h3 class="heading">Main offence and date:</h3>
-        <div class="formatted-text">MAIN_OFFENCE</div>
+        <div class="formatted-text">{{ data.mainOffence }}</div>
       </td>
     </tr>
     <tr class="optional-section OTHER_OFFENCE_PRESENT">
       <td>
         <h3 class="heading">Other offences and dates:</h3>
-        <div class="formatted-text">OTHER_OFFENCE</div>
+        <div class="formatted-text">{{ data.otherOffences }}</div>
       </td>
     </tr>
   </table>
@@ -345,7 +340,7 @@
   <h2>Proposed sentence (including length and any sentence components)</h2>
 
   <div class="sub-section">
-    <div class="formatted-text">_PROPOSAL_</div>
+    <div class="formatted-text">{{ data.proposal }}</div>
   </div>
 
   <div class="keep-together-section">
@@ -359,27 +354,27 @@
       <tr class="table-header">
         <td colspan="4" class="heading">Likelihood of further general offending</td>
       </tr>
-      <tr class="optional-section LIKELIHOOD_TOOL_1_PRESENT">
-        <td width="80%">LIKELIHOOD_TOOL_1</td>
-        <td width="20%">LIKELIHOOD_LEVEL_1</td>
+      <tr class="optional-section {{ data.assessmentTool1 | length > 0 }}">
+        <td width="80%">{{ data.assessmentTool1 }}</td>
+        <td width="20%">{{ data.assessmentLevel1 }}</td>
       </tr>
-      <tr class="optional-section LIKELIHOOD_TOOL_2_PRESENT">
-        <td>LIKELIHOOD_TOOL_2</td>
-        <td>LIKELIHOOD_LEVEL_2</td>
+      <tr class="optional-section {{ data.assessmentTool2 | length > 0 }}">
+        <td>{{ data.assessmentTool2 }}</td>
+        <td>{{ data.assessmentLevel2 }}</td>
       </tr>
-      <tr class="optional-section LIKELIHOOD_TOOL_3_PRESENT">
-        <td>LIKELIHOOD_TOOL_3</td>
-        <td>LIKELIHOOD_LEVEL_3</td>
+      <tr class="optional-section {{ data.assessmentTool3 | length > 0 }}">
+        <td>{{ data.assessmentTool3 }}</td>
+        <td>{{ data.assessmentLevel3 }}</td>
       </tr>
-      <tr class="optional-section LIKELIHOOD_TOOL_4_PRESENT">
-        <td>LIKELIHOOD_TOOL_4</td>
-        <td>LIKELIHOOD_LEVEL_4</td>
+      <tr class="optional-section {{ data.assessmentTool4 | length > 0 }}">
+        <td>{{ data.assessmentTool4 }}</td>
+        <td>{{ data.assessmentLevel4 }}</td>
       </tr>
     </table>
     <div class="details-section">
       <div class="sub-section">
         <h3>Assessment</h3>
-        <div class="formatted-text">LIKELIHOOD_ASSESSMENT</div>
+        <div class="formatted-text">{{ data.yourAssessment }}</div>
       </div>
     </div>
 
@@ -387,8 +382,8 @@
       <tr class="table-header">
         <td class="heading">Response to previous supervision</td>
       </tr>
-      <tr class="optional-section PREVIOUS_SUPERVISION_RESPONSE_PRESENT">
-        <td>PREVIOUS_SUPERVISION_RESPONSE</td>
+      <tr class="optional-section {{ data.responseToPreviousSupervision | length > 0 }}">
+        <td>{{ data.responseToPreviousSupervision }}</td>
       </tr>
     </table>
 
@@ -398,20 +393,20 @@
       </tr>
       <tr>
         <td width="80%">Assessment level</td>
-        <td width="20%">ROSH_LEVEL</td>
+        <td width="20%">{{ data.riskOfSeriousHarm }}</td>
       </tr>
     </table>
     <div class="details-section">
       <div class="sub-section">
         <h3>Evidence for Risk Assessment level</h3>
-        <div class="formatted-text">ROSH_EVIDENCE</div>
+        <div class="formatted-text">{{ data.evidenceForRiskLevel }}</div>
       </div>
     </div>
   </div>
 
   <div class="details-section">
     <h3>Offence analysis:</h3>
-    <div class="formatted-text">OFFENCE_ANALYSIS</div>
+    <div class="formatted-text">{{ data.offenceAnalysis }}</div>
   </div>
 
   <div class="keep-together-section">
@@ -421,17 +416,11 @@
       </tr>
       <tr>
         <td width="90%">Current offending is part of a pattern of offending behaviour</td>
-        <td width="10%">
-          <span class="optional-blank PATTERN_OF_OFFENDING">Yes</span>
-          <span class="alternative-blank PATTERN_OF_OFFENDING">No</span>
-        </td>
+        <td width="10%">{{ data.patternOfOffendingBehaviour | title }}</td>
       </tr>
       <tr>
         <td>Current offending represents an escalation in seriousness</td>
-        <td>
-          <span class="optional-blank ESCALATION_IN_SERIOUSNESS">Yes</span>
-          <span class="alternative-blank ESCALATION_IN_SERIOUSNESS">No</span>
-        </td>
+        <td>{{ data.escalationInSeriousness | title }}</td>
       </tr>
     </table>
   </div>
@@ -449,43 +438,43 @@
       </tr>
       <tr>
         <td width="40%">Accommodation</td>
-        <td width="10%" class="check-padding"><span class="check ISSUE_ACCOMMODATION"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueAccommodation" in data.assessmentFactors }}"></span></td>
         <td width="40%">Employment &amp; Training</td>
-        <td width="10%" class="check-padding"><span class="check ISSUE_EMPLOYMENT"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueEmployment" in data.assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Finances</td>
-        <td class="check-padding"><span class="check ISSUE_FINANCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueFinance" in data.assessmentFactors }}"></span></td>
         <td>Relationships</td>
-        <td class="check-padding"><span class="check ISSUE_RELATIONSHIPS"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueRelationships" in data.assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Substance misuse</td>
-        <td class="check-padding"><span class="check ISSUE_SUBSTANCE_MISUSE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueSubstanceMisuse" in data.assessmentFactors }}"></span></td>
         <td>Physical &amp; Mental Health</td>
-        <td class="check-padding"><span class="check ISSUE_HEALTH"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueHealth" in data.assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Experience of Trauma</td>
-        <td class="check-padding"><span class="check EXPERIENCE_TRAUMA"></span></td>
+        <td class="check-padding"><span class="check {{ data.experienceOfTrauma }}"></span></td>
         <td>Caring Responsibilities</td>
-        <td class="check-padding"><span class="check CARING_RESPONSIBILITIES"></span></td>
+        <td class="check-padding"><span class="check {{ data.caringResponsibilities }}"></span></td>
       </tr>
       <tr>
         <td>Thinking and Behaviour</td>
-        <td class="check-padding"><span class="check ISSUE_BEHAVIOUR"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueBehaviour" in data.assessmentFactors }}"></span></td>
         <td>Maturity</td>
-        <td class="check-padding"><span class="check ISSUE_MATURITY"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueMaturity" in data.assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Other</td>
-        <td class="check-padding"><span class="check ISSUE_OTHER"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueOther" in data.assessmentFactors }}"></span></td>
       </tr>
     </table>
 
     <div class="details-section">
       <h3>Evidence for assessment</h3>
-      <div class="formatted-text">OFFENDER_ASSESSMENT_EVIDENCE</div>
+      <div class="formatted-text">{{ data.evidenceForAssessment }}</div>
     </div>
 
   </div>
@@ -497,44 +486,44 @@
       </tr>
       <tr>
         <td width="40%">Interview</td>
-        <td width="10%" class="check-padding"><span class="check INTERVIEW_INFORMATION_SOURCE"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "interviewInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td width="40%">Service Records</td>
-        <td width="10%" class="check-padding"><span class="check SERVICE_RECORDS_INFORMATION_SOURCE"></span></td>
+        <td width="10%" class="check-padding"><span class="check {{ "yes" if "serviceRecordsInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>CPS Summary</td>
-        <td class="check-padding"><span class="check CPS_SUMMARY_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "cpsSummaryInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td>Previous OASys Assessments</td>
-        <td class="check-padding"><span class="check OASYS_ASSESSMENTS_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "oasysAssessmentsInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Previous Convictions</td>
-        <td class="check-padding"><span class="check PREVIOUS_CONVICTIONS_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "previousConvictionsInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td>Witness Statement</td>
-        <td class="check-padding"><span class="check WITNESS_STATEMENT_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "witnessStatementInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Safeguarding checks</td>
-        <td class="check-padding"><span class="check CHILDREN_SERVICES_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "childrenServicesInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td>Police Information</td>
-        <td class="check-padding"><span class="check POLICE_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "policeInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Sentencing guidelines</td>
-        <td class="check-padding"><span class="check SENTENCING_GUIDELINES_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "sentencingGuidelinesInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td>Domestic abuse call out information</td>
-        <td class="check-padding"><span class="check DOMESTIC_ABUSE_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "domesticAbuseInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Medical information</td>
-        <td class="check-padding"><span class="check MEDICAL_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "medicalInformationSource" in data.sourcesOfInformation }}"></span></td>
         <td>Equalities information</td>
-        <td class="check-padding"><span class="check EQUALITY_INFORMATION_FORM_INFORMATION_SOURCE"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "equalityInformationFormInformationSource" in data.sourcesOfInformation }}"></span></td>
       </tr>
     </table>
-    <div class="sub-section optional-section OTHER_INFORMATION_DETAILS_PRESENT-OTHER_INFORMATION_SOURCE">
+    <div class="sub-section optional-section {{ "yes" if "otherInformationSource" in data.sourcesOfInformation }}">
       <h3>Other sources of information:</h3>
-      <div class="formatted-text">OTHER_INFORMATION_DETAILS</div>
+      <div class="formatted-text">{{ data.otherSourceOfInformation }}</div>
     </div>
   </div>
 
@@ -544,27 +533,31 @@
     </tr>
     <tr>
       <td width="40%" class="heading">Report Author:</td>
-      <td width="60%">REPORT_AUTHOR</td>
+      <td width="60%">{{ data.reportAuthor }}</td>
     </tr>
     <tr>
       <td width="40%" class="heading">Office:</td>
-      <td width="60%">_OFFICE_</td>
+      <td width="60%">{{ data.office }}</td>
     </tr>
     <tr>
       <td width="40%" class="heading">Court office phone number:</td>
-      <td width="60%">COURT_OFFICE_PHONE_NUMBER</td>
+      <td width="60%">{{ data.officePhoneNumber }}</td>
     </tr>
     <tr>
       <td width="40%" class="heading">Signature:</td>
-      <td width="60%">REPORT_AUTHOR</td>
+      <td width="60%">{{ data.reportAuthor }}</td>
     </tr>
     <tr>
       <td width="40%" class="heading">Start date:</td>
-      <td width="60%">START_DATE</td>
+      <td width="60%">{{ data['startDate-day'] | zero }}/{{ data['startDate-month'] | zero }}/{{ data['startDate-year'] }}</td>
     </tr>
     <tr>
       <td width="40%" class="heading">Completion date:</td>
-      <td width="60%">REPORT_DATE</td>
+      <td width="60%">
+        {% if data['completionDate-day'] | length and data['completionDate-month'] | length and data['completionDate-year'] | length %}
+          {{ data['completionDate-day'] | zero }}/{{ data['completionDate-month'] | zero }}/{{ data['completionDate-year'] }}
+        {% endif %}
+      </td>
     </tr>
     <tr>
       <td class="no-border" colspan="2">* (if required)</td>

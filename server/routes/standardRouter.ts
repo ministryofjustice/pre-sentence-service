@@ -26,7 +26,7 @@ export default function standardRouter(userService: UserService): Router {
   router.use(populateCurrentUser(userService))
   router.use(shortFormatRoutes(reportService))
   router.use(recordOfOralRoutes(reportService))
-  router.use(pdfRoutes())
+  router.use(pdfRoutes(reportService))
 
   // @FIXME: Implemented to debug created reports. Remove this after completing data integration
   router.get('/reports/:reportType', async (req, res) => {
