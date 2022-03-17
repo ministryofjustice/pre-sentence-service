@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+const { Client } = require('pg')
+
+const client = new Client({
+  user: 'pre-sentence-service',
+  host: 'localhost',
+  database: 'pre-sentence-service',
+  password: 'pre-sentence-service',
+  port: 5432,
+})
+
+client.connect()
+
+client.query('DROP SCHEMA public CASCADE;CREATE SCHEMA public;', (err, res) => {
+  console.info(err || '\n\nDatabase reset successfully.\nPlease restart the service to run migrations.\n\n')
+  client.end()
+})
