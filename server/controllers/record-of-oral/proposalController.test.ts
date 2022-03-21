@@ -63,6 +63,7 @@ describe('Route Handlers - Proposal Controller', () => {
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
+          reportAuthor: '',
           ...handler.data,
         },
       })

@@ -63,6 +63,7 @@ describe('Route Handlers - Sign Report Controller', () => {
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
+          reportAuthor: '',
           ...handler.defaultTemplateData,
         },
       })

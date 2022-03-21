@@ -19,7 +19,9 @@ export default class SharedController {
 
   redirectPath = ''
 
-  data = {}
+  // @TODO: Create type definitions for each page and override
+  // eslint-disable-next-line no-use-before-define
+  data: any = {}
 
   defaultTemplateData = {}
 
@@ -85,6 +87,7 @@ export default class SharedController {
         ...this.templateValues,
         reportId: req.params.reportId,
         data: {
+          reportAuthor: res.locals && res.locals.user && res.locals.user.displayName ? res.locals.user.displayName : '',
           ...this.defaultTemplateData,
           ...this.data,
           ...this.report,

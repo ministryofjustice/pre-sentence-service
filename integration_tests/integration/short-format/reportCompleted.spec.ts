@@ -2,7 +2,7 @@ import BaseController from '../../../server/controllers/short-format/baseControl
 import Page from '../../pages/page'
 import ReportCompleted from '../../short-format/reportCompleted'
 
-context('Report completed page', () => {
+context('Short Format - Report completed page', () => {
   const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/report-completed`
   let currentPage: ReportCompleted
 

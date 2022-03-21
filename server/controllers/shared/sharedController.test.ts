@@ -78,6 +78,7 @@ describe('Route Handlers - Shared Controller', () => {
         ...handler.templateValues,
         reportId: '12345678',
         data: {
+          reportAuthor: '',
           ...handler.data,
         },
       })
