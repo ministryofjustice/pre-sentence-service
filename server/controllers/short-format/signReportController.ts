@@ -17,19 +17,19 @@ export default class SignReportController extends BaseController {
         errorMessage: 'Enter the office',
       },
       {
-        id: 'courtOfficePhoneNumber',
+        id: 'officePhoneNumber',
         errorMessage: 'Enter the court office phone number',
       },
       {
-        id: 'reportDate-day',
+        id: 'completionDate-day',
         errorMessage: 'Enter a valid day',
       },
       {
-        id: 'reportDate-month',
+        id: 'completionDate-month',
         errorMessage: 'Enter a valid month',
       },
       {
-        id: 'reportDate-year',
+        id: 'completionDate-year',
         errorMessage: 'Enter a valid year',
         minLength: 4,
       },
@@ -40,11 +40,11 @@ export default class SignReportController extends BaseController {
 
   override defaultTemplateData = {
     startDate: new Intl.DateTimeFormat('en-GB').format(new Date()),
-    reportAuthor: 'Arthur Author',
-    office: "Probation office, Sheffield Magistrate's Court",
-    courtOfficePhoneNumber: '0114 276 0760',
-    'reportDate-day': this.today.getDate(),
-    'reportDate-month': this.today.getMonth() + 1,
-    'reportDate-year': this.today.getFullYear(),
+    reportAuthor: '',
+    office: '',
+    officePhoneNumber: '',
+    'completionDate-day': this.today.getDate(),
+    'completionDate-month': this.today.getMonth() + 1,
+    'completionDate-year': this.today.getFullYear(),
   }
 }

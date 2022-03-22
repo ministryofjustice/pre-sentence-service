@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import SignReport from '../../record-of-oral/signReport'
 import ReportCompleted from '../../record-of-oral/reportCompleted'
 
-context('Check report page', () => {
+context('Oral - Sign report page', () => {
   const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/sign-report`
   let currentPage: SignReport
 
@@ -66,6 +66,10 @@ context('Check report page', () => {
         .within(() => {
           cy.get('label').contains('Year').should('exist')
         })
+    })
+
+    it('should pre-populate the current user name if not stored in database', () => {
+      cy.get('#reportAuthor').should('have.value', 'John Smith')
     })
 
     it('should include the primary call to action button', () => {

@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import CheckReport from '../../short-format/checkReport'
 import SignReport from '../../short-format/signReport'
 
-context('Check report page', () => {
+context('Short Format - Check report page', () => {
   const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/check-report`
   let currentPage: CheckReport
 

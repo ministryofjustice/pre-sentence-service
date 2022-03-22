@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import Proposal from '../../record-of-oral/proposal'
 import SourcesOfInformation from '../../record-of-oral/sourcesOfInformation'
 
-context('Proposal report page', () => {
+context('Oral - Proposal report page', () => {
   const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/proposal`
   let currentPage: Proposal
 
