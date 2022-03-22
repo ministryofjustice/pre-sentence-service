@@ -119,6 +119,7 @@ jobs:
   integration_test:
     executor: integration-tests
     steps:
+      - hmpps/install_aws_cli
       - checkout
       - attach_workspace:
           at: ~/app
