@@ -18,8 +18,9 @@ import ReportSavedController from '../../controllers/record-of-oral/reportSavedC
 import ReportCompletedController from '../../controllers/record-of-oral/reportCompletedController'
 
 import ReportService from '../../services/reportService'
+import EventService from '../../services/eventService'
 
-export default function Index(reportService: ReportService): Router {
+export default function Index(reportService: ReportService, eventService: EventService): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
 
@@ -43,8 +44,8 @@ export default function Index(reportService: ReportService): Router {
   getAndPost('/:reportId/sign-report', new SignReportController(reportService))
 
   get('/:reportId/check-report', new CheckReportController(reportService).get)
-  get('/:reportId/report-saved', new ReportSavedController(reportService).get)
-  get('/:reportId/report-completed', new ReportCompletedController(reportService).get)
+  get('/:reportId/report-saved', new ReportSavedController(reportService, eventService).get)
+  get('/:reportId/report-completed', new ReportCompletedController(reportService, eventService).get)
 
   return router
 }

@@ -9,12 +9,14 @@ import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
+import EventService from '../services/eventService'
 import ReportService from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
+  const eventService = new EventService()
   const reportService = new ReportService()
 
   router.use((req, res, next) => {
@@ -24,12 +26,11 @@ export default function standardRouter(userService: UserService): Router {
 
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService))
-  router.use(recordOfOralRoutes(reportService))
+  router.use(shortFormatRoutes(reportService, eventService))
+  router.use(recordOfOralRoutes(reportService, eventService))
   router.use(pdfRoutes(reportService))
 
-  // @FIXME: Implemented to debug created reports. Remove this after completing data integration
-  router.get('/reports/:reportType', async (req, res) => {
+  router.get('/api/v1/reports/:reportType', async (req, res) => {
     try {
       const results = await reportService.getAllReportsByType(req.params.reportType)
       res.json({
@@ -58,6 +59,14 @@ export default function standardRouter(userService: UserService): Router {
         ...req.body,
         reportDefinitionId: reportDefinition.id,
       })
+
+      await eventService.sendReportEvent({
+        reportId: report.id,
+        entityId: req.body.entityId,
+        crn: req.body.crn,
+        reportStatus: 'created',
+      })
+
       res.json(report)
     } catch (error) {
       res.status(error.status || 500).send(error.message)

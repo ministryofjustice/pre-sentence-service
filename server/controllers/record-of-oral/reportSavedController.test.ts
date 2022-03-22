@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import ReportSavedController from './reportSavedController'
 import ReportService from '../../services/reportService'
+import EventService from '../../services/eventService'
 
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
@@ -15,15 +16,29 @@ jest.mock('../../services/reportService', () => {
   })
 })
 
+jest.mock('../../services/eventService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      sendReportEvent: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
+    }
+  })
+})
+
 describe('Route Handlers - Report Saved Controller', () => {
   let mockedReportService: ReportService
+  let mockedEventService: EventService
   let handler: ReportSavedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new ReportSavedController(mockedReportService)
+    mockedEventService = new EventService()
+    handler = new ReportSavedController(mockedReportService, mockedEventService)
   })
 
   afterAll(() => {

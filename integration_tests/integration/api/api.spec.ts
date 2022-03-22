@@ -10,7 +10,7 @@ context('API v1', () => {
     let reportId
 
     it('creates a new report', () => {
-      cy.request('POST', '/api/v1/report/record-of-oral', { entityId: 10 }).as('request')
+      cy.request('POST', '/api/v1/report/record-of-oral', { entityId: 10, crn: 'DX12340A' }).as('request')
       cy.get('@request').then(response => {
         expect(response.status).to.eq(200)
         assert.isObject(response.body, 'Response is Object')
@@ -46,7 +46,7 @@ context('API v1', () => {
     let reportId
 
     it('creates a new report', () => {
-      cy.request('POST', '/api/v1/report/short-format', { entityId: 20 }).as('request')
+      cy.request('POST', '/api/v1/report/short-format', { entityId: 20, crn: 'DX12340A' }).as('request')
       cy.get('@request').then(response => {
         expect(response.status).to.eq(200)
         assert.isObject(response.body, 'Response is Object')

@@ -12,9 +12,9 @@ services:
       - '6379:6379'
 
   wiremock:
-    image: rodolpheche/wiremock
+    image: wiremock/wiremock
     networks:
-    - hmpps_int
+      - hmpps_int
     container_name: pre-sentence-service-wiremock_int
     restart: always
     ports:
@@ -38,11 +38,32 @@ services:
     container_name: pre-sentence-service-db
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=pre-sentence-service
       - POSTGRES_USER=pre-sentence-service
       - POSTGRES_DB=pre-sentence-service
+
+  localstack:
+    image: localstack/localstack:0.13.2
+    networks:
+      - hmpps_int
+    container_name: localstack
+    ports:
+      - "4566-4597:4566-4597"
+      - "8999:8080"
+    environment:
+      - SERVICES=${SERVICES-sqs}
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI-8088}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - AWS_EXECUTION_ENV=True
+      - DEFAULT_REGION=eu-west-2
+      - HOSTNAME_EXTERNAL=${HOSTNAME_EXTERNAL-localstack}
+    volumes:
+      - './.localstack:/tmp/localstack'
+      - $PWD/localstack:/docker-entrypoint-initaws.d
 
 networks:
   hmpps_int:

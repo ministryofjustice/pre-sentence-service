@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
-import ReportService, { IFieldValue } from '../../services/reportService'
 import Report from '../../repositories/entities/report'
+import EventService from '../../services/eventService'
+import ReportService, { IFieldValue } from '../../services/reportService'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -13,6 +14,8 @@ export interface TemplateValues {
 }
 
 export default class SharedController {
+  private persistentData: Array<string> = ['crn']
+
   path = ''
 
   templatePath = ''
@@ -37,7 +40,11 @@ export default class SharedController {
 
   updateReport: () => void
 
-  constructor(protected readonly reportService: ReportService = null, protected report: Report = null) {}
+  constructor(
+    protected readonly reportService: ReportService = null,
+    protected readonly eventService: EventService = null,
+    protected report: Report = null
+  ) {}
 
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
@@ -46,6 +53,7 @@ export default class SharedController {
   private getStoredData = () => {
     this.data = {}
     if (this.report && this.report.fieldValues) {
+      this.pageFields = this.pageFields.concat(this.persistentData)
       this.report.fieldValues.forEach(item => {
         if (this.pageFields.includes(item.field.name)) {
           this.data[item.field.name] = item.value
