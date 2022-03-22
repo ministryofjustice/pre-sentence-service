@@ -9,8 +9,8 @@ import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
+import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
-import ReportService, { IFieldValue } from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
