@@ -19,9 +19,7 @@ export default class SharedController {
 
   redirectPath = ''
 
-  // @TODO: Create type definitions for each page and override
-  // eslint-disable-next-line no-use-before-define
-  data: any = {}
+  data = {}
 
   defaultTemplateData = {}
 
