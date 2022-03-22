@@ -10,7 +10,7 @@ import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
 import EventService from '../services/eventService'
-import ReportService from '../services/reportService'
+import ReportService, { IFieldValue } from '../services/reportService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
@@ -59,14 +59,20 @@ export default function standardRouter(userService: UserService): Router {
         ...req.body,
         reportDefinitionId: reportDefinition.id,
       })
-
+      await reportService.updateFieldValues([
+        {
+          reportId: report.id,
+          fieldId: reportDefinition.fields.filter(field => field.name === 'crn')[0].id,
+          value: req.body.crn,
+          version: 1,
+        },
+      ])
       await eventService.sendReportEvent({
         reportId: report.id,
         entityId: req.body.entityId,
         crn: req.body.crn,
         reportStatus: 'created',
       })
-
       res.json(report)
     } catch (error) {
       res.status(error.status || 500).send(error.message)

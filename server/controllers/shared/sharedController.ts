@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
-import EventService from '../../services/eventService'
 import ReportService, { IFieldValue } from '../../services/reportService'
+import EventService from '../../services/eventService'
 
 export interface TemplateValues {
   preSentenceType: string
