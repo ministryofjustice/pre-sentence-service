@@ -45,7 +45,6 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
-          reportAuthor: '',
           ...handler.data,
         },
       })

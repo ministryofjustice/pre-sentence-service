@@ -87,7 +87,6 @@ export default class SharedController {
         ...this.templateValues,
         reportId: req.params.reportId,
         data: {
-          reportAuthor: res.locals && res.locals.user && res.locals.user.displayName ? res.locals.user.displayName : '',
           ...this.defaultTemplateData,
           ...this.data,
           ...this.report,

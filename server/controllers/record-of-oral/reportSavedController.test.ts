@@ -45,7 +45,6 @@ describe('Route Handlers - Report Saved Controller', () => {
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {
-          reportAuthor: '',
           ...handler.data,
         },
       })
