@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import SignReport from '../../short-format/signReport'
 import ReportCompleted from '../../short-format/reportCompleted'
 
-context('Check report page', () => {
+context('Short Format - Sign report page', () => {
   const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/sign-report`
   let currentPage: SignReport
 
@@ -76,6 +76,7 @@ context('Check report page', () => {
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.completeForm()
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
     })

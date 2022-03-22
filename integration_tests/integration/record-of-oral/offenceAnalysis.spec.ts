@@ -3,7 +3,7 @@ import Page from '../../pages/page'
 import OffenceAnalysis from '../../record-of-oral/offenceAnalysis'
 import OffenderAssessment from '../../record-of-oral/offenderAssessment'
 
-context('Offence analysis report page', () => {
+context('Oral - Offence analysis report page', () => {
   const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/offence-analysis`
   let currentPage: OffenceAnalysis
 

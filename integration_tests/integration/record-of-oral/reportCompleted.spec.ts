@@ -2,7 +2,7 @@ import BaseController from '../../../server/controllers/record-of-oral/baseContr
 import Page from '../../pages/page'
 import ReportCompleted from '../../record-of-oral/reportCompleted'
 
-context('Report completed page', () => {
+context('Oral - Report completed page', () => {
   const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/report-completed`
   let currentPage: ReportCompleted
 
