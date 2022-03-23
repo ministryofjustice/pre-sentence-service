@@ -95,6 +95,7 @@ export default {
   },
   sqs: {
     domainEvents: {
+      region: get('SQS_DOMAIN_EVENTS_AWS_REGION', 'eu-west-2'),
       queueUrl: get(
         'SQS_DOMAIN_EVENTS_QUEUE_URL',
         'http://localhost:4566/queue/pre_sentence_service_domain_events_queue',

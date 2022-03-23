@@ -33,7 +33,7 @@ export interface DomainEvent {
 
 export default class EventService {
   private sqs = new SQS({
-    region: 'eu-west-2',
+    region: config.sqs.domainEvents.region,
     accessKeyId: config.sqs.domainEvents.accessKeyId,
     secretAccessKey: config.sqs.domainEvents.secretAccessKey,
   })
