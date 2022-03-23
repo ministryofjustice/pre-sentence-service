@@ -13,14 +13,18 @@ export default class ApiController {
         ...req.body,
         reportDefinitionId: reportDefinition.id,
       })
-      await this.reportService.updateFieldValues([
-        {
-          reportId: report.id,
-          fieldId: reportDefinition.fields.filter(field => field.name === 'crn')[0].id,
-          value: req.body.crn,
-          version: 1,
-        },
-      ])
+      // @TODO: Refactor this when we integrate the community API to retrieve defendant data
+      const fields = reportDefinition.fields.filter(field => field.name === 'crn')
+      if (fields && fields.length) {
+        await this.reportService.updateFieldValues([
+          {
+            reportId: report.id,
+            fieldId: fields[0].id,
+            value: req.body.crn,
+            version: 1,
+          },
+        ])
+      }
       await this.eventService.sendReportEvent({
         reportId: report.id,
         entityId: req.body.entityId,
