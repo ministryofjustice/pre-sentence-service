@@ -4,14 +4,14 @@ import { SendMessageRequest, SendMessageResult } from 'aws-sdk/clients/sqs'
 import logger from '../../logger'
 import config from '../config'
 
-export interface ReportEventData {
+export interface IReportEventData {
   reportId: string
   entityId: string
   crn: string
   reportStatus: string
 }
 
-export interface DomainEvent {
+export interface IDomainEvent {
   eventType: string
   version: number
   description: string
@@ -43,8 +43,8 @@ export default class EventService {
     MessageBody: '',
   }
 
-  public sendReportEvent = async (reportEventData: ReportEventData): Promise<SendMessageResult> => {
-    const domainEvent: DomainEvent = {
+  public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
+    const domainEvent: IDomainEvent = {
       eventType: `pre-sentence-service.report.${reportEventData.reportStatus}`,
       version: config.sqs.domainEvents.eventVersion,
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
