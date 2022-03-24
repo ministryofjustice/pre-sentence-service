@@ -45,10 +45,10 @@ export default class EventService {
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
     const domainEvent: IDomainEvent = {
-      eventType: `pre-sentence-service.report.${reportEventData.reportStatus}`,
+      eventType: `pre-sentence.report.${reportEventData.reportStatus}`,
       version: config.sqs.domainEvents.eventVersion,
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
-      detailUrl: `${config.domain}/${reportEventData.reportId}/pdf`,
+      detailUrl: `${config.domain}/api/v1/report/${reportEventData.reportId}`,
       occurredAt: new Date().toISOString(),
       additionalInformation: { entityId: reportEventData.entityId, reportId: reportEventData.reportId },
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },

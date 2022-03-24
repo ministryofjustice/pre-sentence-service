@@ -14,12 +14,12 @@ export default class ApiController {
         reportDefinitionId: reportDefinition.id,
       })
       // @TODO: Refactor this when we integrate the community API to retrieve defendant data
-      const fields = reportDefinition.fields.filter(field => field.name === 'crn')
-      if (fields && fields.length) {
+      const crnField = reportDefinition.fields.filter(field => field.name === 'crn')
+      if (crnField && crnField.length) {
         await this.reportService.updateFieldValues([
           {
             reportId: report.id,
-            fieldId: fields[0].id,
+            fieldId: crnField[0].id,
             value: req.body.crn,
             version: 1,
           },
@@ -29,7 +29,7 @@ export default class ApiController {
         reportId: report.id,
         entityId: req.body.entityId,
         crn: req.body.crn,
-        reportStatus: 'created',
+        reportStatus: 'started',
       })
       res.json(report)
     } catch (error) {

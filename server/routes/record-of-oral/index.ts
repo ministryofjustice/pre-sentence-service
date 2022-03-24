@@ -44,7 +44,7 @@ export default function Index(reportService: ReportService, eventService: EventS
   getAndPost('/:reportId/sign-report', new SignReportController(reportService))
 
   get('/:reportId/check-report', new CheckReportController(reportService).get)
-  get('/:reportId/report-saved', new ReportSavedController(reportService, eventService).get)
+  get('/:reportId/report-saved', new ReportSavedController(reportService).get)
   get('/:reportId/report-completed', new ReportCompletedController(reportService, eventService).get)
 
   return router

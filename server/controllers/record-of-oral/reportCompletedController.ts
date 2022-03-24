@@ -22,7 +22,7 @@ export default class ReportCompletedController extends BaseController {
           reportId: this.report.id,
           entityId: this.report.entityId,
           crn: this.data.crn,
-          reportStatus: 'saved',
+          reportStatus: 'completed',
         })
       } catch (e: unknown) {
         logger.error('Update report failed:', e)
