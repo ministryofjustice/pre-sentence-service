@@ -50,6 +50,10 @@ generic-service:
       DB_USER: "database_username"
       DB_PASS: "database_password"
       DB_SERVER: "rds_instance_address"
+    hmpps-domain-events-topic:
+      SQS_DOMAIN_EVENTS_ACCESS_KEY_ID: "access_key_id"
+      SQS_DOMAIN_EVENTS_SECRET_ACCESS_KEY: "secret_access_key"
+      SQS_DOMAIN_EVENTS_QUEUE_URL: "sqs_id"
 
   allowlist:
     office: "217.33.148.210/32"
