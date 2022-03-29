@@ -18,6 +18,16 @@ context('Oral - Risk assessment report page', () => {
   })
 
   describe('Authenticated user accesses risk assessment', () => {
+    it('should display as NOT STARTED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Risk assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Not started').should('exist')
+        })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
@@ -149,6 +159,16 @@ context('Oral - Risk assessment report page', () => {
             .should('be.checked')
         })
       cy.get('#responseToPreviousSupervision').click()
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Risk assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

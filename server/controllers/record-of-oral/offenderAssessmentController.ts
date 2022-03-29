@@ -1,6 +1,13 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
+export const pageFields: Array<string> = [
+  'assessmentFactors',
+  'experienceOfTrauma',
+  'caringResponsibilities',
+  'evidenceForAssessment',
+]
+
 export default class OffenderAssessmentController extends BaseController {
   override templatePath = 'offender-assessment'
 
@@ -24,5 +31,5 @@ export default class OffenderAssessmentController extends BaseController {
     ],
   }
 
-  override pageFields = ['assessmentFactors', 'experienceOfTrauma', 'caringResponsibilities', 'evidenceForAssessment']
+  override pageFields = pageFields
 }
