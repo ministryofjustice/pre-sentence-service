@@ -18,6 +18,16 @@ context('Oral - Sources of information report page', () => {
   })
 
   describe('Authenticated user accesses sources of information', () => {
+    it('should display as NOT STARTED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Not started')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Not started').should('exist')
+        })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
@@ -53,6 +63,16 @@ context('Oral - Sources of information report page', () => {
         cy.wrap($el).should('be.checked')
       })
       cy.get('#otherSourceOfInformation').should('have.value', 'Some other information source')
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Sources of information')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

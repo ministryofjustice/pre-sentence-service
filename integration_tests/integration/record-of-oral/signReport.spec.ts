@@ -18,15 +18,13 @@ context('Oral - Sign report page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
-    it('should include side navigation and current page should appear as active', () => {
-      currentPage.mojSideNavigation().should('exist')
-
-      currentPage.mojSideNavigation().within(() => {
-        cy.get('.moj-side-navigation__item')
-          .contains(currentPage.title)
-          .parent()
-          .should('have.class', 'moj-side-navigation__item--active')
-      })
+    it('should display as CANNOT START YET on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Sign your report')
+        .within(() => {
+          cy.get('.govuk-tag').contains('Cannot start yet').should('exist')
+        })
     })
 
     it('should include the required form elements', () => {
@@ -96,6 +94,16 @@ context('Oral - Sign report page', () => {
       cy.get('#completionDate-day').should('have.value', '27')
       cy.get('#completionDate-month').should('have.value', '10')
       cy.get('#completionDate-year').should('have.value', '2021')
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Sign your report')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

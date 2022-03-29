@@ -46,6 +46,7 @@ describe('Route Handlers - Check Report Controller', () => {
         ...handler.templateValues,
         data: {
           ...handler.data,
+          ...handler.defaultTemplateData,
         },
       })
     })

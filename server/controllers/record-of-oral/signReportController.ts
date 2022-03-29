@@ -4,6 +4,18 @@ import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 import { TemplateValues } from '../shared/sharedController'
 
+export const pageFields: Array<string> = [
+  'reportAuthor',
+  'office',
+  'officePhoneNumber',
+  'startDate-day',
+  'startDate-month',
+  'startDate-year',
+  'completionDate-day',
+  'completionDate-month',
+  'completionDate-year',
+]
+
 export default class SignReportController extends BaseController {
   override templatePath = 'sign-report'
 
@@ -39,17 +51,7 @@ export default class SignReportController extends BaseController {
     ],
   }
 
-  override pageFields = [
-    'reportAuthor',
-    'office',
-    'officePhoneNumber',
-    'startDate-day',
-    'startDate-month',
-    'startDate-year',
-    'completionDate-day',
-    'completionDate-month',
-    'completionDate-year',
-  ]
+  override pageFields = pageFields
 
   private today = new Date()
 
