@@ -5,7 +5,7 @@ import config from '../../config'
 import ReportService from '../../services/reportService'
 import Report from '../../repositories/entities/report'
 
-export default class PdfRoutes {
+export default class PdfController {
   constructor(protected readonly reportService: ReportService = null) {}
 
   private configureReportData(report: Report) {

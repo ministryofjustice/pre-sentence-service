@@ -18,17 +18,6 @@ context('Short Format - Sign report page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
-    it('should include side navigation and current page should appear as active', () => {
-      currentPage.mojSideNavigation().should('exist')
-
-      currentPage.mojSideNavigation().within(() => {
-        cy.get('.moj-side-navigation__item')
-          .contains(currentPage.title)
-          .parent()
-          .should('have.class', 'moj-side-navigation__item--active')
-      })
-    })
-
     it('should include the required form elements', () => {
       currentPage
         .inputText()

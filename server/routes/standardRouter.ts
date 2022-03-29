@@ -8,13 +8,16 @@ import config from '../config'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
+import apiRoutes from './api'
 
 import ReportService from '../services/reportService'
+import EventService from '../services/eventService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
+  const eventService = new EventService()
   const reportService = new ReportService()
 
   router.use((req, res, next) => {
@@ -24,45 +27,10 @@ export default function standardRouter(userService: UserService): Router {
 
   router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService))
-  router.use(recordOfOralRoutes(reportService))
+  router.use(shortFormatRoutes(reportService, eventService))
+  router.use(recordOfOralRoutes(reportService, eventService))
   router.use(pdfRoutes(reportService))
-
-  // @FIXME: Implemented to debug created reports. Remove this after completing data integration
-  router.get('/reports/:reportType', async (req, res) => {
-    try {
-      const results = await reportService.getAllReportsByType(req.params.reportType)
-      res.json({
-        request: req.params.reportType,
-        found: results && results.length,
-        results,
-      })
-    } catch (error) {
-      res.status(error.status || 500).send(error.message)
-    }
-  })
-
-  router.get('/api/v1/report/:id', async (req, res) => {
-    try {
-      const report = await reportService.getReportById(req.params.id)
-      res.json(report)
-    } catch (error) {
-      res.status(error.status || 500).send(error.message)
-    }
-  })
-
-  router.post('/api/v1/report/:reportType', async (req, res) => {
-    try {
-      const reportDefinition = await reportService.getDefinitionByType(req.params.reportType)
-      const report = await reportService.createReport({
-        ...req.body,
-        reportDefinitionId: reportDefinition.id,
-      })
-      res.json(report)
-    } catch (error) {
-      res.status(error.status || 500).send(error.message)
-    }
-  })
+  router.use(apiRoutes(reportService, eventService))
 
   // CSRF protection
   if (!testMode) {

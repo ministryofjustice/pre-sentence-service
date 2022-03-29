@@ -13,6 +13,9 @@ export default class Report {
   @Column()
   reportDefinitionId: number
 
+  @Column()
+  entityId: string
+
   @ManyToOne(() => ReportDefinition, entity => entity.id, { eager: true })
   reportDefinition: ReportDefinition
 

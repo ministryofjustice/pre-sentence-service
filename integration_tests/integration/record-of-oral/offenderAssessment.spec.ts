@@ -18,6 +18,16 @@ context('Oral - Offender assessment report page', () => {
   })
 
   describe('Authenticated user accesses offender assessment', () => {
+    it('should display as NOT STARTED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offender assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Not started').should('exist')
+        })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
@@ -114,6 +124,16 @@ context('Oral - Offender assessment report page', () => {
         })
 
       cy.get('#evidenceForAssessment').should('have.value', 'Some evidence')
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offender assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

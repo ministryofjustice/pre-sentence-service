@@ -1,12 +1,20 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
+export const pageFields: Array<string> = [
+  'court',
+  'localJusticeArea',
+  'dateOfHearing-day',
+  'dateOfHearing-month',
+  'dateOfHearing-year',
+]
+
 export default class CourtDetailsController extends BaseController {
   override templatePath = 'court-details'
 
   override redirectPath = 'offence-details'
 
-  override pageFields = ['court', 'localJusticeArea', 'dateOfHearing-day', 'dateOfHearing-month', 'dateOfHearing-year']
+  override pageFields = pageFields
 
   override formValidation: FormValidation = {
     required: [

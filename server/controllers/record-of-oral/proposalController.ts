@@ -1,6 +1,8 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
+export const pageFields: Array<string> = ['equalityAndDiversity', 'proposal']
+
 export default class ProposalController extends BaseController {
   override templatePath = 'proposal'
 
@@ -20,5 +22,5 @@ export default class ProposalController extends BaseController {
     ],
   }
 
-  override pageFields = ['equalityAndDiversity', 'proposal']
+  override pageFields = pageFields
 }

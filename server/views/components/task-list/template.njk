@@ -14,13 +14,21 @@
   <ul class="moj-task-list__items">
     {%- for item in section.items %}
       <li class="moj-task-list__item" {% for attribute, value in item.attributes %} {{ attribute }}="{{ value }}"{% endfor %}>
-      <a class="moj-task-list__task-name govuk-link--no-visited-state" href="{{ item.href }}">
+      {% if item.href %}<a class="moj-task-list__task-name govuk-link--no-visited-state" href="{{ item.href }}">{% endif %}
         {{- item.html | safe if item.html else item.text -}}
-      </a>
+      {% if item.href %}</a>{% endif %}
+      {% set class = "" %}
       {%- if item.state %}
+        {% if item.state === "Cannot start yet" %}
+          {% set class = "govuk-tag--grey " %}
+        {% elseif item.state === "Not started" %}
+          {% set class = "govuk-tag--grey " %}
+        {% elseif item.state === "In progress" %}
+          {% set class = "govuk-tag--blue " %}
+        {% endif %}
         {{ govukTag({
           text: item.state,
-          classes: "moj-task-list__task-completed"
+          classes: class + "moj-task-list__task-completed"
         }) }}
       {% endif -%}
       </li>

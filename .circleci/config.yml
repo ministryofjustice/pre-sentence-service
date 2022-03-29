@@ -8,6 +8,12 @@ executors:
   integration-tests:
     docker:
       - image: cimg/node:16.14.0-browsers
+      - image: 'localstack/localstack:0.13.2'
+        environment:
+          SERVICES: sqs
+          DATA_DIR: /tmp/localstack/data
+          TMP_DIR: /private
+          DEFAULT_REGION: eu-west-2
       - image: cimg/postgres:13.3
         environment:
           POSTGRES_PASSWORD: pre-sentence-service
@@ -113,12 +119,25 @@ jobs:
   integration_test:
     executor: integration-tests
     steps:
+      - hmpps/install_aws_cli
       - checkout
       - attach_workspace:
           at: ~/app
       - run:
           name: Install missing OS dependency
           command: sudo apt-get install libxss1
+      - run:
+          name: Wait for localstack to start before creating resources
+          command: sleep 10
+      - run:
+          name: Create localstack queues
+          command: |
+            export AWS_DEFAULT_REGION=eu-west-2
+            export AWS_ACCESS_KEY_ID=pre-sentence-service
+            export AWS_SECRET_ACCESS_KEY=pre-sentence-service
+            aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name pre_sentence_service_domain_events_queue
+            aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name pre_sentence_service_domain_events_queue_dl
+            aws --endpoint-url=http://localhost:4566 sqs set-queue-attributes --queue-url "http://localhost:4566/queue/pre_sentence_service_domain_events_queue" --attributes '{"RedrivePolicy":"{\"maxReceiveCount\":\"3\", \"deadLetterTargetArn\":\"arn:aws:sqs:eu-west-2:000000000000:pre_sentence_service_domain_events_queue_dl\"}"}'
       - run:
           name: Get wiremock
           command: curl -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.27.1/wiremock-standalone-2.27.1.jar

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import PdfRoutes from '../../controllers/pdf/pdf'
+import PdfController from '../../controllers/pdf/pdfController'
 import ReportService from '../../services/reportService'
 
 const mockReportData = {
@@ -32,13 +32,13 @@ jest.mock('../../services/reportService', () => {
 })
 
 describe('Route Handlers - View Report - PDF', () => {
-  let handler: PdfRoutes
+  let handler: PdfController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     const mockedReportService = new ReportService()
-    handler = new PdfRoutes(mockedReportService)
+    handler = new PdfController(mockedReportService)
   })
 
   beforeEach(() => {

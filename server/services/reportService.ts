@@ -6,6 +6,7 @@ import FieldValue from '../repositories/entities/fieldValue'
 
 export interface IReport {
   id?: string
+  entityId?: string
   reportDefinitionId: number
 }
 

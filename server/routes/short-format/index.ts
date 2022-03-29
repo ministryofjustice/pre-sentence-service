@@ -17,8 +17,9 @@ import ReportSavedController from '../../controllers/short-format/reportSavedCon
 import ReportCompletedController from '../../controllers/short-format/reportCompletedController'
 
 import ReportService from '../../services/reportService'
+import EventService from '../../services/eventService'
 
-export default function Index(reportService: ReportService): Router {
+export default function Index(reportService: ReportService, eventService: EventService): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
@@ -28,7 +29,7 @@ export default function Index(reportService: ReportService): Router {
     post(path, handler.post)
   }
 
-  get('/:reportId', new LandingPageController(reportService).get)
+  get('/:reportId', new LandingPageController(reportService, eventService).get)
 
   getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService))
   getAndPost('/:reportId/court-details', new CourtDetailsController(reportService))
@@ -41,8 +42,8 @@ export default function Index(reportService: ReportService): Router {
   getAndPost('/:reportId/sign-report', new SignReportController(reportService))
 
   get('/:reportId/check-report', new CheckReportController(reportService).get)
-  get('/:reportId/report-saved', new ReportSavedController(reportService).get)
-  get('/:reportId/report-completed', new ReportCompletedController(reportService).get)
+  get('/:reportId/report-saved', new ReportSavedController(reportService, eventService).get)
+  get('/:reportId/report-completed', new ReportCompletedController(reportService, eventService).get)
 
   return router
 }
