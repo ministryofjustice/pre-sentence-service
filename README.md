@@ -15,18 +15,23 @@ The app requires:
 * redis - session store and token caching
 * postgres - database
 * gotenberg - PDF generator
+* localstack - Cloud service emulator
 
 ### Runing the app for development
 
 To start the main services excluding the typescript app: 
 
-`docker-compose up --remove-orphans hmpps-auth redis postgres gotenberg`
+`docker-compose up --remove-orphans`
+
+Now in a separate terminal window or tab, at the project root.
 
 Install dependencies using `npm install`, ensuring you are using >= `Node v16.14.0` (Gallium) LTS
 
 And then, to build the assets and start the app with nodemon:
 
 `npm run start:dev`
+
+You can now access the service at `http://localhost:3000`
 
 ### Run linter
 
@@ -40,9 +45,9 @@ And then, to build the assets and start the app with nodemon:
 
 For local running, start a test db, redis, and wiremock instance by:
 
-`docker-compose -f docker-compose-test.yml up`
+`docker-compose -f docker-compose-test.yml up --remove-orphans`
 
-Then run the server in test mode by:
+Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
 `npm run start-feature` (or `npm run start-feature:dev` to run with nodemon)
 
