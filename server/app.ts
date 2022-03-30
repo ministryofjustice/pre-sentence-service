@@ -40,7 +40,7 @@ export default function createApplication(userService: UserService): Application
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(authorisationMiddleware())
   app.use(
-    '/swagger',
+    '/api-docs',
     serve,
     setup(swaggerDocument, {
       swaggerOptions: {
