@@ -18,8 +18,9 @@
             "in": "path",
             "required": true,
             "type": "string",
+            "format": "uuid",
             "name": "reportId",
-            "description": "Report ID as uuid"
+            "description": "Report ID"
           }
         ],
         "responses": {
@@ -112,6 +113,7 @@
           },
           "id": {
             "type": "string",
+            "format": "uuid",
             "example": "babb539f-33c3-4948-9b87-946ad9c06a42"
           },
           "status": {
@@ -125,7 +127,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Report ID as uuid",
+            "format": "uuid",
+            "description": "Report ID",
             "example": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e"
           },
           "status": {
