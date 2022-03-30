@@ -9,6 +9,10 @@ export default class ApiController {
   createReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const reportDefinition = await this.reportService.getDefinitionByType(req.params.reportType)
+      if (!reportDefinition) {
+        res.status(400).end()
+        return
+      }
       const report = await this.reportService.createReport({
         ...req.body,
         reportDefinitionId: reportDefinition.id,
@@ -31,7 +35,7 @@ export default class ApiController {
         crn: req.body.crn,
         reportStatus: 'started',
       })
-      res.json(report)
+      res.status(201).json(report)
     } catch (error) {
       res.status(error.status || 500).send(error.message)
     }

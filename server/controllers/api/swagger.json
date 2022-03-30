@@ -1,0 +1,310 @@
+{
+  "swagger": "2.0",
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "info": {
+    "version": "1.0",
+    "title": "Pre-Sentence Service",
+    "description": "Pre-Sentence Service API"
+  },
+  "paths": {
+    "/api/v1/report/{reportId}": {
+      "get": {
+        "tags": ["report"],
+        "summary": "Get report",
+        "description": "Returns a report based on report ID",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "name": "reportId",
+            "description": "Report ID as uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A report object",
+            "schema": {
+              "$ref": "#/components/schemas/report"
+            }
+          },
+          "404": {
+            "description": "Report not found"
+          },
+          "401": {
+            "description": "Authorization error.  See response body for more details."
+          }
+        }
+      }
+    },
+    "/api/v1/report/{reportType}": {
+      "post": {
+        "tags": ["report"],
+        "summary": "Create report",
+        "description": "Creates a new report based on report type",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "name": "reportType",
+            "description": "Supported types: \"record-of-oral\", \"short-format\""
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Relevant data to be stored with the report",
+            "schema": {
+              "$ref": "#/components/schemas/createReport"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A report object",
+            "schema": {
+              "$ref": "#/components/schemas/newReport"
+            }
+          },
+          "400": {
+            "description": "Bad request.  Unsupported or malformed report type."
+          },
+          "401": {
+            "description": "Authorization error.  See response body for more details."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "createReport": {
+        "type": "object",
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "example": "300"
+          },
+          "crn": {
+            "type": "string",
+            "example": "DX12340A"
+          }
+        },
+        "example": {
+          "entityId": "300",
+          "crn": "DX12340A"
+        }
+      },
+      "newReport": {
+        "type": "object",
+        "properties": {
+          "reportDefinitionId": {
+            "type": "integer",
+            "example": 1
+          },
+          "entityId": {
+            "type": "string",
+            "example": "300"
+          },
+          "id": {
+            "type": "string",
+            "example": "babb539f-33c3-4948-9b87-946ad9c06a42"
+          },
+          "status": {
+            "type": "string",
+            "example": "NOT_STARTED"
+          }
+        }
+      },
+      "report": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Report ID as uuid",
+            "example": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e"
+          },
+          "status": {
+            "type": "string",
+            "example": "STARTED"
+          },
+          "reportDefinitionId": {
+            "type": "integer",
+            "example": 1
+          },
+          "entityId": {
+            "type": "string",
+            "example": "42"
+          },
+          "reportDefinition": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "type": {
+                "type": "string",
+                "example": "record-of-oral"
+              },
+              "version": {
+                "type": "integer",
+                "example": 1
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "text"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "name"
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "validation": {
+                      "type": "string",
+                      "example": null
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "type": "text",
+                    "name": "name",
+                    "required": true,
+                    "validation": null
+                  },
+                  {
+                    "id": 2,
+                    "type": "text",
+                    "name": "dateOfBirth",
+                    "required": true,
+                    "validation": null
+                  },
+                  {
+                    "id": 3,
+                    "type": "text",
+                    "name": "crn",
+                    "required": true,
+                    "validation": null
+                  }
+                ]
+              }
+            }
+          },
+          "fieldValues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "fieldId": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "value": {
+                  "type": "string",
+                  "example": "Lenore Marquez"
+                },
+                "version": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "reportId": {
+                  "type": "string",
+                  "description": "Report ID as uuid",
+                  "example": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e"
+                },
+                "field": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "text"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "name"
+                    },
+                    "required": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "validation": {
+                      "type": "string",
+                      "example": null
+                    }
+                  }
+                }
+              }
+            },
+            "example": [
+              {
+                "id": 1,
+                "fieldId": 1,
+                "value": "Lenore Marquez",
+                "version": 1,
+                "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
+                "field": {
+                  "id": 1,
+                  "type": "text",
+                  "name": "name",
+                  "required": true,
+                  "validation": null
+                }
+              },
+              {
+                "id": 2,
+                "fieldId": 2,
+                "value": "18/08/1979",
+                "version": 1,
+                "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
+                "field": {
+                  "id": 2,
+                  "type": "text",
+                  "name": "dateOfBirth",
+                  "required": true,
+                  "validation": null
+                }
+              },
+              {
+                "id": 3,
+                "fieldId": 3,
+                "value": "DX12340A",
+                "version": 1,
+                "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
+                "field": {
+                  "id": 3,
+                  "type": "text",
+                  "name": "crn",
+                  "required": true,
+                  "validation": null
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
