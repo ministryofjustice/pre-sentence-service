@@ -84,11 +84,13 @@
         "properties": {
           "entityId": {
             "type": "string",
-            "example": "300"
+            "example": "300",
+            "description": "External unique identifier reference"
           },
           "crn": {
             "type": "string",
-            "example": "DX12340A"
+            "example": "DX12340A",
+            "description": "Defendant CRN"
           }
         },
         "example": {
