@@ -24,7 +24,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A report object",
+            "description": "Returns a report object",
             "schema": {
               "$ref": "#/components/schemas/report"
             }
@@ -49,12 +49,13 @@
             "required": true,
             "type": "string",
             "name": "reportType",
-            "description": "Supported types: \"record-of-oral\", \"short-format\""
+            "enum": ["record-of-oral", "short-format"],
+            "description": "Type of report to be created"
           },
           {
             "in": "body",
             "name": "body",
-            "description": "Relevant data to be stored with the report",
+            "description": "External identifiers to be stored with the report",
             "schema": {
               "$ref": "#/components/schemas/createReport"
             }
@@ -62,7 +63,7 @@
         ],
         "responses": {
           "201": {
-            "description": "A report object",
+            "description": "Returns a report object",
             "schema": {
               "$ref": "#/components/schemas/newReport"
             }
