@@ -71,3 +71,11 @@ This will remove all database tables, you must then restart the service in order
 
 The template project has implemented some scheduled checks to ensure that key dependencies are kept up to date.
 If these are not desired in the cloned project, remove references to `check_outdated` job from `.circleci/config.yml`
+
+## API Documentation
+
+API documentation is provided via Swagger.
+
+Once the applicaiton is running you can access the Swagger UI at:
+
+`http://localhost:3000/api/docs`

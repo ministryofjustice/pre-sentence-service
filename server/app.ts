@@ -1,7 +1,9 @@
 import express, { Application } from 'express'
+import { serve, setup } from 'swagger-ui-express'
 
 import path from 'path'
 import createError from 'http-errors'
+import swaggerDocument from './controllers/api/swagger.json'
 import 'reflect-metadata'
 
 import indexRoutes from './routes'
@@ -37,6 +39,17 @@ export default function createApplication(userService: UserService): Application
   app.use(setUpAuthentication())
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(authorisationMiddleware())
+  app.use(
+    '/api/docs',
+    serve,
+    setup(swaggerDocument, {
+      swaggerOptions: {
+        validatorUrl: null,
+      },
+      explorer: false,
+      customCss: 'svg { position: absolute; width: 0; height: 0; }',
+    })
+  )
 
   app.use('/', indexRoutes(standardRouter(userService)))
 
