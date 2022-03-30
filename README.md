@@ -78,4 +78,4 @@ API documentation is provided via Swagger.
 
 Once the applicaiton is running you can access the Swagger UI at:
 
-`http://localhost:3000/api-docs`
+`http://localhost:3000/api/docs`
