@@ -1,10 +1,18 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
+export const pageFields: Array<string> = [
+  'likelihoodOfReOffending',
+  'riskOfSeriousHarm',
+  'responseToPreviousSupervision',
+]
+
 export default class RiskAssessmentController extends BaseController {
   override templatePath = 'risk-assessment'
 
   override redirectPath = 'proposal'
+
+  override pageFields = pageFields
 
   override formValidation: FormValidation = {
     required: [
@@ -17,7 +25,7 @@ export default class RiskAssessmentController extends BaseController {
         errorMessage: 'Specify the risk of serious harm level',
       },
       {
-        id: 'previousSupervisionResponse',
+        id: 'responseToPreviousSupervision',
         errorMessage: 'Specify the Response to previous supervision',
       },
     ],

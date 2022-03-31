@@ -167,10 +167,6 @@
                       "type": "integer",
                       "example": 1
                     },
-                    "type": {
-                      "type": "string",
-                      "example": "text"
-                    },
                     "name": {
                       "type": "string",
                       "example": "name"
@@ -188,21 +184,18 @@
                 "example": [
                   {
                     "id": 1,
-                    "type": "text",
                     "name": "name",
                     "required": true,
                     "validation": null
                   },
                   {
                     "id": 2,
-                    "type": "text",
                     "name": "dateOfBirth",
                     "required": true,
                     "validation": null
                   },
                   {
                     "id": 3,
-                    "type": "text",
                     "name": "crn",
                     "required": true,
                     "validation": null
@@ -244,10 +237,6 @@
                       "type": "integer",
                       "example": 1
                     },
-                    "type": {
-                      "type": "string",
-                      "example": "text"
-                    },
                     "name": {
                       "type": "string",
                       "example": "name"
@@ -273,7 +262,6 @@
                 "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
                 "field": {
                   "id": 1,
-                  "type": "text",
                   "name": "name",
                   "required": true,
                   "validation": null
@@ -287,7 +275,6 @@
                 "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
                 "field": {
                   "id": 2,
-                  "type": "text",
                   "name": "dateOfBirth",
                   "required": true,
                   "validation": null
@@ -301,7 +288,6 @@
                 "reportId": "0a15ce57-c46e-4b71-84f0-49dbed4bb81e",
                 "field": {
                   "id": 3,
-                  "type": "text",
                   "name": "crn",
                   "required": true,
                   "validation": null

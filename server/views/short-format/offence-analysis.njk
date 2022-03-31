@@ -57,16 +57,16 @@
     }) }}
 
     {{ picRichTextEditor({
-      name: "patternOfOffending",
-      id: "patternOfOffending",
+      name: "patternOfOffendingBehaviour",
+      id: "patternOfOffendingBehaviour",
       label: {
         text: "Patterns of offending behaviour"
       },
-      value: data.patternOfOffending,
+      value: data.patternOfOffendingBehaviour,
       whatToInclude: patternOfOffendingHelp,
       errorMessage: {
         text: "Enter the patterns of offending behaviour"
-      } if 'patternOfOffending' in elementsWithError
+      } if 'patternOfOffendingBehaviour' in elementsWithError
     }) }}
 
     <button class="govuk-button govuk-!-margin-top-6">Continue</button>
