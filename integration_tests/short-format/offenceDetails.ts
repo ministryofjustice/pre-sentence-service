@@ -10,4 +10,10 @@ export default class IndexPage extends Page {
     cy.get('#otherOffences').type('Some other offences')
     cy.get('#offenceSummary').type('Some offence summary')
   }
+
+  clearForm(): void {
+    cy.get('#mainOffence').clear()
+    cy.get('#otherOffences').clear()
+    cy.get('#offenceSummary').clear()
+  }
 }

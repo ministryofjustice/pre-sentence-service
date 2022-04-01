@@ -86,6 +86,9 @@ context('Oral - Offender assessment report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenderAssessment)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#experienceOfTrauma-error').should('exist')
+      cy.get('#caringResponsibilities-error').should('exist')
+      cy.get('#evidenceForAssessment-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

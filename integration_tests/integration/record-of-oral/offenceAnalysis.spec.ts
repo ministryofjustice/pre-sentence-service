@@ -71,6 +71,9 @@ context('Oral - Offence analysis report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#offenceAnalysis-error').should('exist')
+      cy.get('#patternOfOffendingBehaviour-error').should('exist')
+      cy.get('#escalationInSeriousness-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

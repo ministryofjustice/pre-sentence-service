@@ -79,6 +79,11 @@ context('Oral - Sign report page', () => {
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(SignReport)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#reportAuthor-error').should('exist')
+      cy.get('#office-error').should('exist')
+      cy.get('#officePhoneNumber-error').should('exist')
+      cy.get('#officePhoneNumber').should('exist')
+      cy.get('#completionDate-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

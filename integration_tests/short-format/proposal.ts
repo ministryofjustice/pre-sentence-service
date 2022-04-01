@@ -6,7 +6,12 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#confirmEIF').click()
+    cy.get('#equalityAndDiversity').click()
     cy.get('#proposal').type('Some proposal text')
+  }
+
+  clearForm(): void {
+    cy.get('#equalityAndDiversity').invoke('removeAttr', 'checked')
+    cy.get('#proposal').clear()
   }
 }

@@ -64,6 +64,7 @@ context('Oral - Sentencing court details report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CourtDetails)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#dateOfHearing-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

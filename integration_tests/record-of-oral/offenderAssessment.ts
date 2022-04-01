@@ -18,6 +18,8 @@ export default class IndexPage extends Page {
     cy.get('.govuk-checkboxes__input').each($el => {
       cy.wrap($el).uncheck()
     })
+    cy.get('#experienceOfTrauma').invoke('removeAttr', 'checked')
+    cy.get('#caringResponsibilities').invoke('removeAttr', 'checked')
     cy.get('#evidenceForAssessment').clear()
   }
 }

@@ -65,5 +65,13 @@ context('Short Format - Offender details report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CourtDetails)
     })
+
+    it('should retain inputted data', () => {
+      cy.get('p').contains('Lenore Marquez').should('exist')
+      cy.get('p').contains('18/08/1979').should('exist')
+      cy.get('p').contains('DX12340A').should('exist')
+      cy.get('p').contains('Some address').should('exist')
+      cy.get('p').contains('A123467B').should('exist')
+    })
   })
 })

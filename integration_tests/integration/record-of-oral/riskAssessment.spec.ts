@@ -84,6 +84,12 @@ context('Oral - Risk assessment report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(RiskAssessment)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#assessmentTool1-error').should('exist')
+      cy.get('#assessmentLevel1-error').should('exist')
+      cy.get('#yourAssessment-error').should('exist')
+      cy.get('#evidenceForRiskLevel-error').should('exist')
+      cy.get('#riskOfSeriousHarm-error').should('exist')
+      cy.get('#responseToPreviousSupervision-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

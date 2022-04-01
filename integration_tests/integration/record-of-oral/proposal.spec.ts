@@ -70,6 +70,8 @@ context('Oral - Proposal report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(Proposal)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#equalityAndDiversity-error').should('exist')
+      cy.get('#proposal-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {

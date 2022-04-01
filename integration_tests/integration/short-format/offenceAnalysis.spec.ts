@@ -35,12 +35,6 @@ context('Short Format - Offence analysis report page', () => {
         .parent()
         .within(() => {
           cy.get('label').contains('Offence analysis').should('exist')
-        })
-
-      currentPage
-        .textArea()
-        .parent()
-        .within(() => {
           cy.get('label').contains('Patterns of offending behaviour').should('exist')
         })
     })
@@ -50,15 +44,24 @@ context('Short Format - Offence analysis report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#offenceAnalysis-error').should('exist')
+      cy.get('#patternOfOffendingBehaviour-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.clearForm()
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenderAssessment)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#offenceAnalysis').should('have.value', 'Some offence analysis')
+      cy.get('#patternOfOffendingBehaviour').should('have.value', 'Some patterns of offending behaviour analysis')
     })
   })
 })
