@@ -28,7 +28,7 @@ export default (on: (string, Record) => void): void => {
         port: 5432,
       })
       try {
-        pool.query(`
+        return pool.query(`
             DELETE
             FROM public.field_value;
 
@@ -61,7 +61,7 @@ export default (on: (string, Record) => void): void => {
                    ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 41, '2022', 1);
         `)
       } catch (e) {
-        // Oh, well.
+        return null
       }
     },
   })
