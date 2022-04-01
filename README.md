@@ -59,7 +59,7 @@ Or run tests with the cypress UI:
 
 `npm run int-test-ui`
 
-**N.B. Integration tests will populate the database with test data.**
+### Clean database
 
 In order to clean the database you can use:
 
