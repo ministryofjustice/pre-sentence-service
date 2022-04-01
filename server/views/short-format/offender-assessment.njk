@@ -2,7 +2,7 @@
 
 {% set currentPage = 'Offender assessment' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
-{% set factors = data.factors or [] %}
+{% set assessmentFactors = data.assessmentFactors or "" %}
 
 {% set pageWhatToInclude %}
   <p class="govuk-body">You should consider diversity issues for each factor in terms of the offender’s own experiences or protected characteristics.</p>
@@ -30,8 +30,8 @@
     }) }}
 
     {{ govukCheckboxes({
-      idPrefix: "factors",
-      name: "factors",
+      idPrefix: "assessmentFactors",
+      name: "assessmentFactors",
       fieldset: {
         legend: {
           text: "Select any factors relating to offending behaviour and the individual’s need, including any protective factors."
@@ -41,50 +41,50 @@
         {
           value: "issueAccommodation",
           text: "Accommodation",
-          checked: true if 'issueAccommodation' in factors
+          checked: true if 'issueAccommodation' in assessmentFactors
         },
         {
           value: "issueEmployment",
           text: "Employment, training and education",
-          checked: true if 'issueEmployment' in factors
+          checked: true if 'issueEmployment' in assessmentFactors
         },
         {
           value: "issueFinance",
           text: "Finance",
-          checked: true if 'issueFinance' in factors
+          checked: true if 'issueFinance' in assessmentFactors
         },
         {
           value: "issueRelationships",
           text: "Relationships",
-          checked: true if 'issueRelationships' in factors
+          checked: true if 'issueRelationships' in assessmentFactors
         },
         {
           value: "issueSubstanceMisuse",
           text: "Substance misuse",
-          checked: true if 'issueSubstanceMisuse' in factors
+          checked: true if 'issueSubstanceMisuse' in assessmentFactors
         },
         {
           value: "issueHealth",
           text: "Physical & mental health",
-          checked: true if 'issueHealth' in factors
+          checked: true if 'issueHealth' in assessmentFactors
         },
         {
           value: "issueBehaviour",
           text: "Thinking & behaviour",
-          checked: true if 'issueBehaviour' in factors
+          checked: true if 'issueBehaviour' in assessmentFactors
         },
         {
           value: "issueOther",
           text: "Other",
-          checked: true if 'issueOther' in factors
+          checked: true if 'issueOther' in assessmentFactors
         }
       ]
     }) }}
 
     {{ picRadioButtons({
       classes: "govuk-radios--inline",
-      idPrefix: "experienceTrauma",
-      name: "experienceTrauma",
+      idPrefix: "experienceOfTrauma",
+      name: "experienceOfTrauma",
       fieldset: {
         legend: {
           text: "Is there evidence of the offender experiencing trauma?"
@@ -92,17 +92,17 @@
       },
       errorMessage: {
         text: "Select whether there is evidence of the offender experiencing trauma"
-      } if 'experienceTrauma' in elementsWithError,
+      } if 'experienceOfTrauma' in elementsWithError,
       items: [
         {
           value: "yes",
           text: "Yes",
-          checked: data.experienceTrauma === 'yes'
+          checked: data.experienceOfTrauma === 'yes'
         },
         {
           value: "no",
           text: "No",
-          checked: data.experienceTrauma === 'no'
+          checked: data.experienceOfTrauma === 'no'
         }
       ]
     }) }}

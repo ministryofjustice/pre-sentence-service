@@ -22,10 +22,16 @@ export default class IndexPage extends Page {
 
   clearForm(): void {
     cy.get('#assessmentTool1').clear()
+    cy.get('#assessmentLevel1').invoke('removeAttr', 'checked')
     cy.get('#assessmentTool2').clear()
+    cy.get('#assessmentLevel2').invoke('removeAttr', 'checked')
     cy.get('#assessmentTool3').clear()
+    cy.get('#assessmentLevel3').invoke('removeAttr', 'checked')
     cy.get('#assessmentTool4').clear()
+    cy.get('#assessmentLevel4').invoke('removeAttr', 'checked')
     cy.get('#yourAssessment').clear()
     cy.get('#evidenceForRiskLevel').clear()
+    cy.get('#riskOfSeriousHarm').invoke('removeAttr', 'checked')
+    cy.get('#responseToPreviousSupervision').invoke('removeAttr', 'checked')
   }
 }

@@ -13,5 +13,7 @@ export default class IndexPage extends Page {
 
   clearForm(): void {
     cy.get('#offenceAnalysis').clear()
+    cy.get('#patternOfOffendingBehaviour').invoke('removeAttr', 'checked')
+    cy.get('#escalationInSeriousness').invoke('removeAttr', 'checked')
   }
 }

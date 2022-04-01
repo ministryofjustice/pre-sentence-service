@@ -11,6 +11,7 @@ export default class IndexPage extends Page {
   }
 
   clearForm(): void {
+    cy.get('#equalityAndDiversity').invoke('removeAttr', 'checked')
     cy.get('#proposal').clear()
   }
 }

@@ -6,9 +6,6 @@ export default class Field {
   id: number
 
   @Column()
-  type: string
-
-  @Column()
   name: string
 
   @Column()

@@ -47,5 +47,12 @@ context('Short Format - Sources of information report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(CheckReport)
     })
+
+    it('should retain inputted data', () => {
+      cy.get('.govuk-checkboxes__input').each($el => {
+        cy.wrap($el).should('be.checked')
+      })
+      cy.get('#otherSourceOfInformation').should('have.value', 'Some other information source')
+    })
   })
 })

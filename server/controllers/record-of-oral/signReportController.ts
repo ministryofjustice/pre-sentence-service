@@ -1,5 +1,4 @@
 import { Response } from 'express'
-
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 import { TemplateValues } from '../shared/sharedController'

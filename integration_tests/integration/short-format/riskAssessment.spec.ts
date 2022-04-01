@@ -57,15 +57,35 @@ context('Short Format - Risk assessment report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(RiskAssessment)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#likelihoodOfReOffending-error').should('exist')
+      cy.get('#riskOfSeriousHarm-error').should('exist')
+      cy.get('#responseToPreviousSupervision-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.clearForm()
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(Proposal)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#likelihoodOfReOffending').should('contain', 'Some likelihood of further offending')
+      cy.get('#riskOfSeriousHarm').should('contain', 'Some RoSH evidence')
+      cy.get('legend')
+        .contains('Response to previous supervision')
+        .parent()
+        .within(() => {
+          cy.contains('label', 'Good')
+            .prev()
+            .should('have.attr', 'type', 'radio')
+            .should('have.value', 'Good')
+            .should('be.checked')
+        })
     })
   })
 })

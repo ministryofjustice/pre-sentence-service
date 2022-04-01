@@ -9,6 +9,6 @@ export default class IndexPage extends Page {
     cy.get('.govuk-checkboxes__input').each($el => {
       cy.wrap($el).check()
     })
-    cy.get('#otherInformationDetails').type('Some other information source')
+    cy.get('#otherSourceOfInformation').clear().type('Some other information source')
   }
 }

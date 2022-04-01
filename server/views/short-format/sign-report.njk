@@ -47,7 +47,7 @@
     }) }}
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Start date</h2>
-    <p class="govuk-body">{{ data.startDate }}</p>
+    <p class="govuk-body">{{ data["startDate-day"] }}/{{ data["startDate-month"] }}/{{ data["startDate-year"] }}</p>
 
     {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 

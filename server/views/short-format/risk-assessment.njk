@@ -73,8 +73,8 @@
     }) }}
 
     {{ picRadioButtons({
-      idPrefix: "previousSupervisionResponse",
-      name: "previousSupervisionResponse",
+      idPrefix: "responseToPreviousSupervision",
+      name: "responseToPreviousSupervision",
       fieldset: {
         legend: {
           text: "Response to previous supervision"
@@ -83,27 +83,27 @@
       whatToInclude: previousSupervisionResponseHelp,
       errorMessage: {
         text: "Specify the Response to previous supervision"
-      } if "previousSupervisionResponse" in elementsWithError,
+      } if "responseToPreviousSupervision" in elementsWithError,
       items: [
         {
           value: "Good",
           text: "Good",
-          checked: data.previousSupervisionResponse === "Good"
+          checked: data.responseToPreviousSupervision === "Good"
         },
         {
           value: "Satisfactory",
           text: "Satisfactory",
-          checked: data.previousSupervisionResponse === "Satisfactory"
+          checked: data.responseToPreviousSupervision === "Satisfactory"
         },
         {
           value: "Poor",
           text: "Poor",
-          checked: data.previousSupervisionResponse === "Poor"
+          checked: data.responseToPreviousSupervision === "Poor"
         },
         {
           value: "N/A",
           text: "Not applicable",
-          checked: data.previousSupervisionResponse === "N/A"
+          checked: data.responseToPreviousSupervision === "N/A"
         }
       ]
     }) }}

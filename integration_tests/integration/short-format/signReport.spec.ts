@@ -60,14 +60,40 @@ context('Short Format - Sign report page', () => {
         })
     })
 
+    it('should pre-populate the current user name if not stored in database', () => {
+      cy.get('#reportAuthor').should('have.value', 'John Smith')
+    })
+
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Submit and view your report').should('exist')
     })
 
+    it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
+      currentPage.govukButton().contains('Submit and view your report').click()
+      Page.verifyOnPage(SignReport)
+      currentPage.govukErrorSummary().should('exist')
+      cy.get('#reportAuthor-error').should('exist')
+      cy.get('#office-error').should('exist')
+      cy.get('#officePhoneNumber-error').should('exist')
+      cy.get('#officePhoneNumber').should('exist')
+      cy.get('#completionDate-error').should('exist')
+    })
+
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.clearForm()
       currentPage.completeForm()
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#reportAuthor').should('have.value', 'Arthur Author')
+      cy.get('#office').should('have.value', 'Sheffield Probation Office')
+      cy.get('#officePhoneNumber').should('have.value', '0114 276 0760')
+      cy.get('#completionDate-day').should('have.value', '27')
+      cy.get('#completionDate-month').should('have.value', '10')
+      cy.get('#completionDate-year').should('have.value', '2021')
     })
   })
 })

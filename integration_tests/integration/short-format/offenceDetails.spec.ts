@@ -35,19 +35,7 @@ context('Short Format - Offence details report page', () => {
         .parent()
         .within(() => {
           cy.get('label').contains('Main offence and date').should('exist')
-        })
-
-      currentPage
-        .textArea()
-        .parent()
-        .within(() => {
           cy.get('label').contains('Other offence(s) and dates (if applicable)').should('exist')
-        })
-
-      currentPage
-        .textArea()
-        .parent()
-        .within(() => {
           cy.get('label').contains('Brief summary of the offence').should('exist')
         })
     })
@@ -57,15 +45,25 @@ context('Short Format - Offence details report page', () => {
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceDetails)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#mainOffence-error').should('exist')
+      cy.get('#offenceSummary-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {
+      currentPage.clearForm()
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceAnalysis)
+    })
+
+    it('should retain inputted data', () => {
+      cy.get('#mainOffence').should('have.value', 'Some main offence')
+      cy.get('#otherOffences').should('have.value', 'Some other offences')
+      cy.get('#offenceSummary').should('have.value', 'Some offence summary')
     })
   })
 })

@@ -64,6 +64,7 @@ context('Oral - Offence details report page', () => {
       currentPage.govukButton().contains('Continue').click()
       Page.verifyOnPage(OffenceDetails)
       currentPage.govukErrorSummary().should('exist')
+      cy.get('#mainOffence-error').should('exist')
     })
 
     it('should move to correct screen upon valid form submission', () => {
