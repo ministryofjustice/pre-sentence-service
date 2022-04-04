@@ -42,6 +42,14 @@ context('Short Format - Sources of information report page', () => {
       currentPage.govukButton().contains('Continue').should('exist')
     })
 
+    it('should re-render and display errors upon invalid form submission', () => {
+      currentPage.clearForm()
+      currentPage.govukButton().contains('Continue').click()
+      Page.verifyOnPage(SourcesOfInformation)
+      currentPage.govukErrorSummary().should('exist')
+      cy.get('#sourcesOfInformation-error').should('exist')
+    })
+
     it('should move to correct screen upon valid form submission', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Continue').click()

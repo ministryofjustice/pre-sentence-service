@@ -113,7 +113,6 @@ export default class SharedController {
         reportId: req.params.reportId,
         ...this.templateValues,
         data: {
-          ...this.data,
           ...req.body,
         },
         formValidation: validatedForm,

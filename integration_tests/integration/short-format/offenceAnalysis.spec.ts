@@ -18,6 +18,16 @@ context('Short Format - Offence analysis report page', () => {
   })
 
   describe('Authenticated user accesses offence analysis', () => {
+    it('should display as NOT STARTED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offence analysis')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Not started').should('exist')
+        })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
@@ -62,6 +72,16 @@ context('Short Format - Offence analysis report page', () => {
     it('should retain inputted data', () => {
       cy.get('#offenceAnalysis').should('have.value', 'Some offence analysis')
       cy.get('#patternOfOffendingBehaviour').should('have.value', 'Some patterns of offending behaviour analysis')
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offence analysis')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

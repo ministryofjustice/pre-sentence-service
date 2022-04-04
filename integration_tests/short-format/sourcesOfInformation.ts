@@ -11,4 +11,10 @@ export default class IndexPage extends Page {
     })
     cy.get('#otherSourceOfInformation').clear().type('Some other information source')
   }
+
+  clearForm(): void {
+    cy.get('.govuk-checkboxes__input').each($el => {
+      cy.wrap($el).uncheck()
+    })
+  }
 }
