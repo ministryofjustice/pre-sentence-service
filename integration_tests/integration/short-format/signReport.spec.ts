@@ -18,6 +18,15 @@ context('Short Format - Sign report page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
+    it('should display as CANNOT START YET on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Sign your report')
+        .within(() => {
+          cy.get('.govuk-tag').contains('Cannot start yet').should('exist')
+        })
+    })
+
     it('should include the required form elements', () => {
       currentPage
         .inputText()
@@ -94,6 +103,16 @@ context('Short Format - Sign report page', () => {
       cy.get('#completionDate-day').should('have.value', '27')
       cy.get('#completionDate-month').should('have.value', '10')
       cy.get('#completionDate-year').should('have.value', '2021')
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Sign your report')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
+        })
     })
   })
 })

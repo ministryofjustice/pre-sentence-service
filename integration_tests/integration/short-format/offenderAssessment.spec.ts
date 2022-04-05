@@ -18,6 +18,16 @@ context('Short Format - Offender assessment report page', () => {
   })
 
   describe('Authenticated user accesses offender assessment', () => {
+    it('should display as NOT STARTED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offender assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Not started').should('exist')
+        })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
@@ -105,6 +115,16 @@ context('Short Format - Offender assessment report page', () => {
             .should('have.attr', 'type', 'radio')
             .should('have.value', 'yes')
             .should('be.checked')
+        })
+    })
+
+    it('should display as SAVED on the check report page', () => {
+      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
+      cy.get('.moj-task-list__item')
+        .contains('Offender assessment')
+        .parent()
+        .within(() => {
+          cy.get('.govuk-tag').contains('Saved').should('exist')
         })
     })
   })
