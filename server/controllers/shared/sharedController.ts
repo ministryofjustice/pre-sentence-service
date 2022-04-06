@@ -70,14 +70,14 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name)) {
           const fieldValue = this.report.fieldValues.filter(value => item.name === value.field.name).pop()
-          let value = null
+          let tmpValue = null
           if (formData[item.name] && formData[item.name] !== '') {
-            value = Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name]
+            tmpValue = Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name]
           }
           fieldValues.push({
             reportId: this.report.id,
             fieldId: item.id,
-            value,
+            value: tmpValue,
             version: (fieldValue && fieldValue.version) || 1,
           })
         }
