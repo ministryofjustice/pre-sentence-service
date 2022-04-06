@@ -11,9 +11,11 @@
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Court</h2>
     <p class="govuk-body">{{ data.court }}</p>
+    <input type="hidden" name="court" id="court" value="{{ data.court }}">
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Local justice area</h2>
     <p class="govuk-body">{{ data.localJusticeArea }}</p>
+    <input type="hidden" name="localJusticeArea" id="localJusticeArea" value="{{ data.localJusticeArea }}">
 
     {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 

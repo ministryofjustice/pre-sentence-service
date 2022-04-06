@@ -19,10 +19,14 @@
 
 {% endblock %}
 
-{% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
+{% block pageTitle %}{{ pageTitle | default(applicationName) }}{% endblock %}
 
 {% block header %}
   {% include "./header.njk" %}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "./keyDetails.njk" %}
 {% endblock %}
 
 {% block bodyStart %}

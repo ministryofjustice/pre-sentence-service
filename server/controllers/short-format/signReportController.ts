@@ -7,6 +7,7 @@ export const pageFields: Array<string> = [
   'reportAuthor',
   'office',
   'officePhoneNumber',
+  'counterSignature',
   'startDate-day',
   'startDate-month',
   'startDate-year',

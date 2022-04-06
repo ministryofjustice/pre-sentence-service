@@ -14,7 +14,7 @@ export interface TemplateValues {
 }
 
 export default class SharedController {
-  private persistentData: Array<string> = ['crn']
+  private persistentData: Array<string> = ['crn', 'name']
 
   path = ''
 
@@ -40,6 +40,8 @@ export default class SharedController {
 
   updateReport: () => void
 
+  correctFormData: (req: Request) => object
+
   constructor(
     protected readonly reportService: ReportService = null,
     protected readonly eventService: EventService = null,
@@ -53,9 +55,9 @@ export default class SharedController {
   private getStoredData = () => {
     this.data = {}
     if (this.report && this.report.fieldValues) {
-      this.pageFields = this.pageFields.concat(this.persistentData)
+      const requiredFields = this.pageFields.concat(this.persistentData)
       this.report.fieldValues.forEach(item => {
-        if (this.pageFields.includes(item.field.name)) {
+        if (requiredFields.includes(item.field.name)) {
           this.data[item.field.name] = item.value
         }
       })
@@ -66,12 +68,16 @@ export default class SharedController {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
-        if (formData[item.name]) {
+        if (this.pageFields.includes(item.name)) {
           const fieldValue = this.report.fieldValues.filter(value => item.name === value.field.name).pop()
+          let value = null
+          if (formData[item.name] && formData[item.name] !== '') {
+            value = Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name]
+          }
           fieldValues.push({
             reportId: this.report.id,
             fieldId: item.id,
-            value: Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name],
+            value,
             version: (fieldValue && fieldValue.version) || 1,
           })
         }
@@ -106,6 +112,12 @@ export default class SharedController {
   public post = async (req: Request, res: Response): Promise<void> => {
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid) {
+      if (this.correctFormData) {
+        req.body = {
+          ...req.body,
+          ...this.correctFormData(req),
+        }
+      }
       await this.updateFields(req.body)
       res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
     } else {

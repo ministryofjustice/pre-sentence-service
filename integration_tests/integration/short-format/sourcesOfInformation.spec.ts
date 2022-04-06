@@ -18,6 +18,13 @@ context('Short Format - Sources of information report page', () => {
   })
 
   describe('Authenticated user accesses sources of information', () => {
+    it('should display the key details', () => {
+      cy.get('#qa-key-details').within(() => {
+        cy.get('h2').should('contain', 'CRN: DX12340A')
+        cy.get('h1').should('contain', 'Lenore Marquez')
+      })
+    })
+
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
