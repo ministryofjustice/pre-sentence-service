@@ -21,7 +21,7 @@ The app requires:
 
 To start the main services excluding the typescript app: 
 
-`docker-compose up --remove-orphans`
+`docker-compose up --remove-orphans hmpps-auth redis postgres localstack gotenberg`
 
 Now in a separate terminal window or tab, at the project root.
 
