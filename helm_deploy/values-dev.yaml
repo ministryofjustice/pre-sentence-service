@@ -14,6 +14,7 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
+    AWS_ENDPOINT: "https://sns.eu-west-2.amazonaws.com"
 
 gotenberg:
   replicaCount: 1

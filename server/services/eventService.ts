@@ -1,5 +1,5 @@
-import { SQS } from 'aws-sdk'
-import { SendMessageRequest, SendMessageResult } from 'aws-sdk/clients/sqs'
+import { SNS } from 'aws-sdk'
+import { SendMessageResult } from 'aws-sdk/clients/sqs'
 
 import logger from '../../logger'
 import config from '../config'
@@ -32,21 +32,17 @@ export interface IDomainEvent {
 }
 
 export default class EventService {
-  private sqs = new SQS({
-    region: config.sqs.domainEvents.region,
-    accessKeyId: config.sqs.domainEvents.accessKeyId,
-    secretAccessKey: config.sqs.domainEvents.secretAccessKey,
+  private sns = new SNS({
+    endpoint: config.aws.sns.endpoint,
+    region: config.aws.sns.region,
+    accessKeyId: config.aws.sns.accessKeyId,
+    secretAccessKey: config.aws.sns.secretAccessKey,
   })
-
-  private sendMessageRequest: SendMessageRequest = {
-    QueueUrl: config.sqs.domainEvents.queueUrl,
-    MessageBody: '',
-  }
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
     const domainEvent: IDomainEvent = {
       eventType: `pre-sentence.report.${reportEventData.reportStatus}`,
-      version: config.sqs.domainEvents.eventVersion,
+      version: config.aws.sns.eventVersion,
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
       detailUrl: `${config.domain}/api/v1/report/${reportEventData.reportId}`,
       occurredAt: new Date().toISOString(),
@@ -57,13 +53,14 @@ export default class EventService {
     let result: SendMessageResult
 
     try {
-      result = await this.sqs
-        .sendMessage({
-          ...this.sendMessageRequest,
-          MessageBody: JSON.stringify(domainEvent),
+      result = await this.sns
+        .publish({
+          Message: JSON.stringify(domainEvent),
+          TopicArn: config.aws.sns.topicArn,
         })
         .promise()
-      logger.info(`Message ${result.MessageId} placed in the queue.`)
+
+      logger.info(`Message ${result.MessageId} sent to the topic.`)
     } catch (e) {
       logger.error(`Message ${domainEvent.eventType} for report ${reportEventData.reportId} failed.`, e)
     }

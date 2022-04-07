@@ -93,16 +93,17 @@ export default {
     schema: get('DB_SCHEMA', 'public'),
     migrations: get('DB_RUN_MIGRATIONS', 'true'),
   },
-  sqs: {
-    domainEvents: {
-      region: get('SQS_DOMAIN_EVENTS_AWS_REGION', 'eu-west-2'),
-      queueUrl: get(
-        'SQS_DOMAIN_EVENTS_QUEUE_URL',
-        'http://localhost:4566/queue/pre_sentence_service_domain_events_queue',
+  aws: {
+    sns: {
+      endpoint: get('AWS_ENDPOINT', 'http://localhost:4566', requiredInProduction),
+      region: get('AWS_REGION', 'eu-west-2'),
+      topicArn: get(
+        'TOPIC_ARN',
+        'arn:aws:sns:eu-west-2:000000000000:pre-sentence-service-topic-arn',
         requiredInProduction
       ),
-      accessKeyId: get('SQS_DOMAIN_EVENTS_ACCESS_KEY_ID', 'pre-sentence-service', requiredInProduction),
-      secretAccessKey: get('SQS_DOMAIN_EVENTS_SECRET_ACCESS_KEY', 'pre-sentence-service', requiredInProduction),
+      accessKeyId: get('ACCESS_KEY_ID', 'pre-sentence-service', requiredInProduction),
+      secretAccessKey: get('SECRET_ACCESS_KEY', 'pre-sentence-service', requiredInProduction),
       eventVersion: 1,
     },
   },

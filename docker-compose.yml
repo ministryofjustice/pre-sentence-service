@@ -53,11 +53,12 @@ services:
     networks:
       - hmpps
     container_name: localstack
+
     ports:
       - "4566-4597:4566-4597"
       - "8999:8080"
     environment:
-      - SERVICES=${SERVICES-sqs}
+      - SERVICES=sns
       - DEBUG=${DEBUG- }
       - DATA_DIR=${DATA_DIR- }
       - PORT_WEB_UI=${PORT_WEB_UI-8088}
