@@ -55,7 +55,7 @@ export default {
         deadline: Number(get('HMPPS_AUTH_TIMEOUT_DEADLINE', 10000)),
       },
       agent: new AgentConfig(),
-      apiClientId: get('API_CLIENT_ID', 'clientid', requiredInProduction),
+      apiClientId: get('API_CLIENT_ID', 'pre-sentence-service', requiredInProduction),
       apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
     },
     tokenVerification: {
@@ -93,16 +93,17 @@ export default {
     schema: get('DB_SCHEMA', 'public'),
     migrations: get('DB_RUN_MIGRATIONS', 'true'),
   },
-  sqs: {
-    domainEvents: {
-      region: get('SQS_DOMAIN_EVENTS_AWS_REGION', 'eu-west-2'),
-      queueUrl: get(
-        'SQS_DOMAIN_EVENTS_QUEUE_URL',
-        'http://localhost:4566/queue/pre_sentence_service_domain_events_queue',
+  aws: {
+    sns: {
+      endpoint: get('AWS_ENDPOINT', null), // Only set locally in order to use with localstack
+      region: get('AWS_REGION', 'eu-west-2'),
+      topicArn: get(
+        'TOPIC_ARN',
+        'arn:aws:sns:eu-west-2:000000000000:pre-sentence-service-topic-arn',
         requiredInProduction
       ),
-      accessKeyId: get('SQS_DOMAIN_EVENTS_ACCESS_KEY_ID', 'pre-sentence-service', requiredInProduction),
-      secretAccessKey: get('SQS_DOMAIN_EVENTS_SECRET_ACCESS_KEY', 'pre-sentence-service', requiredInProduction),
+      accessKeyId: get('ACCESS_KEY_ID', 'pre-sentence-service', requiredInProduction),
+      secretAccessKey: get('SECRET_ACCESS_KEY', 'pre-sentence-service', requiredInProduction),
       eventVersion: 1,
     },
   },

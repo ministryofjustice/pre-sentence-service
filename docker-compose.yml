@@ -53,11 +53,12 @@ services:
     networks:
       - hmpps
     container_name: localstack
+
     ports:
       - "4566-4597:4566-4597"
       - "8999:8080"
     environment:
-      - SERVICES=${SERVICES-sqs}
+      - SERVICES=sns
       - DEBUG=${DEBUG- }
       - DATA_DIR=${DATA_DIR- }
       - PORT_WEB_UI=${PORT_WEB_UI-8088}
@@ -89,9 +90,9 @@ services:
       - SESSION_SECRET=app-insecure-default-session
       - GOTENBERG_API_URL=http://localhost:3001
       - INGRESS_URL=http://localhost:3000
-      - SQS_DOMAIN_EVENTS_QUEUE_URL=http://localhost:4566/queue/pre_sentence_service_domain_events_queue
-      - SQS_DOMAIN_EVENTS_ACCESS_KEY_ID=pre-sentence-service
-      - SQS_DOMAIN_EVENTS_SECRET_ACCESS_KEY=pre-sentence-service
+      - AWS_ENDPOINT=http://localhost:4566
+      - ACCESS_KEY_ID=pre-sentence-service
+      - SECRET_ACCESS_KEY=pre-sentence-service
 
 networks:
   hmpps:
