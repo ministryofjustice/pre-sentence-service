@@ -55,7 +55,7 @@ export default {
         deadline: Number(get('HMPPS_AUTH_TIMEOUT_DEADLINE', 10000)),
       },
       agent: new AgentConfig(),
-      apiClientId: get('API_CLIENT_ID', 'clientid', requiredInProduction),
+      apiClientId: get('API_CLIENT_ID', 'pre-sentence-service', requiredInProduction),
       apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
     },
     tokenVerification: {
@@ -95,7 +95,7 @@ export default {
   },
   aws: {
     sns: {
-      endpoint: get('AWS_ENDPOINT', 'http://localhost:4566', requiredInProduction),
+      endpoint: get('AWS_ENDPOINT', null), // Only set locally in order to use with localstack
       region: get('AWS_REGION', 'eu-west-2'),
       topicArn: get(
         'TOPIC_ARN',

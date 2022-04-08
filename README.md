@@ -29,7 +29,9 @@ Install dependencies using `npm install`, ensuring you are using >= `Node v16.14
 
 And then, to build the assets and start the app with nodemon:
 
-`npm run start:dev`
+`AWS_ENDPOINT=http://localhost:4566 npm run start:dev`
+
+Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
 
 You can now access the service at `http://localhost:3000`
 
@@ -49,7 +51,9 @@ For local running, start a test db, redis, and wiremock instance by:
 
 Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
-`npm run start-feature` (or `npm run start-feature:dev` to run with nodemon)
+`AWS_ENDPOINT=http://localhost:4566 npm run start-feature` (or `AWS_ENDPOINT=http://localhost:4566 npm run start-feature:dev` to run with nodemon)
+
+Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
 
 And then either, run tests in headless mode with:
 
