@@ -11,19 +11,24 @@
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Name</h2>
     <p class="govuk-body">{{ data.name }}</p>
+    <input type="hidden" name="name" id="name" value="{{ data.name }}">
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Date of birth</h2>
     <p class="govuk-body">{{ data.dateOfBirth }}</p>
+    <input type="hidden" name="dateOfBirth" id="dateOfBirth" value="{{ data.dateOfBirth }}">
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Age</h2>
     <p class="govuk-body">{{ data.age }}</p>
+    <input type="hidden" name="age" id="age" value="{{ data.age }}">
 
     <h2 class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Delius CRN</h2>
     <p class="govuk-body">{{ data.crn }}</p>
+    <input type="hidden" name="crn" id="crn" value="{{ data.crn }}">
 
     {% if data.address | length %}
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Address</p>
       <p class="govuk-body">{{ data.address | replace('\n', '<br/>') | safe }}</p>
+      <input type="hidden" name="address" id="address" value="{{ data.address }}">
     {% else %}
       {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
@@ -39,6 +44,7 @@
     {% if data.pnc | length %}
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">PNC ID</p>
       <p class="govuk-body">{{ data.pnc }}</p>
+      <input type="hidden" name="pnc" id="pnc" value="{{ data.pnc }}">
     {% else %}
       {% from "govuk/components/input/macro.njk" import govukInput %}
 
@@ -51,6 +57,10 @@
         classes: "govuk-!-width-one-half"
       }) }}
     {% endif %}
+
+    <input type="hidden" name="startDate-day" id="startDate-day" value="{{ data['startDate-day'] }}">
+    <input type="hidden" name="startDate-month" id="startDate-month" value="{{ data['startDate-month'] }}">
+    <input type="hidden" name="startDate-year" id="startDate-year" value="{{ data['startDate-year'] }}">
 
     <button class="govuk-button govuk-!-margin-top-6">Continue</button>
   </form>

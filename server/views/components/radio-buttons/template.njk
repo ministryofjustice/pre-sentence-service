@@ -11,9 +11,11 @@
 {% set describedBy = params.fieldset.describedBy if params.fieldset.describedBy else "" %}
 
 {% set isConditional = false %}
+{% set conditionalHtml = "" %}
 {% for item in params.items %}
   {% if item.conditional.html %}
     {% set isConditional = true %}
+    {% set conditionalHtml = item.conditional.html %}
   {% endif %}
 {% endfor %}
 
@@ -103,15 +105,21 @@
             }) | indent(6) | trim }}
           {% endif %}
         </div>
-        {% if item.conditional.html %}
+        {% if isConditional and params.classes !== "govuk-radios--inline" %}
           <div class="govuk-radios__conditional{% if not item.checked %} govuk-radios__conditional--hidden{% endif %}" id="{{ conditionalId }}">
-            {{ item.conditional.html | safe }}
+            {{ conditionalHtml | safe }}
           </div>
         {% endif %}
       {% endif %}
     {% endif %}
   {% endfor %}
   </div>
+
+  {% if isConditional and params.classes === "govuk-radios--inline" %}
+    <div class="govuk-radios__conditional{% if not item.checked %} govuk-radios__conditional--hidden{% endif %}" id="conditional-{{ params.idPrefix }}">
+      {{ conditionalHtml | safe }}
+    </div>
+  {% endif %}
 {% endset -%}
 
 <div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">

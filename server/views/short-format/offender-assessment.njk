@@ -13,6 +13,20 @@
   <p class="govuk-body">Provide an explanation of the offender's motivation and readiness to change.</p>
 {% endset %}
 
+{% set experienceOfTraumaWhatToInclude %}
+  <p class="govuk-body">Trauma can affect an offender's ability to engage and make decisions.</p>
+  <p class="govuk-body">Detail the offender's experience of trauma. How has it affected their offending?</p>
+  <p class="govuk-body">Has it affected their engagement with rehabilitative interventions?</p>
+{% endset %}
+
+{% set caringResponsibilitiesWhatToInclude %}
+  <p class="govuk-body">Detail the offender’s current and past caring responsibilities.</p>
+  <p class="govuk-body">Take account of caring for both children and adults.</p>
+  <p class="govuk-body">How have those responsibilities affected their offending?</p>
+  <p class="govuk-body">Have they affected their engagement with rehabilitative interventions?</p>
+  <p class="govuk-body">Remember that evidence shows that imprisonment of mothers has significant impacts on those that they care for.</p>
+{% endset %}
+
 {% block reportForm %}
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
@@ -22,6 +36,119 @@
     {% from "govuk/components/details/macro.njk" import govukDetails %}
     {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
     {% from "components/radio-buttons/macro.njk" import picRadioButtons %}
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {% set accommodationOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueAccommodationDetails",
+        id: "issueAccommodationDetails",
+        label: {
+          text: "Provide a brief assessment for accommodation"
+        },
+        value: data.issueAccommodationDetails
+      }) }}
+    {% endset %}
+
+    {% set employmentOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueEmploymentDetails",
+        id: "issueEmploymentDetails",
+        label: {
+          text: "Provide a brief assessment for employment"
+        },
+        value: data.issueEmploymentDetails
+      }) }}
+    {% endset %}
+
+    {% set financeOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueFinanceDetails",
+        id: "issueFinanceDetails",
+        label: {
+          text: "Provide a brief assessment for finance"
+        },
+        value: data.issueFinanceDetails
+      }) }}
+    {% endset %}
+
+    {% set relationshipsOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueRelationshipsDetails",
+        id: "issueRelationshipsDetails",
+        label: {
+          text: "Provide a brief assessment for relationships"
+        },
+        value: data.issueRelationshipsDetails
+      }) }}
+    {% endset %}
+
+    {% set substanceMisuseOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueSubstanceMisuseDetails",
+        id: "issueSubstanceMisuseDetails",
+        label: {
+          text: "Provide a brief assessment for substance misuse"
+        },
+        value: data.issueSubstanceMisuseDetails
+      }) }}
+    {% endset %}
+
+    {% set healthOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueHealthDetails",
+        id: "issueHealthDetails",
+        label: {
+          text: "Provide a brief assessment for physical & mental health"
+        },
+        value: data.issueHealthDetails
+      }) }}
+    {% endset %}
+
+    {% set behaviourOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueBehaviourDetails",
+        id: "issueBehaviourDetails",
+        label: {
+          text: "Provide a brief assessment for behaviour"
+        },
+        value: data.issueBehaviourDetails
+      }) }}
+    {% endset %}
+
+    {% set otherOptionHtml %}
+      {{ picRichTextEditor({
+        name: "issueOtherDetails",
+        id: "issueOtherDetails",
+        label: {
+          text: "Provide a brief assessment of other issues"
+        },
+        value: data.issueOtherDetails
+      }) }}
+    {% endset %}
+
+    {% set experienceOfTraumaOptionHtml %}
+      {{ picRichTextEditor({
+        name: "experienceOfTraumaDetails",
+        id: "experienceOfTraumaDetails",
+        label: {
+          text: "Experience of trauma"
+        },
+        value: data.experienceOfTraumaDetails,
+        whatToInclude: experienceOfTraumaWhatToInclude
+      }) }}
+    {% endset %}
+
+    {% set caringResponsibilitiesOptionHtml %}
+      {{ picRichTextEditor({
+        name: "caringResponsibilitiesDetails",
+        id: "caringResponsibilitiesDetails",
+        label: {
+          text: "Caring responsibilities"
+        },
+        value: data.caringResponsibilitiesDetails,
+        whatToInclude: caringResponsibilitiesWhatToInclude
+      }) }}
+    {% endset %}
 
     {{ govukDetails({
       summaryText: "What to include",
@@ -41,42 +168,66 @@
         {
           value: "issueAccommodation",
           text: "Accommodation",
-          checked: true if 'issueAccommodation' in assessmentFactors
+          checked: true if 'issueAccommodation' in assessmentFactors,
+          conditional: {
+            html: accommodationOptionHtml
+          }
         },
         {
           value: "issueEmployment",
           text: "Employment, training and education",
-          checked: true if 'issueEmployment' in assessmentFactors
+          checked: true if 'issueEmployment' in assessmentFactors,
+          conditional: {
+            html: employmentOptionHtml
+          }
         },
         {
           value: "issueFinance",
           text: "Finance",
-          checked: true if 'issueFinance' in assessmentFactors
+          checked: true if 'issueFinance' in assessmentFactors,
+          conditional: {
+            html: financeOptionHtml
+          }
         },
         {
           value: "issueRelationships",
           text: "Relationships",
-          checked: true if 'issueRelationships' in assessmentFactors
+          checked: true if 'issueRelationships' in assessmentFactors,
+          conditional: {
+            html: relationshipsOptionHtml
+          }
         },
         {
           value: "issueSubstanceMisuse",
           text: "Substance misuse",
-          checked: true if 'issueSubstanceMisuse' in assessmentFactors
+          checked: true if 'issueSubstanceMisuse' in assessmentFactors,
+          conditional: {
+            html: substanceMisuseOptionHtml
+          }
         },
         {
           value: "issueHealth",
           text: "Physical & mental health",
-          checked: true if 'issueHealth' in assessmentFactors
+          checked: true if 'issueHealth' in assessmentFactors,
+          conditional: {
+            html: healthOptionHtml
+          }
         },
         {
           value: "issueBehaviour",
           text: "Thinking & behaviour",
-          checked: true if 'issueBehaviour' in assessmentFactors
+          checked: true if 'issueBehaviour' in assessmentFactors,
+          conditional: {
+            html: behaviourOptionHtml
+          }
         },
         {
           value: "issueOther",
-          text: "Other",
-          checked: true if 'issueOther' in assessmentFactors
+          text: "Other (Please specify below)",
+          checked: true if 'issueOther' in assessmentFactors,
+          conditional: {
+            html: otherOptionHtml
+          }
         }
       ]
     }) }}
@@ -97,7 +248,10 @@
         {
           value: "yes",
           text: "Yes",
-          checked: data.experienceOfTrauma === 'yes'
+          checked: data.experienceOfTrauma === 'yes',
+          conditional: {
+            html: experienceOfTraumaOptionHtml
+          }
         },
         {
           value: "no",
@@ -123,7 +277,10 @@
         {
           value: "yes",
           text: "Yes",
-          checked: data.caringResponsibilities === 'yes'
+          checked: data.caringResponsibilities === 'yes',
+          conditional: {
+            html: caringResponsibilitiesOptionHtml
+          }
         },
         {
           value: "no",

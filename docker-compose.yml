@@ -73,7 +73,7 @@ services:
     build: .
     networks:
       - hmpps
-    depends_on: [ redis, postgres, gotenberg, localstack ]
+    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack ]
     ports:
       - "3000:3000"
     environment:
@@ -81,10 +81,17 @@ services:
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
       # These will need to match new creds in the seed auth service auth
-      - API_CLIENT_ID=client-id
-      - API_CLIENT_SECRET=client-secret
-      - SYSTEM_CLIENT_ID=system-client-id
+      - API_CLIENT_ID=pre-sentence-service
+      - API_CLIENT_SECRET=clientsecret
+      - TOKEN_VERIFICATION_API_URL=http://localhost:8100
+      - SYSTEM_CLIENT_ID=pre-sentence-service
       - SYSTEM_CLIENT_SECRET=system-client-secret
+      - SESSION_SECRET=app-insecure-default-session
+      - GOTENBERG_API_URL=http://localhost:3001
+      - INGRESS_URL=http://localhost:3000
+      - SQS_DOMAIN_EVENTS_QUEUE_URL=http://localhost:4566/queue/pre_sentence_service_domain_events_queue
+      - SQS_DOMAIN_EVENTS_ACCESS_KEY_ID=pre-sentence-service
+      - SQS_DOMAIN_EVENTS_SECRET_ACCESS_KEY=pre-sentence-service
 
 networks:
   hmpps:

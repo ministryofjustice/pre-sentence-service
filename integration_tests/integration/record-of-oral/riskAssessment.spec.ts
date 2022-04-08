@@ -18,6 +18,13 @@ context('Oral - Risk assessment report page', () => {
   })
 
   describe('Authenticated user accesses risk assessment', () => {
+    it('should display the key details', () => {
+      cy.get('#qa-key-details').within(() => {
+        cy.get('h2').should('contain', 'CRN: DX12340A')
+        cy.get('h1').should('contain', 'Lenore Marquez')
+      })
+    })
+
     it('should display as NOT STARTED on the check report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')

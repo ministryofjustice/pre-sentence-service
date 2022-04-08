@@ -258,7 +258,7 @@
 
 </head>
 <body>
-<div class="watermark">{{ "DRAFT" if data.reportStatus !== "COMPLETED" }}{{ "PREVIEW" if data.preview }}</div>
+<div class="watermark">{{ "DRAFT" if data.reportStatus !== "COMPLETED" and not data.preview }}{{ "PREVIEW" if data.preview }}</div>
 <div class="page {{ "preview" if data.preview }}">
 
   <table class="first-page-header">
@@ -552,7 +552,11 @@
     </tr>
     <tr>
       <td width="40%" class="heading">Start date:</td>
-      <td width="60%">{{ data['startDate-day'] | zero }}/{{ data['startDate-month'] | zero }}/{{ data['startDate-year'] }}</td>
+      <td width="60%">
+        {% if data['startDate-day'] | length and data['startDate-month'] | length and data['startDate-year'] | length %}
+          {{ data['startDate-day'] | zero }}/{{ data['startDate-month'] | zero }}/{{ data['startDate-year'] }}
+        {% endif %}
+      </td>
     </tr>
     <tr>
       <td width="40%" class="heading">Completion date:</td>

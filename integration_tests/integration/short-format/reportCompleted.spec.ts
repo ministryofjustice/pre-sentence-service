@@ -17,6 +17,13 @@ context('Short Format - Report completed page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
+    it('should display the key details', () => {
+      cy.get('#qa-key-details').within(() => {
+        cy.get('h2').should('contain', 'CRN: DX12340A')
+        cy.get('h1').should('contain', 'Lenore Marquez')
+      })
+    })
+
     it('should NOT include side navigation', () => {
       currentPage.mojSideNavigation().should('not.exist')
     })

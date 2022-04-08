@@ -5,6 +5,7 @@ export const pageFields: Array<string> = [
   'likelihoodOfReOffending',
   'riskOfSeriousHarm',
   'responseToPreviousSupervision',
+  'responseToPreviousSupervisionDetails',
 ]
 
 export default class RiskAssessmentController extends BaseController {
