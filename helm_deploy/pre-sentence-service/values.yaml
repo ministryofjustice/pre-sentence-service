@@ -53,6 +53,7 @@ generic-service:
     hmpps-domain-events-topic:
       ACCESS_KEY_ID: "access_key_id"
       SECRET_ACCESS_KEY: "secret_access_key"
+      TOPIC_ARN: "topic_arn"
 
   allowlist:
     office: "217.33.148.210/32"
