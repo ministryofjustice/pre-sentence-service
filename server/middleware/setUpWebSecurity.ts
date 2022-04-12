@@ -27,6 +27,7 @@ export default function setUpWebSecurity(): Router {
             "'sha256-jLD2pxuZtowRxJaa7Gk5fzhU0HYiWxyCk191dG7ioSw='",
             `'nonce-${config.nonce}'`,
           ],
+          connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           imgSrc: ["'self'", 'data:'],
         },
