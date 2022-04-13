@@ -10,7 +10,7 @@ executors:
       - image: cimg/node:16.14.2-browsers
       - image: localstack/localstack:0.14.2
         environment:
-          SERVICES: sqs
+          SERVICES: sns
           DATA_DIR: /tmp/localstack/data
           TMP_DIR: /private
           DEFAULT_REGION: eu-west-2
@@ -130,7 +130,7 @@ jobs:
           name: Wait for localstack to start before creating resources
           command: sleep 10
       - run:
-          name: Create localstack queues
+          name: Create localstack topic
           command: |
             export AWS_ACCESS_KEY_ID=pre-sentence-service
             export AWS_SECRET_ACCESS_KEY=pre-sentence-service
