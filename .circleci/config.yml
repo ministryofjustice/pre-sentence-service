@@ -128,7 +128,13 @@ jobs:
           command: sudo apt-get install libxss1
       - run:
           name: Wait for localstack to start before creating resources
-          command: sleep 10
+          command: |
+            echo "Waiting for localstack sns"
+            until $(curl --silent --fail http://localhost:4566/health | grep "\"sns\": \"running\"" > /dev/null); do
+                printf '.'
+                sleep 2
+            done
+            echo " sns available"
       - run:
           name: Create localstack topic
           command: |
