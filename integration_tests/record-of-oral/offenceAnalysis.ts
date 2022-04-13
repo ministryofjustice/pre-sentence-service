@@ -6,13 +6,21 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#offenceAnalysis').clear().type('Some offence analysis')
+    cy.get('#offenceAnalysis')
+      .parent()
+      .within(() => {
+        cy.get('.ck-editor__editable_inline').clear().type('Some offence analysis')
+      })
     cy.get('#patternOfOffendingBehaviour').click()
     cy.get('#escalationInSeriousness').click()
   }
 
   clearForm(): void {
-    cy.get('#offenceAnalysis').clear()
+    cy.get('#offenceAnalysis')
+      .parent()
+      .within(() => {
+        cy.get('.ck-editor__editable_inline').clear()
+      })
     cy.get('#patternOfOffendingBehaviour').invoke('removeAttr', 'checked')
     cy.get('#escalationInSeriousness').invoke('removeAttr', 'checked')
   }

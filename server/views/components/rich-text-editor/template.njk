@@ -3,7 +3,7 @@
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 
 {% set describedBy = params.describedBy if params.describedBy else "" %}
-<div data-editor="InlineEditor" data-collaboration="false" class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
+<div data-editor="ClassicEditor" data-collaboration="false" class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
 {{ govukLabel({
     html: params.label.html,
     text: params.label.text,

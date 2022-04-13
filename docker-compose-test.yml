@@ -5,7 +5,7 @@ services:
     image: 'bitnami/redis:5.0'
     networks:
       - hmpps_int
-    container_name: pre-sentence-service-redis_int
+    container_name: redis_int
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -15,7 +15,7 @@ services:
     image: wiremock/wiremock
     networks:
       - hmpps_int
-    container_name: pre-sentence-service-wiremock_int
+    container_name: wiremock_int
     restart: always
     ports:
       - "9091:8080"
@@ -24,7 +24,7 @@ services:
     image: thecodingmachine/gotenberg:6.4.4
     networks:
       - hmpps_int
-    container_name: gotenberg
+    container_name: gotenberg_int
     ports:
       - "3001:3000"
     restart: always
@@ -35,7 +35,7 @@ services:
     image: postgres:13.3
     networks:
       - hmpps_int
-    container_name: pre-sentence-service-db
+    container_name: postgres_int
     restart: always
     ports:
       - "5432:5432"
@@ -48,7 +48,7 @@ services:
     image: localstack/localstack:0.13.2
     networks:
       - hmpps_int
-    container_name: localstack
+    container_name: localstack_int
     ports:
       - "4566-4597:4566-4597"
       - "8999:8080"

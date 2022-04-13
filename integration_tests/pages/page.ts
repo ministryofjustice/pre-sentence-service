@@ -17,6 +17,8 @@ export default abstract class Page {
 
   inputText = (): PageElement => cy.get('.govuk-input')
 
+  richTextArea = (): PageElement => cy.get('.ck-editor')
+
   textArea = (): PageElement => cy.get('.govuk-textarea')
 
   radioButtons = (): PageElement => cy.get('.govuk-radios')
