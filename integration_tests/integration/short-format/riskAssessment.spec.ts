@@ -48,14 +48,14 @@ context('Short Format - Risk assessment report page', () => {
 
     it('should include the required form elements', () => {
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Likelihood of further offending').should('exist')
         })
 
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Risk of serious harm').should('exist')
@@ -91,8 +91,8 @@ context('Short Format - Risk assessment report page', () => {
     })
 
     it('should retain inputted data', () => {
-      cy.get('#likelihoodOfReOffending').should('contain', 'Some likelihood of further offending')
-      cy.get('#riskOfSeriousHarm').should('contain', 'Some RoSH evidence')
+      cy.get('#likelihoodOfReOffending').should('contain', '<p>Some likelihood of further offending</p>')
+      cy.get('#riskOfSeriousHarm').should('contain', '<p>Some RoSH evidence</p>')
       cy.get('legend')
         .contains('Response to previous supervision')
         .parent()

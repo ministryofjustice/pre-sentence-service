@@ -1,4 +1,5 @@
 import Page from '../pages/page'
+import { enterRichText } from '../utils/helpers'
 
 export default class IndexPage extends Page {
   constructor() {
@@ -9,7 +10,7 @@ export default class IndexPage extends Page {
     cy.get('.govuk-checkboxes__input').each($el => {
       cy.wrap($el).check()
     })
-    cy.get('#otherSourceOfInformation').clear().type('Some other information source')
+    enterRichText('#otherSourceOfInformation', 'Some other information source')
   }
 
   clearForm(): void {

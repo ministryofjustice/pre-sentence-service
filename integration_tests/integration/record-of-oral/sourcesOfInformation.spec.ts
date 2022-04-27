@@ -77,7 +77,7 @@ context('Oral - Sources of information report page', () => {
       cy.get('.govuk-checkboxes__input').each($el => {
         cy.wrap($el).should('be.checked')
       })
-      cy.get('#otherSourceOfInformation').should('have.value', 'Some other information source')
+      cy.get('#otherSourceOfInformation').should('have.value', '<p>Some other information source</p>')
     })
 
     it('should display as SAVED on the check report page', () => {

@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import express, { Router, Express } from 'express'
 import cookieSession from 'cookie-session'
 import createError from 'http-errors'
@@ -41,7 +40,7 @@ function appSetup(route: Router, production: boolean): Express {
 
   app.use((req, res, next) => {
     res.locals = {}
-    res.locals.user = req.user
+    res.locals.user = user
     next()
   })
 

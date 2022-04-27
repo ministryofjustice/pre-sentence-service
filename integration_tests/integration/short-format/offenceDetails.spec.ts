@@ -48,7 +48,7 @@ context('Short Format - Offence details report page', () => {
 
     it('should include the required form elements', () => {
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Main offence and date').should('exist')
@@ -78,9 +78,9 @@ context('Short Format - Offence details report page', () => {
     })
 
     it('should retain inputted data', () => {
-      cy.get('#mainOffence').should('have.value', 'Some main offence')
-      cy.get('#otherOffences').should('have.value', 'Some other offences')
-      cy.get('#offenceSummary').should('have.value', 'Some offence summary')
+      cy.get('#mainOffence').should('have.value', '<p>Some main offence</p>')
+      cy.get('#otherOffences').should('have.value', '<p>Some other offences</p>')
+      cy.get('#offenceSummary').should('have.value', '<p>Some offence summary</p>')
     })
 
     it('should display as SAVED on the check report page', () => {

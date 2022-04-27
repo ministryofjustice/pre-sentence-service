@@ -66,7 +66,7 @@ context('Oral - Risk assessment report page', () => {
       currentPage.headingL2().contains('Risk of serious harm').should('exist')
 
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Evidence for risk level').should('exist')
@@ -158,9 +158,9 @@ context('Oral - Risk assessment report page', () => {
             .should('be.checked')
         })
 
-      cy.get('#yourAssessment').should('have.value', 'Some assessment')
+      cy.get('#yourAssessment').should('have.value', '<p>Some assessment</p>')
 
-      cy.get('#evidenceForRiskLevel').should('have.value', 'Some RoSH evidence')
+      cy.get('#evidenceForRiskLevel').should('have.value', '<p>Some RoSH evidence</p>')
       cy.get('legend')
         .contains('Response')
         .parent()
