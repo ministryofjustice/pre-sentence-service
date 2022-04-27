@@ -52,12 +52,21 @@ export default class SharedController {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
+  private getPersistentData = () => {
+    if (this.report && this.report.fieldValues) {
+      this.report.fieldValues.forEach(item => {
+        if (this.persistentData.includes(item.field.name)) {
+          this.data[item.field.name] = item.value
+        }
+      })
+    }
+  }
+
   private getStoredData = () => {
     this.data = {}
     if (this.report && this.report.fieldValues) {
-      const requiredFields = this.pageFields.concat(this.persistentData)
       this.report.fieldValues.forEach(item => {
-        if (requiredFields.includes(item.field.name)) {
+        if (this.pageFields.includes(item.field.name)) {
           this.data[item.field.name] = item.value
         }
       })
@@ -92,6 +101,7 @@ export default class SharedController {
     this.report = await this.reportService.getReportById(req.params.reportId)
     if (this.report) {
       this.getStoredData()
+      this.getPersistentData()
       if (this.updateReport) {
         this.updateReport()
       }
@@ -121,10 +131,13 @@ export default class SharedController {
       await this.updateFields(req.body)
       res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
     } else {
+      this.report = await this.reportService.getReportById(req.params.reportId)
+      this.getPersistentData()
       this.renderTemplate(res, {
-        reportId: req.params.reportId,
         ...this.templateValues,
+        reportId: req.params.reportId,
         data: {
+          ...this.data,
           ...req.body,
         },
         formValidation: validatedForm,
