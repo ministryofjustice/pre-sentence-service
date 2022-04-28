@@ -52,16 +52,6 @@ export default class SharedController {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
-  private getPersistentData = () => {
-    if (this.report && this.report.fieldValues) {
-      this.report.fieldValues.forEach(item => {
-        if (this.persistentData.includes(item.field.name)) {
-          this.data[item.field.name] = item.value
-        }
-      })
-    }
-  }
-
   private getStoredData = () => {
     this.data = {}
     if (this.report && this.report.fieldValues) {
@@ -71,6 +61,18 @@ export default class SharedController {
         }
       })
     }
+  }
+
+  private getPersistentData = (): object => {
+    const data = {}
+    if (this.report && this.report.fieldValues) {
+      this.report.fieldValues.forEach(item => {
+        if (this.persistentData.includes(item.field.name)) {
+          data[item.field.name] = item.value
+        }
+      })
+    }
+    return data
   }
 
   protected updateFields = async (formData: unknown) => {
@@ -101,7 +103,6 @@ export default class SharedController {
     this.report = await this.reportService.getReportById(req.params.reportId)
     if (this.report) {
       this.getStoredData()
-      this.getPersistentData()
       if (this.updateReport) {
         this.updateReport()
       }
@@ -112,6 +113,7 @@ export default class SharedController {
           ...this.defaultTemplateData,
           ...this.data,
           ...this.report,
+          ...this.getPersistentData(),
         },
       })
     } else {
@@ -132,13 +134,13 @@ export default class SharedController {
       res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
     } else {
       this.report = await this.reportService.getReportById(req.params.reportId)
-      this.getPersistentData()
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: req.params.reportId,
         data: {
           ...this.data,
           ...req.body,
+          ...this.getPersistentData(),
         },
         formValidation: validatedForm,
       })
