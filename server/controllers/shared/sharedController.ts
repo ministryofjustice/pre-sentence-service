@@ -75,6 +75,19 @@ export default class SharedController {
     return data
   }
 
+  private checkFieldValueVersions = (req: Request): boolean => {
+    let validVersions = true
+    if (this.report && this.report.fieldValues && req.session && req.session.fieldValues) {
+      this.report.fieldValues.forEach(savedValue => {
+        const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
+        if (compare && compare.version !== savedValue.version) {
+          validVersions = false
+        }
+      })
+    }
+    return validVersions
+  }
+
   protected updateFields = async (formData: unknown) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
@@ -106,6 +119,9 @@ export default class SharedController {
       if (this.updateReport) {
         this.updateReport()
       }
+      if (req.session) {
+        req.session.fieldValues = this.report.fieldValues
+      }
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: req.params.reportId,
@@ -122,6 +138,7 @@ export default class SharedController {
   }
 
   public post = async (req: Request, res: Response): Promise<void> => {
+    this.report = await this.reportService.getReportById(req.params.reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid) {
       if (this.correctFormData) {
@@ -130,10 +147,22 @@ export default class SharedController {
           ...this.correctFormData(req),
         }
       }
-      await this.updateFields(req.body)
-      res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
+      if (this.checkFieldValueVersions(req)) {
+        await this.updateFields(req.body)
+        res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
+      } else {
+        this.renderTemplate(res, {
+          ...this.templateValues,
+          reportId: req.params.reportId,
+          data: {
+            versionMismatch: true,
+            ...this.data,
+            ...req.body,
+            ...this.getPersistentData(),
+          },
+        })
+      }
     } else {
-      this.report = await this.reportService.getReportById(req.params.reportId)
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: req.params.reportId,

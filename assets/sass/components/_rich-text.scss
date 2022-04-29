@@ -12,3 +12,11 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.app-notification-banner-error {
+  border-color: $govuk-error-colour;
+
+  .govuk-notification-banner__header {
+    background-color: $govuk-error-colour;
+  }
+}

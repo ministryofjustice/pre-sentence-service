@@ -1,5 +1,58 @@
 {% extends "./layout.njk" %}
 
+{% set errorList = [] %}
+{% set elementsWithError = [] %}
+{% for item in formValidation.errors %}
+  {{ errorList.push({ text: item.errorMessage, href: "#" + item.id }) }}
+  {{ elementsWithError.push(item.id) }}
+{% endfor %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+
+        {% block sideNavigation%}
+        {% endblock %}
+
+      </div>
+      <div class="govuk-grid-column-two-thirds govuk-!-padding-top-2">
+
+        {% if data.versionMismatch %}
+          {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+          {% set html %}
+            <h3 class="govuk-notification-banner__heading">Your changes have not been saved</h3>
+            <p class="govuk-body">Changes to this section of the report have been made from another source.</p>
+          {% endset %}
+
+          {{ govukNotificationBanner({
+            titleText: 'There is a problem',
+            html: html,
+            role: 'alert',
+            classes: 'app-notification-banner-error'
+          }) }}
+        {% endif %}
+
+        {% if formValidation.errors | length %}
+          {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          }) }}
+        {% endif %}
+
+        {% block reportForm %}
+        {% endblock %}
+
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
+
 {% block additionalScripts %}
   <script src="/assets/ckeditor.js"></script>
   <script src="/assets/ckeditor5setup.js"></script>

@@ -67,12 +67,12 @@ context('Short Format - Proposal report page', () => {
     })
 
     it('should include the primary call to action button', () => {
-      currentPage.govukButton().contains('Continue').should('exist')
+      currentPage.govukButton().contains('Save and continue').should('exist')
     })
 
     it('should re-render and display errors upon invalid form submission', () => {
       currentPage.clearForm()
-      currentPage.govukButton().contains('Continue').click()
+      currentPage.govukButton().contains('Save and continue').click()
       Page.verifyOnPage(Proposal)
       currentPage.govukErrorSummary().should('exist')
       cy.get('#equalityAndDiversity-error').should('exist')
@@ -82,7 +82,7 @@ context('Short Format - Proposal report page', () => {
     it('should move to correct screen upon valid form submission', () => {
       currentPage.clearForm()
       currentPage.completeForm()
-      currentPage.govukButton().contains('Continue').click()
+      currentPage.govukButton().contains('Save and continue').click()
       Page.verifyOnPage(SourcesOfInformation)
     })
 
