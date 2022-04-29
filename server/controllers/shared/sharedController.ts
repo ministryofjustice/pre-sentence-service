@@ -77,7 +77,7 @@ export default class SharedController {
 
   private checkFieldValueVersions = (req: Request): boolean => {
     let validVersions = true
-    if (this.report && this.report.fieldValues && req.session && req.session.fieldValues) {
+    if (this.report && this.report.fieldValues && req.session.fieldValues) {
       this.report.fieldValues.forEach(savedValue => {
         const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
         if (compare && compare.version !== savedValue.version) {
@@ -119,9 +119,7 @@ export default class SharedController {
       if (this.updateReport) {
         this.updateReport()
       }
-      if (req.session) {
-        req.session.fieldValues = this.report.fieldValues
-      }
+      req.session.fieldValues = this.report.fieldValues
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: req.params.reportId,

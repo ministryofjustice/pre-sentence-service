@@ -36,6 +36,7 @@ describe('Route Handlers - Shared Controller', () => {
         reportId: '12345678',
       },
       body: {},
+      session: {},
     } as unknown as Request
     res = {
       render: jest.fn(),

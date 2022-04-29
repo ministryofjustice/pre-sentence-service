@@ -40,6 +40,7 @@ describe('Route Handlers - Sources of Information Controller', () => {
     req = {
       params: {},
       body: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),

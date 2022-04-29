@@ -33,6 +33,7 @@ describe('Route Handlers - Record of Oral Pre-Sentence Report Landing Page Contr
   beforeEach(() => {
     req = {
       params: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),

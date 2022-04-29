@@ -33,6 +33,7 @@ describe('Route Handlers - Check Report Controller', () => {
   beforeEach(() => {
     req = {
       params: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),
