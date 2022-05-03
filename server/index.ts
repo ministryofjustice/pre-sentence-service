@@ -7,7 +7,7 @@ import UserService from './services/userService'
 import getDatabaseConnection from './repositories/db'
 
 export default async function createApplication(): Promise<Application> {
-  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient()))
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
   const userService = new UserService(hmppsAuthClient)
   const [error] = await getDatabaseConnection()
 
