@@ -40,6 +40,7 @@ describe('Route Handlers - Proposal Controller', () => {
     req = {
       params: {},
       body: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),

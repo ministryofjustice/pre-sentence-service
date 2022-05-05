@@ -34,7 +34,7 @@ context('Short-format - Preview report', () => {
       cy.get('#dateOfHearing-day').clear().type('1')
       cy.get('#dateOfHearing-month').clear().type('3')
       cy.get('#dateOfHearing-year').clear().type('2022')
-      cy.get('.govuk-button').contains('Continue').click()
+      cy.get('.govuk-button').contains('Save and continue').click()
 
       cy.visit(path)
 

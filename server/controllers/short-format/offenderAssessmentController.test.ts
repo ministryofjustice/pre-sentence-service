@@ -45,6 +45,7 @@ describe('Route Handlers - Offender Assessment Controller', () => {
     req = {
       params: {},
       body: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),

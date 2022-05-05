@@ -33,6 +33,7 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
   beforeEach(() => {
     req = {
       params: {},
+      session: {},
     } as Request
     res = {
       render: jest.fn(),
