@@ -21,7 +21,7 @@
       p {
           orphans: 1; /* workaround for bug described by https://stackoverflow.com/questions/9499519/itext-2-flying-saucer-how-to-avoid-that-the-images-appears-broken-between-two */
           min-height: 16px;
-          margin: 0;
+          margin: 15px 0 0 0;
       }
 
       body {
@@ -329,21 +329,23 @@
     <tr>
       <td>
         <h3 class="heading">Main offence and date:</h3>
-        <div class="formatted-text">{{ data.mainOffence }}</div>
+        <div class="formatted-text">{{ data.mainOffence | safe }}</div>
       </td>
     </tr>
-    <tr class="optional-section OTHER_OFFENCE_PRESENT">
+    {% if data.otherOffences | length %}
+    <tr>
       <td>
         <h3 class="heading">Other offences and dates:</h3>
-        <div class="formatted-text">{{ data.otherOffences }}</div>
+        <div class="formatted-text">{{ data.otherOffences | safe }}</div>
       </td>
     </tr>
+    {% endif %}
   </table>
 
   <h2>Proposed sentence (including length and any sentence components)</h2>
 
   <div class="sub-section">
-    <div class="formatted-text">{{ data.proposal }}</div>
+    <div class="formatted-text">{{ data.proposal | safe }}</div>
   </div>
 
   <div class="keep-together-section">
@@ -377,7 +379,7 @@
     <div class="details-section">
       <div class="sub-section">
         <h3>Assessment</h3>
-        <div class="formatted-text">{{ data.yourAssessment }}</div>
+        <div class="formatted-text">{{ data.yourAssessment | safe }}</div>
       </div>
     </div>
 
@@ -402,14 +404,14 @@
     <div class="details-section">
       <div class="sub-section">
         <h3>Evidence for Risk Assessment level</h3>
-        <div class="formatted-text">{{ data.evidenceForRiskLevel }}</div>
+        <div class="formatted-text">{{ data.evidenceForRiskLevel | safe }}</div>
       </div>
     </div>
   </div>
 
   <div class="details-section">
     <h3>Offence analysis:</h3>
-    <div class="formatted-text">{{ data.offenceAnalysis }}</div>
+    <div class="formatted-text">{{ data.offenceAnalysis | safe}}</div>
   </div>
 
   <div class="keep-together-section">
@@ -477,7 +479,7 @@
 
     <div class="details-section">
       <h3>Evidence for assessment</h3>
-      <div class="formatted-text">{{ data.evidenceForAssessment }}</div>
+      <div class="formatted-text">{{ data.evidenceForAssessment | safe }}</div>
     </div>
 
   </div>
@@ -526,7 +528,7 @@
     </table>
     <div class="sub-section optional-section {{ "yes" if "otherInformationSource" in sourcesOfInformation }}">
       <h3>Other sources of information:</h3>
-      <div class="formatted-text">{{ data.otherSourceOfInformation }}</div>
+      <div class="formatted-text">{{ data.otherSourceOfInformation | safe }}</div>
     </div>
   </div>
 

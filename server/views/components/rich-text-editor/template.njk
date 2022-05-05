@@ -3,7 +3,7 @@
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 
 {% set describedBy = params.describedBy if params.describedBy else "" %}
-<div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
+<div data-editor="ClassicEditor" data-collaboration="false" class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
 {{ govukLabel({
     html: params.label.html,
     text: params.label.text,
@@ -52,9 +52,10 @@
     }) | indent(2) | trim }}
   {% endif %}
 
-  <textarea class="govuk-textarea {{- ' govuk-textarea--error' if params.errorMessage }} {{- ' ' + params.classes if params.classes}}" id="{{ params.id }}" name="{{ params.name }}" rows="{%if params.rows %} {{- params.rows -}} {% else %}5{%endif %}"
+  <textarea hidden class="app-apply-ckeditor5" id="{{ params.id }}" name="{{ params.name }}" rows="{%if params.rows %} {{- params.rows -}} {% else %}5{%endif %}"
   {%- if (params.spellcheck === false) or (params.spellcheck === true) %} spellcheck="{{ params.spellcheck }}"{% endif %}
     {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
     {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value }}</textarea>
+
 </div>

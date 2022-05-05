@@ -48,7 +48,7 @@ context('Oral - Offence analysis report page', () => {
 
     it('should include the required form elements', () => {
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Provide an analysis of the offence(s), including victim impact.').should('exist')
@@ -90,7 +90,7 @@ context('Oral - Offence analysis report page', () => {
     })
 
     it('should retain inputted data', () => {
-      cy.get('#offenceAnalysis').should('have.value', 'Some offence analysis')
+      cy.get('#offenceAnalysis').should('have.value', '<p>Some offence analysis</p>')
       cy.get('legend')
         .contains('Is current offending part of a pattern of offending behaviour?')
         .parent()

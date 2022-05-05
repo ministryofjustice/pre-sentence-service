@@ -77,7 +77,7 @@ context('Oral - Offender assessment report page', () => {
         })
 
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Evidence for assessment').should('exist')
@@ -133,7 +133,7 @@ context('Oral - Offender assessment report page', () => {
             .should('be.checked')
         })
 
-      cy.get('#evidenceForAssessment').should('have.value', 'Some evidence')
+      cy.get('#evidenceForAssessment').should('have.value', '<p>Some evidence</p>')
     })
 
     it('should display as SAVED on the check report page', () => {

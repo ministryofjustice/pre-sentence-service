@@ -59,7 +59,7 @@ context('Short Format - Proposal report page', () => {
         })
 
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Enter a proposed sentence').should('exist')
@@ -100,7 +100,7 @@ context('Short Format - Proposal report page', () => {
             .should('be.checked')
         })
 
-      cy.get('#proposal').should('have.value', 'Some proposal text')
+      cy.get('#proposal').should('have.value', '<p>Some proposal text</p>')
     })
 
     it('should display as SAVED on the check report page', () => {

@@ -21,7 +21,7 @@
       p {
           orphans: 1; /* workaround for bug described by https://stackoverflow.com/questions/9499519/itext-2-flying-saucer-how-to-avoid-that-the-images-appears-broken-between-two */
           min-height: 16px;
-          margin: 0;
+          margin: 15px 0 0 0;
       }
 
       body {
@@ -111,6 +111,7 @@
       .optional-section, .alternative-section.yes {
           display: none;
       }
+
       .optional-section.true, .optional-section.true-true, .optional-section.true-yes, .optional-section.yes, .alternative-section {
           display: block;
       }
@@ -160,12 +161,15 @@
       .header, .footer {
           color: #BCBCBC;
       }
+
       .cell-top {
           vertical-align: top;
       }
+
       h1 {
           font-size: 18px;
       }
+
       h2 {
           font-size: 16px;
           page-break-after: avoid;
@@ -188,26 +192,34 @@
       .details-section {
           margin-top: 0.5cm;
       }
+
       .details-section p {
           margin-top: 0;
           padding-top: 0;
       }
+
       .formatted-text {
           white-space: pre-wrap;
       }
+
       .keep-together-section {
           page-break-inside: avoid;
       }
+
       .sub-section {
           margin-top: 0.4cm;
       }
+
       div.header {
-          display: block; text-align: center;
+          display: block;
+          text-align: center;
           position: running(header);
           margin-top: 1cm;
       }
+
       div.footer {
-          display: block; text-align: center;
+          display: block;
+          text-align: center;
           position: running(footer);
           font-size: 14px;
       }
@@ -219,24 +231,31 @@
       .footer .optional-section {
           display: inline;
       }
+
       .footer .optional-section.DRAFT {
           display: none;
       }
+
       .footer .alternative-section {
           display: none;
       }
+
       .footer .alternative-section.DRAFT {
           display: inline;
       }
+
       span#page-number:before {
           content: counter(page);
       }
+
       .ql-align-justify {
           text-align: justify;
       }
+
       tr.no-border {
           border: none;
       }
+
       @page {
           @top-center {
               content: element(header)
@@ -245,11 +264,12 @@
               content: element(footer)
           }
           size: A4 portrait;
-          margin-top:2cm;
-          margin-left:1.2cm;
-          margin-right:1.2cm;
-          margin-bottom:2cm;
+          margin-top: 2cm;
+          margin-left: 1.2cm;
+          margin-right: 1.2cm;
+          margin-bottom: 2cm;
       }
+
       .preview {
           width: 690px;
           margin: 25px auto;
@@ -258,7 +278,8 @@
 
 </head>
 <body>
-<div class="watermark">{{ "DRAFT" if data.reportStatus !== "COMPLETED" and not data.preview }}{{ "PREVIEW" if data.preview }}</div>
+<div
+    class="watermark">{{ "DRAFT" if data.reportStatus !== "COMPLETED" and not data.preview }}{{ "PREVIEW" if data.preview }}</div>
 <div class="page {{ "preview" if data.preview }}">
 
   <table class="first-page-header">
@@ -310,28 +331,30 @@
     <tr>
       <td>
         <h3 class="heading">Main offence and date:</h3>
-        <div class="formatted-text">{{ data.mainOffence }}</div>
+        <div class="formatted-text">{{ data.mainOffence | safe }}</div>
       </td>
     </tr>
-    <tr class="optional-section OTHER_OFFENCE_PRESENT">
+    {% if data.otherOffences | length %}
+    <tr>
       <td>
         <h3 class="heading">Other offences and dates:</h3>
-        <div class="formatted-text">{{ data.otherOffences }}</div>
+        <div class="formatted-text">{{ data.otherOffences | safe }}</div>
       </td>
     </tr>
+    {% endif %}
   </table>
   <div class="details-section">
     <h3>Summary of the offence:</h3>
-    <div class="formatted-text">{{ data.offenceSummary }}</div>
+    <div class="formatted-text">{{ data.offenceSummary | safe }}</div>
   </div>
   <div class="details-section">
     <h3>Offence analysis:</h3>
-    <div class="formatted-text">{{ data.offenceAnalysis }}</div>
+    <div class="formatted-text">{{ data.offenceAnalysis | safe }}</div>
   </div>
 
   <div class="details-section">
     <h3>Pattern of offending:</h3>
-    <div class="formatted-text">{{ data.patternOfOffendingBehaviour }}</div>
+    <div class="formatted-text">{{ data.patternOfOffendingBehaviour | safe }}</div>
   </div>
 
   <div class="keep-together-section">
@@ -347,19 +370,23 @@
       </tr>
       <tr>
         <td width="40%">Accommodation</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueAccommodation" in assessmentFactors }}"></span></td>
+        <td width="10%" class="check-padding"><span
+              class="check {{ "yes" if "issueAccommodation" in assessmentFactors }}"></span></td>
         <td width="40%">Employment</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "issueEmployment" in assessmentFactors }}"></span></td>
+        <td width="10%" class="check-padding"><span
+              class="check {{ "yes" if "issueEmployment" in assessmentFactors }}"></span></td>
       </tr>
       <tr>
         <td>Finance</td>
         <td class="check-padding"><span class="check {{ "yes" if "issueFinance" in assessmentFactors }}"></span></td>
         <td>Relationships</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueRelationships" in assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueRelationships" in assessmentFactors }}"></span>
+        </td>
       </tr>
       <tr>
         <td>Substance misuse</td>
-        <td class="check-padding"><span class="check {{ "yes" if "issueSubstanceMisuse" in assessmentFactors }}"></span></td>
+        <td class="check-padding"><span class="check {{ "yes" if "issueSubstanceMisuse" in assessmentFactors }}"></span>
+        </td>
         <td>Physical &amp; Mental Health</td>
         <td class="check-padding"><span class="check {{ "yes" if "issueHealth" in assessmentFactors }}"></span></td>
       </tr>
@@ -379,49 +406,57 @@
     <div class="details-section">
       <div class="sub-section optional-section {{ "yes" if "issueAccommodation" in assessmentFactors }}">
         <h3>Accommodation</h3>
-        <div class="formatted-text">{{ data.issueAccommodationDetails }}</div>
+        <div class="formatted-text">{{ data.issueAccommodationDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueEmployment" in assessmentFactors }}">
         <h3>Employment, training and education</h3>
-        <div class="formatted-text">{{ data.issueEmploymentDetails }}</div>
+        <div class="formatted-text">{{ data.issueEmploymentDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueFinance" in assessmentFactors }}">
         <h3>Finance</h3>
-        <div class="formatted-text">{{ data.issueFinanceDetails }}</div>
+        <div class="formatted-text">{{ data.issueFinanceDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueRelationships" in assessmentFactors }}">
         <h3>Relationships</h3>
-        <div class="formatted-text">{{ data.issueRelationshipsDetails }}</div>
+        <div class="formatted-text">{{ data.issueRelationshipsDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueSubstanceMisuse" in assessmentFactors }}">
         <h3>Substance misuse</h3>
-        <div class="formatted-text">{{ data.issueSubstanceMisuseDetails }}</div>
+        <div class="formatted-text">{{ data.issueSubstanceMisuseDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueHealth" in assessmentFactors }}">
         <h3>Physical &amp; mental health</h3>
-        <div class="formatted-text">{{ data.issueHealthDetails }}</div>
+        <div class="formatted-text">{{ data.issueHealthDetails | safe }}</div>
       </div>
       <div class="sub-section optional-section {{ "yes" if "issueBehaviour" in assessmentFactors }}">
         <h3>Thinking and behaviour</h3>
-        <div class="formatted-text">{{ data.issueBehaviourDetails }}</div>
+        <div class="formatted-text">{{ data.issueBehaviourDetails | safe }}</div>
       </div>
 
       <div class="sub-section">
         <h3>Experience of trauma</h3>
-        <div class="formatted-text optional-section {{ data.experienceOfTrauma }}">{{ data.experienceOfTraumaDetails }}</div>
-        <div class="formatted-text alternative-section {{ data.experienceOfTrauma }}">There is no evidence that the offender has experienced trauma.</div>
+        <div
+            class="formatted-text optional-section {{ data.experienceOfTrauma }}">{{ data.experienceOfTraumaDetails | safe }}</div>
+        <div class="formatted-text alternative-section {{ data.experienceOfTrauma }}">There is no evidence that the
+          offender has experienced trauma.
+        </div>
       </div>
 
       <div class="sub-section">
         <h3>Caring responsibilities</h3>
-        <div class="formatted-text optional-section {{ data.caringResponsibilities }}">{{ data.caringResponsibilitiesDetails }}</div>
-        <div class="formatted-text alternative-section {{ data.caringResponsibilities }}">There are no current or past caring responsibilities in this case.</div>
+        <div
+            class="formatted-text optional-section {{ data.caringResponsibilities }}">{{ data.caringResponsibilitiesDetails | safe }}</div>
+        <div class="formatted-text alternative-section {{ data.caringResponsibilities }}">There are no current or past
+          caring responsibilities in this case.
+        </div>
       </div>
 
-      <div class="sub-section optional-section {{ "yes" if "issueOther" in assessmentFactors }}">
+      {% if "issueOther" in assessmentFactors %}
+      <div class="sub-section">
         <h3>Other</h3>
-        <div class="formatted-text">{{ data.issueOtherDetails }}</div>
+        <div class="formatted-text">{{ data.issueOtherDetails | safe }}</div>
       </div>
+      {% endif %}
     </div>
   </div>
 
@@ -430,11 +465,11 @@
     <h2>Risk assessment</h2>
     <div class="sub-section">
       <h3>Likelihood of further offending:</h3>
-      <div class="formatted-text">{{ data.likelihoodOfReOffending }}</div>
+      <div class="formatted-text">{{ data.likelihoodOfReOffending | safe }}</div>
     </div>
     <div class="sub-section">
       <h3>Risk of serious harm:</h3>
-      <div class="formatted-text">{{ data.riskOfSeriousHarm }}</div>
+      <div class="formatted-text">{{ data.riskOfSeriousHarm | safe }}</div>
     </div>
     <div class="sub-section">
       <h3>Response to previous supervision:</h3>
@@ -442,7 +477,7 @@
     </div>
     <div class="sub-section">
       <h3>Details on previous supervision:</h3>
-      <div class="formatted-text">{{ data.responseToPreviousSupervisionDetails }}</div>
+      <div class="formatted-text">{{ data.responseToPreviousSupervisionDetails | safe }}</div>
     </div>
   </div>
 
@@ -450,7 +485,7 @@
 
 
   <div class="sub-section">
-    <div class="formatted-text">{{ data.proposal }}</div>
+    <div class="formatted-text">{{ data.proposal | safe }}</div>
   </div>
 
 
@@ -461,42 +496,54 @@
       </tr>
       <tr>
         <td width="40%">Interview</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "interviewInformationSource" in sourcesOfInformation }}"></span></td>
+        <td width="10%" class="check-padding"><span
+              class="check {{ "yes" if "interviewInformationSource" in sourcesOfInformation }}"></span></td>
         <td width="40%">Service Records</td>
-        <td width="10%" class="check-padding"><span class="check {{ "yes" if "serviceRecordsInformationSource" in sourcesOfInformation }}"></span></td>
+        <td width="10%" class="check-padding"><span
+              class="check {{ "yes" if "serviceRecordsInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>CPS Summary</td>
-        <td class="check-padding"><span class="check {{ "yes" if "cpsSummaryInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "cpsSummaryInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Previous OASys Assessments</td>
-        <td class="check-padding"><span class="check {{ "yes" if "oasysAssessmentsInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "oasysAssessmentsInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Previous Convictions</td>
-        <td class="check-padding"><span class="check {{ "yes" if "previousConvictionsInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "previousConvictionsInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Victim Statement</td>
-        <td class="check-padding"><span class="check {{ "yes" if "victimStatementInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "victimStatementInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Safeguarding checks</td>
-        <td class="check-padding"><span class="check {{ "yes" if "childrenServicesInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "childrenServicesInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Police Information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "policeInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "policeInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Sentencing guidelines</td>
-        <td class="check-padding"><span class="check {{ "yes" if "sentencingGuidelinesInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "sentencingGuidelinesInformationSource" in sourcesOfInformation }}"></span></td>
         <td>Domestic abuse call out information</td>
-        <td class="check-padding"><span class="check {{ "yes" if "domesticAbuseInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "domesticAbuseInformationSource" in sourcesOfInformation }}"></span></td>
       </tr>
       <tr>
         <td>Equality Information Form</td>
-        <td class="check-padding"><span class="check {{ "yes" if "equalityInformationFormInformationSource" in sourcesOfInformation }}"></span></td>
+        <td class="check-padding"><span
+              class="check {{ "yes" if "equalityInformationFormInformationSource" in sourcesOfInformation }}"></span>
+        </td>
       </tr>
     </table>
     <div class="sub-section optional-section {{ "yes" if "otherInformationSource" in sourcesOfInformation }}">
       <h3>Other sources of information:</h3>
-      <div class="formatted-text">{{ data.otherSourceOfInformation }}</div>
+      <div class="formatted-text">{{ data.otherSourceOfInformation | safe }}</div>
     </div>
   </div>
 

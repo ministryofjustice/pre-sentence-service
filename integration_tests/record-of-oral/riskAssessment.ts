@@ -1,4 +1,5 @@
 import Page from '../pages/page'
+import { clearRichText, enterRichText } from '../utils/helpers'
 
 export default class IndexPage extends Page {
   constructor() {
@@ -14,9 +15,9 @@ export default class IndexPage extends Page {
     cy.get('#assessmentLevel3').click()
     cy.get('#assessmentTool4').clear().type('Some tool name')
     cy.get('#assessmentLevel4').click()
-    cy.get('#yourAssessment').clear().type('Some assessment')
+    enterRichText('#yourAssessment', 'Some assessment')
     cy.get('#riskOfSeriousHarm').click()
-    cy.get('#evidenceForRiskLevel').clear().type('Some RoSH evidence')
+    enterRichText('#evidenceForRiskLevel', 'Some RoSH evidence')
     cy.get('#responseToPreviousSupervision').click()
   }
 
@@ -29,8 +30,8 @@ export default class IndexPage extends Page {
     cy.get('#assessmentLevel3').invoke('removeAttr', 'checked')
     cy.get('#assessmentTool4').clear()
     cy.get('#assessmentLevel4').invoke('removeAttr', 'checked')
-    cy.get('#yourAssessment').clear()
-    cy.get('#evidenceForRiskLevel').clear()
+    clearRichText('#yourAssessment')
+    clearRichText('#evidenceForRiskLevel')
     cy.get('#riskOfSeriousHarm').invoke('removeAttr', 'checked')
     cy.get('#responseToPreviousSupervision').invoke('removeAttr', 'checked')
   }

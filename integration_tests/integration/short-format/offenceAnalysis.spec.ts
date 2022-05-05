@@ -48,7 +48,7 @@ context('Short Format - Offence analysis report page', () => {
 
     it('should include the required form elements', () => {
       currentPage
-        .textArea()
+        .richTextArea()
         .parent()
         .within(() => {
           cy.get('label').contains('Offence analysis').should('exist')
@@ -77,8 +77,11 @@ context('Short Format - Offence analysis report page', () => {
     })
 
     it('should retain inputted data', () => {
-      cy.get('#offenceAnalysis').should('have.value', 'Some offence analysis')
-      cy.get('#patternOfOffendingBehaviour').should('have.value', 'Some patterns of offending behaviour analysis')
+      cy.get('#offenceAnalysis').should('have.value', '<p>Some offence analysis</p>')
+      cy.get('#patternOfOffendingBehaviour').should(
+        'have.value',
+        '<p>Some patterns of offending behaviour analysis</p>'
+      )
     })
 
     it('should display as SAVED on the check report page', () => {

@@ -1,4 +1,5 @@
 import Page from '../pages/page'
+import { clearRichText, enterRichText } from '../utils/helpers'
 
 export default class IndexPage extends Page {
   constructor() {
@@ -6,12 +7,12 @@ export default class IndexPage extends Page {
   }
 
   completeForm(): void {
-    cy.get('#mainOffence').clear().type('Some main offence')
-    cy.get('#otherOffences').clear().type('Some other offences')
+    enterRichText('#mainOffence', 'Some main offence')
+    enterRichText('#otherOffences', 'Some other offences')
   }
 
   clearForm(): void {
-    cy.get('#mainOffence').clear()
-    cy.get('#otherOffences').clear()
+    clearRichText('#mainOffence')
+    clearRichText('#otherOffences')
   }
 }
