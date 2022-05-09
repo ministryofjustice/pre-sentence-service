@@ -1,6 +1,6 @@
 {
   "name": "pre-sentence-service",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Pre-sentence Service",
   "repository": "git@github.com:ministryofjustice/pre-sentence-service.git",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots"
   },
   "engines": {
-    "node": ">=16.14.0 <18.0.0",
+    "node": ">=16.15.0 <17.0.0",
     "npm": ">=8.0.0"
   },
   "jest": {

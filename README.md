@@ -25,7 +25,7 @@ To start the main services excluding the typescript app:
 
 Now in a separate terminal window or tab, at the project root.
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v16.14.0` (Gallium) LTS
+Install dependencies using `npm install`, ensuring you are using >= `Node v16.15.0` (Gallium) LTS
 
 And then, to build the assets and start the app with nodemon:
 
