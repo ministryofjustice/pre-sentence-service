@@ -67,9 +67,6 @@ export default class SignReportController extends BaseController {
       data: {
         reportAuthor: res.locals && res.locals.user && res.locals.user.displayName ? res.locals.user.displayName : '',
         ...templateValues.data,
-        'startDate-day': this.data['startDate-day'],
-        'startDate-month': this.data['startDate-month'],
-        'startDate-year': this.data['startDate-year'],
       },
     })
   }
