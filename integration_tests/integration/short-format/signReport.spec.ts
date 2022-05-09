@@ -81,10 +81,7 @@ context('Short Format - Sign report page', () => {
     })
 
     it('should display the start date from the database', () => {
-      const today = new Date()
-      const todayDay = `0${today.getDate()}`.slice(-2)
-      const todayMonth = `0${today.getMonth() + 1}`.slice(-2)
-      cy.get('.qa-start-date').contains(`${todayDay}/${todayMonth}/${today.getFullYear()}`)
+      cy.get('.qa-start-date').contains('01/02/2022')
     })
 
     it('should include the primary call to action button', () => {
