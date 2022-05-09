@@ -1,7 +1,17 @@
 import { differenceInYears, parse } from 'date-fns'
 import BaseController from './baseController'
 
-export const pageFields: Array<string> = ['name', 'dateOfBirth', 'age', 'crn', 'address', 'pnc']
+export const pageFields: Array<string> = [
+  'name',
+  'dateOfBirth',
+  'age',
+  'crn',
+  'address',
+  'pnc',
+  'startDate-day',
+  'startDate-month',
+  'startDate-year',
+]
 
 export default class OffenderDetailsController extends BaseController {
   override templatePath = 'offender-details'
