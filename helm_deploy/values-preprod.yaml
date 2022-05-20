@@ -15,7 +15,13 @@ generic-service:
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
 
-  allowlist:
+  allowList:
+    office: "217.33.148.210/32"
+    health-kick: "35.177.252.195/32"
+    mojvpn: "81.134.202.29/32"
+    cloudplatform-live1-1: "35.178.209.113/32"
+    cloudplatform-live1-2: "3.8.51.207/32"
+    cloudplatform-live1-3: "35.177.252.54/32"
     delius-pre-prod-1: "52.56.240.62/32"
     delius-pre-prod-2: "18.130.110.168/32"
     delius-pre-prod-3: "35.178.44.184/32"
