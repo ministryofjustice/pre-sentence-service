@@ -22,14 +22,8 @@ export default defineConfig({
     setupNodeEvents(on) {
       on('task', {
         reset: resetStubs,
-
-        getSignInUrl: auth.getSignInUrl,
-        stubSignIn: auth.stubSignIn,
-
-        stubAuthUser: auth.stubUser,
-        stubAuthPing: auth.stubPing,
-
-        stubTokenVerificationPing: tokenVerification.stubPing,
+        ...auth,
+        ...tokenVerification,
 
         resetDatabase() {
           const pool = new pg.Pool({
