@@ -7,10 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
           var xhr = new XMLHttpRequest()
           xhr.open('POST', 'save', true)
           xhr.setRequestHeader('Content-Type', 'application/json')
-          xhr.send(JSON.stringify({
-            id: $(editor.sourceElement).attr('id'),
-            value: editor.getData()
-          }))
+          xhr.send(JSON.stringify([
+            {
+              id: $(editor.sourceElement).attr('id'),
+              value: editor.getData()
+            }
+          ]))
         }
       },
       */

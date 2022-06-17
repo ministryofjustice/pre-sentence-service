@@ -102,7 +102,7 @@ export default class SharedController {
             reportId: this.report.id,
             fieldId: item.id,
             value: tmpValue,
-            version: (fieldValue && fieldValue.version) || 1,
+            version: fieldValue && fieldValue.version ? fieldValue.version + 1 : 1,
           })
         }
       })
