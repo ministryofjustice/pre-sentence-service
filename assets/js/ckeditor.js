@@ -69,7 +69,7 @@
       })()),
         (t.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e))
       var e = {}
-      t.d(e, { default: () => ig })
+      t.d(e, { default: () => Jm })
       const n = function () {
         return function t() {
           t.called = !0
@@ -205,10 +205,10 @@
               r = o && e && o.callbacks[e]
             if (!(!i || (t && !o) || (e && !r)))
               if (n) {
-                P(this, t, e, n)
-                ;-1 !== r.indexOf(n) && (1 === r.length ? delete o.callbacks[e] : P(this, t, e, n))
+                k(this, t, e, n)
+                ;-1 !== r.indexOf(n) && (1 === r.length ? delete o.callbacks[e] : k(this, t, e, n))
               } else if (r) {
-                for (; (n = r.pop()); ) P(this, t, e, n)
+                for (; (n = r.pop()); ) k(this, t, e, n)
                 delete o.callbacks[e]
               } else if (o) {
                 for (e in o.callbacks) this.stopListening(t, e)
@@ -238,7 +238,7 @@
               if (this._delegations) {
                 const t = this._delegations.get(s),
                   i = this._delegations.get('*')
-                t && k(t, n, e), i && k(i, n, e)
+                t && P(t, n, e), i && P(i, n, e)
               }
               return n.return
             } catch (t) {
@@ -319,14 +319,14 @@
           ? v(t, e.substr(0, e.lastIndexOf(':')))
           : null
       }
-      function k(t, e, n) {
+      function P(t, e, n) {
         for (let [s, o] of t) {
           o ? 'function' == typeof o && (o = o(e.name)) : (o = e.name)
           const t = new i(e.source, o)
           ;(t.path = [...e.path]), s.fire(t, ...n)
         }
       }
-      function P(t, e, n, i) {
+      function k(t, e, n, i) {
         e._removeEventListener ? e._removeEventListener(n, i) : t._removeEventListener.call(e, n, i)
       }
       const A = function (t) {
@@ -335,12 +335,12 @@
       }
       const C = 'object' == typeof global && global && global.Object === Object && global
       var E = 'object' == typeof self && self && self.Object === Object && self
-      const T = C || E || Function('return this')()
-      const S = T.Symbol
-      var x = Object.prototype,
-        R = x.hasOwnProperty,
-        O = x.toString,
-        I = S ? S.toStringTag : void 0
+      const S = C || E || Function('return this')()
+      const x = S.Symbol
+      var T = Object.prototype,
+        R = T.hasOwnProperty,
+        O = T.toString,
+        I = x ? x.toStringTag : void 0
       const M = function (t) {
         var e = R.call(t, I),
           n = t[I]
@@ -355,7 +355,7 @@
       const D = function (t) {
         return N.call(t)
       }
-      var F = S ? S.toStringTag : void 0
+      var F = x ? x.toStringTag : void 0
       const B = function (t) {
         return null == t ? (void 0 === t ? '[object Undefined]' : '[object Null]') : F && F in Object(t) ? M(t) : D(t)
       }
@@ -369,7 +369,7 @@
           '[object Proxy]' == e
         )
       }
-      const L = T['__core-js_shared__']
+      const L = S['__core-js_shared__']
       var j = (function () {
         var t = /[^.]+$/.exec((L && L.keys && L.keys.IE_PROTO) || '')
         return t ? 'Symbol(src)_1.' + t : ''
@@ -538,32 +538,32 @@
         for (var n = -1, i = Array(t); ++n < t; ) i[n] = e(n)
         return i
       }
-      const kt = function (t) {
+      const Pt = function (t) {
         return null != t && 'object' == typeof t
       }
-      const Pt = function (t) {
-        return kt(t) && '[object Arguments]' == B(t)
+      const kt = function (t) {
+        return Pt(t) && '[object Arguments]' == B(t)
       }
       var At = Object.prototype,
         Ct = At.hasOwnProperty,
         Et = At.propertyIsEnumerable
-      const Tt = Pt(
+      const St = kt(
         (function () {
           return arguments
         })()
       )
-        ? Pt
+        ? kt
         : function (t) {
-            return kt(t) && Ct.call(t, 'callee') && !Et.call(t, 'callee')
+            return Pt(t) && Ct.call(t, 'callee') && !Et.call(t, 'callee')
           }
-      const St = Array.isArray
-      const xt = function () {
+      const xt = Array.isArray
+      const Tt = function () {
         return !1
       }
       var Rt = 'object' == typeof exports && exports && !exports.nodeType && exports,
         Ot = Rt && 'object' == typeof module && module && !module.nodeType && module,
-        It = Ot && Ot.exports === Rt ? T.Buffer : void 0
-      const Mt = (It ? It.isBuffer : void 0) || xt
+        It = Ot && Ot.exports === Rt ? S.Buffer : void 0
+      const Mt = (It ? It.isBuffer : void 0) || Tt
       var Nt = {}
       ;(Nt['[object Float32Array]'] =
         Nt['[object Float64Array]'] =
@@ -592,7 +592,7 @@
           Nt['[object WeakMap]'] =
             !1)
       const Dt = function (t) {
-        return kt(t) && gt(t.length) && !!Nt[B(t)]
+        return Pt(t) && gt(t.length) && !!Nt[B(t)]
       }
       const Ft = function (t) {
         return function (e) {
@@ -612,8 +612,8 @@
       const zt = Wt ? Ft(Wt) : Dt
       var $t = Object.prototype.hasOwnProperty
       const qt = function (t, e) {
-        var n = St(t),
-          i = !n && Tt(t),
+        var n = xt(t),
+          i = !n && St(t),
           s = !n && !i && Mt(t),
           o = !n && !i && !s && zt(t),
           r = n || i || s || o,
@@ -927,14 +927,14 @@
         be = _e.toString,
         ye = we.hasOwnProperty,
         ve = be.call(Object)
-      const ke = function (t) {
-        if (!kt(t) || '[object Object]' != B(t)) return !1
+      const Pe = function (t) {
+        if (!Pt(t) || '[object Object]' != B(t)) return !1
         var e = pe(t)
         if (null === e) return !0
         var n = ye.call(e, 'constructor') && e.constructor
         return 'function' == typeof n && n instanceof n && be.call(n) == ve
       }
-      const Pe = function () {
+      const ke = function () {
         ;(this.__data__ = []), (this.size = 0)
       }
       const Ae = function (t, e) {
@@ -947,15 +947,15 @@
           n = Ae(e, t)
         return !(n < 0) && (n == e.length - 1 ? e.pop() : Ce.call(e, n, 1), --this.size, !0)
       }
-      const Te = function (t) {
+      const Se = function (t) {
         var e = this.__data__,
           n = Ae(e, t)
         return n < 0 ? void 0 : e[n][1]
       }
-      const Se = function (t) {
+      const xe = function (t) {
         return Ae(this.__data__, t) > -1
       }
-      const xe = function (t, e) {
+      const Te = function (t, e) {
         var n = this.__data__,
           i = Ae(n, t)
         return i < 0 ? (++this.size, n.push([t, e])) : (n[i][1] = e), this
@@ -968,11 +968,11 @@
           this.set(i[0], i[1])
         }
       }
-      ;(Re.prototype.clear = Pe),
+      ;(Re.prototype.clear = ke),
         (Re.prototype.delete = Ee),
-        (Re.prototype.get = Te),
-        (Re.prototype.has = Se),
-        (Re.prototype.set = xe)
+        (Re.prototype.get = Se),
+        (Re.prototype.has = xe),
+        (Re.prototype.set = Te)
       const Oe = Re
       const Ie = function () {
         ;(this.__data__ = new Oe()), (this.size = 0)
@@ -988,7 +988,7 @@
       const De = function (t) {
         return this.__data__.has(t)
       }
-      const Fe = Z(T, 'Map')
+      const Fe = Z(S, 'Map')
       const Be = Z(Object, 'create')
       const Ve = function () {
         ;(this.__data__ = Be ? Be(null) : {}), (this.size = 0)
@@ -1111,7 +1111,7 @@
       }
       var fn = 'object' == typeof exports && exports && !exports.nodeType && exports,
         mn = fn && 'object' == typeof module && module && !module.nodeType && module,
-        gn = mn && mn.exports === fn ? T.Buffer : void 0,
+        gn = mn && mn.exports === fn ? S.Buffer : void 0,
         pn = gn ? gn.allocUnsafe : void 0
       const _n = function (t, e) {
         if (e) return t.slice()
@@ -1136,19 +1136,19 @@
         return []
       }
       var vn = Object.prototype.propertyIsEnumerable,
-        kn = Object.getOwnPropertySymbols
-      const Pn = kn
+        Pn = Object.getOwnPropertySymbols
+      const kn = Pn
         ? function (t) {
             return null == t
               ? []
               : ((t = Object(t)),
-                bn(kn(t), function (e) {
+                bn(Pn(t), function (e) {
                   return vn.call(t, e)
                 }))
           }
         : yn
       const An = function (t, e) {
-        return st(t, Pn(t), e)
+        return st(t, kn(t), e)
       }
       const Cn = function (t, e) {
         for (var n = -1, i = e.length, s = t.length; ++n < i; ) t[s + n] = e[n]
@@ -1156,27 +1156,27 @@
       }
       const En = Object.getOwnPropertySymbols
         ? function (t) {
-            for (var e = []; t; ) Cn(e, Pn(t)), (t = pe(t))
+            for (var e = []; t; ) Cn(e, kn(t)), (t = pe(t))
             return e
           }
         : yn
-      const Tn = function (t, e) {
+      const Sn = function (t, e) {
         return st(t, En(t), e)
       }
-      const Sn = function (t, e, n) {
+      const xn = function (t, e, n) {
         var i = e(t)
-        return St(t) ? i : Cn(i, n(t))
+        return xt(t) ? i : Cn(i, n(t))
       }
-      const xn = function (t) {
-        return Sn(t, hn, Pn)
+      const Tn = function (t) {
+        return xn(t, hn, kn)
       }
       const Rn = function (t) {
-        return Sn(t, Yt, En)
+        return xn(t, Yt, En)
       }
-      const On = Z(T, 'DataView')
-      const In = Z(T, 'Promise')
-      const Mn = Z(T, 'Set')
-      const Nn = Z(T, 'WeakMap')
+      const On = Z(S, 'DataView')
+      const In = Z(S, 'Promise')
+      const Mn = Z(S, 'Set')
+      const Nn = Z(S, 'WeakMap')
       var Dn = '[object Map]',
         Fn = '[object Promise]',
         Bn = '[object Set]',
@@ -1219,7 +1219,7 @@
           n = new t.constructor(e)
         return e && 'string' == typeof t[0] && Kn.call(t, 'index') && ((n.index = t.index), (n.input = t.input)), n
       }
-      const Jn = T.Uint8Array
+      const Jn = S.Uint8Array
       const Yn = function (t) {
         var e = new t.constructor(t.byteLength)
         return new Jn(e).set(new Jn(t)), e
@@ -1233,7 +1233,7 @@
         var e = new t.constructor(t.source, Zn.exec(t))
         return (e.lastIndex = t.lastIndex), e
       }
-      var ti = S ? S.prototype : void 0,
+      var ti = x ? x.prototype : void 0,
         ei = ti ? ti.valueOf : void 0
       const ni = function (t) {
         return ei ? Object(ei.call(t)) : {}
@@ -1289,12 +1289,12 @@
         return 'function' != typeof t.constructor || Ht(t) ? {} : ri(pe(t))
       }
       const ci = function (t) {
-        return kt(t) && '[object Map]' == Hn(t)
+        return Pt(t) && '[object Map]' == Hn(t)
       }
       var li = jt && jt.isMap
       const hi = li ? Ft(li) : ci
       const di = function (t) {
-        return kt(t) && '[object Set]' == Hn(t)
+        return Pt(t) && '[object Set]' == Hn(t)
       }
       var ui = jt && jt.isSet
       const fi = ui ? Ft(ui) : di
@@ -1333,7 +1333,7 @@
           h = 4 & n
         if ((i && (a = o ? i(e, s, o, r) : i(e)), void 0 !== a)) return a
         if (!A(e)) return e
-        var d = St(e)
+        var d = xt(e)
         if (d) {
           if (((a = Gn(e)), !c)) return wn(e, a)
         } else {
@@ -1341,7 +1341,7 @@
             f = u == gi || '[object GeneratorFunction]' == u
           if (Mt(e)) return _n(e, c)
           if (u == pi || u == mi || (f && !o)) {
-            if (((a = l || f ? {} : ai(e)), !c)) return l ? Tn(e, un(a, e)) : An(e, dn(a, e))
+            if (((a = l || f ? {} : ai(e)), !c)) return l ? Sn(e, un(a, e)) : An(e, dn(a, e))
           } else {
             if (!_i[u]) return o ? e : {}
             a = si(e, u, c)
@@ -1359,7 +1359,7 @@
               e.forEach(function (s, o) {
                 a.set(o, t(s, n, i, o, e, r))
               })
-        var g = d ? void 0 : (h ? (l ? Rn : xn) : l ? Yt : hn)(e)
+        var g = d ? void 0 : (h ? (l ? Rn : Tn) : l ? Yt : hn)(e)
         return (
           rn(g || e, function (s, o) {
             g && (s = e[(o = s)]), it(a, o, t(s, n, i, o, e, r))
@@ -1371,11 +1371,11 @@
         return wi(t, 5, (e = 'function' == typeof e ? e : void 0))
       }
       const yi = function (t) {
-        return kt(t) && 1 === t.nodeType && !ke(t)
+        return Pt(t) && 1 === t.nodeType && !Pe(t)
       }
       class vi {
         constructor(t, e) {
-          ;(this._config = {}), e && this.define(ki(e)), t && this._setObjectToTarget(this._config, t)
+          ;(this._config = {}), e && this.define(Pi(e)), t && this._setObjectToTarget(this._config, t)
         }
         set(t, e) {
           this._setToTarget(this._config, t, e)
@@ -1390,24 +1390,24 @@
           for (const t of Object.keys(this._config)) yield t
         }
         _setToTarget(t, e, n, i = !1) {
-          if (ke(e)) return void this._setObjectToTarget(t, e, i)
+          if (Pe(e)) return void this._setObjectToTarget(t, e, i)
           const s = e.split('.')
           e = s.pop()
-          for (const e of s) ke(t[e]) || (t[e] = {}), (t = t[e])
-          if (ke(n)) return ke(t[e]) || (t[e] = {}), (t = t[e]), void this._setObjectToTarget(t, n, i)
+          for (const e of s) Pe(t[e]) || (t[e] = {}), (t = t[e])
+          if (Pe(n)) return Pe(t[e]) || (t[e] = {}), (t = t[e]), void this._setObjectToTarget(t, n, i)
           ;(i && void 0 !== t[e]) || (t[e] = n)
         }
         _getFromSource(t, e) {
           const n = e.split('.')
           e = n.pop()
           for (const e of n) {
-            if (!ke(t[e])) {
+            if (!Pe(t[e])) {
               t = null
               break
             }
             t = t[e]
           }
-          return t ? ki(t[e]) : void 0
+          return t ? Pi(t[e]) : void 0
         }
         _setObjectToTarget(t, e, n) {
           Object.keys(e).forEach(i => {
@@ -1415,10 +1415,10 @@
           })
         }
       }
-      function ki(t) {
-        return bi(t, Pi)
-      }
       function Pi(t) {
+        return bi(t, ki)
+      }
+      function ki(t) {
         return yi(t) ? t : void 0
       }
       function Ai(t) {
@@ -1720,10 +1720,10 @@
           }
         }
       }
-      function Ti(t) {
+      function Si(t) {
         return Array.isArray(t) ? t : [t]
       }
-      function Si(t, e, n = 1) {
+      function xi(t, e, n = 1) {
         if ('number' != typeof n) throw new c('translation-service-quantity-not-a-number', null, { quantity: n })
         const i = Object.keys(window.CKEDITOR_TRANSLATIONS).length
         1 === i && (t = Object.keys(window.CKEDITOR_TRANSLATIONS)[0])
@@ -1742,9 +1742,9 @@
         return o[s][a]
       }
       he(Ei, p), window.CKEDITOR_TRANSLATIONS || (window.CKEDITOR_TRANSLATIONS = {})
-      const xi = ['ar', 'ara', 'fa', 'per', 'fas', 'he', 'heb', 'ku', 'kur', 'ug', 'uig']
+      const Ti = ['ar', 'ara', 'fa', 'per', 'fas', 'he', 'heb', 'ku', 'kur', 'ug', 'uig']
       function Ri(t) {
-        return xi.includes(t) ? 'rtl' : 'ltr'
+        return Ti.includes(t) ? 'rtl' : 'ltr'
       }
       class Oi {
         constructor(t = {}) {
@@ -1763,11 +1763,11 @@
           )
         }
         _t(t, e = []) {
-          ;(e = Ti(e)), 'string' == typeof t && (t = { string: t })
+          ;(e = Si(e)), 'string' == typeof t && (t = { string: t })
           const n = !!t.plural ? e[0] : 1
           return (function (t, e) {
             return t.replace(/%(\d+)/g, (t, n) => (n < e.length ? e[n] : t))
-          })(Si(this.uiLanguage, t, n), e)
+          })(xi(this.uiLanguage, t, n), e)
         }
       }
       class Ii {
@@ -2029,7 +2029,7 @@
           (e.attributes &&
             ((n.attributes = (function (t, e) {
               const n = new Set(e.getAttributeKeys())
-              ke(t)
+              Pe(t)
                 ? (void 0 !== t.style && l('matcher-pattern-deprecated-attributes-style-key', t),
                   void 0 !== t.class && l('matcher-pattern-deprecated-attributes-class-key', t))
                 : (n.delete('style'), n.delete('class'))
@@ -2057,12 +2057,12 @@
         const i = (function (t) {
             if (Array.isArray(t))
               return t.map(t =>
-                ke(t)
+                Pe(t)
                   ? ((void 0 !== t.key && void 0 !== t.value) || l('matcher-pattern-missing-key-or-value', t),
                     [t.key, t.value])
                   : [t, !0]
               )
-            if (ke(t)) return Object.entries(t)
+            if (Pe(t)) return Object.entries(t)
             return [[t, !0]]
           })(t),
           s = Array.from(e),
@@ -2085,12 +2085,12 @@
         )
       }
       const $i = function (t) {
-        return 'symbol' == typeof t || (kt(t) && '[object Symbol]' == B(t))
+        return 'symbol' == typeof t || (Pt(t) && '[object Symbol]' == B(t))
       }
       var qi = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
         Ui = /^\w*$/
       const Hi = function (t, e) {
-        if (St(t)) return !1
+        if (xt(t)) return !1
         var n = typeof t
         return (
           !('number' != n && 'symbol' != n && 'boolean' != n && null != t && !$i(t)) ||
@@ -2136,11 +2136,11 @@
         for (var n = -1, i = null == t ? 0 : t.length, s = Array(i); ++n < i; ) s[n] = e(t[n], n, t)
         return s
       }
-      var ts = S ? S.prototype : void 0,
+      var ts = x ? x.prototype : void 0,
         es = ts ? ts.toString : void 0
       const ns = function t(e) {
         if ('string' == typeof e) return e
-        if (St(e)) return Qi(e, t) + ''
+        if (xt(e)) return Qi(e, t) + ''
         if ($i(e)) return es ? es.call(e) : ''
         var n = e + ''
         return '0' == n && 1 / e == -Infinity ? '-0' : n
@@ -2149,7 +2149,7 @@
         return null == t ? '' : ns(t)
       }
       const ss = function (t, e) {
-        return St(t) ? t : Hi(t, e) ? [t] : Zi(is(t))
+        return xt(t) ? t : Hi(t, e) ? [t] : Zi(is(t))
       }
       const os = function (t) {
         var e = null == t ? 0 : t.length
@@ -2200,7 +2200,7 @@
         }
       })()
       const gs = function (t) {
-        return kt(t) && pt(t)
+        return Pt(t) && pt(t)
       }
       const ps = function (t, e) {
         if (('constructor' !== e || 'function' != typeof t[e]) && '__proto__' != e) return t[e]
@@ -2217,12 +2217,12 @@
           var h = o ? o(a, c, n + '', t, e, r) : void 0,
             d = void 0 === h
           if (d) {
-            var u = St(c),
+            var u = xt(c),
               f = !u && Mt(c),
               m = !u && !f && zt(c)
             ;(h = c),
               u || f || m
-                ? St(a)
+                ? xt(a)
                   ? (h = a)
                   : gs(a)
                   ? (h = wn(a))
@@ -2231,8 +2231,8 @@
                   : m
                   ? ((d = !1), (h = ii(c, !0)))
                   : (h = [])
-                : ke(c) || Tt(c)
-                ? ((h = a), Tt(a) ? (h = _s(a)) : (A(a) && !V(a)) || (h = ai(c)))
+                : Pe(c) || St(c)
+                ? ((h = a), St(a) ? (h = _s(a)) : (A(a) && !V(a)) || (h = ai(c)))
                 : (d = !1)
           }
           d && (r.set(c, h), s(h, c, i, o, r), r.delete(c)), fs(t, n, h)
@@ -2269,10 +2269,10 @@
         }
         return t
       }
-      const ks = function (t, e, n) {
+      const Ps = function (t, e, n) {
         return null == t ? t : vs(t, e, n)
       }
-      class Ps {
+      class ks {
         constructor(t) {
           ;(this._styles = {}), (this._styleProcessor = t)
         }
@@ -2438,9 +2438,9 @@
       }
       function Es(t, e, n) {
         let i = n
-        A(n) && (i = ys({}, us(t, e), n)), ks(t, e, i)
+        A(n) && (i = ys({}, us(t, e), n)), Ps(t, e, i)
       }
-      class Ts extends Fi {
+      class Ss extends Fi {
         constructor(t, e, n, i) {
           if (
             (super(t),
@@ -2456,9 +2456,9 @@
             this._attrs.has('class'))
           ) {
             const t = this._attrs.get('class')
-            Ss(this._classes, t), this._attrs.delete('class')
+            xs(this._classes, t), this._attrs.delete('class')
           }
-          ;(this._styles = new Ps(this.document.stylesProcessor)),
+          ;(this._styles = new ks(this.document.stylesProcessor)),
             this._attrs.has('style') && (this._styles.setTo(this._attrs.get('style')), this._attrs.delete('style')),
             (this._customProperties = new Map()),
             (this._unsafeAttributesToRender = [])
@@ -2503,7 +2503,7 @@
           return 'class' == t ? this._classes.size > 0 : 'style' == t ? !this._styles.isEmpty : this._attrs.has(t)
         }
         isSimilar(t) {
-          if (!(t instanceof Ts)) return !1
+          if (!(t instanceof Ss)) return !1
           if (this === t) return !0
           if (this.name != t.name) return !1
           if (
@@ -2607,7 +2607,7 @@
         _setAttribute(t, e) {
           ;(e = String(e)),
             this._fireChange('attributes', this),
-            'class' == t ? Ss(this._classes, e) : 'style' == t ? this._styles.setTo(e) : this._attrs.set(t, e)
+            'class' == t ? xs(this._classes, e) : 'style' == t ? this._styles.setTo(e) : this._attrs.set(t, e)
         }
         _removeAttribute(t) {
           return (
@@ -2621,18 +2621,18 @@
         }
         _addClass(t) {
           this._fireChange('attributes', this)
-          for (const e of Ti(t)) this._classes.add(e)
+          for (const e of Si(t)) this._classes.add(e)
         }
         _removeClass(t) {
           this._fireChange('attributes', this)
-          for (const e of Ti(t)) this._classes.delete(e)
+          for (const e of Si(t)) this._classes.delete(e)
         }
         _setStyle(t, e) {
           this._fireChange('attributes', this), this._styles.set(t, e)
         }
         _removeStyle(t) {
           this._fireChange('attributes', this)
-          for (const e of Ti(t)) this._styles.remove(e)
+          for (const e of Si(t)) this._styles.remove(e)
         }
         _setCustomProperty(t, e) {
           this._customProperties.set(t, e)
@@ -2641,11 +2641,11 @@
           return this._customProperties.delete(t)
         }
       }
-      function Ss(t, e) {
+      function xs(t, e) {
         const n = e.split(/\s+/)
         t.clear(), n.forEach(e => t.add(e))
       }
-      class xs extends Ts {
+      class Ts extends Ss {
         constructor(t, e, n, i) {
           super(t, e, n, i), (this.getFillerOffset = Rs)
         }
@@ -2668,7 +2668,7 @@
         for (const e of t) if (!e.is('uiElement')) return null
         return this.childCount
       }
-      class Os extends xs {
+      class Os extends Ts {
         constructor(t, e, n, i) {
           super(t, e, n, i),
             this.set('isReadOnly', !1),
@@ -2779,7 +2779,7 @@
             if (t.isAtEnd) return (this.position = Ds._createAfter(n)), this._next()
             i = n.data[t.offset]
           } else i = n.getChild(t.offset)
-          if (i instanceof Ts)
+          if (i instanceof Ss)
             return (
               this.shallow ? t.offset++ : (t = new Ds(i, 0)),
               (this.position = t),
@@ -2825,7 +2825,7 @@
             if (t.isAtStart) return (this.position = Ds._createBefore(n)), this._previous()
             i = n.data[t.offset - 1]
           } else i = n.getChild(t.offset - 1)
-          if (i instanceof Ts)
+          if (i instanceof Ss)
             return this.shallow
               ? (t.offset--, (this.position = t), this._formatReturnValue('elementStart', i, e, t, 1))
               : ((t = new Ds(i, i.childCount)),
@@ -3371,7 +3371,7 @@
             }
           },
           _addEventListener(t, e, n) {
-            const i = Ti(n.context || '$document'),
+            const i = Si(n.context || '$document'),
               s = Ks(this)
             for (const o of i) {
               let i = s.get(o)
@@ -3425,7 +3425,7 @@
         }
       }
       he(Gs, $s), he(Gs, se)
-      class Js extends Ts {
+      class Js extends Ss {
         constructor(t, e, n, i) {
           super(t, e, n, i),
             (this.getFillerOffset = Ys),
@@ -3477,7 +3477,7 @@
         return Array.from(t.getChildren()).filter(t => !t.is('uiElement')).length
       }
       Js.DEFAULT_PRIORITY = 10
-      class Zs extends Ts {
+      class Zs extends Ss {
         constructor(t, e, n, i) {
           super(t, e, n, i), (this.getFillerOffset = Qs)
         }
@@ -3617,7 +3617,7 @@
             return 'down'
         }
       }
-      class fo extends Ts {
+      class fo extends Ss {
         constructor(t, e, n, i) {
           super(t, e, n, i), (this.getFillerOffset = go)
         }
@@ -3676,7 +3676,7 @@
       function go() {
         return null
       }
-      class po extends Ts {
+      class po extends Ss {
         constructor(t, e, n, i) {
           super(t, e, n, i), (this.getFillerOffset = _o)
         }
@@ -3785,8 +3785,8 @@
         }
         createContainerElement(t, e, n = {}, i = {}) {
           let s = null
-          ke(n) ? (i = n) : (s = n)
-          const o = new xs(this.document, t, e, s)
+          Pe(n) ? (i = n) : (s = n)
+          const o = new Ts(this.document, t, e, s)
           return i.renderUnsafeAttributes && o._unsafeAttributesToRender.push(...i.renderUnsafeAttributes), o
         }
         createEditableElement(t, e, n = {}) {
@@ -3826,7 +3826,7 @@
           e._removeClass(t)
         }
         setStyle(t, e, n) {
-          ke(t) && void 0 === n && (n = e), n._setStyle(t, e)
+          Pe(t) && void 0 === n && (n = e), n._setStyle(t, e)
         }
         removeStyle(t, e) {
           e._removeStyle(t)
@@ -3904,7 +3904,7 @@
         }
         remove(t) {
           const e = t instanceof Fs ? t : Fs._createOn(t)
-          if ((So(e, this.document), e.isCollapsed)) return new wo(this.document)
+          if ((xo(e, this.document), e.isCollapsed)) return new wo(this.document)
           const { start: n, end: i } = this._breakAttributesRange(e, !0),
             s = n.parent,
             o = i.offset - n.offset,
@@ -3914,7 +3914,7 @@
           return (e.start = a), (e.end = a.clone()), new wo(this.document, r)
         }
         clear(t, e) {
-          So(t, this.document)
+          xo(t, this.document)
           const n = t.getWalker({ direction: 'backward', ignoreElementEnd: !0 })
           for (const i of n) {
             const n = i.item
@@ -3941,7 +3941,7 @@
         }
         wrap(t, e) {
           if (!(e instanceof Js)) throw new c('view-writer-wrap-invalid-attribute', this.document)
-          if ((So(t, this.document), t.isCollapsed)) {
+          if ((xo(t, this.document), t.isCollapsed)) {
             let i = t.start
             i.parent.is('element') &&
               ((n = i.parent), !Array.from(n.getChildren()).some(t => !t.is('uiElement'))) &&
@@ -3955,7 +3955,7 @@
         }
         unwrap(t, e) {
           if (!(e instanceof Js)) throw new c('view-writer-unwrap-invalid-attribute', this.document)
-          if ((So(t, this.document), t.isCollapsed)) return t
+          if ((xo(t, this.document), t.isCollapsed)) return t
           const { start: n, end: i } = this._breakAttributesRange(t, !0),
             s = n.parent,
             o = this._unwrapChildren(s, n.offset, i.offset, e),
@@ -3965,7 +3965,7 @@
           return new Fs(r, a)
         }
         rename(t, e) {
-          const n = new xs(this.document, t, e.getAttributes())
+          const n = new Ts(this.document, t, e.getAttributes())
           return (
             this.insert(Ds._createAfter(e), n),
             this.move(Fs._createIn(e), Ds._createAt(n, 0)),
@@ -4011,7 +4011,7 @@
           let i, s
           if (((i = n ? yo(t) : t.parent.is('$text') ? t.parent.parent : t.parent), !i))
             throw new c('view-writer-invalid-position-container', this.document)
-          s = n ? this._breakAttributes(t, !0) : t.parent.is('$text') ? Po(t) : t
+          s = n ? this._breakAttributes(t, !0) : t.parent.is('$text') ? ko(t) : t
           const o = i._insertChild(s.offset, e)
           for (const t of e) this._addToClonedElementsGroup(t)
           const r = s.getShiftedBy(o),
@@ -4083,8 +4083,8 @@
           return new Fs(r, a)
         }
         _wrapPosition(t, e) {
-          if (e.isSimilar(t.parent)) return ko(t.clone())
-          t.parent.is('$text') && (t = Po(t))
+          if (e.isSimilar(t.parent)) return Po(t.clone())
+          t.parent.is('$text') && (t = ko(t))
           const n = this.createAttributeElement()
           ;(n._priority = Number.POSITIVE_INFINITY), (n.isSimilar = () => !1), t.parent._insertChild(t.offset, n)
           const i = new Fs(t, t.getShiftedBy(1))
@@ -4093,10 +4093,10 @@
           n._remove()
           const o = s.nodeBefore,
             r = s.nodeAfter
-          return o instanceof Bi && r instanceof Bi ? Ao(o, r) : ko(s)
+          return o instanceof Bi && r instanceof Bi ? Ao(o, r) : Po(s)
         }
         _wrapAttributeElement(t, e) {
-          if (!xo(t, e)) return !1
+          if (!To(t, e)) return !1
           if (t.name !== e.name || t.priority !== e.priority) return !1
           for (const n of t.getAttributeKeys())
             if ('class' !== n && 'style' !== n && e.hasAttribute(n) && e.getAttribute(n) !== t.getAttribute(n))
@@ -4109,7 +4109,7 @@
           return !0
         }
         _unwrapAttributeElement(t, e) {
-          if (!xo(t, e)) return !1
+          if (!To(t, e)) return !1
           if (t.name !== e.name || t.priority !== e.priority) return !1
           for (const n of t.getAttributeKeys())
             if ('class' !== n && 'style' !== n && (!e.hasAttribute(n) || e.getAttribute(n) !== t.getAttribute(n)))
@@ -4124,7 +4124,7 @@
         _breakAttributesRange(t, e = !1) {
           const n = t.start,
             i = t.end
-          if ((So(t, this.document), t.isCollapsed)) {
+          if ((xo(t, this.document), t.isCollapsed)) {
             const n = this._breakAttributes(t.start, e)
             return new Fs(n, n)
           }
@@ -4139,9 +4139,9 @@
           if (t.parent.is('emptyElement')) throw new c('view-writer-cannot-break-empty-element', this.document)
           if (t.parent.is('uiElement')) throw new c('view-writer-cannot-break-ui-element', this.document)
           if (t.parent.is('rawElement')) throw new c('view-writer-cannot-break-raw-element', this.document)
-          if (!e && i.is('$text') && To(i.parent)) return t.clone()
-          if (To(i)) return t.clone()
-          if (i.is('$text')) return this._breakAttributes(Po(t), e)
+          if (!e && i.is('$text') && So(i.parent)) return t.clone()
+          if (So(i)) return t.clone()
+          if (i.is('$text')) return this._breakAttributes(ko(t), e)
           if (n == i.childCount) {
             const t = new Ds(i.parent, i.index + 1)
             return this._breakAttributes(t, e)
@@ -4179,7 +4179,7 @@
       }
       function yo(t) {
         let e = t.parent
-        for (; !To(e); ) {
+        for (; !So(e); ) {
           if (!e) return
           e = e.parent
         }
@@ -4188,13 +4188,13 @@
       function vo(t, e) {
         return t.priority < e.priority || (!(t.priority > e.priority) && t.getIdentity() < e.getIdentity())
       }
-      function ko(t) {
+      function Po(t) {
         const e = t.nodeBefore
         if (e && e.is('$text')) return new Ds(e, e.data.length)
         const n = t.nodeAfter
         return n && n.is('$text') ? new Ds(n, 0) : t
       }
-      function Po(t) {
+      function ko(t) {
         if (t.offset == t.parent.data.length) return new Ds(t.parent.parent, t.parent.index + 1)
         if (0 === t.offset) return new Ds(t.parent.parent, t.parent.index)
         const e = t.parent.data.slice(t.offset)
@@ -4214,16 +4214,16 @@
           n.is('$text') || Co(n.getChildren(), e)
         }
       }
-      const Eo = [Bi, Js, xs, Zs, po, fo]
-      function To(t) {
+      const Eo = [Bi, Js, Ts, Zs, po, fo]
+      function So(t) {
         return t && (t.is('containerElement') || t.is('documentFragment'))
       }
-      function So(t, e) {
+      function xo(t, e) {
         const n = yo(t.start),
           i = yo(t.end)
         if (!n || !i || n !== i) throw new c('view-writer-invalid-range-container', e)
       }
-      function xo(t, e) {
+      function To(t, e) {
         return null === t.id && null === e.id
       }
       function Ro(t) {
@@ -5143,7 +5143,7 @@
         _createViewElement(t, e) {
           if (Uo(t)) return new fo(this.document, '$comment')
           const n = e.keepOriginalCase ? t.tagName : t.tagName.toLowerCase()
-          return new Ts(this.document, n)
+          return new Ss(this.document, n)
         }
         _isViewElementWithRawContent(t, e) {
           return !1 !== e.withChildren && this._rawContentElementMatcher.match(t)
@@ -5326,7 +5326,7 @@
         }
         return o.delete(t), o.delete(e), u
       }
-      const kr = function (t) {
+      const Pr = function (t) {
         var e = -1,
           n = Array(t.size)
         return (
@@ -5336,7 +5336,7 @@
           n
         )
       }
-      const Pr = function (t) {
+      const kr = function (t) {
         var e = -1,
           n = Array(t.size)
         return (
@@ -5346,7 +5346,7 @@
           n
         )
       }
-      var Ar = S ? S.prototype : void 0,
+      var Ar = x ? x.prototype : void 0,
         Cr = Ar ? Ar.valueOf : void 0
       const Er = function (t, e, n, i, s, o, r) {
         switch (n) {
@@ -5365,10 +5365,10 @@
           case '[object String]':
             return t == e + ''
           case '[object Map]':
-            var a = kr
+            var a = Pr
           case '[object Set]':
             var c = 1 & i
-            if ((a || (a = Pr), t.size != e.size && !c)) return !1
+            if ((a || (a = kr), t.size != e.size && !c)) return !1
             var l = r.get(t)
             if (l) return l == e
             ;(i |= 2), r.set(t, e)
@@ -5379,15 +5379,15 @@
         }
         return !1
       }
-      var Tr = Object.prototype.hasOwnProperty
-      const Sr = function (t, e, n, i, s, o) {
+      var Sr = Object.prototype.hasOwnProperty
+      const xr = function (t, e, n, i, s, o) {
         var r = 1 & n,
-          a = xn(t),
+          a = Tn(t),
           c = a.length
-        if (c != xn(e).length && !r) return !1
+        if (c != Tn(e).length && !r) return !1
         for (var l = c; l--; ) {
           var h = a[l]
-          if (!(r ? h in e : Tr.call(e, h))) return !1
+          if (!(r ? h in e : Sr.call(e, h))) return !1
         }
         var d = o.get(t),
           u = o.get(e)
@@ -5415,17 +5415,17 @@
         }
         return o.delete(t), o.delete(e), f
       }
-      var xr = '[object Arguments]',
+      var Tr = '[object Arguments]',
         Rr = '[object Array]',
         Or = '[object Object]',
         Ir = Object.prototype.hasOwnProperty
       const Mr = function (t, e, n, i, s, o) {
-        var r = St(t),
-          a = St(e),
+        var r = xt(t),
+          a = xt(e),
           c = r ? Rr : Hn(t),
           l = a ? Rr : Hn(e),
-          h = (c = c == xr ? Or : c) == Or,
-          d = (l = l == xr ? Or : l) == Or,
+          h = (c = c == Tr ? Or : c) == Or,
+          d = (l = l == Tr ? Or : l) == Or,
           u = c == l
         if (u && Mt(t)) {
           if (!Mt(e)) return !1
@@ -5441,10 +5441,10 @@
             return o || (o = new on()), s(g, p, n, i, o)
           }
         }
-        return !!u && (o || (o = new on()), Sr(t, e, n, i, s, o))
+        return !!u && (o || (o = new on()), xr(t, e, n, i, s, o))
       }
       const Nr = function t(e, n, i, s, o) {
-        return e === n || (null == e || null == n || (!kt(e) && !kt(n)) ? e != e && n != n : Mr(e, n, i, s, t, o))
+        return e === n || (null == e || null == n || (!Pt(e) && !Pt(n)) ? e != e && n != n : Mr(e, n, i, s, t, o))
       }
       const Dr = function (t, e, n) {
         var i = (n = 'function' == typeof n ? n : void 0) ? n(t, e) : void 0
@@ -5580,7 +5580,7 @@
         }
       }
       const jr = function () {
-        return T.Date.now()
+        return S.Date.now()
       }
       var Wr = /\s/
       const zr = function (t) {
@@ -6054,8 +6054,8 @@
           s = null
         for (; i; ) {
           let o
-          ;(o = va(i == n ? t : s)), ga(o, () => ka(t, i))
-          const r = ka(t, i)
+          ;(o = va(i == n ? t : s)), ga(o, () => Pa(t, i))
+          const r = Pa(t, i)
           if ((ma(i, r, e), i.parent != i)) {
             if (((s = i.frameElement), (i = i.parent), !s)) return
           } else i = null
@@ -6105,7 +6105,7 @@
         }
         return t.parentNode
       }
-      function ka(t, e) {
+      function Pa(t, e) {
         const n = ya(t),
           i = new ca(t)
         if (n === e) return i
@@ -6119,7 +6119,7 @@
         }
         return i
       }
-      function Pa(t) {
+      function ka(t) {
         const e = t.next()
         return e.done ? null : e.value
       }
@@ -6210,7 +6210,7 @@
         }
         observe() {}
       }
-      class Ta extends mr {
+      class Sa extends mr {
         constructor(t) {
           super(t)
           const e = this.document
@@ -6222,7 +6222,7 @@
         }
         observe() {}
       }
-      class Sa {
+      class xa {
         constructor(t) {
           ;(this.document = new Gs(t)),
             (this.domConverter = new rr(this.document)),
@@ -6245,7 +6245,7 @@
             this.addObserver(Qr),
             this.addObserver(na),
             this.addObserver(Ea),
-            this.addObserver(Ta),
+            this.addObserver(Sa),
             no.isAndroid && this.addObserver(ia),
             this.document.on('arrowKey', Vo, { priority: 'low' }),
             mo(this),
@@ -6380,8 +6380,8 @@
             (this.isRenderingInProgress = !1)
         }
       }
-      he(Sa, se)
-      class xa {
+      he(xa, se)
+      class Ta {
         constructor(t) {
           ;(this.parent = null), (this._attrs = Li(t))
         }
@@ -6478,7 +6478,7 @@
           return 'node' === t || 'model:node' === t
         }
         _clone() {
-          return new xa(this._attrs)
+          return new Ta(this._attrs)
         }
         _remove() {
           this.parent._removeChildren(this.index)
@@ -6496,7 +6496,7 @@
           this._attrs.clear()
         }
       }
-      class Ra extends xa {
+      class Ra extends Ta {
         constructor(t, e) {
           super(e), (this._data = t || '')
         }
@@ -6617,7 +6617,7 @@
           return this.length
         }
         _insertNodes(t, e) {
-          for (const t of e) if (!(t instanceof xa)) throw new c('model-nodelist-insertnodes-not-node', this)
+          for (const t of e) if (!(t instanceof Ta)) throw new c('model-nodelist-insertnodes-not-node', this)
           this._nodes.splice(t, 0, ...e)
         }
         _removeNodes(t, e = 1) {
@@ -6627,7 +6627,7 @@
           return this._nodes.map(t => t.toJSON())
         }
       }
-      class Ma extends xa {
+      class Ma extends Ta {
         constructor(t, e, n) {
           super(e), (this.name = t), (this._children = new Ia()), n && this._insertChild(0, n)
         }
@@ -7817,7 +7817,7 @@
           else if (t && 'function' == typeof t.getRanges) this._setRanges(t.getRanges(), t.isBackward)
           else if (t instanceof ja) this._setRanges([t], !!e && !!e.backward)
           else if (t instanceof Fa) this._setRanges([new ja(t)])
-          else if (t instanceof xa) {
+          else if (t instanceof Ta) {
             const i = !!n && !!n.backward
             let s
             if ('in' == e) s = ja._createIn(t)
@@ -8537,7 +8537,7 @@
                     if (!r) throw new c('conversion-attribute-to-attribute-on-text', n.dispatcher, e)
                     if (null !== e.attributeOldValue && i)
                       if ('class' == i.key) {
-                        const t = Ti(i.value)
+                        const t = Si(i.value)
                         for (const e of t) a.removeClass(e, r)
                       } else if ('style' == i.key) {
                         const t = Object.keys(i.value)
@@ -8545,7 +8545,7 @@
                       } else a.removeAttribute(i.key, r)
                     if (null !== e.attributeNewValue && o)
                       if ('class' == o.key) {
-                        const t = Ti(o.value)
+                        const t = Si(o.value)
                         for (const e of t) a.addClass(e, r)
                       } else if ('style' == o.key) {
                         const t = Object.keys(o.value)
@@ -8886,19 +8886,19 @@
         const i = n.createContext(t)
         return !!n.checkChild(i, 'paragraph') && !!n.checkChild(i.push('paragraph'), e)
       }
-      function kc(t, e) {
+      function Pc(t, e) {
         const n = e.createElement('paragraph')
         return e.insert(n, t), e.createPositionAt(n, 0)
       }
-      class Pc extends oc {
+      class kc extends oc {
         elementToElement(t) {
           return this.add(Ac(t))
         }
         elementToAttribute(t) {
           return this.add(
             (function (t) {
-              Tc((t = rc(t)))
-              const e = Sc(t, !1),
+              Sc((t = rc(t)))
+              const e = xc(t, !1),
                 n = Cc(t.view),
                 i = n ? 'element:' + n : 'element'
               return n => {
@@ -8925,8 +8925,8 @@
                   t.view.name && (n.name = t.view.name)
                   return (t.view = n), e
                 })(t))
-              Tc(t, e)
-              const n = Sc(t, !0)
+              Sc(t, e)
+              const n = xc(t, !0)
               return e => {
                 e.on('element', n, { priority: t.converterPriority || 'low' })
               }
@@ -8953,8 +8953,8 @@
           return this.add(
             (function (t) {
               ;(t = rc(t)).model || (t.model = e => (e ? t.view + ':' + e : t.view))
-              const e = Ec(xc(t, 'start')),
-                n = Ec(xc(t, 'end'))
+              const e = Ec(Tc(t, 'start')),
+                n = Ec(Tc(t, 'end'))
               return i => {
                 i.on('element:' + t.view + '-start', e, { priority: t.converterPriority || 'normal' }),
                   i.on('element:' + t.view + '-end', n, { priority: t.converterPriority || 'normal' })
@@ -9025,13 +9025,13 @@
             (s.consumable.consume(i.viewItem, r), s.convertChildren(i.viewItem, a), s.updateConversionResult(a, i))
         }
       }
-      function Tc(t, e = null) {
+      function Sc(t, e = null) {
         const n = null === e || (t => t.getAttribute(e)),
           i = 'object' != typeof t.model ? t.model : t.model.key,
           s = 'object' != typeof t.model || void 0 === t.model.value ? n : t.model.value
         t.model = { key: i, value: s }
       }
-      function Sc(t, e) {
+      function xc(t, e) {
         const n = new ji(t.view)
         return (i, s, o) => {
           if (!s.modelRange && e) return
@@ -9064,7 +9064,7 @@
             o.consumable.consume(s.viewItem, r.match))
         }
       }
-      function xc(t, e) {
+      function Tc(t, e) {
         const n = {}
         return (
           (n.view = t.view + '-' + e),
@@ -9079,7 +9079,7 @@
       class Rc {
         constructor(t, e) {
           ;(this.model = t),
-            (this.view = new Sa(e)),
+            (this.view = new xa(e)),
             (this.mapper = new Wa()),
             (this.downcastDispatcher = new qa({ mapper: this.mapper, schema: t.schema }))
           const n = this.model.document,
@@ -9326,7 +9326,7 @@
           for (const e in this._consumables) e in t && this._revert(e, t[e])
         }
         _add(t, e) {
-          const n = St(e) ? e : [e],
+          const n = xt(e) ? e : [e],
             i = this._consumables[t]
           for (const e of n) {
             if ('attributes' === t && ('class' === e || 'style' === e))
@@ -9336,7 +9336,7 @@
           }
         }
         _test(t, e) {
-          const n = St(e) ? e : [e],
+          const n = xt(e) ? e : [e],
             i = this._consumables[t]
           for (const e of n)
             if ('attributes' !== t || ('class' !== e && 'style' !== e)) {
@@ -9351,7 +9351,7 @@
           return !0
         }
         _consume(t, e) {
-          const n = St(e) ? e : [e],
+          const n = xt(e) ? e : [e],
             i = this._consumables[t]
           for (const e of n)
             if ('attributes' !== t || ('class' !== e && 'style' !== e)) {
@@ -9363,7 +9363,7 @@
             }
         }
         _revert(t, e) {
-          const n = St(e) ? e : [e],
+          const n = xt(e) ? e : [e],
             i = this._consumables[t]
           for (const e of n)
             if ('attributes' !== t || ('class' !== e && 'style' !== e)) {
@@ -9870,7 +9870,7 @@
             if (s === e.parent) return { position: e }
             this._modelCursor.parent.getAncestors().includes(s) && (s = null)
           }
-          if (!s) return vc(e, t, n) ? { position: kc(e, i) } : null
+          if (!s) return vc(e, t, n) ? { position: Pc(e, i) } : null
           const o = this.conversionApi.writer.split(e, s),
             r = []
           for (const t of o.range.getWalker())
@@ -9977,7 +9977,7 @@
                 if (!i.test(e.viewItem)) return
                 if (!n.checkChild(o, '$text')) {
                   if (!vc(o, '$text', n)) return
-                  o = kc(o, s)
+                  o = Pc(o, s)
                 }
                 i.consume(e.viewItem)
                 const r = s.createText(e.viewItem.data)
@@ -10137,9 +10137,9 @@
       class Qc {
         constructor(t, e) {
           ;(this._helpers = new Map()),
-            (this._downcast = Ti(t)),
+            (this._downcast = Si(t)),
             this._createConversionHelpers({ name: 'downcast', dispatchers: this._downcast, isDowncast: !0 }),
-            (this._upcast = Ti(e)),
+            (this._upcast = Si(e)),
             this._createConversionHelpers({ name: 'upcast', dispatchers: this._upcast, isDowncast: !1 })
         }
         addAlias(t, e) {
@@ -10167,7 +10167,7 @@
         }
         _createConversionHelpers({ name: t, dispatchers: e, isDowncast: n }) {
           if (this._helpers.has(t)) throw new c('conversion-group-exists', this)
-          const i = n ? new ac(e) : new Pc(e)
+          const i = n ? new ac(e) : new kc(e)
           this._helpers.set(t, i)
         }
       }
@@ -10182,7 +10182,7 @@
         else yield* el(t.model, t.view, t.upcastAlso)
       }
       function* el(t, e, n) {
-        if ((yield { model: t, view: e }, n)) for (const e of Ti(n)) yield { model: t, view: e }
+        if ((yield { model: t, view: e }, n)) for (const e of Si(n)) yield { model: t, view: e }
       }
       class nl {
         constructor(t = {}) {
@@ -10322,7 +10322,7 @@
           if ('string' == typeof t[n]) e.push(new Ra(t[n]))
           else if (t[n] instanceof Oa) e.push(new Ra(t[n].data, t[n].getAttributes()))
           else if (t[n] instanceof sl || t[n] instanceof Ia) for (const i of t[n]) e.push(i)
-          else t[n] instanceof xa && e.push(t[n])
+          else t[n] instanceof Ta && e.push(t[n])
         for (let t = 1; t < e.length; t++) {
           const n = e[t],
             i = e[t - 1]
@@ -10804,7 +10804,7 @@
           return new this(n, t.howMany, i, s, t.baseVersion)
         }
       }
-      class kl extends Ma {
+      class Pl extends Ma {
         constructor(t, e, n = 'main') {
           super(e), (this._document = t), (this.rootName = n)
         }
@@ -10826,7 +10826,7 @@
           return this.rootName
         }
       }
-      class Pl {
+      class kl {
         constructor(t, e) {
           ;(this.model = t), (this.batch = e)
         }
@@ -10846,7 +10846,7 @@
           if ((this._assertWriterUsedCorrectly(), t instanceof Ra && '' == t.data)) return
           const i = Fa._createAt(e, n)
           if (t.parent) {
-            if (Sl(t.root, i.root)) return void this.move(ja._createOn(t), i)
+            if (xl(t.root, i.root)) return void this.move(ja._createOn(t), i)
             if (t.root.document) throw new c('model-writer-insert-forbidden-move', this)
             this.remove(t)
           }
@@ -10919,7 +10919,7 @@
           if (!t.isFlat) throw new c('writer-move-range-not-flat', this)
           const i = Fa._createAt(e, n)
           if (i.isEqual(t.start)) return
-          if ((this._addOperationForAffectedMarkers('move', t), !Sl(t.root, i.root)))
+          if ((this._addOperationForAffectedMarkers('move', t), !xl(t.root, i.root)))
             throw new c('writer-move-different-document', this)
           const s = t.root.document ? t.root.document.version : null,
             o = new gl(t.start, t.end.offset - t.start.offset, i, s)
@@ -10930,7 +10930,7 @@
           const e = (t instanceof ja ? t : ja._createOn(t)).getMinimalFlatRanges().reverse()
           for (const t of e)
             this._addOperationForAffectedMarkers('move', t),
-              Tl(t.start, t.end.offset - t.start.offset, this.batch, this.model)
+              Sl(t.start, t.end.offset - t.start.offset, this.batch, this.model)
         }
         merge(t) {
           this._assertWriterUsedCorrectly()
@@ -11165,7 +11165,7 @@
           a = new _l(e, n, i, o.markers, s, r.version)
         t.batch.addOperation(a), o.applyOperation(a)
       }
-      function Tl(t, e, n, i) {
+      function Sl(t, e, n, i) {
         let s
         if (t.root.document) {
           const n = i.document,
@@ -11174,10 +11174,10 @@
         } else s = new ml(t, e)
         n.addOperation(s), i.applyOperation(s)
       }
-      function Sl(t, e) {
-        return t === e || (t instanceof kl && e instanceof kl)
+      function xl(t, e) {
+        return t === e || (t instanceof Pl && e instanceof Pl)
       }
-      class xl {
+      class Tl {
         constructor(t) {
           ;(this._markerCollection = t),
             (this._changesInElement = new Map()),
@@ -11714,7 +11714,7 @@
             (this.history = new Ml()),
             (this.selection = new nc(this)),
             (this.roots = new Ci({ idProperty: 'rootName' })),
-            (this.differ = new xl(t.markers)),
+            (this.differ = new Tl(t.markers)),
             (this._postFixers = new Set()),
             (this._hasSelectionChangedFromTheLastChangeBlock = !1),
             this.createRoot('$root', Vl),
@@ -11760,7 +11760,7 @@
         }
         createRoot(t = '$root', e = 'main') {
           if (this.roots.get(e)) throw new c('model-document-createroot-name-exists', this, { name: e })
-          const n = new kl(this, t, e)
+          const n = new Pl(this, t, e)
           return this.roots.add(n), n
         }
         destroy() {
@@ -12188,7 +12188,7 @@
         const i = t.getSelectedElement()
         if (i && e.schema.isObject(i) && !e.schema.isInline(i))
           return ['before', 'after'].includes(n) ? e.createRange(e.createPositionAt(i, n)) : e.createRangeOn(i)
-        const s = Pa(t.getSelectedBlocks())
+        const s = ka(t.getSelectedBlocks())
         if (!s) return e.createRange(t.focus)
         if (s.isEmpty) return e.createRange(e.createPositionAt(s, 0))
         const o = e.createPositionAfter(s)
@@ -12200,7 +12200,7 @@
         o = n ? (n.is('selection') ? n : t.createSelection(n, i)) : t.document.selection
         let r = o
         s.findOptimalPosition && t.schema.isBlock(e) && (r = t.createSelection(Jl(o, t, s.findOptimalPosition)))
-        const a = Pa(o.getSelectedBlocks()),
+        const a = ka(o.getSelectedBlocks()),
           l = {}
         return (
           a && Object.assign(l, t.schema.getAttributesWithProperty(a, 'copyOnReplace', !0)),
@@ -12738,7 +12738,7 @@
           const t = []
           for (this.fire('_beforeChanges'); this._pendingChanges.length; ) {
             const e = this._pendingChanges[0].batch
-            this._currentWriter = new Pl(this, e)
+            this._currentWriter = new kl(this, e)
             const n = this._pendingChanges[0].callback(this._currentWriter)
             t.push(n),
               this.document._handleChangeBlock(this._currentWriter),
@@ -12963,9 +12963,9 @@
           return this._actions[Symbol.iterator]()
         }
       }
-      const kh =
+      const Ph =
         '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="9.5" cy="4.5" r="1.5"/><circle cx="9.5" cy="10.5" r="1.5"/><circle cx="9.5" cy="16.5" r="1.5"/></svg>'
-      class Ph extends Ci {
+      class kh extends Ci {
         constructor(t = []) {
           super(t, { idProperty: 'viewUid' }),
             this.on('add', (t, e, n) => {
@@ -13022,7 +13022,7 @@
           return this._bindTemplate ? this._bindTemplate : (this._bindTemplate = Ch.bind(this, this))
         }
         createCollection(t) {
-          const e = new Ph(t)
+          const e = new kh(t)
           return this._viewCollections.add(e), e
         }
         registerChild(t) {
@@ -13077,8 +13077,8 @@
         }
         static bind(t, e) {
           return {
-            to: (n, i) => new Th({ eventNameOrFunction: n, attribute: n, observable: t, emitter: e, callback: i }),
-            if: (n, i, s) => new Sh({ observable: t, emitter: e, attribute: n, valueIfTrue: i, callback: s }),
+            to: (n, i) => new Sh({ eventNameOrFunction: n, attribute: n, observable: t, emitter: e, callback: i }),
+            if: (n, i, s) => new xh({ observable: t, emitter: e, attribute: n, valueIfTrue: i, callback: s }),
           }
         }
         static extend(t, e) {
@@ -13105,7 +13105,7 @@
           let e = t.node
           return (
             e ? (t.revertData.text = e.textContent) : (e = t.node = document.createTextNode('')),
-            xh(this.text)
+            Th(this.text)
               ? this._bindToObservable({ schema: this.text, updater: Oh(e), data: t })
               : (e.textContent = this.text.join('')),
             e
@@ -13122,7 +13122,7 @@
               (n = this.attributes[e]),
               r && (r.attributes[e] = i),
               (s = A(n[0]) && n[0].ns ? n[0].ns : null),
-              xh(n))
+              Th(n))
             ) {
               const a = s ? n[0].value : n
               r && qh(e) && a.unshift(i), this._bindToObservable({ schema: a, updater: Ih(o, e, s), data: t })
@@ -13140,7 +13140,7 @@
           const n = e.node
           for (const i in t) {
             const s = t[i]
-            xh(s) ? this._bindToObservable({ schema: [s], updater: Mh(n, i), data: e }) : (n.style[i] = s)
+            Th(s) ? this._bindToObservable({ schema: [s], updater: Mh(n, i), data: e }) : (n.style[i] = s)
           }
         }
         _renderElementChildren(t) {
@@ -13212,7 +13212,7 @@
           )
         }
       }
-      class Th extends Eh {
+      class Sh extends Eh {
         activateDomEventListener(t, e, n) {
           const i = (t, n) => {
             ;(e && !n.target.matches(e)) ||
@@ -13228,19 +13228,19 @@
           )
         }
       }
-      class Sh extends Eh {
+      class xh extends Eh {
         getValue(t) {
           return !jh(super.getValue(t)) && (this.valueIfTrue || !0)
         }
       }
-      function xh(t) {
-        return !!t && (t.value && (t = t.value), Array.isArray(t) ? t.some(xh) : t instanceof Eh)
+      function Th(t) {
+        return !!t && (t.value && (t = t.value), Array.isArray(t) ? t.some(Th) : t instanceof Eh)
       }
       function Rh(t, e, { node: n }) {
         let i = (function (t, e) {
           return t.map(t => (t instanceof Eh ? t.getValue(e) : t))
         })(t, n)
-        ;(i = 1 == t.length && t[0] instanceof Sh ? i[0] : i.reduce(Bh, '')), jh(i) ? e.remove() : e.set(i)
+        ;(i = 1 == t.length && t[0] instanceof xh ? i[0] : i.reduce(Bh, '')), jh(i) ? e.remove() : e.set(i)
       }
       function Oh(t) {
         return {
@@ -13285,7 +13285,7 @@
               })(t))
             : t.text &&
               (function (t) {
-                t.text = Ti(t.text)
+                t.text = Si(t.text)
               })(t),
           t.on &&
             ((t.eventListeners = (function (t) {
@@ -13297,7 +13297,7 @@
         ) {
           t.attributes &&
             (function (t) {
-              for (const e in t) t[e].value && (t[e].value = Ti(t[e].value)), Fh(t, e)
+              for (const e in t) t[e].value && (t[e].value = Si(t[e].value)), Fh(t, e)
             })(t.attributes)
           const e = []
           if (t.children)
@@ -13308,7 +13308,7 @@
         return t
       }
       function Fh(t, e) {
-        t[e] = Ti(t[e])
+        t[e] = Si(t[e])
       }
       function Bh(t, e) {
         return jh(e) ? t : jh(t) ? e : `${t} ${e}`
@@ -13338,15 +13338,15 @@
         return t instanceof Ch
       }
       function $h(t) {
-        return t instanceof Ph
+        return t instanceof kh
       }
       function qh(t) {
         return 'class' == t || 'style' == t
       }
       const Uh = function (t) {
-        return 'string' == typeof t || (!St(t) && kt(t) && '[object String]' == B(t))
+        return 'string' == typeof t || (!xt(t) && Pt(t) && '[object String]' == B(t))
       }
-      class Hh extends Ph {
+      class Hh extends kh {
         constructor(t, e = []) {
           super(e), (this.locale = t)
         }
@@ -14133,7 +14133,7 @@
               label: e('Show more items'),
               tooltip: !0,
               tooltipPosition: 'rtl' === t.uiLanguageDirection ? 'se' : 'sw',
-              icon: kh,
+              icon: Ph,
             }),
             n.toolbarView.items.bindTo(this.groupedItems).using(t => t),
             n
@@ -14359,16 +14359,16 @@
           })
         }
       }
-      class kd {
+      class Pd {
         constructor(t, e) {
           e && Xt(this, e), t && this.set(t)
         }
       }
-      function Pd(t) {
+      function kd(t) {
         return e => e + t
       }
-      he(kd, se)
-      const Ad = Pd('px'),
+      he(Pd, se)
+      const Ad = kd('px'),
         Cd = Xo.document.body
       class Ed extends Ah {
         constructor(t) {
@@ -14452,8 +14452,8 @@
         }
         _startPinning(t) {
           this.attachTo(t)
-          const e = Td(t.target),
-            n = t.limiter ? Td(t.limiter) : Cd
+          const e = Sd(t.target),
+            n = t.limiter ? Sd(t.limiter) : Cd
           this.listenTo(
             Xo.document,
             'scroll',
@@ -14473,8 +14473,8 @@
           this.stopListening(Xo.document, 'scroll'), this.stopListening(Xo.window, 'resize')
         }
       }
-      function Td(t) {
-        return yi(t) ? t : oa(t) ? t.commonAncestorContainer : 'function' == typeof t ? Td(t()) : null
+      function Sd(t) {
+        return yi(t) ? t : oa(t) ? t.commonAncestorContainer : 'function' == typeof t ? Sd(t()) : null
       }
       ;(Ed.arrowHorizontalOffset = 25),
         (Ed.arrowVerticalOffset = 10),
@@ -14684,9 +14684,9 @@
             return t.bottom + e
           }
         })())
-      Pd('px')
-      const Sd = Pd('px')
-      class xd extends Ah {
+      kd('px')
+      const xd = kd('px')
+      class Td extends Ah {
         constructor(t) {
           super(t)
           const e = this.bindTemplate
@@ -14705,7 +14705,7 @@
                 class: ['ck', 'ck-sticky-panel__placeholder'],
                 style: {
                   display: e.to('isSticky', t => (t ? 'block' : 'none')),
-                  height: e.to('isSticky', t => (t ? Sd(this._panelRect.height) : null)),
+                  height: e.to('isSticky', t => (t ? xd(this._panelRect.height) : null)),
                 },
               },
             }).render()),
@@ -14720,10 +14720,10 @@
                 ],
                 style: {
                   width: e.to('isSticky', t =>
-                    t ? Sd(this._contentPanelPlaceholder.getBoundingClientRect().width) : null
+                    t ? xd(this._contentPanelPlaceholder.getBoundingClientRect().width) : null
                   ),
-                  top: e.to('_hasViewportTopOffset', t => (t ? Sd(this.viewportTopOffset) : null)),
-                  bottom: e.to('_isStickyToTheLimiter', t => (t ? Sd(this.limiterBottomOffset) : null)),
+                  top: e.to('_hasViewportTopOffset', t => (t ? xd(this.viewportTopOffset) : null)),
+                  bottom: e.to('_isStickyToTheLimiter', t => (t ? xd(this.limiterBottomOffset) : null)),
                   marginLeft: e.to('_marginLeft'),
                 },
               },
@@ -14758,13 +14758,13 @@
             this.isSticky
               ? ((this._isStickyToTheLimiter = e.bottom < t.height + this.limiterBottomOffset + this.viewportTopOffset),
                 (this._hasViewportTopOffset = !this._isStickyToTheLimiter && !!this.viewportTopOffset),
-                (this._marginLeft = this._isStickyToTheLimiter ? null : Sd(-Xo.window.scrollX)))
+                (this._marginLeft = this._isStickyToTheLimiter ? null : xd(-Xo.window.scrollX)))
               : ((this._isStickyToTheLimiter = !1), (this._hasViewportTopOffset = !1), (this._marginLeft = null))
         }
       }
-      Pd('px')
-      Pd('px')
-      Pd('px')
+      kd('px')
+      kd('px')
+      kd('px')
       const Rd = new WeakMap()
       function Od(t, e) {
         return !!e.hasClass('ck-placeholder') && (t.removeClass('ck-placeholder', e), !0)
@@ -15577,7 +15577,7 @@
           return new wo(this.document, t)
         }
         createElement(t, e, n) {
-          return new Ts(this.document, t, e, n)
+          return new Ss(this.document, t, e, n)
         }
         createText(t) {
           return new Bi(this.document, t)
@@ -15614,7 +15614,7 @@
           }
         }
         rename(t, e) {
-          const n = new Ts(this.document, t, e.getAttributes(), e.getChildren())
+          const n = new Ss(this.document, t, e.getAttributes(), e.getChildren())
           return this.replace(e, n) ? n : null
         }
         setAttribute(t, e, n) {
@@ -15630,7 +15630,7 @@
           e._removeClass(t)
         }
         setStyle(t, e, n) {
-          ke(t) && void 0 === n && (n = e), n._setStyle(t, e)
+          Pe(t) && void 0 === n && (n = e), n._setStyle(t, e)
         }
         removeStyle(t, e) {
           e._removeStyle(t)
@@ -15926,7 +15926,7 @@
       class Jd extends bd {
         constructor(t, e, n = {}) {
           super(t),
-            (this.stickyPanel = new xd(t)),
+            (this.stickyPanel = new Td(t)),
             (this.toolbar = new ld(t, { shouldGroupWhenFull: n.shouldToolbarGroupWhenFull })),
             (this.editable = new vd(t, e))
         }
@@ -16159,197 +16159,7 @@
           })
         }
       }
-      const iu = { autoRefresh: !0 },
-        su = 36e5
-      class ou {
-        constructor(t, e = iu) {
-          if (!t) throw new c('token-missing-token-url', this)
-          e.initValue && this._validateTokenValue(e.initValue),
-            this.set('value', e.initValue),
-            (this._refresh =
-              'function' == typeof t
-                ? t
-                : () => {
-                    return (
-                      (e = t),
-                      new Promise((t, n) => {
-                        const i = new XMLHttpRequest()
-                        i.open('GET', e),
-                          i.addEventListener('load', () => {
-                            const e = i.status,
-                              s = i.response
-                            return e < 200 || e > 299 ? n(new c('token-cannot-download-new-token', null)) : t(s)
-                          }),
-                          i.addEventListener('error', () => n(new Error('Network Error'))),
-                          i.addEventListener('abort', () => n(new Error('Abort'))),
-                          i.send()
-                      })
-                    )
-                    var e
-                  }),
-            (this._options = Object.assign({}, iu, e))
-        }
-        init() {
-          return new Promise((t, e) => {
-            this.value
-              ? (this._options.autoRefresh && this._registerRefreshTokenTimeout(), t(this))
-              : this.refreshToken().then(t).catch(e)
-          })
-        }
-        refreshToken() {
-          return this._refresh()
-            .then(t => {
-              this._validateTokenValue(t),
-                this.set('value', t),
-                this._options.autoRefresh && this._registerRefreshTokenTimeout()
-            })
-            .then(() => this)
-        }
-        destroy() {
-          clearTimeout(this._tokenRefreshTimeout)
-        }
-        _validateTokenValue(t) {
-          const e = 'string' == typeof t,
-            n = !/^".*"$/.test(t),
-            i = e && 3 === t.split('.').length
-          if (!n || !i) throw new c('token-not-in-jwt-format', this)
-        }
-        _registerRefreshTokenTimeout() {
-          const t = this._getTokenRefreshTimeoutTime()
-          clearTimeout(this._tokenRefreshTimeout),
-            (this._tokenRefreshTimeout = setTimeout(() => {
-              this.refreshToken()
-            }, t))
-        }
-        _getTokenRefreshTimeoutTime() {
-          try {
-            const [, t] = this.value.split('.'),
-              { exp: e } = JSON.parse(atob(t))
-            if (!e) return su
-            return Math.floor((1e3 * e - Date.now()) / 2)
-          } catch (t) {
-            return su
-          }
-        }
-        static create(t, e = iu) {
-          return new ou(t, e).init()
-        }
-      }
-      he(ou, se)
-      const ru = ou,
-        au = /^data:(\S*?);base64,/
-      class cu {
-        constructor(t, e, n) {
-          if (!t) throw new c('fileuploader-missing-file', null)
-          if (!e) throw new c('fileuploader-missing-token', null)
-          if (!n) throw new c('fileuploader-missing-api-address', null)
-          ;(this.file = (function (t) {
-            if ('string' != typeof t) return !1
-            const e = t.match(au)
-            return !(!e || !e.length)
-          })(t)
-            ? (function (t, e = 512) {
-                try {
-                  const n = t.match(au)[1],
-                    i = atob(t.replace(au, '')),
-                    s = []
-                  for (let t = 0; t < i.length; t += e) {
-                    const n = i.slice(t, t + e),
-                      o = new Array(n.length)
-                    for (let t = 0; t < n.length; t++) o[t] = n.charCodeAt(t)
-                    s.push(new Uint8Array(o))
-                  }
-                  return new Blob(s, { type: n })
-                } catch (t) {
-                  throw new c('fileuploader-decoding-image-data-error', null)
-                }
-              })(t)
-            : t),
-            (this._token = e),
-            (this._apiAddress = n)
-        }
-        onProgress(t) {
-          return this.on('progress', (e, n) => t(n)), this
-        }
-        onError(t) {
-          return this.once('error', (e, n) => t(n)), this
-        }
-        abort() {
-          this.xhr.abort()
-        }
-        send() {
-          return this._prepareRequest(), this._attachXHRListeners(), this._sendRequest()
-        }
-        _prepareRequest() {
-          const t = new XMLHttpRequest()
-          t.open('POST', this._apiAddress),
-            t.setRequestHeader('Authorization', this._token.value),
-            (t.responseType = 'json'),
-            (this.xhr = t)
-        }
-        _attachXHRListeners() {
-          const t = this,
-            e = this.xhr
-          function n(e) {
-            return () => t.fire('error', e)
-          }
-          e.addEventListener('error', n('Network Error')),
-            e.addEventListener('abort', n('Abort')),
-            e.upload &&
-              e.upload.addEventListener('progress', t => {
-                t.lengthComputable && this.fire('progress', { total: t.total, uploaded: t.loaded })
-              }),
-            e.addEventListener('load', () => {
-              const t = e.status,
-                n = e.response
-              if (t < 200 || t > 299) return this.fire('error', n.message || n.error)
-            })
-        }
-        _sendRequest() {
-          const t = new FormData(),
-            e = this.xhr
-          return (
-            t.append('file', this.file),
-            new Promise((n, i) => {
-              e.addEventListener('load', () => {
-                const t = e.status,
-                  s = e.response
-                return t < 200 || t > 299
-                  ? s.message
-                    ? i(new c('fileuploader-uploading-data-failed', this, { message: s.message }))
-                    : i(s.error)
-                  : n(s)
-              }),
-                e.addEventListener('error', () => i(new Error('Network Error'))),
-                e.addEventListener('abort', () => i(new Error('Abort'))),
-                e.send(t)
-            })
-          )
-        }
-      }
-      he(cu, p)
-      class lu {
-        constructor(t, e) {
-          if (!t) throw new c('uploadgateway-missing-token', null)
-          if (!e) throw new c('uploadgateway-missing-api-address', null)
-          ;(this._token = t), (this._apiAddress = e)
-        }
-        upload(t) {
-          return new cu(t, this._token, this._apiAddress)
-        }
-      }
-      class hu extends Mi {
-        static get pluginName() {
-          return 'CloudServicesCore'
-        }
-        createToken(t, e) {
-          return new ru(t, e)
-        }
-        createUploadGateway(t, e) {
-          return new lu(t, e)
-        }
-      }
-      class du {
+      class iu {
         constructor(t) {
           ;(this.files = (function (t) {
             const e = Array.from(t.files || []),
@@ -16384,7 +16194,7 @@
           return 'none' == this._native.dropEffect || !!this._native.mozUserCancelled
         }
       }
-      class uu extends Vr {
+      class su extends Vr {
         constructor(t) {
           super(t)
           const e = this.document
@@ -16413,7 +16223,7 @@
             this.listenTo(e, 'dragover', n('dragging'), { priority: 'low' })
         }
         onDomEvent(t) {
-          const e = { dataTransfer: new du(t.clipboardData ? t.clipboardData : t.dataTransfer) }
+          const e = { dataTransfer: new iu(t.clipboardData ? t.clipboardData : t.dataTransfer) }
           ;('drop' != t.type && 'dragover' != t.type) ||
             (e.dropRange = (function (t, e) {
               const n = e.target.ownerDocument,
@@ -16429,8 +16239,8 @@
             this.fire(t.type, t, e)
         }
       }
-      const fu = ['figcaption', 'li']
-      function mu(t) {
+      const ou = ['figcaption', 'li']
+      function ru(t) {
         let e = ''
         if (t.is('$text') || t.is('$textProxy')) e = t.data
         else if (t.is('element', 'img') && t.hasAttribute('alt')) e = t.getAttribute('alt')
@@ -16438,22 +16248,22 @@
         else {
           let n = null
           for (const i of t.getChildren()) {
-            const t = mu(i)
+            const t = ru(i)
             n &&
               (n.is('containerElement') || i.is('containerElement')) &&
-              (fu.includes(n.name) || fu.includes(i.name) ? (e += '\n') : (e += '\n\n')),
+              (ou.includes(n.name) || ou.includes(i.name) ? (e += '\n') : (e += '\n\n')),
               (e += t),
               (n = i)
           }
         }
         return e
       }
-      class gu extends de {
+      class au extends de {
         static get pluginName() {
           return 'ClipboardPipeline'
         }
         init() {
-          this.editor.editing.view.addObserver(uu), this._setupPasteDrop(), this._setupCopyCut()
+          this.editor.editing.view.addObserver(su), this._setupPasteDrop(), this._setupCopyCut()
         }
         _setupPasteDrop() {
           const t = this.editor,
@@ -16557,17 +16367,17 @@
               (n, i) => {
                 i.content.isEmpty ||
                   (i.dataTransfer.setData('text/html', this.editor.data.htmlProcessor.toData(i.content)),
-                  i.dataTransfer.setData('text/plain', mu(i.content))),
+                  i.dataTransfer.setData('text/plain', ru(i.content))),
                   'cut' == i.method && t.model.deleteContent(e.selection)
               },
               { priority: 'low' }
             )
         }
       }
-      function* pu(t, e) {
+      function* cu(t, e) {
         for (const n of e) n && t.getAttributeProperties(n[0]).copyOnEnter && (yield n)
       }
-      class _u extends fe {
+      class lu extends fe {
         execute() {
           const t = this.editor.model,
             e = t.document
@@ -16579,22 +16389,22 @@
                 a = o.end.parent
               if (i.isLimit(r) || i.isLimit(a)) return void (s || r != a || t.deleteContent(n))
               if (s) {
-                const t = pu(e.model.schema, n.getAttributes())
-                wu(e, o.start), e.setSelectionAttribute(t)
+                const t = cu(e.model.schema, n.getAttributes())
+                hu(e, o.start), e.setSelectionAttribute(t)
               } else {
                 const i = !(o.start.isAtStart && o.end.isAtEnd),
                   s = r == a
-                t.deleteContent(n, { leaveUnmerged: i }), i && (s ? wu(e, n.focus) : e.setSelection(a, 0))
+                t.deleteContent(n, { leaveUnmerged: i }), i && (s ? hu(e, n.focus) : e.setSelection(a, 0))
               }
             })(this.editor.model, n, e.selection, t.schema),
               this.fire('afterExecute', { writer: n })
           })
         }
       }
-      function wu(t, e) {
+      function hu(t, e) {
         t.split(e), t.setSelection(e.parent.nextSibling, 0)
       }
-      class bu extends mr {
+      class du extends mr {
         constructor(t) {
           super(t)
           const e = this.document
@@ -16607,7 +16417,7 @@
         }
         observe() {}
       }
-      class yu extends de {
+      class uu extends de {
         static get pluginName() {
           return 'Enter'
         }
@@ -16615,8 +16425,8 @@
           const t = this.editor,
             e = t.editing.view,
             n = e.document
-          e.addObserver(bu),
-            t.commands.add('enter', new _u(t)),
+          e.addObserver(du),
+            t.commands.add('enter', new lu(t)),
             this.listenTo(
               n,
               'enter',
@@ -16627,7 +16437,7 @@
             )
         }
       }
-      class vu {
+      class fu {
         constructor(t, e = 20) {
           ;(this.model = t),
             (this.size = 0),
@@ -16664,9 +16474,9 @@
           ;(this.isLocked && !t) || ((this._batch = null), (this.size = 0))
         }
       }
-      class ku extends fe {
+      class mu extends fe {
         constructor(t, e) {
-          super(t), (this.direction = e), (this._buffer = new vu(t.model, t.config.get('typing.undoStep')))
+          super(t), (this.direction = e), (this._buffer = new fu(t.model, t.config.get('typing.undoStep')))
         }
         get buffer() {
           return this._buffer
@@ -16733,7 +16543,7 @@
           )
         }
       }
-      function Pu(t) {
+      function gu(t) {
         if (t.newChildren.length - t.oldChildren.length != 1) return
         const e = (function (t, e) {
           const n = []
@@ -16758,21 +16568,21 @@
           function r(t) {
             return i && i.type == t
           }
-        })(zo(t.oldChildren, t.newChildren, Au), t.newChildren)
+        })(zo(t.oldChildren, t.newChildren, pu), t.newChildren)
         if (e.length > 1) return
         const n = e[0]
         return n.values[0] && n.values[0].is('$text') ? n : void 0
       }
-      function Au(t, e) {
+      function pu(t, e) {
         return t && t.is('$text') && e && e.is('$text') ? t.data === e.data : t === e
       }
-      function Cu(t, e) {
+      function _u(t, e) {
         const n = e.selection,
           i = t.shiftKey && t.keyCode === ro.delete,
           s = !n.isCollapsed
         return i && s
       }
-      class Eu extends mr {
+      class wu extends mr {
         constructor(t) {
           super(t)
           const e = t.document
@@ -16785,7 +16595,7 @@
             ;(e.keyCode != ro.delete && e.keyCode != ro.backspace) || (n = 0)
           }),
             e.on('keydown', (t, s) => {
-              if (no.isWindows && Cu(s, e)) return
+              if (no.isWindows && _u(s, e)) return
               const o = {}
               if (s.keyCode == ro.delete) (o.direction = 'forward'), (o.unit = 'character')
               else {
@@ -16808,7 +16618,7 @@
         }
         observe() {}
       }
-      class Tu extends de {
+      class bu extends de {
         static get pluginName() {
           return 'Delete'
         }
@@ -16817,12 +16627,12 @@
             e = t.editing.view,
             n = e.document,
             i = t.model.document
-          e.addObserver(Eu), (this._undoOnBackspace = !1)
-          const s = new ku(t, 'forward')
+          e.addObserver(wu), (this._undoOnBackspace = !1)
+          const s = new mu(t, 'forward')
           if (
             (t.commands.add('deleteForward', s),
             t.commands.add('forwardDelete', s),
-            t.commands.add('delete', new ku(t, 'backward')),
+            t.commands.add('delete', new mu(t, 'backward')),
             this.listenTo(
               n,
               'delete',
@@ -16885,7 +16695,7 @@
           this.editor.plugins.has('UndoEditing') && (this._undoOnBackspace = !0)
         }
       }
-      class Su {
+      class yu {
         constructor() {
           this._stack = []
         }
@@ -16894,22 +16704,22 @@
             i = n[0]
           this._insertDescriptor(t)
           const s = n[0]
-          i === s || xu(i, s) || this.fire('change:top', { oldDescriptor: i, newDescriptor: s, writer: e })
+          i === s || vu(i, s) || this.fire('change:top', { oldDescriptor: i, newDescriptor: s, writer: e })
         }
         remove(t, e) {
           const n = this._stack,
             i = n[0]
           this._removeDescriptor(t)
           const s = n[0]
-          i === s || xu(i, s) || this.fire('change:top', { oldDescriptor: i, newDescriptor: s, writer: e })
+          i === s || vu(i, s) || this.fire('change:top', { oldDescriptor: i, newDescriptor: s, writer: e })
         }
         _insertDescriptor(t) {
           const e = this._stack,
             n = e.findIndex(e => e.id === t.id)
-          if (xu(t, e[n])) return
+          if (vu(t, e[n])) return
           n > -1 && e.splice(n, 1)
           let i = 0
-          for (; e[i] && Ru(e[i], t); ) i++
+          for (; e[i] && Pu(e[i], t); ) i++
           e.splice(i, 0, t)
         }
         _removeDescriptor(t) {
@@ -16918,29 +16728,29 @@
           n > -1 && e.splice(n, 1)
         }
       }
-      function xu(t, e) {
-        return t && e && t.priority == e.priority && Ou(t.classes) == Ou(e.classes)
+      function vu(t, e) {
+        return t && e && t.priority == e.priority && ku(t.classes) == ku(e.classes)
       }
-      function Ru(t, e) {
-        return t.priority > e.priority || (!(t.priority < e.priority) && Ou(t.classes) > Ou(e.classes))
+      function Pu(t, e) {
+        return t.priority > e.priority || (!(t.priority < e.priority) && ku(t.classes) > ku(e.classes))
       }
-      function Ou(t) {
+      function ku(t) {
         return Array.isArray(t) ? t.sort().join(',') : t
       }
-      he(Su, p)
-      const Iu =
+      he(yu, p)
+      const Au =
           '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M4 0v1H1v3H0V.5A.5.5 0 0 1 .5 0H4zm8 0h3.5a.5.5 0 0 1 .5.5V4h-1V1h-3V0zM4 16H.5a.5.5 0 0 1-.5-.5V12h1v3h3v1zm8 0v-1h3v-3h1v3.5a.5.5 0 0 1-.5.5H12z"/><path fill-opacity=".256" d="M1 1h14v14H1z"/><g class="ck-icon__selected-indicator"><path d="M7 0h2v1H7V0zM0 7h1v2H0V7zm15 0h1v2h-1V7zm-8 8h2v1H7v-1z"/><path fill-opacity=".254" d="M1 1h14v14H1z"/></g></svg>',
-        Mu = 'ck-widget_selected'
-      function Nu(t) {
+        Cu = 'ck-widget_selected'
+      function Eu(t) {
         return !!t.is('element') && !!t.getCustomProperty('widget')
       }
-      function Du(t, e, n = {}) {
+      function Su(t, e, n = {}) {
         if (!t.is('containerElement')) throw new c('widget-to-widget-wrong-element-type', null, { element: t })
         return (
           e.setAttribute('contenteditable', 'false', t),
           e.addClass('ck-widget', t),
           e.setCustomProperty('widget', !0, t),
-          (t.getFillerOffset = ju),
+          (t.getFillerOffset = Iu),
           n.label &&
             (function (t, e, n) {
               n.setCustomProperty('widgetLabel', e, t)
@@ -16950,45 +16760,45 @@
               const n = e.createUIElement('div', { class: 'ck ck-widget__selection-handle' }, function (t) {
                 const e = this.toDomElement(t),
                   n = new Kh()
-                return n.set('content', Iu), n.render(), e.appendChild(n.element), e
+                return n.set('content', Au), n.render(), e.appendChild(n.element), e
               })
               e.insert(e.createPositionAt(t, 0), n), e.addClass(['ck-widget_with-selection-handle'], t)
             })(t, e),
-          Vu(t, e),
+          Ru(t, e),
           t
         )
       }
-      function Fu(t, e, n) {
-        if ((e.classes && n.addClass(Ti(e.classes), t), e.attributes))
+      function xu(t, e, n) {
+        if ((e.classes && n.addClass(Si(e.classes), t), e.attributes))
           for (const i in e.attributes) n.setAttribute(i, e.attributes[i], t)
       }
-      function Bu(t, e, n) {
-        if ((e.classes && n.removeClass(Ti(e.classes), t), e.attributes))
+      function Tu(t, e, n) {
+        if ((e.classes && n.removeClass(Si(e.classes), t), e.attributes))
           for (const i in e.attributes) n.removeAttribute(i, t)
       }
-      function Vu(t, e, n = Fu, i = Bu) {
-        const s = new Su()
+      function Ru(t, e, n = xu, i = Tu) {
+        const s = new yu()
         s.on('change:top', (e, s) => {
           s.oldDescriptor && i(t, s.oldDescriptor, s.writer), s.newDescriptor && n(t, s.newDescriptor, s.writer)
         }),
           e.setCustomProperty('addHighlight', (t, e, n) => s.add(e, n), t),
           e.setCustomProperty('removeHighlight', (t, e, n) => s.remove(e, n), t)
       }
-      function Lu(t) {
+      function Ou(t) {
         const e = t.getCustomProperty('widgetLabel')
         return e ? ('function' == typeof e ? e() : e) : ''
       }
-      function ju() {
+      function Iu() {
         return null
       }
-      const Wu = 'widget-type-around'
-      function zu(t, e, n) {
-        return t && Nu(t) && !n.isInline(e)
+      const Mu = 'widget-type-around'
+      function Nu(t, e, n) {
+        return t && Eu(t) && !n.isInline(e)
       }
-      function $u(t) {
-        return t.getAttribute(Wu)
+      function Du(t) {
+        return t.getAttribute(Mu)
       }
-      const qu = [
+      const Fu = [
         co('arrowUp'),
         co('arrowRight'),
         co('arrowDown'),
@@ -17018,22 +16828,22 @@
         179,
         255,
       ]
-      for (let t = 112; t <= 135; t++) qu.push(t)
-      function Uu(t) {
-        return !(!t.ctrlKey && !t.metaKey) || qu.includes(t.keyCode)
+      for (let t = 112; t <= 135; t++) Fu.push(t)
+      function Bu(t) {
+        return !(!t.ctrlKey && !t.metaKey) || Fu.includes(t.keyCode)
       }
-      const Hu = ['before', 'after'],
-        Ku = new DOMParser().parseFromString(
+      const Vu = ['before', 'after'],
+        Lu = new DOMParser().parseFromString(
           '<svg viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path d="M9.055.263v3.972h-6.77M1 4.216l2-2.038m-2 2 2 2.038"/></svg>',
           'image/svg+xml'
         ).firstChild,
-        Gu = 'ck-widget__type-around_disabled'
-      class Ju extends de {
+        ju = 'ck-widget__type-around_disabled'
+      class Wu extends de {
         static get pluginName() {
           return 'WidgetTypeAround'
         }
         static get requires() {
-          return [yu, Tu]
+          return [uu, bu]
         }
         constructor(t) {
           super(t), (this._currentFakeCaretModelElement = null)
@@ -17043,11 +16853,11 @@
             e = t.editing.view
           this.on('change:isEnabled', (n, i, s) => {
             e.change(t => {
-              for (const n of e.document.roots) s ? t.removeClass(Gu, n) : t.addClass(Gu, n)
+              for (const n of e.document.roots) s ? t.removeClass(ju, n) : t.addClass(ju, n)
             }),
               s ||
                 t.model.change(t => {
-                  t.removeSelectionAttribute(Wu)
+                  t.removeSelectionAttribute(Mu)
                 })
           }),
             this._enableTypeAroundUIInjection(),
@@ -17083,7 +16893,7 @@
         }
         _insertParagraphAccordingToFakeCaretPosition() {
           const t = this.editor.model.document.selection,
-            e = $u(t)
+            e = Du(t)
           if (!e) return !1
           const n = t.getSelectedElement()
           return this._insertParagraph(n, e), !0
@@ -17097,20 +16907,20 @@
             'insert',
             (t, n, s) => {
               const o = s.mapper.toViewElement(n.item)
-              zu(o, n.item, e) &&
+              Nu(o, n.item, e) &&
                 (function (t, e, n) {
                   const i = t.createUIElement('div', { class: 'ck ck-reset_all ck-widget__type-around' }, function (t) {
                     const n = this.toDomElement(t)
                     return (
                       (function (t, e) {
-                        for (const n of Hu) {
+                        for (const n of Vu) {
                           const i = new Ch({
                             tag: 'div',
                             attributes: {
                               class: ['ck', 'ck-widget__type-around__button', `ck-widget__type-around__button_${n}`],
                               title: e[n],
                             },
-                            children: [t.ownerDocument.importNode(Ku, !0)],
+                            children: [t.ownerDocument.importNode(Lu, !0)],
                           })
                           t.appendChild(i.render())
                         }
@@ -17146,40 +16956,40 @@
             (t, e) => {
               this._handleArrowKeyPress(t, e)
             },
-            { context: [Nu, '$text'], priority: 'high' }
+            { context: [Eu, '$text'], priority: 'high' }
           ),
             this._listenToIfEnabled(n, 'change:range', (e, n) => {
               n.directChange &&
                 t.model.change(t => {
-                  t.removeSelectionAttribute(Wu)
+                  t.removeSelectionAttribute(Mu)
                 })
             }),
             this._listenToIfEnabled(e.document, 'change:data', () => {
               const e = n.getSelectedElement()
               if (e) {
-                if (zu(t.editing.mapper.toViewElement(e), e, i)) return
+                if (Nu(t.editing.mapper.toViewElement(e), e, i)) return
               }
               t.model.change(t => {
-                t.removeSelectionAttribute(Wu)
+                t.removeSelectionAttribute(Mu)
               })
             }),
             this._listenToIfEnabled(t.editing.downcastDispatcher, 'selection', (t, e, n) => {
               const s = n.writer
               if (this._currentFakeCaretModelElement) {
                 const t = n.mapper.toViewElement(this._currentFakeCaretModelElement)
-                t && (s.removeClass(Hu.map(o), t), (this._currentFakeCaretModelElement = null))
+                t && (s.removeClass(Vu.map(o), t), (this._currentFakeCaretModelElement = null))
               }
               const r = e.selection.getSelectedElement()
               if (!r) return
               const a = n.mapper.toViewElement(r)
-              if (!zu(a, r, i)) return
-              const c = $u(e.selection)
+              if (!Nu(a, r, i)) return
+              const c = Du(e.selection)
               c && (s.addClass(o(c), a), (this._currentFakeCaretModelElement = r))
             }),
             this._listenToIfEnabled(t.ui.focusTracker, 'change:isFocused', (e, n, i) => {
               i ||
                 t.model.change(t => {
-                  t.removeSelectionAttribute(Wu)
+                  t.removeSelectionAttribute(Mu)
                 })
             })
         }
@@ -17195,7 +17005,7 @@
             })(e.keyCode, n.locale.contentLanguageDirection),
             c = r.document.selection.getSelectedElement()
           let l
-          zu(c, n.editing.mapper.toModelElement(c), o)
+          Nu(c, n.editing.mapper.toModelElement(c), o)
             ? (l = this._handleArrowKeyPressOnSelectedWidget(a))
             : s.isCollapsed
             ? (l = this._handleArrowKeyPressWhenSelectionNextToAWidget(a))
@@ -17204,10 +17014,10 @@
         }
         _handleArrowKeyPressOnSelectedWidget(t) {
           const e = this.editor.model,
-            n = $u(e.document.selection)
+            n = Du(e.document.selection)
           return e.change(e => {
-            if (!n) return e.setSelectionAttribute(Wu, t ? 'after' : 'before'), !0
-            if (!(n === (t ? 'after' : 'before'))) return e.removeSelectionAttribute(Wu), !0
+            if (!n) return e.setSelectionAttribute(Mu, t ? 'after' : 'before'), !0
+            if (!(n === (t ? 'after' : 'before'))) return e.removeSelectionAttribute(Mu), !0
             return !1
           })
         }
@@ -17218,9 +17028,9 @@
             s = e.plugins.get('Widget'),
             o = s._getObjectElementNextToSelection(t)
           return (
-            !!zu(e.editing.mapper.toViewElement(o), o, i) &&
+            !!Nu(e.editing.mapper.toViewElement(o), o, i) &&
             (n.change(e => {
-              s._setSelectionOverElement(o), e.setSelectionAttribute(Wu, t ? 'before' : 'after')
+              s._setSelectionOverElement(o), e.setSelectionAttribute(Mu, t ? 'before' : 'after')
             }),
             !0)
           )
@@ -17233,9 +17043,9 @@
             o = n.document.selection,
             r = t ? o.getLastPosition().nodeBefore : o.getFirstPosition().nodeAfter
           return (
-            !!zu(s.toViewElement(r), r, i) &&
+            !!Nu(s.toViewElement(r), r, i) &&
             (n.change(e => {
-              e.setSelection(r, 'on'), e.setSelectionAttribute(Wu, t ? 'after' : 'before')
+              e.setSelection(r, 'on'), e.setSelectionAttribute(Mu, t ? 'after' : 'before')
             }),
             !0)
           )
@@ -17272,10 +17082,10 @@
               let a
               this._insertParagraphAccordingToFakeCaretPosition()
                 ? (a = !0)
-                : zu(o, s, r) && (this._insertParagraph(s, i.isSoft ? 'before' : 'after'), (a = !0)),
+                : Nu(o, s, r) && (this._insertParagraph(s, i.isSoft ? 'before' : 'after'), (a = !0)),
                 a && (i.preventDefault(), n.stop())
             },
-            { context: Nu }
+            { context: Eu }
           )
         }
         _enableInsertingParagraphsOnTypingKeystroke() {
@@ -17285,7 +17095,7 @@
             t.document,
             'keydown',
             (t, n) => {
-              e.includes(n.keyCode) || Uu(n) || this._insertParagraphAccordingToFakeCaretPosition()
+              e.includes(n.keyCode) || Bu(n) || this._insertParagraphAccordingToFakeCaretPosition()
             },
             { priority: 'high' }
           )
@@ -17300,7 +17110,7 @@
             'delete',
             (e, s) => {
               if ('atTarget' != e.eventPhase) return
-              const o = $u(n.document.selection)
+              const o = Du(n.document.selection)
               if (!o) return
               const r = s.direction,
                 a = n.document.selection.getSelectedElement(),
@@ -17332,7 +17142,7 @@
               }
               s.preventDefault(), e.stop()
             },
-            { context: Nu }
+            { context: Eu }
           )
         }
         _enableInsertContentIntegration() {
@@ -17344,7 +17154,7 @@
             'insertContent',
             (t, [i, s]) => {
               if (s && !s.is('documentSelection')) return
-              const o = $u(n)
+              const o = Du(n)
               return o
                 ? (t.stop(),
                   e.change(t => {
@@ -17368,7 +17178,7 @@
             (t, n) => {
               const [, i, , s = {}] = n
               if (i && !i.is('documentSelection')) return
-              const o = $u(e)
+              const o = Du(e)
               o && ((s.findOptimalPosition = o), (n[3] = s))
             },
             { priority: 'high' }
@@ -17382,13 +17192,13 @@
             'deleteContent',
             (t, [n]) => {
               if (n && !n.is('documentSelection')) return
-              $u(e) && t.stop()
+              Du(e) && t.stop()
             },
             { priority: 'high' }
           )
         }
       }
-      function Yu(t) {
+      function zu(t) {
         const e = t.model
         return (n, i) => {
           const s = i.keyCode == ro.arrowup,
@@ -17408,18 +17218,18 @@
             const i = t.model
             if (n) {
               const t = e.isCollapsed ? e.focus : e.getLastPosition(),
-                n = Xu(i, t, 'forward')
+                n = $u(i, t, 'forward')
               if (!n) return null
               const s = i.createRange(t, n),
-                o = Zu(i.schema, s, 'backward')
+                o = qu(i.schema, s, 'backward')
               return o ? i.createRange(t, o) : null
             }
             {
               const t = e.isCollapsed ? e.focus : e.getFirstPosition(),
-                n = Xu(i, t, 'backward')
+                n = $u(i, t, 'backward')
               if (!n) return null
               const s = i.createRange(n, t),
-                o = Zu(i.schema, s, 'forward')
+                o = qu(i.schema, s, 'forward')
               return o ? i.createRange(o, t) : null
             }
           })(t, a, c)
@@ -17461,7 +17271,7 @@
           }
         }
       }
-      function Xu(t, e, n) {
+      function $u(t, e, n) {
         const i = t.schema,
           s = t.createRangeIn(e.root),
           o = 'forward' == n ? 'elementStart' : 'elementEnd'
@@ -17471,18 +17281,18 @@
         }
         return null
       }
-      function Zu(t, e, n) {
+      function qu(t, e, n) {
         const i = 'backward' == n ? e.end : e.start
         if (t.checkChild(i, '$text')) return i
         for (const { nextPosition: i } of e.getWalker({ direction: n })) if (t.checkChild(i, '$text')) return i
         return null
       }
-      class Qu extends de {
+      class Uu extends de {
         static get pluginName() {
           return 'Widget'
         }
         static get requires() {
-          return [Ju, Tu]
+          return [Wu, bu]
         }
         init() {
           const t = this.editor,
@@ -17496,9 +17306,9 @@
               const r = o.getSelectedElement()
               if (!r) return
               const a = t.editing.mapper.toViewElement(r)
-              Nu(a) &&
+              Eu(a) &&
                 i.consumable.consume(o, 'selection') &&
-                s.setSelection(s.createRangeOn(a), { fake: !0, label: Lu(a) })
+                s.setSelection(s.createRangeOn(a), { fake: !0, label: Ou(a) })
             }),
             this.editor.editing.downcastDispatcher.on(
               'selection',
@@ -17510,7 +17320,7 @@
                 for (const t of s.getRanges())
                   for (const e of t) {
                     const t = e.item
-                    Nu(t) && !tf(t, o) && (i.addClass(Mu, t), this._previouslySelected.add(t), (o = t))
+                    Eu(t) && !Hu(t, o) && (i.addClass(Cu, t), this._previouslySelected.add(t), (o = t))
                   }
               },
               { priority: 'low' }
@@ -17523,7 +17333,7 @@
               (...t) => {
                 this._handleSelectionChangeOnArrowKeyPress(...t)
               },
-              { context: [Nu, '$text'] }
+              { context: [Eu, '$text'] }
             ),
             this.listenTo(
               n,
@@ -17533,7 +17343,7 @@
               },
               { context: '$root' }
             ),
-            this.listenTo(n, 'arrowKey', Yu(this.editor.editing), { context: '$text' }),
+            this.listenTo(n, 'arrowKey', zu(this.editor.editing), { context: '$text' }),
             this.listenTo(
               n,
               'delete',
@@ -17552,7 +17362,7 @@
             (function (t) {
               for (; t; ) {
                 if (t.is('editableElement') && !t.is('rootElement')) return !0
-                if (Nu(t)) return !1
+                if (Eu(t)) return !1
                 t = t.parent
               }
               return !1
@@ -17569,7 +17379,7 @@
             }
             return
           }
-          if (!Nu(o) && ((o = o.findAncestor(Nu)), !o)) return
+          if (!Eu(o) && ((o = o.findAncestor(Eu)), !o)) return
           no.isAndroid && e.preventDefault(), s.isFocused || i.focus()
           const r = n.editing.mapper.toModelElement(o)
           this._setSelectionOverElement(r)
@@ -17654,14 +17464,14 @@
           return o && n.isObject(o) ? o : null
         }
         _clearPreviouslySelectedWidgets(t) {
-          for (const e of this._previouslySelected) t.removeClass(Mu, e)
+          for (const e of this._previouslySelected) t.removeClass(Cu, e)
           this._previouslySelected.clear()
         }
       }
-      function tf(t, e) {
+      function Hu(t, e) {
         return !!e && Array.from(t.getAncestors()).includes(e)
       }
-      const ef = function (t, e, n) {
+      const Ku = function (t, e, n) {
         var i = !0,
           s = !0
         if ('function' != typeof t) throw new TypeError('Expected a function')
@@ -17670,12 +17480,12 @@
           Zr(t, e, { leading: i, maxWait: e, trailing: s })
         )
       }
-      class nf extends de {
+      class Gu extends de {
         static get pluginName() {
           return 'DragDrop'
         }
         static get requires() {
-          return [gu, Qu]
+          return [au, Uu]
         }
         init() {
           const t = this.editor,
@@ -17683,10 +17493,10 @@
           ;(this._draggedRange = null),
             (this._draggingUid = ''),
             (this._draggableElement = null),
-            (this._updateDropMarkerThrottled = ef(t => this._updateDropMarker(t), 40)),
-            (this._removeDropMarkerDelayed = rf(() => this._removeDropMarker(), 40)),
-            (this._clearDraggableAttributesDelayed = rf(() => this._clearDraggableAttributes(), 40)),
-            e.addObserver(uu),
+            (this._updateDropMarkerThrottled = Ku(t => this._updateDropMarker(t), 40)),
+            (this._removeDropMarkerDelayed = Xu(() => this._removeDropMarker(), 40)),
+            (this._clearDraggableAttributesDelayed = Xu(() => this._clearDraggableAttributes(), 40)),
+            e.addObserver(su),
             e.addObserver(Hd),
             this._setupDragging(),
             this._setupContentInsertionIntegration(),
@@ -17722,7 +17532,7 @@
             (i, r) => {
               const a = n.selection
               if (r.target && r.target.is('editableElement')) return void r.preventDefault()
-              const c = r.target ? af(r.target) : null
+              const c = r.target ? Zu(r.target) : null
               if (c) {
                 const n = t.editing.mapper.toModelElement(c)
                 ;(this._draggedRange = Za.fromRange(e.createRangeOn(n))),
@@ -17730,7 +17540,7 @@
                     t.plugins.get('WidgetToolbarRepository').forceDisabled('dragDrop')
               } else if (!s.selection.isCollapsed) {
                 const t = s.selection.getSelectedElement()
-                ;(t && Nu(t)) || (this._draggedRange = Za.fromRange(a.getFirstRange()))
+                ;(t && Eu(t)) || (this._draggedRange = Za.fromRange(a.getFirstRange()))
               }
               if (!this._draggedRange) return void r.preventDefault()
               ;(this._draggingUid = o()),
@@ -17763,7 +17573,7 @@
               (e, n) => {
                 if (!this.isEnabled) return void (n.dataTransfer.dropEffect = 'none')
                 this._removeDropMarkerDelayed.cancel()
-                const i = sf(t, n.targetRanges, n.target)
+                const i = Ju(t, n.targetRanges, n.target)
                 this._draggedRange || (n.dataTransfer.dropEffect = 'copy'),
                   no.isGecko ||
                     ('copy' == n.dataTransfer.effectAllowed
@@ -17783,12 +17593,12 @@
             'clipboardInput',
             (e, n) => {
               if ('drop' != n.method) return
-              const i = sf(t, n.targetRanges, n.target)
+              const i = Ju(t, n.targetRanges, n.target)
               if ((this._removeDropMarker(), !i)) return this._finalizeDragging(!1), void e.stop()
               this._draggedRange &&
                 this._draggingUid != n.dataTransfer.getData('application/ckeditor5-dragging-uid') &&
                 (this._draggedRange.detach(), (this._draggedRange = null), (this._draggingUid = ''))
-              if ('move' == of(n.dataTransfer) && this._draggedRange && this._draggedRange.containsRange(i, !0))
+              if ('move' == Yu(n.dataTransfer) && this._draggedRange && this._draggedRange.containsRange(i, !0))
                 return this._finalizeDragging(!1), void e.stop()
               n.targetRanges = [t.editing.mapper.toViewRange(i)]
             },
@@ -17796,7 +17606,7 @@
           )
         }
         _setupContentInsertionIntegration() {
-          const t = this.editor.plugins.get(gu)
+          const t = this.editor.plugins.get(au)
           t.on(
             'contentInsertion',
             (t, e) => {
@@ -17810,7 +17620,7 @@
               'contentInsertion',
               (t, e) => {
                 if (!this.isEnabled || 'drop' !== e.method) return
-                const n = 'move' == of(e.dataTransfer),
+                const n = 'move' == Yu(e.dataTransfer),
                   i = !e.resultRange || !e.resultRange.isCollapsed
                 this._finalizeDragging(i && n)
               },
@@ -17824,10 +17634,10 @@
           this.listenTo(n, 'mousedown', (i, s) => {
             if (no.isAndroid || !s) return
             this._clearDraggableAttributesDelayed.cancel()
-            let o = af(s.target)
+            let o = Zu(s.target)
             if (no.isBlink && !t.isReadOnly && !o && !n.selection.isCollapsed) {
               const t = n.selection.getSelectedElement()
-              ;(t && Nu(t)) || (o = n.selection.editableElement)
+              ;(t && Eu(t)) || (o = n.selection.editableElement)
             }
             o &&
               (e.change(t => {
@@ -17898,7 +17708,7 @@
               (this._draggedRange = null))
         }
       }
-      function sf(t, e, n) {
+      function Ju(t, e, n) {
         const i = t.model,
           s = t.editing.mapper
         let o = null
@@ -17908,10 +17718,10 @@
           (o = (function (t, e) {
             const n = t.model,
               i = t.editing.mapper
-            if (Nu(e)) return n.createRangeOn(i.toModelElement(e))
+            if (Eu(e)) return n.createRangeOn(i.toModelElement(e))
             if (!e.is('editableElement')) {
-              const t = e.findAncestor(t => Nu(t) || t.is('editableElement'))
-              if (Nu(t)) return n.createRangeOn(i.toModelElement(t))
+              const t = e.findAncestor(t => Eu(t) || t.is('editableElement'))
+              if (Eu(t)) return n.createRangeOn(i.toModelElement(t))
             }
             return null
           })(t, n)),
@@ -17955,10 +17765,10 @@
               return i.getNearestSelectionRange(s, 'forward')
             })(t, a)
       }
-      function of(t) {
+      function Yu(t) {
         return no.isGecko ? t.dropEffect : ['all', 'copyMove'].includes(t.effectAllowed) ? 'move' : 'copy'
       }
-      function rf(t, e) {
+      function Xu(t, e) {
         let n
         function i(...s) {
           i.cancel(), (n = setTimeout(() => t(...s), e))
@@ -17970,19 +17780,19 @@
           i
         )
       }
-      function af(t) {
+      function Zu(t) {
         if (t.is('editableElement')) return null
-        if (t.hasClass('ck-widget__selection-handle')) return t.findAncestor(Nu)
-        if (Nu(t)) return t
-        const e = t.findAncestor(t => Nu(t) || t.is('editableElement'))
-        return Nu(e) ? e : null
+        if (t.hasClass('ck-widget__selection-handle')) return t.findAncestor(Eu)
+        if (Eu(t)) return t
+        const e = t.findAncestor(t => Eu(t) || t.is('editableElement'))
+        return Eu(e) ? e : null
       }
-      class cf extends de {
+      class Qu extends de {
         static get pluginName() {
           return 'PastePlainText'
         }
         static get requires() {
-          return [gu]
+          return [au]
         }
         init() {
           const t = this.editor,
@@ -17991,11 +17801,11 @@
             i = n.document,
             s = e.document.selection
           let o = !1
-          n.addObserver(uu),
+          n.addObserver(su),
             this.listenTo(i, 'keydown', (t, e) => {
               o = e.shiftKey
             }),
-            t.plugins.get(gu).on('contentInsertion', (t, n) => {
+            t.plugins.get(au).on('contentInsertion', (t, n) => {
               ;(o ||
                 (function (t, e) {
                   if (t.childCount > 1) return !1
@@ -18014,15 +17824,15 @@
             })
         }
       }
-      class lf extends de {
+      class tf extends de {
         static get pluginName() {
           return 'Clipboard'
         }
         static get requires() {
-          return [gu, nf, cf]
+          return [au, Gu, Qu]
         }
       }
-      class hf extends fe {
+      class ef extends fe {
         execute() {
           const t = this.editor.model,
             e = t.document
@@ -18034,11 +17844,11 @@
                 r = s.end.parent,
                 a = o == r
               if (i) {
-                const i = pu(t.schema, n.getAttributes())
-                df(t, e, s.end), e.removeSelectionAttribute(n.getAttributeKeys()), e.setSelectionAttribute(i)
+                const i = cu(t.schema, n.getAttributes())
+                nf(t, e, s.end), e.removeSelectionAttribute(n.getAttributeKeys()), e.setSelectionAttribute(i)
               } else {
                 const i = !(s.start.isAtStart && s.end.isAtEnd)
-                t.deleteContent(n, { leaveUnmerged: i }), a ? df(t, e, n.focus) : i && e.setSelection(r, 0)
+                t.deleteContent(n, { leaveUnmerged: i }), a ? nf(t, e, n.focus) : i && e.setSelection(r, 0)
               }
             })(t, n, e.selection),
               this.fire('afterExecute', { writer: n })
@@ -18054,19 +17864,19 @@
             const i = e.getFirstRange(),
               s = i.start.parent,
               o = i.end.parent
-            if ((uf(s, t) || uf(o, t)) && s !== o) return !1
+            if ((sf(s, t) || sf(o, t)) && s !== o) return !1
             return !0
           })(t.schema, e.selection)
         }
       }
-      function df(t, e, n) {
+      function nf(t, e, n) {
         const i = e.createElement('softBreak')
         t.insertContent(i, n), e.setSelection(i, 'after')
       }
-      function uf(t, e) {
-        return !t.is('rootElement') && (e.isLimit(t) || uf(t.parent, e))
+      function sf(t, e) {
+        return !t.is('rootElement') && (e.isLimit(t) || sf(t.parent, e))
       }
-      class ff extends de {
+      class of extends de {
         static get pluginName() {
           return 'ShiftEnter'
         }
@@ -18081,8 +17891,8 @@
             n
               .for('downcast')
               .elementToElement({ model: 'softBreak', view: (t, { writer: e }) => e.createEmptyElement('br') }),
-            i.addObserver(bu),
-            t.commands.add('shiftEnter', new hf(t)),
+            i.addObserver(du),
+            t.commands.add('shiftEnter', new ef(t)),
             this.listenTo(
               s,
               'enter',
@@ -18093,7 +17903,7 @@
             )
         }
       }
-      class mf extends fe {
+      class rf extends fe {
         constructor(t) {
           super(t), (this.affectsData = !1)
         }
@@ -18101,33 +17911,33 @@
           const t = this.editor.model,
             e = t.document.selection
           let n = t.schema.getLimitElement(e)
-          if (e.containsEntireContent(n) || !gf(t.schema, n))
+          if (e.containsEntireContent(n) || !af(t.schema, n))
             do {
               if (((n = n.parent), !n)) return
-            } while (!gf(t.schema, n))
+            } while (!af(t.schema, n))
           t.change(t => {
             t.setSelection(n, 'in')
           })
         }
       }
-      function gf(t, e) {
+      function af(t, e) {
         return t.isLimit(e) && (t.checkChild(e, '$text') || t.checkChild(e, 'paragraph'))
       }
-      const pf = lo('Ctrl+A')
-      class _f extends de {
+      const cf = lo('Ctrl+A')
+      class lf extends de {
         static get pluginName() {
           return 'SelectAllEditing'
         }
         init() {
           const t = this.editor,
             e = t.editing.view.document
-          t.commands.add('selectAll', new mf(t)),
+          t.commands.add('selectAll', new rf(t)),
             this.listenTo(e, 'keydown', (e, n) => {
-              co(n) === pf && (t.execute('selectAll'), n.preventDefault())
+              co(n) === cf && (t.execute('selectAll'), n.preventDefault())
             })
         }
       }
-      class wf extends de {
+      class hf extends de {
         static get pluginName() {
           return 'SelectAllUI'
         }
@@ -18153,17 +17963,17 @@
           })
         }
       }
-      class bf extends de {
+      class df extends de {
         static get requires() {
-          return [_f, wf]
+          return [lf, hf]
         }
         static get pluginName() {
           return 'SelectAll'
         }
       }
-      class yf extends fe {
+      class uf extends fe {
         constructor(t, e) {
-          super(t), (this._buffer = new vu(t.model, e))
+          super(t), (this._buffer = new fu(t.model, e))
         }
         get buffer() {
           return this._buffer
@@ -18188,7 +17998,7 @@
           })
         }
       }
-      class vf {
+      class ff {
         constructor(t) {
           ;(this.editor = t), (this.editing = this.editor.editing)
         }
@@ -18196,7 +18006,7 @@
           if (
             (function (t) {
               if (0 == t.length) return !1
-              for (const e of t) if ('children' === e.type && !Pu(e)) return !0
+              for (const e of t) if ('children' === e.type && !gu(e)) return !0
               return !1
             })(t)
           )
@@ -18225,7 +18035,7 @@
             u = h && !h.is('element', 'softBreak')
           d && u && a.pop()
           const f = this.editor.model.schema
-          if (!kf(a, f) || !kf(c, f)) return
+          if (!mf(a, f) || !mf(c, f)) return
           const m = a
               .map(t => (t.is('$text') ? t.data : '@'))
               .join('')
@@ -18236,15 +18046,15 @@
               .replace(/\u00A0/g, ' ')
           if (g === m) return
           const p = zo(g, m),
-            { firstChangeAt: _, insertions: w, deletions: b } = Pf(p)
+            { firstChangeAt: _, insertions: w, deletions: b } = gf(p)
           let y = null
           e && (y = this.editing.mapper.toModelRange(e.getFirstRange()))
           const v = m.substr(_, w),
-            k = this.editor.model.createRange(
+            P = this.editor.model.createRange(
               this.editor.model.createPositionAt(r, _),
               this.editor.model.createPositionAt(r, _ + b)
             )
-          this.editor.execute('input', { text: v, range: k, resultRange: y })
+          this.editor.execute('input', { text: v, range: P, resultRange: y })
         }
         _handleTextMutation(t, e) {
           if ('text' != t.type) return
@@ -18252,7 +18062,7 @@
             i = t.oldText.replace(/\u00A0/g, ' ')
           if (i === n) return
           const s = zo(i, n),
-            { firstChangeAt: o, insertions: r, deletions: a } = Pf(s)
+            { firstChangeAt: o, insertions: r, deletions: a } = gf(s)
           let c = null
           e && (c = this.editing.mapper.toModelRange(e.getFirstRange()))
           const l = this.editing.view.createPositionAt(t.node, o),
@@ -18263,17 +18073,17 @@
         }
         _handleTextNodeInsertion(t) {
           if ('children' != t.type) return
-          const e = Pu(t),
+          const e = gu(t),
             n = this.editing.view.createPositionAt(t.node, e.index),
             i = this.editing.mapper.toModelPosition(n),
             s = e.values[0].data
           this.editor.execute('input', { text: s.replace(/\u00A0/g, ' '), range: this.editor.model.createRange(i) })
         }
       }
-      function kf(t, e) {
+      function mf(t, e) {
         return t.every(t => e.isInline(t))
       }
-      function Pf(t) {
+      function gf(t) {
         let e = null,
           n = null
         for (let i = 0; i < t.length; i++) {
@@ -18284,13 +18094,13 @@
         for (let o = e; o <= n; o++) 'insert' != t[o] && i++, 'delete' != t[o] && s++
         return { insertions: s, deletions: i, firstChangeAt: e }
       }
-      class Af extends de {
+      class pf extends de {
         static get pluginName() {
           return 'Input'
         }
         init() {
           const t = this.editor,
-            e = new yf(t, t.config.get('typing.undoStep') || 20)
+            e = new uf(t, t.config.get('typing.undoStep') || 20)
           t.commands.add('input', e),
             (function (t) {
               let e = null
@@ -18298,13 +18108,13 @@
                 i = t.editing.view,
                 s = t.commands.get('input')
               function o(t) {
-                if (no.isWindows && Cu(t, i.document)) return
+                if (no.isWindows && _u(t, i.document)) return
                 const o = n.document,
                   a = i.document.isComposing,
                   c = e && e.isEqual(o.selection)
                 ;(e = null),
                   s.isEnabled &&
-                    (Uu(t) ||
+                    (Bu(t) ||
                       o.selection.isCollapsed ||
                       (a && 229 === t.keyCode) ||
                       (!a && 229 === t.keyCode && c) ||
@@ -18341,14 +18151,14 @@
             })(t),
             (function (t) {
               t.editing.view.document.on('mutations', (e, n, i) => {
-                new vf(t).handle(n, i)
+                new ff(t).handle(n, i)
               })
             })(t)
         }
       }
-      class Cf extends de {
+      class _f extends de {
         static get requires() {
-          return [Af, Tu]
+          return [pf, bu]
         }
         static get pluginName() {
           return 'Typing'
@@ -18403,11 +18213,11 @@
         },
         se
       )
-      Ef('"'), Ef("'"), Ef("'"), Ef('"'), Ef('"'), Ef("'")
-      function Ef(t) {
+      wf('"'), wf("'"), wf("'"), wf('"'), wf('"'), wf("'")
+      function wf(t) {
         return new RegExp(`(^|\\s)(${t})([^${t}]*)(${t})$`)
       }
-      class Tf extends fe {
+      class bf extends fe {
         constructor(t) {
           super(t),
             (this._stack = []),
@@ -18445,8 +18255,8 @@
             r = t.map(t => t.getTransformedByOperations(n)),
             a = r.flat()
           for (const t of r) {
-            const e = t.filter(t => t.root != s.graveyard).filter(t => !xf(t, a))
-            e.length && (Sf(e), o.push(e[0]))
+            const e = t.filter(t => t.root != s.graveyard).filter(t => !vf(t, a))
+            e.length && (yf(e), o.push(e[0]))
           }
           o.length &&
             i.change(t => {
@@ -18472,17 +18282,17 @@
           }
         }
       }
-      function Sf(t) {
+      function yf(t) {
         t.sort((t, e) => (t.start.isBefore(e.start) ? -1 : 1))
         for (let e = 1; e < t.length; e++) {
           const n = t[e - 1].getJoined(t[e], !0)
           n && (e--, t.splice(e, 2, n))
         }
       }
-      function xf(t, e) {
+      function vf(t, e) {
         return e.some(e => e !== t && e.containsRange(t, !0))
       }
-      class Rf extends Tf {
+      class Pf extends bf {
         execute(t = null) {
           const e = t ? this._stack.findIndex(e => e.batch == t) : this._stack.length - 1,
             n = this._stack.splice(e, 1)[0],
@@ -18495,7 +18305,7 @@
             this.refresh()
         }
       }
-      class Of extends Tf {
+      class kf extends bf {
         execute() {
           const t = this._stack.pop(),
             e = this.editor.model.createBatch({ isUndo: !0 })
@@ -18507,7 +18317,7 @@
             this.refresh()
         }
       }
-      class If extends de {
+      class Af extends de {
         static get pluginName() {
           return 'UndoEditing'
         }
@@ -18516,8 +18326,8 @@
         }
         init() {
           const t = this.editor
-          ;(this._undoCommand = new Rf(t)),
-            (this._redoCommand = new Of(t)),
+          ;(this._undoCommand = new Pf(t)),
+            (this._redoCommand = new kf(t)),
             t.commands.add('undo', this._undoCommand),
             t.commands.add('redo', this._redoCommand),
             this.listenTo(
@@ -18546,11 +18356,11 @@
             t.keystrokes.set('CTRL+SHIFT+Z', 'redo')
         }
       }
-      const Mf =
+      const Cf =
           '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="m5.042 9.367 2.189 1.837a.75.75 0 0 1-.965 1.149l-3.788-3.18a.747.747 0 0 1-.21-.284.75.75 0 0 1 .17-.945L6.23 4.762a.75.75 0 1 1 .964 1.15L4.863 7.866h8.917A.75.75 0 0 1 14 7.9a4 4 0 1 1-1.477 7.718l.344-1.489a2.5 2.5 0 1 0 1.094-4.73l.008-.032H5.042z"/></svg>',
-        Nf =
+        Ef =
           '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="m14.958 9.367-2.189 1.837a.75.75 0 0 0 .965 1.149l3.788-3.18a.747.747 0 0 0 .21-.284.75.75 0 0 0-.17-.945L13.77 4.762a.75.75 0 1 0-.964 1.15l2.331 1.955H6.22A.75.75 0 0 0 6 7.9a4 4 0 1 0 1.477 7.718l-.344-1.489A2.5 2.5 0 1 1 6.039 9.4l-.008-.032h8.927z"/></svg>'
-      class Df extends de {
+      class Sf extends de {
         static get pluginName() {
           return 'UndoUI'
         }
@@ -18558,8 +18368,8 @@
           const t = this.editor,
             e = t.locale,
             n = t.t,
-            i = 'ltr' == e.uiLanguageDirection ? Mf : Nf,
-            s = 'ltr' == e.uiLanguageDirection ? Nf : Mf
+            i = 'ltr' == e.uiLanguageDirection ? Cf : Ef,
+            s = 'ltr' == e.uiLanguageDirection ? Ef : Cf
           this._addButton('undo', n('Undo'), 'CTRL+Z', i), this._addButton('redo', n('Redo'), 'CTRL+Y', s)
         }
         _addButton(t, e, n, i) {
@@ -18578,15 +18388,15 @@
           })
         }
       }
-      class Ff extends de {
+      class xf extends de {
         static get requires() {
-          return [If, Df]
+          return [Af, Sf]
         }
         static get pluginName() {
           return 'Undo'
         }
       }
-      class Bf {
+      class Tf {
         constructor(t) {
           this.set('activeHandlePosition', null),
             this.set('proposedWidthPercents', null),
@@ -18601,7 +18411,7 @@
           const i = new ca(e)
           ;(this.activeHandlePosition = (function (t) {
             const e = ['top-left', 'top-right', 'bottom-right', 'bottom-left']
-            for (const n of e) if (t.classList.contains(Vf(n))) return n
+            for (const n of e) if (t.classList.contains(Rf(n))) return n
           })(t)),
             (this._referenceCoordinates = (function (t, e) {
               const n = new ca(t),
@@ -18636,11 +18446,11 @@
             (this.proposedHandleHostHeight = t.handleHostHeight)
         }
       }
-      function Vf(t) {
+      function Rf(t) {
         return `ck-widget__resizer__handle-${t}`
       }
-      he(Bf, se)
-      class Lf extends Ah {
+      he(Tf, se)
+      class Of extends Ah {
         constructor() {
           super()
           const t = this.bindTemplate
@@ -18678,7 +18488,7 @@
           this.unbind(), (this._isVisible = !1)
         }
       }
-      class jf {
+      class If {
         constructor(t) {
           ;(this._options = t),
             (this._viewResizerWrapper = null),
@@ -18720,7 +18530,7 @@
           })
         }
         begin(t) {
-          ;(this.state = new Bf(this._options)),
+          ;(this.state = new Tf(this._options)),
             this._sizeView._bindToState(this._options, this.state),
             (this._initialViewWidth = this._options.viewElement.getStyle('width')),
             this.state.begin(t, this._getHandleHost(), this._getResizeHost())
@@ -18830,10 +18640,10 @@
           var n
         }
         _appendSizeUI(t) {
-          ;(this._sizeView = new Lf()), this._sizeView.render(), t.appendChild(this._sizeView.element)
+          ;(this._sizeView = new Of()), this._sizeView.render(), t.appendChild(this._sizeView.element)
         }
       }
-      he(jf, se)
+      he(If, se)
       he(
         class extends de {
           static get pluginName() {
@@ -18853,7 +18663,7 @@
             const n = () => {
               this.visibleResizer && this.visibleResizer.redraw()
             }
-            ;(this._redrawFocusedResizerThrottled = ef(n, 200)),
+            ;(this._redrawFocusedResizerThrottled = Ku(n, 200)),
               this.on('change:visibleResizer', n),
               this.editor.ui.on('update', this._redrawFocusedResizerThrottled),
               this.editor.model.document.on(
@@ -18876,7 +18686,7 @@
             this._redrawFocusedResizerThrottled.cancel()
           }
           attachTo(t) {
-            const e = new jf(t),
+            const e = new If(t),
               n = this.editor.plugins
             if ((e.attach(), n.has('WidgetToolbarRepository'))) {
               const t = n.get('WidgetToolbarRepository')
@@ -18914,7 +18724,7 @@
           }
           _mouseDownListener(t, e) {
             const n = e.domTarget
-            jf.isResizeHandle(n) &&
+            If.isResizeHandle(n) &&
               ((this._activeResizer = this._getResizerByHandle(n)),
               this._activeResizer && (this._activeResizer.begin(n), t.stop(), e.preventDefault()))
           }
@@ -18927,7 +18737,7 @@
         },
         se
       )
-      class Wf extends fe {
+      class Mf extends fe {
         refresh() {
           const t = this.editor.model,
             e = t.schema,
@@ -18937,7 +18747,7 @@
               const n = (function (t, e) {
                 const n = t.getSelectedElement()
                 if (n) {
-                  const i = $u(t)
+                  const i = Du(t)
                   if (i) return e.createRange(e.createPositionAt(n, i))
                 }
                 return Jl(t, e)
@@ -18956,7 +18766,7 @@
           })
         }
       }
-      class zf extends de {
+      class Nf extends de {
         static get pluginName() {
           return 'HorizontalLineEditing'
         }
@@ -18978,16 +18788,16 @@
                   e.addClass('ck-horizontal-line', s),
                   e.setCustomProperty('hr', !0, s),
                   (function (t, e, n) {
-                    return e.setCustomProperty('horizontalLine', !0, t), Du(t, e, { label: n })
+                    return e.setCustomProperty('horizontalLine', !0, t), Su(t, e, { label: n })
                   })(s, e, i)
                 )
               },
             }),
             i.for('upcast').elementToElement({ view: 'hr', model: 'horizontalLine' }),
-            t.commands.add('horizontalLine', new Wf(t))
+            t.commands.add('horizontalLine', new Mf(t))
         }
       }
-      class $f extends de {
+      class Df extends de {
         static get pluginName() {
           return 'HorizontalLineUI'
         }
@@ -19012,34 +18822,34 @@
           })
         }
       }
-      const qf = 'italic'
-      class Uf extends de {
+      const Ff = 'italic'
+      class Bf extends de {
         static get pluginName() {
           return 'ItalicEditing'
         }
         init() {
           const t = this.editor
-          t.model.schema.extend('$text', { allowAttributes: qf }),
-            t.model.schema.setAttributeProperties(qf, { isFormatting: !0, copyOnEnter: !0 }),
+          t.model.schema.extend('$text', { allowAttributes: Ff }),
+            t.model.schema.setAttributeProperties(Ff, { isFormatting: !0, copyOnEnter: !0 }),
             t.conversion.attributeToElement({
-              model: qf,
+              model: Ff,
               view: 'i',
               upcastAlso: ['em', { styles: { 'font-style': 'italic' } }],
             }),
-            t.commands.add(qf, new Zd(t, qf)),
-            t.keystrokes.set('CTRL+I', qf)
+            t.commands.add(Ff, new Zd(t, Ff)),
+            t.keystrokes.set('CTRL+I', Ff)
         }
       }
-      const Hf = 'italic'
-      class Kf extends de {
+      const Vf = 'italic'
+      class Lf extends de {
         static get pluginName() {
           return 'ItalicUI'
         }
         init() {
           const t = this.editor,
             e = t.t
-          t.ui.componentFactory.add(Hf, n => {
-            const i = t.commands.get(Hf),
+          t.ui.componentFactory.add(Vf, n => {
+            const i = t.commands.get(Vf),
               s = new Jh(n)
             return (
               s.set({
@@ -19051,14 +18861,14 @@
               }),
               s.bind('isOn', 'isEnabled').to(i, 'value', 'isEnabled'),
               this.listenTo(s, 'execute', () => {
-                t.execute(Hf), t.editing.view.focus()
+                t.execute(Vf), t.editing.view.focus()
               }),
               s
             )
           })
         }
       }
-      class Gf extends fe {
+      class jf extends fe {
         constructor(t, e) {
           super(t), (this.type = e)
         }
@@ -19068,7 +18878,7 @@
         execute(t = {}) {
           const e = this.editor.model,
             n = e.document,
-            i = Array.from(n.selection.getSelectedBlocks()).filter(t => Yf(t, e.schema)),
+            i = Array.from(n.selection.getSelectedBlocks()).filter(t => zf(t, e.schema)),
             s = void 0 !== t.forceValue ? !t.forceValue : this.value
           e.change(t => {
             if (s) {
@@ -19088,7 +18898,7 @@
               let t = Number.POSITIVE_INFINITY
               for (const e of i)
                 e.is('element', 'listItem') && e.getAttribute('listIndent') < t && (t = e.getAttribute('listIndent'))
-              ;(t = 0 === t ? 1 : t), Jf(i, !0, t), Jf(i, !1, t)
+              ;(t = 0 === t ? 1 : t), Wf(i, !0, t), Wf(i, !1, t)
             }
             for (const e of i.reverse())
               s && 'listItem' == e.name
@@ -19103,18 +18913,18 @@
           })
         }
         _getValue() {
-          const t = Pa(this.editor.model.document.selection.getSelectedBlocks())
+          const t = ka(this.editor.model.document.selection.getSelectedBlocks())
           return !!t && t.is('element', 'listItem') && t.getAttribute('listType') == this.type
         }
         _checkEnabled() {
           if (this.value) return !0
           const t = this.editor.model.document.selection,
             e = this.editor.model.schema,
-            n = Pa(t.getSelectedBlocks())
-          return !!n && Yf(n, e)
+            n = ka(t.getSelectedBlocks())
+          return !!n && zf(n, e)
         }
       }
-      function Jf(t, e, n) {
+      function Wf(t, e, n) {
         const i = e ? t[0] : t[t.length - 1]
         if (i.is('element', 'listItem')) {
           let s = i[e ? 'previousSibling' : 'nextSibling'],
@@ -19125,10 +18935,10 @@
               (s = s[e ? 'previousSibling' : 'nextSibling'])
         }
       }
-      function Yf(t, e) {
+      function zf(t, e) {
         return e.checkChild(t.parent, 'listItem') && !e.isObject(t)
       }
-      class Xf extends fe {
+      class $f extends fe {
         constructor(t, e) {
           super(t), (this._indentBy = 'forward' == e ? 1 : -1)
         }
@@ -19153,7 +18963,7 @@
           })
         }
         _checkEnabled() {
-          const t = Pa(this.editor.model.document.selection.getSelectedBlocks())
+          const t = ka(this.editor.model.document.selection.getSelectedBlocks())
           if (!t || !t.is('element', 'listItem')) return !1
           if (this._indentBy > 0) {
             const e = t.getAttribute('listIndent'),
@@ -19168,23 +18978,23 @@
           return !0
         }
       }
-      function Zf(t, e) {
+      function qf(t, e) {
         const n = e.mapper,
           i = e.writer,
           s = 'numbered' == t.getAttribute('listType') ? 'ol' : 'ul',
           o = (function (t) {
             const e = t.createContainerElement('li')
-            return (e.getFillerOffset = sm), e
+            return (e.getFillerOffset = Yf), e
           })(i),
           r = i.createContainerElement(s, null)
         return i.insert(i.createPositionAt(r, 0), o), n.bindElements(t, o), o
       }
-      function Qf(t, e, n, i) {
+      function Uf(t, e, n, i) {
         const s = e.parent,
           o = n.mapper,
           r = n.writer
         let a = o.toViewPosition(i.createPositionBefore(t))
-        const c = nm(t.previousSibling, {
+        const c = Gf(t.previousSibling, {
             sameIndent: !0,
             smallerIndent: !0,
             listIndent: t.getAttribute('listIndent'),
@@ -19202,7 +19012,7 @@
             })(t)
           a = e ? r.createPositionBefore(e) : r.createPositionAt(t, 'end')
         } else a = o.toViewPosition(i.createPositionBefore(t))
-        if (((a = em(a)), r.insert(a, s), l && 'listItem' == l.name)) {
+        if (((a = Kf(a)), r.insert(a, s), l && 'listItem' == l.name)) {
           const t = o.toViewElement(l),
             n = r.createRange(r.createPositionAt(t, 0), a).getWalker({ ignoreElementEnd: !0 })
           for (const t of n)
@@ -19210,7 +19020,7 @@
               const i = r.breakContainer(r.createPositionBefore(t.item)),
                 s = t.item.parent,
                 o = r.createPositionAt(e, 'end')
-              tm(r, o.nodeBefore, o.nodeAfter), r.move(r.createRangeOn(s), o), (n.position = i)
+              Hf(r, o.nodeBefore, o.nodeAfter), r.move(r.createRangeOn(s), o), (n.position = i)
             }
         } else {
           const n = s.nextSibling
@@ -19226,9 +19036,9 @@
               r.move(r.createRangeOn(i.parent), r.createPositionAt(e, 'end')))
           }
         }
-        tm(r, s, s.nextSibling), tm(r, s.previousSibling, s)
+        Hf(r, s, s.nextSibling), Hf(r, s.previousSibling, s)
       }
-      function tm(t, e, n) {
+      function Hf(t, e, n) {
         return !e ||
           !n ||
           ('ul' != e.name && 'ol' != e.name) ||
@@ -19237,10 +19047,10 @@
           ? null
           : t.mergeContainers(t.createPositionAfter(e))
       }
-      function em(t) {
+      function Kf(t) {
         return t.getLastMatchingPosition(t => t.item.is('uiElement'))
       }
-      function nm(t, e) {
+      function Gf(t, e) {
         const n = !!e.sameIndent,
           i = !!e.smallerIndent,
           s = e.listIndent
@@ -19252,7 +19062,7 @@
         }
         return null
       }
-      function im(t, e, n, i) {
+      function Jf(t, e, n, i) {
         t.ui.componentFactory.add(e, s => {
           const o = t.commands.get(e),
             r = new Jh(s)
@@ -19266,11 +19076,11 @@
           )
         })
       }
-      function sm() {
+      function Yf() {
         const t = !this.isEmpty && ('ul' == this.getChild(0).name || 'ol' == this.getChild(0).name)
         return this.isEmpty || t ? 0 : Rs.call(this)
       }
-      function om(t) {
+      function Xf(t) {
         return (e, n, i) => {
           const s = i.consumable
           if (
@@ -19283,10 +19093,10 @@
             s.consume(n.item, 'attribute:listType'),
             s.consume(n.item, 'attribute:listIndent')
           const o = n.item
-          Qf(o, Zf(o, i), i, t)
+          Uf(o, qf(o, i), i, t)
         }
       }
-      function rm(t, e, n) {
+      function Zf(t, e, n) {
         if (!n.consumable.test(e.item, t.name)) return
         const i = n.mapper.toViewElement(e.item),
           s = n.writer
@@ -19295,13 +19105,13 @@
           r = 'numbered' == e.attributeNewValue ? 'ol' : 'ul'
         s.rename(r, o)
       }
-      function am(t, e, n) {
+      function Qf(t, e, n) {
         n.consumable.consume(e.item, t.name)
         const i = n.mapper.toViewElement(e.item).parent,
           s = n.writer
-        tm(s, i, i.nextSibling), tm(s, i.previousSibling, i)
+        Hf(s, i, i.nextSibling), Hf(s, i.previousSibling, i)
       }
-      function cm(t, e, n) {
+      function tm(t, e, n) {
         if (n.consumable.test(e.item, t.name) && 'listItem' != e.item.name) {
           let t = n.mapper.toViewPosition(e.range.start)
           const i = n.writer,
@@ -19323,21 +19133,21 @@
             for (let e = 0; e < s.length; e++) {
               const n = t.nodeBefore
               if (((t = i.insert(t, s[e]).end), e > 0)) {
-                const e = tm(i, n, n.nextSibling)
+                const e = Hf(i, n, n.nextSibling)
                 e && e.parent == n && t.offset--
               }
             }
-            tm(i, t.nodeBefore, t.nodeAfter)
+            Hf(i, t.nodeBefore, t.nodeAfter)
           }
         }
       }
-      function lm(t, e, n) {
+      function em(t, e, n) {
         const i = n.mapper.toViewPosition(e.position),
           s = i.nodeBefore,
           o = i.nodeAfter
-        tm(n.writer, s, o)
+        Hf(n.writer, s, o)
       }
-      function hm(t, e, n) {
+      function nm(t, e, n) {
         if (n.consumable.consume(e.viewItem, { name: !0 })) {
           const t = n.writer,
             i = t.createElement('listItem'),
@@ -19368,7 +19178,7 @@
                 a &&
                   a.is('element') &&
                   !s.checkChild(t, a.name) &&
-                  ((t = e.modelCursor.parent.is('element', 'listItem') ? e.modelCursor.parent : gm(e.modelCursor)),
+                  ((t = e.modelCursor.parent.is('element', 'listItem') ? e.modelCursor.parent : am(e.modelCursor)),
                   (o = i.createPositionAfter(t)))
               }
             return o
@@ -19376,29 +19186,29 @@
           ;(e.modelRange = t.createRange(e.modelCursor, r)), n.updateConversionResult(i, e)
         }
       }
-      function dm(t, e, n) {
+      function im(t, e, n) {
         if (n.consumable.test(e.viewItem, { name: !0 })) {
           const t = Array.from(e.viewItem.getChildren())
           for (const e of t) {
-            !(e.is('element', 'li') || _m(e)) && e._remove()
+            !(e.is('element', 'li') || lm(e)) && e._remove()
           }
         }
       }
-      function um(t, e, n) {
+      function sm(t, e, n) {
         if (n.consumable.test(e.viewItem, { name: !0 })) {
           if (0 === e.viewItem.childCount) return
           const t = [...e.viewItem.getChildren()]
           let n = !1
-          for (const e of t) n && !_m(e) && e._remove(), _m(e) && (n = !0)
+          for (const e of t) n && !lm(e) && e._remove(), lm(e) && (n = !0)
         }
       }
-      function fm(t) {
+      function om(t) {
         return (e, n) => {
           if (n.isPhantom) return
           const i = n.modelPosition.nodeBefore
           if (i && i.is('element', 'listItem')) {
             const e = n.mapper.toViewElement(i),
-              s = e.getAncestors().find(_m),
+              s = e.getAncestors().find(lm),
               o = t.createPositionAt(e, 0).getWalker()
             for (const t of o) {
               if ('elementStart' == t.type && t.item.is('element', 'li')) {
@@ -19413,7 +19223,7 @@
           }
         }
       }
-      function mm(t, [e, n]) {
+      function rm(t, [e, n]) {
         let i,
           s = e.is('documentFragment') ? e.getChild(0) : e
         if (((i = n ? this.createSelection(n) : this.document.selection), s && s.is('element', 'listItem'))) {
@@ -19432,7 +19242,7 @@
           }
         }
       }
-      function gm(t) {
+      function am(t) {
         const e = new Na({ startPosition: t })
         let n
         do {
@@ -19440,8 +19250,8 @@
         } while (!n.value.item.is('element', 'listItem'))
         return n.value.item
       }
-      function pm(t, e, n, i, s, o) {
-        const r = nm(e.nodeBefore, { sameIndent: !0, smallerIndent: !0, listIndent: t, foo: 'b' }),
+      function cm(t, e, n, i, s, o) {
+        const r = Gf(e.nodeBefore, { sameIndent: !0, smallerIndent: !0, listIndent: t, foo: 'b' }),
           a = s.mapper,
           c = s.writer,
           l = r ? r.getAttribute('listIndent') : null
@@ -19455,19 +19265,19 @@
             h = a.toViewPosition(t)
           }
         else h = n
-        h = em(h)
+        h = Kf(h)
         for (const t of [...i.getChildren()])
-          _m(t) && ((h = c.move(c.createRangeOn(t), h).end), tm(c, t, t.nextSibling), tm(c, t.previousSibling, t))
+          lm(t) && ((h = c.move(c.createRangeOn(t), h).end), Hf(c, t, t.nextSibling), Hf(c, t.previousSibling, t))
       }
-      function _m(t) {
+      function lm(t) {
         return t.is('element', 'ol') || t.is('element', 'ul')
       }
-      class wm extends de {
+      class hm extends de {
         static get pluginName() {
           return 'ListEditing'
         }
         static get requires() {
-          return [yu, Tu]
+          return [uu, bu]
         }
         init() {
           const t = this.editor
@@ -19544,9 +19354,9 @@
               }
             })(t.model, e)
           ),
-            n.mapper.registerViewToModelLength('li', bm),
-            e.mapper.registerViewToModelLength('li', bm),
-            n.mapper.on('modelToViewPosition', fm(n.view)),
+            n.mapper.registerViewToModelLength('li', dm),
+            e.mapper.registerViewToModelLength('li', dm),
+            n.mapper.on('modelToViewPosition', om(n.view)),
             n.mapper.on(
               'viewToModelPosition',
               ((i = t.model),
@@ -19568,17 +19378,17 @@
                   const r = o.toModelElement(s)
                   let a = 1,
                     c = n.nodeBefore
-                  for (; c && _m(c); ) (a += o.getModelLength(c)), (c = c.previousSibling)
+                  for (; c && lm(c); ) (a += o.getModelLength(c)), (c = c.previousSibling)
                   ;(e.modelPosition = i.createPositionBefore(r).getShiftedBy(a)), t.stop()
                 }
               })
             ),
-            e.mapper.on('modelToViewPosition', fm(n.view)),
+            e.mapper.on('modelToViewPosition', om(n.view)),
             t.conversion.for('editingDowncast').add(e => {
-              e.on('insert', cm, { priority: 'high' }),
-                e.on('insert:listItem', om(t.model)),
-                e.on('attribute:listType:listItem', rm, { priority: 'high' }),
-                e.on('attribute:listType:listItem', am, { priority: 'low' }),
+              e.on('insert', tm, { priority: 'high' }),
+                e.on('insert:listItem', Xf(t.model)),
+                e.on('attribute:listType:listItem', Zf, { priority: 'high' }),
+                e.on('attribute:listType:listItem', Qf, { priority: 'low' }),
                 e.on(
                   'attribute:listIndent:listItem',
                   (function (t) {
@@ -19591,9 +19401,9 @@
                         a = r.previousSibling,
                         c = o.createRangeOn(r)
                       o.remove(c),
-                        a && a.nextSibling && tm(o, a, a.nextSibling),
-                        pm(n.attributeOldValue + 1, n.range.start, c.start, s, i, t),
-                        Qf(n.item, s, i, t)
+                        a && a.nextSibling && Hf(o, a, a.nextSibling),
+                        cm(n.attributeOldValue + 1, n.range.start, c.start, s, i, t),
+                        Uf(n.item, s, i, t)
                       for (const t of n.item.getChildren()) i.consumable.consume(t, 'insert')
                     }
                   })(t.model)
@@ -19611,29 +19421,29 @@
                         a = r.previousSibling,
                         c = o.createRangeOn(r),
                         l = o.remove(c)
-                      a && a.nextSibling && tm(o, a, a.nextSibling),
-                        pm(i.mapper.toModelElement(s).getAttribute('listIndent') + 1, n.position, c.start, s, i, t)
+                      a && a.nextSibling && Hf(o, a, a.nextSibling),
+                        cm(i.mapper.toModelElement(s).getAttribute('listIndent') + 1, n.position, c.start, s, i, t)
                       for (const t of o.createRangeIn(l).getItems()) i.mapper.unbindViewElement(t)
                       e.stop()
                     }
                   })(t.model)
                 ),
-                e.on('remove', lm, { priority: 'low' })
+                e.on('remove', em, { priority: 'low' })
             }),
             t.conversion.for('dataDowncast').add(e => {
-              e.on('insert', cm, { priority: 'high' }), e.on('insert:listItem', om(t.model))
+              e.on('insert', tm, { priority: 'high' }), e.on('insert:listItem', Xf(t.model))
             }),
             t.conversion.for('upcast').add(t => {
-              t.on('element:ul', dm, { priority: 'high' }),
-                t.on('element:ol', dm, { priority: 'high' }),
-                t.on('element:li', um, { priority: 'high' }),
-                t.on('element:li', hm)
+              t.on('element:ul', im, { priority: 'high' }),
+                t.on('element:ol', im, { priority: 'high' }),
+                t.on('element:li', sm, { priority: 'high' }),
+                t.on('element:li', nm)
             }),
-            t.model.on('insertContent', mm, { priority: 'high' }),
-            t.commands.add('numberedList', new Gf(t, 'numbered')),
-            t.commands.add('bulletedList', new Gf(t, 'bulleted')),
-            t.commands.add('indentList', new Xf(t, 'forward')),
-            t.commands.add('outdentList', new Xf(t, 'backward'))
+            t.model.on('insertContent', rm, { priority: 'high' }),
+            t.commands.add('numberedList', new jf(t, 'numbered')),
+            t.commands.add('bulletedList', new jf(t, 'bulleted')),
+            t.commands.add('indentList', new $f(t, 'forward')),
+            t.commands.add('outdentList', new $f(t, 'backward'))
           const s = n.view.document
           this.listenTo(
             s,
@@ -19682,25 +19492,25 @@
           e && e.registerChildCommand(t.get('indentList')), n && n.registerChildCommand(t.get('outdentList'))
         }
       }
-      function bm(t) {
+      function dm(t) {
         let e = 1
         for (const n of t.getChildren())
-          if ('ul' == n.name || 'ol' == n.name) for (const t of n.getChildren()) e += bm(t)
+          if ('ul' == n.name || 'ol' == n.name) for (const t of n.getChildren()) e += dm(t)
         return e
       }
-      class ym extends de {
+      class um extends de {
         static get pluginName() {
           return 'ListUI'
         }
         init() {
           const t = this.editor.t
-          im(
+          Jf(
             this.editor,
             'numberedList',
             t('Numbered List'),
             '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7 5.75c0 .414.336.75.75.75h9.5a.75.75 0 1 0 0-1.5h-9.5a.75.75 0 0 0-.75.75zM3.5 3v5H2V3.7H1v-1h2.5V3zM.343 17.857l2.59-3.257H2.92a.6.6 0 1 0-1.04 0H.302a2 2 0 1 1 3.995 0h-.001c-.048.405-.16.734-.333.988-.175.254-.59.692-1.244 1.312H4.3v1h-4l.043-.043zM7 14.75a.75.75 0 0 1 .75-.75h9.5a.75.75 0 1 1 0 1.5h-9.5a.75.75 0 0 1-.75-.75z"/></svg>'
           ),
-            im(
+            Jf(
               this.editor,
               'bulletedList',
               t('Bulleted List'),
@@ -19708,25 +19518,25 @@
             )
         }
       }
-      class vm extends fe {
+      class fm extends fe {
         refresh() {
           const t = this.editor.model,
-            e = Pa(t.document.selection.getSelectedBlocks())
-          ;(this.value = !!e && e.is('element', 'paragraph')), (this.isEnabled = !!e && km(e, t.schema))
+            e = ka(t.document.selection.getSelectedBlocks())
+          ;(this.value = !!e && e.is('element', 'paragraph')), (this.isEnabled = !!e && mm(e, t.schema))
         }
         execute(t = {}) {
           const e = this.editor.model,
             n = e.document
           e.change(i => {
             const s = (t.selection || n.selection).getSelectedBlocks()
-            for (const t of s) !t.is('element', 'paragraph') && km(t, e.schema) && i.rename(t, 'paragraph')
+            for (const t of s) !t.is('element', 'paragraph') && mm(t, e.schema) && i.rename(t, 'paragraph')
           })
         }
       }
-      function km(t, e) {
+      function mm(t, e) {
         return e.checkChild(t.parent, 'paragraph') && !e.isObject(t)
       }
-      class Pm extends fe {
+      class gm extends fe {
         execute(t) {
           const e = this.editor.model,
             n = t.attributes
@@ -19742,28 +19552,28 @@
           })
         }
       }
-      class Am extends de {
+      class pm extends de {
         static get pluginName() {
           return 'Paragraph'
         }
         init() {
           const t = this.editor,
             e = t.model
-          t.commands.add('paragraph', new vm(t)),
-            t.commands.add('insertParagraph', new Pm(t)),
+          t.commands.add('paragraph', new fm(t)),
+            t.commands.add('insertParagraph', new gm(t)),
             e.schema.register('paragraph', { inheritAllFrom: '$block' }),
             t.conversion.elementToElement({ model: 'paragraph', view: 'p' }),
             t.conversion
               .for('upcast')
               .elementToElement({
                 model: (t, { writer: e }) =>
-                  Am.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
+                  pm.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
                 view: /.+/,
                 converterPriority: 'low',
               })
         }
       }
-      function Cm(t, e) {
+      function _m(t, e) {
         if (!t.childCount) return
         const n = new Kd(t.document),
           i = (function (t, e) {
@@ -19772,7 +19582,7 @@
               s = []
             for (const t of n)
               if ('elementStart' === t.type && i.match(t.item)) {
-                const e = Sm(t.item)
+                const e = ym(t.item)
                 s.push({ element: t.item, id: e.id, order: e.order, indent: e.indent })
               }
             return s
@@ -19829,13 +19639,13 @@
                   t && t[1] && (c = parseInt(t[1]))
                 }
               }
-              return { type: a, startIndex: c, style: Em(r) }
+              return { type: a, startIndex: c, style: wm(r) }
             })(t, e)
             if (s) {
               if (t.indent > o) {
                 const t = s.getChild(s.childCount - 1),
                   e = t.getChild(t.childCount - 1)
-                ;(s = Tm(i, e, n)), (o += 1)
+                ;(s = bm(i, e, n)), (o += 1)
               } else if (t.indent < o) {
                 const e = o - t.indent
                 ;(s = (function (t, e) {
@@ -19851,7 +19661,7 @@
                 })(s, e)),
                   (o = parseInt(t.indent))
               }
-            } else s = Tm(i, t.element, n)
+            } else s = bm(i, t.element, n)
             t.indent <= o && (s.is('element', i.type) || (s = n.rename(i.type, s)))
           }
           const u = (function (t, e) {
@@ -19867,7 +19677,7 @@
           n.appendChild(u, s)
         })
       }
-      function Em(t) {
+      function wm(t) {
         if (t.startsWith('arabic-leading-zero')) return 'decimal-leading-zero'
         switch (t) {
           case 'alpha-upper':
@@ -19886,7 +19696,7 @@
             return null
         }
       }
-      function Tm(t, e, n) {
+      function bm(t, e, n) {
         const i = e.parent,
           s = n.createElement(t.type),
           o = i.getChildIndex(e) + 1
@@ -19897,7 +19707,7 @@
           s
         )
       }
-      function Sm(t) {
+      function ym(t) {
         const e = {},
           n = t.getStyle('mso-list')
         if (n) {
@@ -19908,7 +19718,7 @@
         }
         return e
       }
-      Am.paragraphLikeElements = new Set([
+      pm.paragraphLikeElements = new Set([
         'blockquote',
         'dd',
         'div',
@@ -19924,13 +19734,13 @@
         'td',
         'th',
       ])
-      const xm = /id=("|')docs-internal-guid-[-0-9a-f]+("|')/i
-      class Rm {
+      const vm = /id=("|')docs-internal-guid-[-0-9a-f]+("|')/i
+      class Pm {
         constructor(t) {
           this.document = t
         }
         isActive(t) {
-          return xm.test(t)
+          return vm.test(t)
         }
         execute(t) {
           const e = new Kd(this.document),
@@ -19954,7 +19764,7 @@
             (t.content = n)
         }
       }
-      function Om(t, e) {
+      function km(t, e) {
         if (!t.childCount) return
         const n = new Kd(),
           i = (function (t, e) {
@@ -19999,7 +19809,7 @@
           (function (t, e, n) {
             if (t.length === e.length)
               for (let i = 0; i < t.length; i++) {
-                const s = `data:${e[i].type};base64,${Im(e[i].hex)}`
+                const s = `data:${e[i].type};base64,${Am(e[i].hex)}`
                 n.setAttribute('src', s, t[i])
               }
           })(
@@ -20021,7 +19831,7 @@
             n
           )
       }
-      function Im(t) {
+      function Am(t) {
         return btoa(
           t
             .match(/\w{2}/g)
@@ -20029,21 +19839,21 @@
             .join('')
         )
       }
-      const Mm = /<meta\s*name="?generator"?\s*content="?microsoft\s*word\s*\d+"?\/?>/i,
-        Nm = /xmlns:o="urn:schemas-microsoft-com/i
-      class Dm {
+      const Cm = /<meta\s*name="?generator"?\s*content="?microsoft\s*word\s*\d+"?\/?>/i,
+        Em = /xmlns:o="urn:schemas-microsoft-com/i
+      class Sm {
         constructor(t) {
           this.document = t
         }
         isActive(t) {
-          return Mm.test(t) || Nm.test(t)
+          return Cm.test(t) || Em.test(t)
         }
         execute(t) {
           const { body: e, stylesString: n } = t._parsedData
-          Cm(e, n), Om(e, t.dataTransfer.getData('text/rtf')), (t.content = e)
+          _m(e, n), km(e, t.dataTransfer.getData('text/rtf')), (t.content = e)
         }
       }
-      function Fm(t) {
+      function xm(t) {
         return t.replace(/<span(?: class="Apple-converted-space"|)>(\s+)<\/span>/g, (t, e) =>
           1 === e.length
             ? ' '
@@ -20052,10 +19862,10 @@
                 .substr(0, e.length)
         )
       }
-      function Bm(t, e) {
+      function Tm(t, e) {
         const n = new DOMParser(),
           i = (function (t) {
-            return Fm(Fm(t))
+            return xm(xm(t))
               .replace(/(<span\s+style=['"]mso-spacerun:yes['"]>[^\S\r\n]*?)[\r\n]+([^\S\r\n]*<\/span>)/g, '$1$2')
               .replace(/<span\s+style=['"]mso-spacerun:yes['"]><\/span>/g, '')
               .replace(/ <\//g, ' </')
@@ -20100,16 +19910,16 @@
           })(s)
         return { body: r, bodyString: o, styles: a.styles, stylesString: a.stylesString }
       }
-      const Vm = 'removeFormat'
-      class Lm extends de {
+      const Rm = 'removeFormat'
+      class Om extends de {
         static get pluginName() {
           return 'RemoveFormatUI'
         }
         init() {
           const t = this.editor,
             e = t.t
-          t.ui.componentFactory.add(Vm, n => {
-            const i = t.commands.get(Vm),
+          t.ui.componentFactory.add(Rm, n => {
+            const i = t.commands.get(Rm),
               s = new Jh(n)
             return (
               s.set({
@@ -20119,17 +19929,17 @@
               }),
               s.bind('isOn', 'isEnabled').to(i, 'value', 'isEnabled'),
               this.listenTo(s, 'execute', () => {
-                t.execute(Vm), t.editing.view.focus()
+                t.execute(Rm), t.editing.view.focus()
               }),
               s
             )
           })
         }
       }
-      class jm extends fe {
+      class Im extends fe {
         refresh() {
           const t = this.editor.model
-          this.isEnabled = !!Pa(this._getFormattingItems(t.document.selection, t.schema))
+          this.isEnabled = !!ka(this._getFormattingItems(t.document.selection, t.schema))
         }
         execute() {
           const t = this.editor.model,
@@ -20144,7 +19954,7 @@
           })
         }
         *_getFormattingItems(t, e) {
-          const n = t => !!Pa(this._getFormattingAttributes(t, e))
+          const n = t => !!ka(this._getFormattingAttributes(t, e))
           for (const i of t.getRanges()) for (const t of i.getItems()) !e.isBlock(t) && n(t) && (yield t)
           for (const e of t.getSelectedBlocks()) n(e) && (yield e)
           n(t) && (yield t)
@@ -20156,43 +19966,43 @@
           }
         }
       }
-      class Wm extends de {
+      class Mm extends de {
         static get pluginName() {
           return 'RemoveFormatEditing'
         }
         init() {
           const t = this.editor
-          t.commands.add('removeFormat', new jm(t))
+          t.commands.add('removeFormat', new Im(t))
         }
       }
-      const zm = 'underline'
-      class $m extends de {
+      const Nm = 'underline'
+      class Dm extends de {
         static get pluginName() {
           return 'UnderlineEditing'
         }
         init() {
           const t = this.editor
-          t.model.schema.extend('$text', { allowAttributes: zm }),
-            t.model.schema.setAttributeProperties(zm, { isFormatting: !0, copyOnEnter: !0 }),
+          t.model.schema.extend('$text', { allowAttributes: Nm }),
+            t.model.schema.setAttributeProperties(Nm, { isFormatting: !0, copyOnEnter: !0 }),
             t.conversion.attributeToElement({
-              model: zm,
+              model: Nm,
               view: 'u',
               upcastAlso: { styles: { 'text-decoration': 'underline' } },
             }),
-            t.commands.add(zm, new Zd(t, zm)),
+            t.commands.add(Nm, new Zd(t, Nm)),
             t.keystrokes.set('CTRL+U', 'underline')
         }
       }
-      const qm = 'underline'
-      class Um extends de {
+      const Fm = 'underline'
+      class Bm extends de {
         static get pluginName() {
           return 'UnderlineUI'
         }
         init() {
           const t = this.editor,
             e = t.t
-          t.ui.componentFactory.add(qm, n => {
-            const i = t.commands.get(qm),
+          t.ui.componentFactory.add(Fm, n => {
+            const i = t.commands.get(Fm),
               s = new Jh(n)
             return (
               s.set({
@@ -20204,29 +20014,29 @@
               }),
               s.bind('isOn', 'isEnabled').to(i, 'value', 'isEnabled'),
               this.listenTo(s, 'execute', () => {
-                t.execute(qm), t.editing.view.focus()
+                t.execute(Fm), t.editing.view.focus()
               }),
               s
             )
           })
         }
       }
-      class Hm extends fe {
+      class Vm extends fe {
         execute(t = {}) {
           this.editor.plugins.get('WProofreader').toggle()
         }
       }
-      class Km extends fe {
+      class Lm extends fe {
         execute(t = {}) {
           this.editor.plugins.get('WProofreader').openSettings()
         }
       }
-      class Gm extends fe {
+      class jm extends fe {
         execute(t = {}) {
           this.editor.plugins.get('WProofreader').openDialog()
         }
       }
-      class Jm extends de {
+      class Wm extends de {
         static get pluginName() {
           return 'WProofreaderEditing'
         }
@@ -20234,9 +20044,9 @@
           this._addCommands(), this._enableInTrackChanges()
         }
         _addCommands() {
-          this.editor.commands.add('WProofreaderToggle', new Hm(this.editor)),
-            this.editor.commands.add('WProofreaderSettings', new Km(this.editor)),
-            this.editor.commands.add('WProofreaderDialog', new Gm(this.editor))
+          this.editor.commands.add('WProofreaderToggle', new Vm(this.editor)),
+            this.editor.commands.add('WProofreaderSettings', new Lm(this.editor)),
+            this.editor.commands.add('WProofreaderDialog', new jm(this.editor))
         }
         _enableInTrackChanges() {
           if (this.editor.plugins.has('TrackChanges')) {
@@ -20245,7 +20055,7 @@
           }
         }
       }
-      class Ym extends de {
+      class zm extends de {
         static get pluginName() {
           return 'WProofreaderUI'
         }
@@ -20322,7 +20132,7 @@
             t.forEach(t => {
               const n = {
                 type: 'button',
-                model: new kd({
+                model: new Pd({
                   commandParam: this._commands[t.name],
                   label: t.localization.default,
                   localization: t.localization,
@@ -20336,7 +20146,7 @@
           )
         }
       }
-      class Xm {
+      class $m {
         constructor() {
           this._create()
         }
@@ -20366,9 +20176,9 @@
           return this._storage[t]
         }
       }
-      class Zm {
+      class qm {
         constructor(t) {
-          this._validateSrc(t), (this._src = t), (this._globalSrcStorage = new Xm())
+          this._validateSrc(t), (this._src = t), (this._globalSrcStorage = new $m())
         }
         load() {
           return new Promise((t, e) => {
@@ -20429,14 +20239,14 @@
           t()
         }
       }
-      const Qm = 'InstancesDisabling'
-      function tg(t, e = new Set()) {
+      const Um = 'InstancesDisabling'
+      function Hm(t, e = new Set()) {
         const n = [t],
           i = new Set()
         let s = 0
         for (; n.length > s; ) {
           const t = n[s++]
-          if (!(i.has(t) || eg(t) || e.has(t)))
+          if (!(i.has(t) || Km(t) || e.has(t)))
             if ((i.add(t), t[Symbol.iterator]))
               try {
                 for (const e of t) n.push(e)
@@ -20445,7 +20255,7 @@
         }
         return i
       }
-      function eg(t) {
+      function Km(t) {
         const e = Object.prototype.toString.call(t),
           n = typeof t
         return (
@@ -20462,8 +20272,8 @@
           t instanceof Event
         )
       }
-      class ng extends Yd {}
-      ;(ng.builtinPlugins = [
+      class Gm extends Yd {}
+      ;(Gm.builtinPlugins = [
         Xd,
         class extends de {
           static get requires() {
@@ -20473,42 +20283,9 @@
             return 'Bold'
           }
         },
-        class extends Mi {
-          static get pluginName() {
-            return 'CloudServices'
-          }
-          static get requires() {
-            return [hu]
-          }
-          init() {
-            const t = this.context.config.get('cloudServices') || {}
-            for (const e in t) this[e] = t[e]
-            if (((this._tokens = new Map()), this.tokenUrl))
-              return (
-                (this.token = this.context.plugins.get('CloudServicesCore').createToken(this.tokenUrl)),
-                this._tokens.set(this.tokenUrl, this.token),
-                this.token.init()
-              )
-            this.token = null
-          }
-          registerTokenUrl(t) {
-            if (this._tokens.has(t)) return Promise.resolve(this.getTokenFor(t))
-            const e = this.context.plugins.get('CloudServicesCore').createToken(t)
-            return this._tokens.set(t, e), e.init()
-          }
-          getTokenFor(t) {
-            const e = this._tokens.get(t)
-            if (!e) throw new c('cloudservices-token-not-registered', this)
-            return e
-          }
-          destroy() {
-            super.destroy()
-            for (const t of this._tokens.values()) t.destroy()
-          }
-        },
         class extends de {
           static get requires() {
-            return [lf, yu, bf, ff, Cf, Ff]
+            return [tf, uu, df, of, _f, xf]
           }
           static get pluginName() {
             return 'Essentials'
@@ -20516,7 +20293,7 @@
         },
         class extends de {
           static get requires() {
-            return [zf, $f, Qu]
+            return [Nf, Df, Uu]
           }
           static get pluginName() {
             return 'HorizontalLine'
@@ -20524,7 +20301,7 @@
         },
         class extends de {
           static get requires() {
-            return [Uf, Kf]
+            return [Bf, Lf]
           }
           static get pluginName() {
             return 'Italic'
@@ -20532,26 +20309,26 @@
         },
         class extends de {
           static get requires() {
-            return [wm, ym]
+            return [hm, um]
           }
           static get pluginName() {
             return 'List'
           }
         },
-        Am,
+        pm,
         class extends de {
           static get pluginName() {
             return 'PasteFromOffice'
           }
           static get requires() {
-            return [gu]
+            return [au]
           }
           init() {
             const t = this.editor,
               e = t.editing.view.document,
               n = []
-            n.push(new Dm(e)),
-              n.push(new Rm(e)),
+            n.push(new Sm(e)),
+              n.push(new Pm(e)),
               t.plugins.get('ClipboardPipeline').on(
                 'inputTransformation',
                 (i, s) => {
@@ -20560,7 +20337,7 @@
                   const o = s.dataTransfer.getData('text/html'),
                     r = n.find(t => t.isActive(o))
                   r &&
-                    ((s._parsedData = Bm(o, e.stylesProcessor)),
+                    ((s._parsedData = Tm(o, e.stylesProcessor)),
                     r.execute(s),
                     (s._isTransformedWithPasteFromOffice = !0))
                 },
@@ -20570,7 +20347,7 @@
         },
         class extends de {
           static get requires() {
-            return [Wm, Lm]
+            return [Mm, Om]
           }
           static get pluginName() {
             return 'RemoveFormat'
@@ -20578,7 +20355,7 @@
         },
         class extends de {
           static get requires() {
-            return [$m, Um]
+            return [Dm, Bm]
           }
           static get pluginName() {
             return 'Underline'
@@ -20586,7 +20363,7 @@
         },
         class extends de {
           static get requires() {
-            return [Jm, Ym]
+            return [Wm, zm]
           }
           static get pluginName() {
             return 'WProofreader'
@@ -20606,7 +20383,7 @@
             ;(this._userOptions = this._getUserOptions()),
               this._setTheme(),
               this._setAutoStartup(),
-              this._setIsEnabled(this._userOptions.autoStartup, Qm),
+              this._setIsEnabled(this._userOptions.autoStartup, Um),
               this._loadWscbundle()
                 .then(() => {
                   this._handleWscbundleLoaded()
@@ -20636,7 +20413,7 @@
             t ? this.clearForceDisabled(e) : this.forceDisabled(e)
           }
           _loadWscbundle() {
-            return new Zm(this._userOptions.srcUrl).load()
+            return new qm(this._userOptions.srcUrl).load()
           }
           _handleWscbundleLoaded() {
             'ready' === this.editor.state ? this._createInstances() : this._subscribeOnEditorReady()
@@ -20679,7 +20456,7 @@
           }
           _onToggle(t) {
             const e = !t.isDisabled()
-            this._setIsEnabled(e, Qm), this._syncToggle(e)
+            this._setIsEnabled(e, Um), this._syncToggle(e)
           }
           _syncToggle(t) {
             this._instances.forEach(e => {
@@ -20718,7 +20495,7 @@
           toggle() {
             if (0 === this._instances.length) return
             const t = this.isInstancesEnabled()
-            this._setIsEnabled(!t, Qm), this._syncToggle(!t)
+            this._setIsEnabled(!t, Um), this._syncToggle(!t)
           }
           openSettings() {
             0 !== this._instances.length && this._instances[0].openSettings()
@@ -20734,7 +20511,7 @@
           }
         },
       ]),
-        (ng.defaultConfig = {
+        (Gm.defaultConfig = {
           toolbar: {
             items: [
               'bold',
@@ -20765,8 +20542,8 @@
             srcUrl: 'http://localhost:8081/wscservice/wscbundle/wscbundle.js',
           },
         })
-      const ig = {
-        Editor: ng,
+      const Jm = {
+        Editor: Gm,
         EditorWatchdog: class extends class {
           constructor(t) {
             if (
@@ -20854,7 +20631,7 @@
           constructor(t, e = {}) {
             super(e),
               (this._editor = null),
-              (this._throttledSave = ef(
+              (this._throttledSave = Ku(
                 this._save.bind(this),
                 'number' == typeof e.saveInterval ? e.saveInterval : 5e3
               )),
@@ -20942,8 +20719,8 @@
             return (function (t, e, n = new Set()) {
               if (t === e && 'object' == typeof (i = t) && null !== i) return !0
               var i
-              const s = tg(t, n),
-                o = tg(e, n)
+              const s = Hm(t, n),
+                o = Hm(e, n)
               for (const t of s) if (o.has(t)) return !0
               return !1
             })(this._editor, t.context, this._excludedProps)
