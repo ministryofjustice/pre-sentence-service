@@ -65,5 +65,13 @@ services:
       - './.localstack:/tmp/localstack'
       - $PWD/localstack:/docker-entrypoint-initaws.d
 
+  wproofreader:
+    image: webspellchecker/wproofreader:5.21.0
+    networks:
+      - hmpps_int
+    container_name: wproofreader_int
+    ports:
+      - "8081:8080"
+
 networks:
   hmpps_int:

@@ -12,8 +12,9 @@ generic-service:
     INGRESS_URL: "https://pre-sentence-service-preprod.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
-    GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
+    GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
+    WPROOFREADER_URL: "http://pre-sentence-service-wproofreader"
 
   allowList:
     office: "217.33.148.210/32"

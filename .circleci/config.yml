@@ -22,6 +22,9 @@ executors:
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
+      - image: webspellchecker/wproofreader:5.21.0
+        ports:
+          - "8081:8080"
     working_directory: ~/app
 
 
