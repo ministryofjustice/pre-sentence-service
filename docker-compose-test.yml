@@ -71,7 +71,9 @@ services:
       - hmpps_int
     container_name: wproofreader_int
     ports:
-      - "80:8080"
+      - "8081:8080"
+    command:
+      - ${WP_LICENSE_KEY}
 
 networks:
   hmpps_int:

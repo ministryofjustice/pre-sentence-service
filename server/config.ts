@@ -82,7 +82,7 @@ export default {
       preSentenceUrl: get('PRE_SENTENCE_URL', 'http://host.docker.internal:3000', requiredInProduction),
     },
     wproofreader: {
-      apiUrl: get('WPROOFREADER_URL', 'http://localhost', requiredInProduction),
+      apiUrl: get('WPROOFREADER_URL', 'http://localhost:8081', requiredInProduction),
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
