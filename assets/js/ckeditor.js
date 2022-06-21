@@ -20535,11 +20535,10 @@
             lang: 'en_GB',
             serviceProtocol: 'http',
             serviceHost: 'localhost',
-            servicePort: '8081',
             servicePath: 'wscservice/api',
             removeBranding: !0,
             settingsSections: ['general', 'options'],
-            srcUrl: 'http://localhost:8081/wscservice/wscbundle/wscbundle.js',
+            srcUrl: 'http://localhost/wscservice/wscbundle/wscbundle.js',
           },
         })
       const Jm = {
