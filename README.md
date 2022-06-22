@@ -19,6 +19,17 @@ The app requires:
 
 ### Runing the app for development
 
+Edit macOS hosts file.
+
+`sudo nano /etc/hosts`
+
+Add the following
+
+```
+# Allow WProofreader interoperability
+127.0.0.1       pre-sentence-service-wproofreader
+```
+
 To start the main services excluding the typescript app: 
 
 `WP_LICENSE_KEY=<license_key> docker-compose up --remove-orphans hmpps-auth redis postgres localstack gotenberg wproofreader`
