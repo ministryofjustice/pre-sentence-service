@@ -19,7 +19,8 @@
       </div>
       <div class="govuk-grid-column-two-thirds govuk-!-padding-top-2">
 
-        {% if data.versionMismatch %}
+        <div id="pss-version-mismatch" class="{{ 'govuk-!-display-none' if not data.versionMismatch }}" aria-hidden="true">
+
           {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
           {% set html %}
@@ -33,7 +34,8 @@
             role: 'alert',
             classes: 'app-notification-banner-error'
           }) }}
-        {% endif %}
+
+        </div>
 
         {% if formValidation.errors | length %}
           {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}

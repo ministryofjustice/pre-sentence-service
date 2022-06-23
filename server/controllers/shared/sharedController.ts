@@ -75,7 +75,7 @@ export default class SharedController {
     return data
   }
 
-  private checkFieldValueVersions = (req: Request): boolean => {
+  protected checkFieldValueVersions = (req: Request): boolean => {
     let validVersions = true
     if (this.report && this.report.fieldValues && req.session.fieldValues) {
       this.report.fieldValues.forEach(savedValue => {
@@ -102,7 +102,7 @@ export default class SharedController {
             reportId: this.report.id,
             fieldId: item.id,
             value: tmpValue,
-            version: (fieldValue && fieldValue.version) || 1,
+            version: fieldValue && fieldValue.version ? fieldValue.version + 1 : 1,
           })
         }
       })
