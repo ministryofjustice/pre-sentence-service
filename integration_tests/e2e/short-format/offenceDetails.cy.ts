@@ -2,6 +2,7 @@ import BaseController from '../../../server/controllers/short-format/baseControl
 import Page from '../../pages/page'
 import OffenceDetails from '../../short-format/offenceDetails'
 import OffenceAnalysis from '../../short-format/offenceAnalysis'
+import { enterRichText } from '../../utils/helpers'
 
 context('Short Format - Offence details report page', () => {
   const path = `/${new BaseController().path}/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/offence-details`
@@ -91,6 +92,15 @@ context('Short Format - Offence details report page', () => {
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })
+    })
+
+    it('should auto save inputted data in a CKEditor instance', () => {
+      enterRichText('#otherOffences', 'Some other offence data should auto save')
+      enterRichText('#mainOffence', 'Some main offence')
+      // eslint-disable-next-line
+      cy.wait(500) // CKEditor autosave includes a wait
+      cy.reload()
+      cy.get('#otherOffences').should('have.value', '<p>Some other offence data should auto save</p>')
     })
   })
 })

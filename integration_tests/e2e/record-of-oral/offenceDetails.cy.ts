@@ -2,6 +2,7 @@ import BaseController from '../../../server/controllers/record-of-oral/baseContr
 import Page from '../../pages/page'
 import OffenceDetails from '../../record-of-oral/offenceDetails'
 import OffenceAnalysis from '../../record-of-oral/offenceAnalysis'
+import { enterRichText } from '../../utils/helpers'
 
 context('Oral - Offence details report page', () => {
   const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/offence-details`
@@ -77,6 +78,15 @@ context('Oral - Offence details report page', () => {
     it('should retain inputted data', () => {
       cy.get('#mainOffence').should('have.value', '<p>Some main offence</p>')
       cy.get('#otherOffences').should('have.value', '<p>Some other offences</p>')
+    })
+
+    it('should auto save inputted data in a CKEditor instance', () => {
+      enterRichText('#otherOffences', 'Some other offence data should auto save')
+      enterRichText('#mainOffence', 'Some main offence')
+      // eslint-disable-next-line
+      cy.wait(500) // CKEditor autosave includes a wait
+      cy.reload()
+      cy.get('#otherOffences').should('have.value', '<p>Some other offence data should auto save</p>')
     })
   })
 })

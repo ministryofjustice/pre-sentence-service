@@ -1,8 +1,9 @@
 import { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
-import LandingPageController from '../../controllers/short-format/landingPageController'
+import AutoSaveController from '../../controllers/shared/autoSaveController'
 import BaseController from '../../controllers/short-format/baseController'
+import LandingPageController from '../../controllers/short-format/landingPageController'
 import OffenderDetailsController from '../../controllers/short-format/offenderDetailsController'
 import CourtDetailsController from '../../controllers/short-format/courtDetailsController'
 import OffenceDetailsController from '../../controllers/short-format/offenceDetailsController'
@@ -44,6 +45,8 @@ export default function Index(reportService: ReportService, eventService: EventS
   get('/:reportId/check-report', new CheckReportController(reportService).get)
   get('/:reportId/report-saved', new ReportSavedController(reportService, eventService).get)
   get('/:reportId/report-completed', new ReportCompletedController(reportService, eventService).get)
+
+  post('/:reportId/auto-save', new AutoSaveController(reportService).post)
 
   return router
 }
