@@ -28,7 +28,7 @@ const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
   }
 }
 
-function init(): void {
+function initAuth(): void {
   const strategy = new Strategy(
     {
       authorizationURL: `${config.apis.hmppsAuth.externalUrl}/oauth/authorize`,
@@ -47,7 +47,4 @@ function init(): void {
   passport.use(strategy)
 }
 
-export default {
-  authenticationMiddleware,
-  init,
-}
+export { authenticationMiddleware, initAuth }

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import csurf from 'csurf'
-import auth from '../authentication/auth'
+import { authenticationMiddleware } from '../authentication/auth'
 import tokenVerifier from '../data/tokenVerification'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import type UserService from '../services/userService'
@@ -25,7 +25,6 @@ export default function standardRouter(userService: UserService): Router {
     next()
   })
 
-  router.use(auth.authenticationMiddleware(tokenVerifier))
   router.use(populateCurrentUser(userService))
   router.use(shortFormatRoutes(reportService, eventService))
   router.use(recordOfOralRoutes(reportService, eventService))
@@ -34,6 +33,7 @@ export default function standardRouter(userService: UserService): Router {
 
   // CSRF protection
   if (!testMode) {
+    router.use(authenticationMiddleware(tokenVerifier))
     router.use(csurf())
   }
 

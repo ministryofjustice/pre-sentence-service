@@ -19,6 +19,7 @@ const mockReportData = {
     type: 'some_report_type',
     version: 1,
   },
+  urn: `uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e`,
 }
 
 const mockReportsData = [
@@ -104,6 +105,26 @@ describe('Route Handlers - API', () => {
   it('should create a report', () => {
     return request(app)
       .post('/api/v1/report/record-of-oral')
+      .send({ crn: 'DX12340A', entityId: '100' })
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.text).toEqual(JSON.stringify(mockReportData))
+      })
+  })
+
+  it('should support nDelius report types when creating a Record of Oral report', () => {
+    return request(app)
+      .post('/api/v1/report/oralReport')
+      .send({ crn: 'DX12340A', entityId: '100' })
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.text).toEqual(JSON.stringify(mockReportData))
+      })
+  })
+
+  it('should support nDelius report types when creating Short Format report', () => {
+    return request(app)
+      .post('/api/v1/report/shortFormatPreSentenceReport')
       .send({ crn: 'DX12340A', entityId: '100' })
       .expect('Content-Type', /json/)
       .expect(res => {
