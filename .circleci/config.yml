@@ -7,7 +7,7 @@ orbs:
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:16.15.1-browsers
+      - image: cimg/node:16.15.0-browsers
       - image: localstack/localstack:0.14.2
         environment:
           SERVICES: sns
@@ -36,13 +36,13 @@ parameters:
 
   node-version:
     type: string
-    default: 16.15.1-browsers
+    default: 16.15.0-browsers
 
 
 jobs:
   build:
     executor:
-      name: cimg/node
+      name: hmpps/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
@@ -80,7 +80,7 @@ jobs:
 
   check_outdated:
     executor:
-      name: cimg/node
+      name: hmpps/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
@@ -102,7 +102,7 @@ jobs:
 
   unit_test:
     executor:
-      name: cimg/node
+      name: hmpps/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
