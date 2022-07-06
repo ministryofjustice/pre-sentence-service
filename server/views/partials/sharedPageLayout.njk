@@ -56,6 +56,9 @@
 {% endblock %}
 
 {% block additionalScripts %}
+  <script nonce="{{ nonce }}">
+    window.csrfToken = '{{ csrfToken }}'
+  </script>
   <script src="/assets/ckeditor.js"></script>
   <script src="/assets/ckeditor5setup.js"></script>
 {% endblock %}
