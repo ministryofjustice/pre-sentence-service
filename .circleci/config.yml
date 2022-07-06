@@ -42,7 +42,7 @@ parameters:
 jobs:
   build:
     executor:
-      name: hmpps/node
+      name: cimg/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
@@ -80,7 +80,7 @@ jobs:
 
   check_outdated:
     executor:
-      name: hmpps/node
+      name: cimg/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
@@ -102,7 +102,7 @@ jobs:
 
   unit_test:
     executor:
-      name: hmpps/node
+      name: cimg/node
       tag: << pipeline.parameters.node-version >>
     steps:
       - checkout
