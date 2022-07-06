@@ -1,3 +1,5 @@
+import Report from '../repositories/entities/report'
+
 export const pdfOptions = {
   marginTop: '0.8',
   marginBottom: '0.7',
@@ -30,4 +32,16 @@ export function getFooter(data: FooterData): string {
         </div>
     </span>
   `
+}
+
+export function configureReportData(report: Report) {
+  const reportData = {
+    reportStatus: report.status,
+    reportType: report.reportDefinition.type,
+    reportVersion: report.reportDefinition.version,
+  }
+  report.fieldValues.forEach(value => {
+    reportData[value.field.name] = value.value
+  })
+  return reportData
 }
