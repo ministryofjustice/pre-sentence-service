@@ -1,6 +1,6 @@
 import { Express } from 'express'
 import request from 'supertest'
-import appWithAllRoutes from '../testutils/appSetup'
+import { appWithApiRoutes } from '../testutils/appSetup'
 
 const mockReportData = {
   id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
@@ -95,7 +95,7 @@ describe('Route Handlers - API', () => {
   let app: Express
 
   beforeAll(() => {
-    app = appWithAllRoutes({})
+    app = appWithApiRoutes({})
   })
 
   afterAll(() => {

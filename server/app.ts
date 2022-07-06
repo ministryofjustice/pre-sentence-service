@@ -9,6 +9,7 @@ import 'reflect-metadata'
 import indexRoutes from './routes'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
+import apiRouter from './routes/apiRouter'
 import standardRouter from './routes/standardRouter'
 import type UserService from './services/userService'
 import GotenbergClient from './data/gotenbergClient'
@@ -18,10 +19,8 @@ import config from './config'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
-import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
-import authorisationMiddleware from './middleware/authorisationMiddleware'
 
 export default function createApplication(userService: UserService): Application {
   const app = express()
@@ -36,9 +35,7 @@ export default function createApplication(userService: UserService): Application
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   nunjucksSetup(app, path)
-  app.use(setUpAuthentication())
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
-  app.use(authorisationMiddleware())
   app.use(
     '/api/docs',
     serve,
@@ -51,6 +48,7 @@ export default function createApplication(userService: UserService): Application
     })
   )
 
+  app.use('/api', apiRouter())
   app.use('/', indexRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

@@ -1,15 +1,18 @@
 import { Router } from 'express'
 import csurf from 'csurf'
+
 import auth from '../authentication/auth'
-import tokenVerifier from '../data/tokenVerification'
-import populateCurrentUser from '../middleware/populateCurrentUser'
-import type UserService from '../services/userService'
 import config from '../config'
+
+import tokenVerifier from '../data/tokenVerification'
+import setUpAuthentication from '../middleware/setUpAuthentication'
+import authorisationMiddleware from '../middleware/authorisationMiddleware'
+import populateCurrentUser from '../middleware/populateCurrentUser'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
-import apiRoutes from './api'
 
+import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
 
@@ -20,29 +23,25 @@ export default function standardRouter(userService: UserService): Router {
   const eventService = new EventService()
   const reportService = new ReportService()
 
-  router.use((req, res, next) => {
-    res.locals.nonce = config.nonce
-    next()
-  })
-
-  router.use(auth.authenticationMiddleware(tokenVerifier))
-  router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, eventService))
-  router.use(recordOfOralRoutes(reportService, eventService))
-  router.use(pdfRoutes(reportService))
-  router.use(apiRoutes(reportService, eventService))
-
-  // CSRF protection
   if (!testMode) {
+    router.use(setUpAuthentication())
+    router.use(authorisationMiddleware())
+    router.use(auth.authenticationMiddleware(tokenVerifier))
     router.use(csurf())
   }
 
   router.use((req, res, next) => {
+    res.locals.nonce = config.nonce
     if (typeof req.csrfToken === 'function') {
       res.locals.csrfToken = req.csrfToken()
     }
     next()
   })
+
+  router.use(populateCurrentUser(userService))
+  router.use(shortFormatRoutes(reportService, eventService))
+  router.use(recordOfOralRoutes(reportService, eventService))
+  router.use(pdfRoutes(reportService))
 
   return router
 }

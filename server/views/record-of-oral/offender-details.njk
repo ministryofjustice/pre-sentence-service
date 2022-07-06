@@ -62,6 +62,8 @@
     <input type="hidden" name="startDate-month" id="startDate-month" value="{{ data['startDate-month'] }}">
     <input type="hidden" name="startDate-year" id="startDate-year" value="{{ data['startDate-year'] }}">
 
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
     <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
   </form>
 
