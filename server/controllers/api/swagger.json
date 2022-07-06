@@ -39,6 +39,38 @@
         }
       }
     },
+    "/api/v1/report/{reportId}/pdf": {
+      "get": {
+        "tags": ["report"],
+        "summary": "Get report PDF file",
+        "description": "Returns a PDF file based on report ID",
+        "parameters": [
+          {
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid",
+            "name": "reportId",
+            "description": "Report ID"
+          }
+        ],
+        "produces": ["application/pdf"],
+        "responses": {
+          "200": {
+            "description": "Returns a PDF file",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "404": {
+            "description": "Report not found"
+          },
+          "401": {
+            "description": "Authorization error.  See response body for more details."
+          }
+        }
+      }
+    },
     "/api/v1/report/{reportType}": {
       "post": {
         "tags": ["report"],
@@ -119,6 +151,11 @@
           "status": {
             "type": "string",
             "example": "NOT_STARTED"
+          },
+          "urn": {
+            "type": "string",
+            "format": "urn",
+            "example": "urn:uk:gov:hmpps:pre-sentence-service:report:babb539f-33c3-4948-9b87-946ad9c06a42"
           }
         }
       },

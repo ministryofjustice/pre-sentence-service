@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
+import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
+import config from '../../config'
 
 export default class ApiController {
   constructor(protected readonly reportService: ReportService = null, protected readonly eventService: EventService) {}
@@ -65,6 +67,26 @@ export default class ApiController {
     try {
       const report = await this.reportService.getReportById(req.params.id)
       res.json(report)
+    } catch (error) {
+      res.status(error.status || 500).send(error.message)
+    }
+  }
+
+  getPdfById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params
+      const report = await this.reportService.getReportById(id)
+      const reportData = configureReportData(report)
+      const headerHtml = getHeader()
+      const footerHtml = getFooter({ version: reportData.reportVersion })
+      // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
+      const { preSentenceUrl } = config.apis.gotenberg
+      const filename = `${reportData.reportType}_${id}.pdf`
+      res.renderPDF(
+        `reports/${reportData.reportType}`,
+        { preSentenceUrl, data: reportData },
+        { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
+      )
     } catch (error) {
       res.status(error.status || 500).send(error.message)
     }
