@@ -33,4 +33,22 @@ describe('GET /record-of-oral', () => {
         expect(res.text).toContain('Record of Oral Pre-Sentence Report')
       })
   })
+
+  it('should redirect requests from nDelius', () => {
+    return request(app)
+      .get('/oralReport/123456789')
+      .expect(res => {
+        expect(res.status).toBe(301)
+        expect(res.text).toContain('Moved Permanently. Redirecting to /record-of-oral/123456789')
+      })
+  })
+
+  it('should redirect sub-section requests from nDelius', () => {
+    return request(app)
+      .get('/oralReport/123456789/someSection')
+      .expect(res => {
+        expect(res.status).toBe(301)
+        expect(res.text).toContain('Moved Permanently. Redirecting to /record-of-oral/123456789/someSection')
+      })
+  })
 })
