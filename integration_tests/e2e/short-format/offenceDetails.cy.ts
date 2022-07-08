@@ -99,7 +99,7 @@ context('Short Format - Offence details report page', () => {
       enterRichText('#mainOffence', 'Some main offence')
       // eslint-disable-next-line
       cy.wait(500) // CKEditor autosave includes a wait
-      cy.reload()
+      cy.visit(path)
       cy.get('#otherOffences').should('have.value', '<p>Some other offence data should auto save</p>')
     })
   })
