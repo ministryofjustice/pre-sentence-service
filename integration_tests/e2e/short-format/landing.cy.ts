@@ -17,7 +17,7 @@ context('Short Format Pre-Sentence Report landing page', () => {
     currentPage = Page.verifyOnPage(LandingPage)
   })
 
-  describe('Authenticated user accesses Record of Oral Pre-Sentence Report', () => {
+  describe('Authenticated user accesses Short Format Pre-Sentence Report', () => {
     it('should display the key details', () => {
       cy.get('#qa-key-details').within(() => {
         cy.get('h2').should('contain', 'CRN: DX12340A')
@@ -40,6 +40,13 @@ context('Short Format Pre-Sentence Report landing page', () => {
     it('should move to the first page of the report', () => {
       currentPage.govukButton().should('contain.text', 'Start now').click()
       Page.verifyOnPage(OffenderDetails)
+    })
+  })
+
+  describe('Authenticated user accesses Short Format Pre-Sentence Report from nDelius', () => {
+    it('should redirect to the correct URL', () => {
+      cy.visit('/shortFormatPreSentenceReport/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7')
+      currentPage = Page.verifyOnPage(LandingPage)
     })
   })
 })

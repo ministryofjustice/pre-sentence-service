@@ -33,4 +33,22 @@ describe('GET /short-format', () => {
         expect(res.text).toContain('Short Format Pre-Sentence Report')
       })
   })
+
+  it('should redirect requests from nDelius', () => {
+    return request(app)
+      .get('/shortFormatPreSentenceReport/123456789')
+      .expect(res => {
+        expect(res.status).toBe(301)
+        expect(res.text).toContain('Moved Permanently. Redirecting to /short-format/123456789')
+      })
+  })
+
+  it('should redirect sub-section requests from nDelius', () => {
+    return request(app)
+      .get('/shortFormatPreSentenceReport/123456789/someSection')
+      .expect(res => {
+        expect(res.status).toBe(301)
+        expect(res.text).toContain('Moved Permanently. Redirecting to /short-format/123456789/someSection')
+      })
+  })
 })

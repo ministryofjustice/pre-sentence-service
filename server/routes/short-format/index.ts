@@ -30,6 +30,11 @@ export default function Index(reportService: ReportService, eventService: EventS
     post(path, handler.post)
   }
 
+  router.get('/shortFormatPreSentenceReport/:reportId/:section?', (req, res) => {
+    const { reportId, section } = req.params
+    res.redirect(301, `/short-format/${reportId}${section ? `/${section}` : ''}`)
+  })
+
   get('/:reportId', new LandingPageController(reportService, eventService).get)
 
   getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService))

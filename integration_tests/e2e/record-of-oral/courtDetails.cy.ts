@@ -94,4 +94,11 @@ context('Oral - Sentencing court details report page', () => {
         })
     })
   })
+
+  describe('Authenticated user accesses sentencing court details from nDelius', () => {
+    it('should redirect to the correct URL', () => {
+      cy.visit('/oralReport/0a15ce57-c46e-4b71-84f0-49dbed4bb81e/court-details')
+      Page.verifyOnPage(CourtDetails)
+    })
+  })
 })

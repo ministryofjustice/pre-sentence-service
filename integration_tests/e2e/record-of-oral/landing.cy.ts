@@ -42,4 +42,11 @@ context('Record of Oral Pre-Sentence Report landing page', () => {
       Page.verifyOnPage(OffenderDetails)
     })
   })
+
+  describe('Authenticated user accesses Record of Oral Pre-Sentence Report from nDelius', () => {
+    it('should redirect to the correct URL', () => {
+      cy.visit('/oralReport/0a15ce57-c46e-4b71-84f0-49dbed4bb81e')
+      currentPage = Page.verifyOnPage(LandingPage)
+    })
+  })
 })

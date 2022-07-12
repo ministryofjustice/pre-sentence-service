@@ -89,4 +89,11 @@ context('Short Format - Sentencing court details report page', () => {
         })
     })
   })
+
+  describe('Authenticated user accesses sentencing court details from nDelius', () => {
+    it('should redirect to the correct URL', () => {
+      cy.visit('/shortFormatPreSentenceReport/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7/court-details')
+      Page.verifyOnPage(CourtDetails)
+    })
+  })
 })
