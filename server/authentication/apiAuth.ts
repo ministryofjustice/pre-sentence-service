@@ -20,8 +20,6 @@ function initAuth(): void {
       jwksUri: `${config.apis.hmppsAuth.url}/.well-known/jwks.json`,
     }),
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    ignoreExpiration: true,
-    audience: 'http://localhost:3000',
     issuer: `${config.apis.hmppsAuth.url}/issuer`,
     algorithms: ['RS256'],
   }
