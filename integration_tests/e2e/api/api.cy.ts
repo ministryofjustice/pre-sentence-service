@@ -1,4 +1,4 @@
-context('API v1', () => {
+xcontext('API v1', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
