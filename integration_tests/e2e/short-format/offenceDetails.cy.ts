@@ -94,7 +94,7 @@ context('Short Format - Offence details report page', () => {
         })
     })
 
-    it('should auto save inputted data in a CKEditor instance', () => {
+    xit('should auto save inputted data in a CKEditor instance', () => {
       enterRichText('#otherOffences', 'Some other offence data should auto save')
       enterRichText('#mainOffence', 'Some main offence')
       // eslint-disable-next-line
