@@ -23,11 +23,8 @@ function initAuth(): void {
     issuer: `${config.apis.hmppsAuth.url}/issuer`,
     algorithms: ['RS256'],
   }
-  const strategy = new Strategy(opts, (jwtPayload, done) => {
-    logger.info('JWT Payload:', jwtPayload)
-    done(null, false)
-  })
-  passport.use(strategy)
+  const jwtStrategy = new Strategy(opts, (jwtPayload, done) => done(null, jwtPayload))
+  passport.use(jwtStrategy)
 }
 
 export { apiAuthenticationMiddleware, initAuth }
