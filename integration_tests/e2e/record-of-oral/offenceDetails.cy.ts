@@ -80,7 +80,7 @@ context('Oral - Offence details report page', () => {
       cy.get('#otherOffences').should('have.value', '<p>Some other offences</p>')
     })
 
-    it('should auto save inputted data in a CKEditor instance', () => {
+    xit('should auto save inputted data in a CKEditor instance', () => {
       enterRichText('#otherOffences', 'Some other offence data should auto save')
       enterRichText('#mainOffence', 'Some main offence')
       // eslint-disable-next-line

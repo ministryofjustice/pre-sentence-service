@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import apiRoutes from './api'
 
-// import { apiAuthenticationMiddleware, initAuth } from '../authentication/apiAuth'
+import { apiAuthenticationMiddleware, initAuth } from '../authentication/apiAuth'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
 
@@ -13,8 +13,8 @@ export default function apiRouter(): Router {
   const reportService = new ReportService()
 
   if (!testMode) {
-    // initAuth()
-    // router.use(apiAuthenticationMiddleware())
+    initAuth()
+    router.use(apiAuthenticationMiddleware())
   }
 
   router.use(apiRoutes(reportService, eventService))
