@@ -1,3 +1,4 @@
+import { differenceInYears, parse } from 'date-fns'
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
@@ -32,5 +33,20 @@ export default class CourtDetailsController extends BaseController {
         errorMessage: 'Enter a valid year',
       },
     ],
+  }
+
+  override updateReport = async () => {
+    if (!this.data['dateOfHearing-day']) {
+      const today = new Date()
+      const calculatedData = {
+        'dateOfHearing-day': `0${today.getDate()}`.slice(-2),
+        'dateOfHearing-month': `0${today.getMonth() + 1}`.slice(-2),
+        'dateOfHearing-year': today.getFullYear(),
+      }
+      this.data = {
+        ...this.data,
+        ...calculatedData,
+      }
+    }
   }
 }

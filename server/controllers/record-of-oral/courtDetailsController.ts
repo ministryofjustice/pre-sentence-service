@@ -33,4 +33,19 @@ export default class CourtDetailsController extends BaseController {
       },
     ],
   }
+
+  override updateReport = async () => {
+    if (!this.data['dateOfHearing-day']) {
+      const today = new Date()
+      const calculatedData = {
+        'dateOfHearing-day': `0${today.getDate()}`.slice(-2),
+        'dateOfHearing-month': `0${today.getMonth() + 1}`.slice(-2),
+        'dateOfHearing-year': today.getFullYear(),
+      }
+      this.data = {
+        ...this.data,
+        ...calculatedData,
+      }
+    }
+  }
 }

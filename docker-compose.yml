@@ -83,18 +83,6 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
-  hmpps-community-api-wiremock:
-    image: quay.io/hmpps/hmpps-community-api-wiremock:latest
-    networks:
-      - hmpps
-    container_name: hmpps-community-api-wiremock
-    env_file:
-      - ./.env
-    ports:
-      - "5000:5000"
-    healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:5000/actuator/health' ]
-
   app:
     build: .
     networks:

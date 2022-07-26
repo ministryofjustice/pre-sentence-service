@@ -83,11 +83,11 @@ export default class ApiController {
       } else {
         configuredAddress = `${address.buildingName ? convertToTitleCase(address.buildingName) : ''} ${
           address.addressNumber ? address.addressNumber : ''
-        } ${address.streetName ? convertToTitleCase(address.streetName) : ''}
-        ${address.district ? convertToTitleCase(address.district) : ''}
-        ${address.town ? convertToTitleCase(address.town) : ''}
-        ${address.county ? convertToTitleCase(address.county) : ''}
-        ${address.postcode ? address.postcode.toUpperCase() : ''}`
+        } ${address.streetName ? convertToTitleCase(address.streetName) : ''} ${
+          address.district ? convertToTitleCase(address.district) : ''
+        } ${address.town ? convertToTitleCase(address.town) : ''} ${
+          address.county ? convertToTitleCase(address.county) : ''
+        } ${address.postcode ? address.postcode.toUpperCase() : ''}`
       }
       fieldValues.push(this.configureFieldValue(report, reportDefinition, 'address', configuredAddress))
     }
@@ -154,6 +154,7 @@ export default class ApiController {
       ]
         .concat(offenderInformationFields)
         .concat(additionalInformationFields)
+
       await this.reportService.updateFieldValues(fieldValues)
       await this.eventService.sendReportEvent({
         reportId: report.id,
