@@ -78,19 +78,19 @@ describe('hmppsAuthClient', () => {
       expect(tokenStore.setToken).toBeCalledWith('Bob', token.access_token, 240)
     })
 
-    it('should return token from HMPPS Auth without username', async () => {
+    it('should return system token from HMPPS Auth when requested without username', async () => {
       tokenStore.getToken.mockResolvedValue(null)
 
       fakeHmppsAuthApi
         .post(`/oauth/token`, 'grant_type=client_credentials')
-        .basicAuth({ user: config.apis.hmppsAuth.apiClientId, pass: config.apis.hmppsAuth.apiClientSecret })
+        .basicAuth({ user: config.apis.hmppsAuth.systemClientId, pass: config.apis.hmppsAuth.systemClientSecret })
         .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
         .reply(200, token)
 
       const output = await hmppsAuthClient.getApiClientToken()
 
       expect(output).toEqual(token.access_token)
-      expect(tokenStore.setToken).toBeCalledWith('%ANONYMOUS%', token.access_token, 240)
+      expect(tokenStore.setToken).toBeCalledWith('%SYSTEM%', token.access_token, 240)
     })
   })
 })

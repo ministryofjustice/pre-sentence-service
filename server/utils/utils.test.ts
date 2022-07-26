@@ -1,4 +1,4 @@
-import convertToTitleCase from './utils'
+import { convertToTitleCase, getIsoDate } from './utils'
 
 describe('Convert to title case', () => {
   it('null string', () => {
@@ -27,5 +27,11 @@ describe('Convert to title case', () => {
   })
   it('Hyphenated', () => {
     expect(convertToTitleCase('Robert-John SmiTH-jONes-WILSON')).toEqual('Robert-John Smith-Jones-Wilson')
+  })
+})
+
+describe('Date utils', () => {
+  it('should convert date to ISO date format', () => {
+    expect(getIsoDate('2022-07-26')).toBe('26/07/2022')
   })
 })

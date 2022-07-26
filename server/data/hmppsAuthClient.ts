@@ -11,15 +11,16 @@ const timeoutSpec = config.apis.hmppsAuth.timeout
 const hmppsAuthUrl = config.apis.hmppsAuth.url
 
 function getApiClientTokenFromHmppsAuth(username?: string): Promise<superagent.Response> {
-  const clientToken = generateOauthClientToken(config.apis.hmppsAuth.apiClientId, config.apis.hmppsAuth.apiClientSecret)
+  const clientId = username ? config.apis.hmppsAuth.apiClientId : config.apis.hmppsAuth.systemClientId
+  const clientSecret = username ? config.apis.hmppsAuth.apiClientSecret : config.apis.hmppsAuth.systemClientSecret
+  const clientToken = generateOauthClientToken(clientId, clientSecret)
 
   const authRequest = username
     ? querystring.stringify({ grant_type: 'client_credentials', username })
     : querystring.stringify({ grant_type: 'client_credentials' })
 
-  logger.info(
-    `HMPPS Auth request '${authRequest}' for client id '${config.apis.hmppsAuth.apiClientId}' and user '${username}'`
-  )
+  logger.info(`HMPPS Auth request '${authRequest}'`)
+  logger.info(`For client id '${clientId}'${username ? ` and user '${username}'` : ''}`)
 
   return superagent
     .post(`${hmppsAuthUrl}/oauth/token`)
@@ -57,7 +58,7 @@ export default class HmppsAuthClient {
   }
 
   async getApiClientToken(username?: string): Promise<string> {
-    const key = username || '%ANONYMOUS%'
+    const key = username || '%SYSTEM%'
 
     const token = await this.tokenStore.getToken(key)
     if (token) {

@@ -12,6 +12,7 @@ import errorHandler from './errorHandler'
 import apiRouter from './routes/apiRouter'
 import standardRouter from './routes/standardRouter'
 import type UserService from './services/userService'
+import type CommunityService from './services/communityService'
 import GotenbergClient from './data/gotenbergClient'
 import pdfRenderer from './utils/pdfRenderer'
 import config from './config'
@@ -22,7 +23,7 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 
-export default function createApplication(userService: UserService): Application {
+export default function createApplication(userService: UserService, communityService: CommunityService): Application {
   const app = express()
 
   app.set('json spaces', 2)
@@ -48,7 +49,7 @@ export default function createApplication(userService: UserService): Application
     })
   )
 
-  app.use('/api', apiRouter())
+  app.use('/api', apiRouter(communityService))
   app.use('/', indexRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

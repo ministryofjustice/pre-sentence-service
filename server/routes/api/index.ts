@@ -1,11 +1,16 @@
 import { Router } from 'express'
-import ReportService from '../../services/reportService'
 import ApiController from '../../controllers/api/apiController'
+import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
+import ReportService from '../../services/reportService'
 
-export default function Index(reportService: ReportService, eventService: EventService): Router {
+export default function Index(
+  reportService: ReportService,
+  eventService: EventService,
+  communityService: CommunityService
+): Router {
   const router = Router()
-  const apiHandlers = new ApiController(reportService, eventService)
+  const apiHandlers = new ApiController(reportService, eventService, communityService)
 
   router.get('/v1/report/:id', apiHandlers.getReportById)
   router.get('/v1/report/:id/pdf', apiHandlers.getPdfById)

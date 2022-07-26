@@ -57,6 +57,8 @@ export default {
       agent: new AgentConfig(),
       apiClientId: get('API_CLIENT_ID', 'pre-sentence-service', requiredInProduction),
       apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+      systemClientId: get('AUTH_API_CLIENT_ID', 'community-api-client', requiredInProduction),
+      systemClientSecret: get('AUTH_API_CLIENT_SECRET', 'community-api-client', requiredInProduction),
     },
     tokenVerification: {
       url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:8100', requiredInProduction),
@@ -66,6 +68,14 @@ export default {
       },
       agent: new AgentConfig(),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
+    },
+    communityApi: {
+      url: get('COMMUNITY_API_URL', 'http://localhost:8096', requiredInProduction),
+      timeout: {
+        response: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000)),
+        deadline: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_DEADLINE', 5000)),
+      },
+      agent: new AgentConfig(),
     },
     gotenberg: {
       apiUrl: get('GOTENBERG_API_URL', 'http://localhost:3001', requiredInProduction),
