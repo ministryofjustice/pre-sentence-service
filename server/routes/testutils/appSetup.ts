@@ -7,8 +7,9 @@ import allRoutes from '../index'
 import nunjucksSetup from '../../utils/nunjucksSetup'
 import errorHandler from '../../errorHandler'
 import standardRouter from '../standardRouter'
-import UserService from '../../services/userService'
 import apiRouter from '../apiRouter'
+import MockCommunityService from './mockCommunityService'
+import MockUserService from './mockUserService'
 
 const user = {
   name: 'john smith',
@@ -16,19 +17,6 @@ const user = {
   lastName: 'smith',
   username: 'user1',
   displayName: 'John Smith',
-}
-
-class MockUserService extends UserService {
-  constructor() {
-    super(undefined)
-  }
-
-  async getUser(token: string) {
-    return {
-      token,
-      ...user,
-    }
-  }
 }
 
 function appSetup(baseUrl: string, route: Router, production: boolean): Express {
@@ -55,7 +43,7 @@ function appSetup(baseUrl: string, route: Router, production: boolean): Express 
 }
 
 export function appWithApiRoutes({ production = false }: { production?: boolean }): Express {
-  return appSetup('/api', apiRouter(), production)
+  return appSetup('/api', apiRouter(new MockCommunityService()), production)
 }
 
 export default function appWithViewRoutes({ production = false }: { production?: boolean }): Express {

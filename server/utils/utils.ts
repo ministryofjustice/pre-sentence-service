@@ -11,7 +11,13 @@ const isBlank = (str: string): boolean => !str || /^\s*$/.test(str)
  */
 const properCaseName = (name: string): string => (isBlank(name) ? '' : name.split('-').map(properCase).join('-'))
 
-const convertToTitleCase = (sentence: string): string =>
+export const convertToTitleCase = (sentence: string): string =>
   isBlank(sentence) ? '' : sentence.split(' ').map(properCaseName).join(' ')
 
-export default convertToTitleCase
+export const getTodayIsoDate = (): string => {
+  return new Intl.DateTimeFormat(['en-GB']).format(new Date())
+}
+
+export const getIsoDate = (date: string): string => {
+  return new Intl.DateTimeFormat(['en-GB']).format(new Date(date))
+}
