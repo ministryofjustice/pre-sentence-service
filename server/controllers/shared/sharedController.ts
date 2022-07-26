@@ -80,7 +80,7 @@ export default class SharedController {
     if (this.report && this.report.fieldValues && req.session.fieldValues) {
       this.report.fieldValues.forEach(savedValue => {
         const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
-        if (compare && compare.version !== savedValue.version) {
+        if ((compare ? compare.version : 1) !== savedValue.version) {
           validVersions = false
         }
       })

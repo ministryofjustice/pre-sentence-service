@@ -54,7 +54,6 @@ export default class ReportService {
       fieldValues.map(async fieldValue => {
         const { reportId, fieldId } = fieldValue
         const foundFieldValue = await getRepository(FieldValue).findOne({ where: { reportId, fieldId } })
-        // @TODO: Enforce field value version - see PIC-1953
         if (foundFieldValue) {
           if (fieldValue.value === null) {
             await getRepository(FieldValue).delete(foundFieldValue.id)
