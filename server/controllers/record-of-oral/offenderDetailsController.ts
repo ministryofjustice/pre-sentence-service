@@ -1,7 +1,5 @@
 import { differenceInYears, parse } from 'date-fns'
-import { Request, Response } from 'express'
 import BaseController from './baseController'
-import logger from '../../../logger'
 
 export const pageFields: Array<string> = [
   'name',
