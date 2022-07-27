@@ -4,6 +4,7 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
 import EventService from '../../services/eventService'
+import logger from '../../../logger'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -39,6 +40,8 @@ export default class SharedController {
   }
 
   updateReport: () => void
+
+  additionalPostAction: () => void
 
   correctFormData: (req: Request) => object
 
@@ -89,6 +92,7 @@ export default class SharedController {
   }
 
   protected updateFields = async (formData: unknown) => {
+    logger.info('UPDATE FIELDS:', formData)
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
@@ -146,6 +150,9 @@ export default class SharedController {
         }
       }
       if (this.checkFieldValueVersions(req)) {
+        if (this.additionalPostAction) {
+          this.additionalPostAction()
+        }
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {
