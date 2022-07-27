@@ -73,8 +73,8 @@ export default class CommunityService {
     return this.client({ path })
   }
 
-  async getOffenceInformation(crn: string, eventId: string) {
-    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/convictions/${eventId}`
+  async getOffenceInformation(crn: string) {
+    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/convictions`
     return this.client({ path })
   }
 }
