@@ -15,7 +15,7 @@ export default class AutoSaveController extends SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         pageFields.forEach(field => {
           if (item.name === field.id) {
-            const fieldValue = this.report.fieldValues.filter(value => field.id === value.field.name).pop()
+            const fieldValue = this.report.fieldValues.find(value => field.id === value.field.name)
             fieldValues.push({
               reportId: this.report.id,
               fieldId: item.id,
