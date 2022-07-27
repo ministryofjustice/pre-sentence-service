@@ -28,6 +28,12 @@ export default class OffenderDetailsController extends BaseController {
     'startDate-year'?: number
   } = {}
 
+  override additionalPostAction = async () => {
+    if (this.report && this.report.status === 'NOT_STARTED') {
+      await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
+    }
+  }
+
   override updateReport = async () => {
     if (this.report && this.report.status === 'NOT_STARTED') {
       const today = new Date()
@@ -41,8 +47,6 @@ export default class OffenderDetailsController extends BaseController {
         ...this.data,
         ...calculatedData,
       }
-      await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
-      await this.updateFields(calculatedData)
     }
   }
 }

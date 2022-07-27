@@ -101,7 +101,7 @@ export default class ApiController {
     eventId: string
   ): Promise<Array<IFieldValue>> {
     const convictions: Array<OffenceInformation> = await this.communityService.getOffenceInformation(crn)
-    const offenceInformation = convictions.filter(conviction => conviction.index === eventId)[0]
+    const offenceInformation = convictions.filter(conviction => conviction.index === eventId).pop()
     const mainOffences = offenceInformation.offences.filter((offence: Offence) => offence.mainOffence)
     const mainOffenceData: Array<string> = []
     mainOffences.forEach((offence: Offence) => {

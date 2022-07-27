@@ -40,6 +40,8 @@ export default class SharedController {
 
   updateReport: () => void
 
+  additionalPostAction: () => void
+
   correctFormData: (req: Request) => object
 
   constructor(
@@ -146,6 +148,9 @@ export default class SharedController {
         }
       }
       if (this.checkFieldValueVersions(req)) {
+        if (this.additionalPostAction) {
+          this.additionalPostAction()
+        }
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {
