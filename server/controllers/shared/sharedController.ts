@@ -95,7 +95,7 @@ export default class SharedController {
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name)) {
-          const fieldValue = this.report.fieldValues.filter(value => item.name === value.field.name).pop()
+          const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
           let tmpValue = null
           if (formData[item.name] && formData[item.name] !== '') {
             tmpValue = Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name]
