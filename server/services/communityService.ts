@@ -77,4 +77,9 @@ export default class CommunityService {
     const path = `${this.apiUrl}/secure/offenders/crn/${crn}/convictions`
     return this.client({ path })
   }
+
+  async getUserAccess(crn: string, username: string) {
+    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/user/${username}/userAccess`
+    return this.client({ path })
+  }
 }

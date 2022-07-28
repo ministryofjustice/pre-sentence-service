@@ -5,6 +5,7 @@ context('Short-format - Preview report', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.task('stubUserAccess')
     cy.signIn()
 
     cy.visit(path)

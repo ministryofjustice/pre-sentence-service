@@ -11,6 +11,7 @@ context('Oral - Risk assessment report page', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.task('stubUserAccess')
     cy.signIn()
 
     cy.visit(path)
@@ -20,7 +21,7 @@ context('Oral - Risk assessment report page', () => {
   describe('Authenticated user accesses risk assessment', () => {
     it('should display the key details', () => {
       cy.get('#qa-key-details').within(() => {
-        cy.get('h2').should('contain', 'CRN: DX12340A')
+        cy.get('h2').should('contain', 'CRN: X320741')
         cy.get('h1').should('contain', 'Lenore Marquez')
       })
     })

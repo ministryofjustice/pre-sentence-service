@@ -3,6 +3,7 @@ import pg from 'pg'
 
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import auth from './integration_tests/mockApis/auth'
+import communityApi from './integration_tests/mockApis/communityApi'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 
 export default defineConfig({
@@ -22,6 +23,7 @@ export default defineConfig({
         reset: resetStubs,
         ...auth,
         ...tokenVerification,
+        ...communityApi,
 
         resetDatabase() {
           const pool = new pg.Pool({
@@ -39,7 +41,7 @@ export default defineConfig({
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
                 VALUES ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 1, 'Lenore Marquez', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 2, '18/08/1979', 1),
-                       ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 3, 'DX12340A', 1),
+                       ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 3, 'X320741', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 6, 'Sheffield Magistrates Court', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 7, 'South Yorkshire', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 8, '23', 1),
@@ -54,7 +56,7 @@ export default defineConfig({
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
                 VALUES ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 1, 'Lenore Marquez', 1),
                        ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 2, '18/08/1979', 1),
-                       ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 3, 'DX12340A', 1),
+                       ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 3, 'X320741', 1),
                        ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 6, 'Sheffield Magistrates Court', 1),
                        ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 7, 'South Yorkshire', 1),
                        ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 8, '23', 1),

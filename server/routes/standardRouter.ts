@@ -15,10 +15,12 @@ import pdfRoutes from './pdf'
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
+import restrictionExclusionMiddleware from '../middleware/restrictionExclusionMiddleware'
+import CommunityService from '../services/communityService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(userService: UserService): Router {
+export default function standardRouter(userService: UserService, communityService: CommunityService): Router {
   const router = Router({ mergeParams: true })
   const eventService = new EventService()
   const reportService = new ReportService()
@@ -28,6 +30,7 @@ export default function standardRouter(userService: UserService): Router {
     router.use(authorisationMiddleware())
     router.use(auth.authenticationMiddleware(tokenVerifier))
     router.use(csurf())
+    router.use(restrictionExclusionMiddleware(reportService, communityService))
   }
 
   router.use((req, res, next) => {
