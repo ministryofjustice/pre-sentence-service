@@ -11,6 +11,7 @@ context('Oral - Offender details report page', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.task('stubUserAccess')
     cy.signIn()
 
     cy.visit(path)
@@ -20,7 +21,7 @@ context('Oral - Offender details report page', () => {
   describe('Authenticated user accesses offender details', () => {
     it('should display the key details', () => {
       cy.get('#qa-key-details').within(() => {
-        cy.get('h2').should('contain', 'CRN: DX12340A')
+        cy.get('h2').should('contain', 'CRN: X320741')
         cy.get('h1').should('contain', 'Lenore Marquez')
       })
     })
@@ -54,7 +55,7 @@ context('Oral - Offender details report page', () => {
       currentPage.govukBody().contains('18/08/1979').should('exist')
 
       currentPage.headingL2().contains('Delius CRN').should('exist')
-      currentPage.govukBody().contains('DX12340A').should('exist')
+      currentPage.govukBody().contains('X320741').should('exist')
     })
 
     it('should include the required form elements', () => {
@@ -86,7 +87,7 @@ context('Oral - Offender details report page', () => {
     it('should retain inputted data', () => {
       cy.get('p').contains('Lenore Marquez').should('exist')
       cy.get('p').contains('18/08/1979').should('exist')
-      cy.get('p').contains('DX12340A').should('exist')
+      cy.get('p').contains('X320741').should('exist')
       cy.get('p').contains('Some address').should('exist')
       cy.get('p').contains('A123467B').should('exist')
     })

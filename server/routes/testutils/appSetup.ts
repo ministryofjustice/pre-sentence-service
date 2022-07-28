@@ -47,5 +47,5 @@ export function appWithApiRoutes({ production = false }: { production?: boolean 
 }
 
 export default function appWithViewRoutes({ production = false }: { production?: boolean }): Express {
-  return appSetup('/', allRoutes(standardRouter(new MockUserService())), production)
+  return appSetup('/', allRoutes(standardRouter(new MockUserService(), new MockCommunityService())), production)
 }
