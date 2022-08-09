@@ -119,7 +119,7 @@ export default class SharedController {
     if (this.report) {
       this.getStoredData()
       if (this.updateReport) {
-        this.updateReport()
+        await this.updateReport()
       }
       req.session.fieldValues = this.report.fieldValues
       this.renderTemplate(res, {
@@ -149,7 +149,7 @@ export default class SharedController {
       }
       if (this.checkFieldValueVersions(req)) {
         if (this.additionalPostAction) {
-          this.additionalPostAction()
+          await this.additionalPostAction()
         }
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
