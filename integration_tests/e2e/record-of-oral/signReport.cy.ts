@@ -98,29 +98,10 @@ context('Oral - Sign report page', () => {
       cy.get('#completionDate-error').should('exist')
     })
 
-    it('should move to correct screen upon valid form submission', () => {
+    it('should move to correct screen upon valid form submission and redirect on revisit', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
-    })
-
-    it('should retain inputted data', () => {
-      cy.get('#reportAuthor').should('have.value', 'Arthur Author')
-      cy.get('#office').should('have.value', 'Sheffield Probation Office')
-      cy.get('#officePhoneNumber').should('have.value', '0114 276 0760')
-      cy.get('#completionDate-day').should('have.value', '27')
-      cy.get('#completionDate-month').should('have.value', '10')
-      cy.get('#completionDate-year').should('have.value', '2021')
-    })
-
-    it('should display as SAVED on the check report page', () => {
-      cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
-      cy.get('.moj-task-list__item')
-        .contains('Sign your report')
-        .parent()
-        .within(() => {
-          cy.get('.govuk-tag').contains('Saved').should('exist')
-        })
     })
   })
 })
