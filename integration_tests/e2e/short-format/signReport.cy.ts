@@ -101,7 +101,7 @@ context('Short Format - Sign report page', () => {
       cy.get('#completionDate-error').should('exist')
     })
 
-    it('should move to correct screen upon valid form submission and redirect on revisit', () => {
+    it('should move to correct screen upon valid form submission', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Submit and view your report').click()
       Page.verifyOnPage(ReportCompleted)
