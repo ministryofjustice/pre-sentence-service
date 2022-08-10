@@ -4,7 +4,8 @@ import Page from '../../pages/page'
 import OffenderDetails from '../../record-of-oral/offenderDetails'
 
 context('Record of Oral Pre-Sentence Report landing page', () => {
-  const path = `/${new BaseController().path}/0a15ce57-c46e-4b71-84f0-49dbed4bb81e`
+  const reportId = '0a15ce57-c46e-4b71-84f0-49dbed4bb81e'
+  const path = `/${new BaseController().path}/${reportId}`
   let currentPage: LandingPage
 
   beforeEach(() => {
@@ -46,8 +47,21 @@ context('Record of Oral Pre-Sentence Report landing page', () => {
 
   describe('Authenticated user accesses Record of Oral Pre-Sentence Report from nDelius', () => {
     it('should redirect to the correct URL', () => {
-      cy.visit('/oralReport/0a15ce57-c46e-4b71-84f0-49dbed4bb81e')
+      cy.visit(`/oralReport/${reportId}`)
       currentPage = Page.verifyOnPage(LandingPage)
+    })
+  })
+
+  describe('Authenticated user accesses Record of Oral Pre-Sentence Report to complete a previously started report', () => {
+    it('should display a continue button', () => {
+      cy.visit(`/${path}/offender-details`)
+      currentPage.govukButton().contains('Save and continue').click()
+      cy.visit(path)
+      currentPage.govukButton().should('contain.text', 'Continue now')
+    })
+
+    it('should display the last saved timestamp', () => {
+      currentPage.lastSaved().should('exist')
     })
   })
 })

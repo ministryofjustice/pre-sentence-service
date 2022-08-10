@@ -38,6 +38,11 @@ export default defineConfig({
                 DELETE
                 FROM public.field_value;
 
+                UPDATE
+                    public.report
+                SET "lastUpdated" = NULL
+                WHERE id = '0a15ce57-c46e-4b71-84f0-49dbed4bb81e';
+
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
                 VALUES ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 1, 'Lenore Marquez', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 2, '18/08/1979', 1),
@@ -52,6 +57,11 @@ export default defineConfig({
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 39, '01', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 40, '02', 1),
                        ('0a15ce57-c46e-4b71-84f0-49dbed4bb81e', 41, '2022', 1);
+
+                UPDATE
+                    public.report
+                SET "lastUpdated" = NULL
+                WHERE id = '0877ed35-e59a-4e94-b2bd-5d2283dd7dd7';
 
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
                 VALUES ('0877ed35-e59a-4e94-b2bd-5d2283dd7dd7', 1, 'Lenore Marquez', 1),
