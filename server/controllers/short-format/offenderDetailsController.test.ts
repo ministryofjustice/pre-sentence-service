@@ -11,6 +11,11 @@ jest.mock('../../services/reportService', () => {
           process.nextTick(() => resolve({}))
         })
       },
+      updateReport: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
+        })
+      },
     }
   })
 })

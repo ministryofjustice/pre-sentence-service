@@ -151,6 +151,7 @@ export default class SharedController {
         if (this.additionalPostAction) {
           this.additionalPostAction()
         }
+        await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {
