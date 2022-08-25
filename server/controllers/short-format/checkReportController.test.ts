@@ -3,17 +3,7 @@ import { Request, Response } from 'express'
 import CheckReportController from './checkReportController'
 import ReportService from '../../services/reportService'
 
-jest.mock('../../services/reportService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getReportById: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
+jest.mock('../../services/reportService')
 
 describe('Route Handlers - Check Report Controller', () => {
   let mockedReportService: ReportService

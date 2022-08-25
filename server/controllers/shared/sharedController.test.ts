@@ -3,22 +3,7 @@ import { Request, Response } from 'express'
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
 
-jest.mock('../../services/reportService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getReportById: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-      updateReport: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
+jest.mock('../../services/reportService')
 
 describe('Route Handlers - Shared Controller', () => {
   let mockedReportService: ReportService
