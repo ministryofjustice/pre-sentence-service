@@ -57,7 +57,12 @@
 
 {% block additionalScripts %}
   <script nonce="{{ nonce }}">
-    window.csrfToken = '{{ csrfToken }}'
+    (function () {
+      window.wproofreaderProtocol = '{{ wproofreader_protocol }}';
+      window.wproofreaderHost = '{{ wproofreader_host }}';
+      window.wproofreaderPort = {{ wproofreader_port }};
+      window.csrfToken = '{{ csrfToken }}';
+    })()
   </script>
   <script src="/assets/ckeditor.js"></script>
   <script src="/assets/ckeditor5setup.js"></script>
