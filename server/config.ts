@@ -91,6 +91,11 @@ export default {
        */
       preSentenceUrl: get('PRE_SENTENCE_URL', 'http://host.docker.internal:3000', requiredInProduction),
     },
+    wproofreader: {
+      serviceProtocol: get('WPROOFREADER_PROTOCOL', 'http', requiredInProduction),
+      serviceHost: get('WPROOFREADER_HOST', 'localhost', requiredInProduction),
+      servicePort: get('WPROOFREADER_PORT', 8081),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   db: {

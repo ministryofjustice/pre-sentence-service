@@ -53,7 +53,6 @@ services:
     networks:
       - hmpps
     container_name: localstack
-
     ports:
       - "4566-4597:4566-4597"
       - "8999:8080"
@@ -83,12 +82,24 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
+  wproofreader:
+    image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
+    networks:
+      - hmpps
+    container_name: wproofreader
+    ports:
+      - "8081:8081"
+    command:
+      - ${WP_LICENSE_KEY}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
+
   app:
     build: .
     networks:
       - hmpps
     container_name: pre-sentence-service
-    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack ]
+    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack, community-api, wproofreader ]
     ports:
       - "3000:3000"
     environment:

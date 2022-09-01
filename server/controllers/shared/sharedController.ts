@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
@@ -39,8 +40,6 @@ export default class SharedController {
   }
 
   updateReport: () => void
-
-  additionalPostAction: () => void
 
   correctFormData: (req: Request) => object
 
@@ -90,15 +89,15 @@ export default class SharedController {
     return validVersions
   }
 
-  protected updateFields = async (formData: unknown) => {
+  protected updateFields = async (fieldData: unknown, overridePageFields = false) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
-        if (this.pageFields.includes(item.name)) {
+        if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
           let tmpValue = null
-          if (formData[item.name] && formData[item.name] !== '') {
-            tmpValue = Array.isArray(formData[item.name]) ? formData[item.name].join(',') : formData[item.name]
+          if (fieldData[item.name] && fieldData[item.name] !== '') {
+            tmpValue = Array.isArray(fieldData[item.name]) ? fieldData[item.name].join(',') : fieldData[item.name]
           }
           fieldValues.push({
             reportId: this.report.id,
@@ -112,6 +111,16 @@ export default class SharedController {
     if (fieldValues.length) {
       await this.reportService.updateFieldValues(fieldValues)
     }
+  }
+
+  private setStartedDate = async () => {
+    const today = new Date()
+    const startDateFields = {
+      'startDate-day': `0${today.getDate()}`.slice(-2),
+      'startDate-month': `0${today.getMonth() + 1}`.slice(-2),
+      'startDate-year': today.getFullYear(),
+    }
+    await this.updateFields(startDateFields, true)
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
@@ -156,8 +165,9 @@ export default class SharedController {
         }
       }
       if (this.checkFieldValueVersions(req)) {
-        if (this.additionalPostAction) {
-          await this.additionalPostAction()
+        if (this.report && this.report.status === 'NOT_STARTED') {
+          await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
+          await this.setStartedDate()
         }
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)

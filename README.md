@@ -16,12 +16,13 @@ The app requires:
 * postgres - database
 * gotenberg - PDF generator
 * localstack - Cloud service emulator
+* wproofreader - Spellchecking for rich text editor (CKEditor 5)
 
 ### Runing the app for development
 
 To start the main services excluding the typescript app: 
 
-`docker-compose up --remove-orphans hmpps-auth redis postgres localstack gotenberg localstack community-api`
+`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose up --remove-orphans hmpps-auth redis postgres localstack gotenberg localstack community-api wproofreader`
 
 Now in a separate terminal window or tab, at the project root.
 
@@ -47,7 +48,7 @@ You can now access the service at `http://localhost:3000`
 
 For local running, start a test db, redis, and wiremock instance by:
 
-`docker-compose -f docker-compose-test.yml up --remove-orphans`
+`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose -f docker-compose-test.yml up --remove-orphans`
 
 Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
