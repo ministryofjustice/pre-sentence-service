@@ -5,6 +5,7 @@ import CommunityService from '../services/communityService'
 import ReportService from '../services/reportService'
 import FieldValue from '../repositories/entities/fieldValue'
 import Report from '../repositories/entities/report'
+import logger from '../../logger'
 
 export default function restrictionExclusionMiddleware(
   reportService: ReportService,
@@ -12,13 +13,16 @@ export default function restrictionExclusionMiddleware(
 ): RequestHandler {
   return asyncMiddleware(async (req, res, next) => {
     if (req.session && req.session.isAllowedAccess) {
+      logger.info('\n\nUSER ACCESS FROM SESSION\n\n')
       return next()
     }
     const report: Report = await reportService.getReportById(req.params.reportId)
     if (report && report.fieldValues) {
+      logger.info('\n\nTRY TEST USER ACCESS\n\n')
       const crnField: FieldValue = report.fieldValues.find(fieldValue => fieldValue.field.name === 'crn')
       try {
         const userAccess: UserAccess = await communityService.getUserAccess(crnField.value, res.locals.user.username)
+        logger.info('\n\nTEST USER ACCESS RETURNED:', userAccess, '\n\n')
         if (userAccess) {
           req.session.isAllowedAccess = true
           return next()
@@ -43,6 +47,7 @@ export default function restrictionExclusionMiddleware(
         })
       }
     }
+    logger.info('\n\nTEST USER ACCESS FAILED MASSIVELY')
     return null
   })
 }
