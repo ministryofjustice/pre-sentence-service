@@ -47,7 +47,7 @@ export default function restrictionExclusionMiddleware(
         })
       }
     }
-    logger.info('\n\nTEST USER ACCESS FAILED MASSIVELY')
+    logger.info('\n\nTEST USER ACCESS FAILED\n\n')
     return null
   })
 }
