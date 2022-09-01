@@ -65,5 +65,17 @@ services:
       - './.localstack:/tmp/localstack'
       - $PWD/localstack:/docker-entrypoint-initaws.d
 
+  wproofreader:
+    image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
+    networks:
+      - hmpps_int
+    container_name: wproofreader_int
+    ports:
+      - "8081:8081"
+    command:
+      - ${WP_LICENSE_KEY}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
+
 networks:
   hmpps_int:

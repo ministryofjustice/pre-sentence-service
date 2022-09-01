@@ -7,7 +7,7 @@ orbs:
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:16.14.2-browsers
+      - image: cimg/node:16.17.0-browsers
       - image: localstack/localstack:0.14.2
         environment:
           SERVICES: sns
@@ -22,6 +22,7 @@ executors:
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
+      - image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
     working_directory: ~/app
 
 
@@ -36,7 +37,7 @@ parameters:
 
   node-version:
     type: string
-    default: 16.14.2-browsers
+    default: 16.17.0-browsers
 
 
 jobs:

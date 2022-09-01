@@ -35,6 +35,9 @@ export default function standardRouter(userService: UserService, communityServic
 
   router.use((req, res, next) => {
     res.locals.nonce = config.nonce
+    res.locals.wproofreader_protocol = config.apis.wproofreader.serviceProtocol
+    res.locals.wproofreader_host = config.apis.wproofreader.serviceHost
+    res.locals.wproofreader_port = config.apis.wproofreader.servicePort
     if (typeof req.csrfToken === 'function') {
       res.locals.csrfToken = req.csrfToken()
     }
