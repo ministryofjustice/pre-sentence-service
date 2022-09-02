@@ -11,7 +11,7 @@ generic-service:
   env:
     INGRESS_URL: "https://pre-sentence-service-dev.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
-    COMMUNITY_API_URL: "http://pre-sentence-service-hmpps-community-api-wiremock"
+    COMMUNITY_API_URL: "https://community-api.dev.delius.probation.hmpps.dsd.io"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
