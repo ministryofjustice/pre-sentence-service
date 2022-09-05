@@ -141,6 +141,7 @@ export default class ApiController {
       }
       const report = await this.reportService.createReport({
         ...req.body,
+        entityId: req.body.eventNumber.toString(),
         reportDefinitionId: reportDefinition.id,
       })
       const offenderInformationFields = await this.getOffenderInformationFields(report, reportDefinition, req.body.crn)
