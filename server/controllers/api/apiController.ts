@@ -148,7 +148,7 @@ export default class ApiController {
         report,
         reportDefinition,
         req.body.crn,
-        req.body.entityId
+        req.body.eventNumber.toString()
       )
       const fieldValues: Array<IFieldValue> = [
         this.configureFieldValue(report, reportDefinition, 'crn', req.body.crn.toUpperCase()),
@@ -159,7 +159,7 @@ export default class ApiController {
       await this.reportService.updateFieldValues(fieldValues)
       await this.eventService.sendReportEvent({
         reportId: report.id,
-        entityId: req.body.entityId,
+        entityId: req.body.eventNumber.toString(),
         crn: req.body.crn.toUpperCase(),
         reportStatus: 'started',
       })
