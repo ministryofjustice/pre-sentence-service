@@ -5,7 +5,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware'
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  get('/examples', (req, res, next) => {
+  get('/', (req, res, next) => {
     res.render('pages/index')
   })
 
