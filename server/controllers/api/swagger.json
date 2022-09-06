@@ -116,7 +116,7 @@
       "createReport": {
         "type": "object",
         "properties": {
-          "entityId": {
+          "eventNumber": {
             "type": "string",
             "example": "300",
             "description": "External unique identifier reference"
@@ -128,7 +128,7 @@
           }
         },
         "example": {
-          "entityId": "300",
+          "eventNumber": "300",
           "crn": "DX12340A"
         }
       },
@@ -139,7 +139,7 @@
             "type": "integer",
             "example": 1
           },
-          "entityId": {
+          "eventNumber": {
             "type": "string",
             "example": "300"
           },
@@ -176,7 +176,7 @@
             "type": "integer",
             "example": 1
           },
-          "entityId": {
+          "eventNumber": {
             "type": "string",
             "example": "42"
           },

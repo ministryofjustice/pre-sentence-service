@@ -40,7 +40,8 @@ export default defineConfig({
 
                 UPDATE
                     public.report
-                SET "lastUpdated" = NULL
+                SET "lastUpdated" = NULL,
+                    "status" = 'NOT_STARTED'
                 WHERE id = '0a15ce57-c46e-4b71-84f0-49dbed4bb81e';
 
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
@@ -60,7 +61,8 @@ export default defineConfig({
 
                 UPDATE
                     public.report
-                SET "lastUpdated" = NULL
+                SET "lastUpdated" = NULL,
+                    "status" = 'NOT_STARTED'
                 WHERE id = '0877ed35-e59a-4e94-b2bd-5d2283dd7dd7';
 
                 INSERT INTO field_value ("reportId", "fieldId", "value", "version")
