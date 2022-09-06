@@ -9,6 +9,7 @@ import { convertToTitleCase, getIsoDate } from '../../utils/utils'
 import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
 import type { Offence, OffenceInformation } from '../../@types/offence'
 import type { Address, Offender } from '../../@types/offender'
+import logger from '../../../logger'
 
 export default class ApiController {
   constructor(
@@ -139,12 +140,15 @@ export default class ApiController {
         res.status(400).end()
         return
       }
+      logger.info('CREATING REPORT')
       const report = await this.reportService.createReport({
         ...req.body,
         entityId: req.body.eventNumber.toString(),
         reportDefinitionId: reportDefinition.id,
       })
+      logger.info('GET OFFENDER INFORMATION')
       const offenderInformationFields = await this.getOffenderInformationFields(report, reportDefinition, req.body.crn)
+      logger.info('GET ADDITIONAL INFORMATION')
       const additionalInformationFields = await this.getAdditionalInformationFields(
         report,
         reportDefinition,
@@ -157,7 +161,9 @@ export default class ApiController {
         .concat(offenderInformationFields)
         .concat(additionalInformationFields)
 
+      logger.info('UPDATE FIELD VALUES')
       await this.reportService.updateFieldValues(fieldValues)
+      logger.info('SEND REPORT EVENT')
       await this.eventService.sendReportEvent({
         reportId: report.id,
         entityId: req.body.eventNumber.toString(),
@@ -169,6 +175,7 @@ export default class ApiController {
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
       })
     } catch (error) {
+      logger.info('ERROR', error)
       res.status(error.status || 500).send(error.message)
     }
   }
