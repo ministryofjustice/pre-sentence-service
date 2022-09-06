@@ -6,7 +6,7 @@ const mockReportData = {
   id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
   status: 'NOT_STARTED',
   reportDefinitionId: 1,
-  entityId: '10',
+  eventNumber: '10',
   fieldValues: [
     {
       value: 'Some field value',
@@ -27,13 +27,13 @@ const mockReportsData = [
     id: '396c6e6e-f1e5-420b-94c4-0e6ecabdbf96',
     status: 'NOT_STARTED',
     reportDefinitionId: 2,
-    entityId: '20',
+    eventNumber: '20',
   },
   {
     id: '0877ed35-e59a-4e94-b2bd-5d2283dd7dd7',
     status: 'NOT_STARTED',
     reportDefinitionId: 2,
-    entityId: '42',
+    eventNumber: '42',
   },
 ]
 
@@ -160,7 +160,7 @@ describe('Route Handlers - API', () => {
     return (
       request(app)
         .post('/api/v1/report/record-of-oral')
-        .send({ crn: 'DX12340A', entityId: '100' })
+        .send({ crn: 'DX12340A', eventNumber: '100' })
         // .expect('Content-Type', /json/)
         .expect(res => {
           expect(res.text).toEqual(JSON.stringify(mockReportData))
@@ -171,7 +171,7 @@ describe('Route Handlers - API', () => {
   xit('should support nDelius report types when creating a Record of Oral report', () => {
     return request(app)
       .post('/api/v1/report/oralReport')
-      .send({ crn: 'DX12340A', entityId: '100' })
+      .send({ crn: 'DX12340A', eventNumber: '100' })
       .expect('Content-Type', /json/)
       .expect(res => {
         expect(res.text).toEqual(JSON.stringify(mockReportData))
@@ -181,7 +181,7 @@ describe('Route Handlers - API', () => {
   xit('should support nDelius report types when creating Short Format report', () => {
     return request(app)
       .post('/api/v1/report/shortFormatPreSentenceReport')
-      .send({ crn: 'DX12340A', entityId: '100' })
+      .send({ crn: 'DX12340A', eventNumber: '100' })
       .expect('Content-Type', /json/)
       .expect(res => {
         expect(res.text).toEqual(JSON.stringify(mockReportData))
