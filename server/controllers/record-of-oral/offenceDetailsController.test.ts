@@ -4,18 +4,7 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 import OffenceDetailsController from './offenceDetailsController'
 import ReportService from '../../services/reportService'
 
-jest.mock('../../services/reportService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getReportById: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
-
+jest.mock('../../services/reportService')
 jest.mock('../../utils/formValidation')
 
 describe('Route Handlers - Offence Details Controller', () => {

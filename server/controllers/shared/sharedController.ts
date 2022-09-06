@@ -169,6 +169,7 @@ export default class SharedController {
           await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
           await this.setStartedDate()
         }
+        await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
         await this.updateFields(req.body)
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {

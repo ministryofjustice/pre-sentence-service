@@ -4,34 +4,8 @@ import ReportCompletedController from './reportCompletedController'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
 
-jest.mock('../../services/reportService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getReportById: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-      updateReport: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
-
-jest.mock('../../services/eventService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      sendReportEvent: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
+jest.mock('../../services/reportService')
+jest.mock('../../services/eventService')
 
 describe('Route Handlers - Report Completed Controller', () => {
   let mockedEventService: EventService

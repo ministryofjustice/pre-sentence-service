@@ -11,6 +11,9 @@ export default class Report {
   status: string
 
   @Column()
+  lastUpdated: string
+
+  @Column()
   reportDefinitionId: number
 
   @Column()
