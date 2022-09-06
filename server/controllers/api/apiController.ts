@@ -118,14 +118,21 @@ export default class ApiController {
       fieldValues.push(this.configureFieldValue(report, reportDefinition, 'otherOffences', otherOffenceData.join('/n')))
     }
     fieldValues.push(
-      this.configureFieldValue(report, reportDefinition, 'court', offenceInformation.responsibleCourt.courtName)
+      this.configureFieldValue(
+        report,
+        reportDefinition,
+        'court',
+        offenceInformation.responsibleCourt && offenceInformation.responsibleCourt.courtName
+      )
     )
     fieldValues.push(
       this.configureFieldValue(
         report,
         reportDefinition,
         'localJusticeArea',
-        offenceInformation.responsibleCourt.probationArea.description
+        offenceInformation.responsibleCourt &&
+          offenceInformation.responsibleCourt.probationArea &&
+          offenceInformation.responsibleCourt.probationArea.description
       )
     )
     return fieldValues
@@ -141,6 +148,7 @@ export default class ApiController {
       }
       const report = await this.reportService.createReport({
         ...req.body,
+        entityId: req.body.eventNumber.toString(),
         reportDefinitionId: reportDefinition.id,
       })
       const offenderInformationFields = await this.getOffenderInformationFields(report, reportDefinition, req.body.crn)
@@ -148,7 +156,7 @@ export default class ApiController {
         report,
         reportDefinition,
         req.body.crn,
-        req.body.entityId
+        req.body.eventNumber.toString()
       )
       const fieldValues: Array<IFieldValue> = [
         this.configureFieldValue(report, reportDefinition, 'crn', req.body.crn.toUpperCase()),
@@ -159,7 +167,7 @@ export default class ApiController {
       await this.reportService.updateFieldValues(fieldValues)
       await this.eventService.sendReportEvent({
         reportId: report.id,
-        entityId: req.body.entityId,
+        entityId: req.body.eventNumber.toString(),
         crn: req.body.crn.toUpperCase(),
         reportStatus: 'started',
       })

@@ -18,7 +18,7 @@ export interface IDomainEvent {
   detailUrl: string
   occurredAt: string
   additionalInformation: {
-    entityId: string
+    eventNumber: string
     reportId: string
   }
   personReference: {
@@ -46,7 +46,7 @@ export default class EventService {
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
       detailUrl: `${config.domain}/api/v1/report/${reportEventData.reportId}`,
       occurredAt: new Date().toISOString(),
-      additionalInformation: { entityId: reportEventData.entityId, reportId: reportEventData.reportId },
+      additionalInformation: { eventNumber: reportEventData.entityId, reportId: reportEventData.reportId },
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 
