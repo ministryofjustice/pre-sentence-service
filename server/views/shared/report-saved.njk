@@ -15,15 +15,21 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">What to do next</h2>
 
-    <p class="govuk-body">Review and print your '{{ preSentenceType }}'<br>
-      <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf">View your {{ "completed" if data.reportCompleted else "draft" }} PDF report</a>
-    </p>
+    {% if data.reportCompleted %}
+      <p class="govuk-body">You cannot edit or change this report</p>
 
-    <p class="govuk-body">Check or edit your report again<br>
-      <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportPath }}/{{ reportId }}/check-report">Select a section to update or change</a>
-    </p>
+      <p class="govuk-body">
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf">View a read-only PDF of this report to download or print</a>
+      </p>
+    {% else %}
+      <p class="govuk-body">Review and print your '{{ preSentenceType }}'<br>
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf">View your draft PDF report</a>
+      </p>
 
-    <p class="govuk-body">Close this report</p>
+      <p class="govuk-body">Check or edit your report again<br>
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportPath }}/{{ reportId }}/check-report">Select a section to update or change</a>
+      </p>
+    {% endif %}
 
   </main>
 

@@ -19563,14 +19563,12 @@
             t.commands.add('insertParagraph', new gm(t)),
             e.schema.register('paragraph', { inheritAllFrom: '$block' }),
             t.conversion.elementToElement({ model: 'paragraph', view: 'p' }),
-            t.conversion
-              .for('upcast')
-              .elementToElement({
-                model: (t, { writer: e }) =>
-                  pm.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
-                view: /.+/,
-                converterPriority: 'low',
-              })
+            t.conversion.for('upcast').elementToElement({
+              model: (t, { writer: e }) =>
+                pm.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
+              view: /.+/,
+              converterPriority: 'low',
+            })
         }
       }
       function _m(t, e) {

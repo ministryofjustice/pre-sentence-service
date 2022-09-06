@@ -128,7 +128,15 @@ export default class SharedController {
     if (this.report) {
       this.getStoredData()
       if (this.updateReport) {
-        this.updateReport()
+        await this.updateReport()
+      }
+      if (this.report.status === 'COMPLETED') {
+        this.path = 'shared'
+        this.templatePath = 'report-saved'
+        this.defaultTemplateData = {
+          ...this.defaultTemplateData,
+          reportCompleted: true,
+        }
       }
       req.session.fieldValues = this.report.fieldValues
       this.renderTemplate(res, {
