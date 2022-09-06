@@ -119,14 +119,21 @@ export default class ApiController {
       fieldValues.push(this.configureFieldValue(report, reportDefinition, 'otherOffences', otherOffenceData.join('/n')))
     }
     fieldValues.push(
-      this.configureFieldValue(report, reportDefinition, 'court', offenceInformation.responsibleCourt.courtName)
+      this.configureFieldValue(
+        report,
+        reportDefinition,
+        'court',
+        offenceInformation.responsibleCourt && offenceInformation.responsibleCourt.courtName
+      )
     )
     fieldValues.push(
       this.configureFieldValue(
         report,
         reportDefinition,
         'localJusticeArea',
-        offenceInformation.responsibleCourt.probationArea.description
+        offenceInformation.responsibleCourt &&
+          offenceInformation.responsibleCourt.probationArea &&
+          offenceInformation.responsibleCourt.probationArea.description
       )
     )
     return fieldValues
