@@ -49,6 +49,10 @@ export default class ReportService {
     return getRepository(Report).upsert(updatedReport, ['id'])
   }
 
+  public deleteReport(report: Report): Promise<Report> {
+    return getRepository(Report).remove(report)
+  }
+
   public updateFieldValues(fieldValues: Array<IFieldValue>): Promise<void[]> {
     return Promise.all(
       fieldValues.map(async fieldValue => {
