@@ -139,6 +139,7 @@ export default class ApiController {
   }
 
   createReport = async (req: Request, res: Response): Promise<void> => {
+    let report
     try {
       const reportType = this.correctReportType(req.params.reportType)
       const reportDefinition = await this.reportService.getDefinitionByType(reportType)
@@ -146,7 +147,7 @@ export default class ApiController {
         res.status(400).end()
         return
       }
-      const report = await this.reportService.createReport({
+      report = await this.reportService.createReport({
         ...req.body,
         entityId: req.body.eventNumber.toString(),
         reportDefinitionId: reportDefinition.id,
@@ -176,6 +177,9 @@ export default class ApiController {
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
       })
     } catch (error) {
+      if (report) {
+        await this.reportService.deleteReport(report)
+      }
       res.status(error.status || 500).send(error.message)
     }
   }
