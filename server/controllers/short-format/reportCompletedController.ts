@@ -20,7 +20,7 @@ export default class ReportCompletedController extends BaseController {
         await this.reportService.updateReport({ ...this.report, status: 'COMPLETED' })
         await this.eventService.sendReportEvent({
           reportId: this.report.id,
-          entityId: this.report.entityId,
+          eventNumber: this.report.eventNumber,
           crn: this.data.crn,
           reportStatus: 'completed',
         })

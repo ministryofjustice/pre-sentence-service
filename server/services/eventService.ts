@@ -6,7 +6,7 @@ import config from '../config'
 
 export interface IReportEventData {
   reportId: string
-  entityId: string
+  eventNumber: string
   crn: string
   reportStatus: string
 }
@@ -46,7 +46,7 @@ export default class EventService {
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
       detailUrl: `${config.domain}/api/v1/report/${reportEventData.reportId}`,
       occurredAt: new Date().toISOString(),
-      additionalInformation: { eventNumber: reportEventData.entityId, reportId: reportEventData.reportId },
+      additionalInformation: { eventNumber: reportEventData.eventNumber, reportId: reportEventData.reportId },
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 

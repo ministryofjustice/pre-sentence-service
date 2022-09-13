@@ -10,14 +10,14 @@ xcontext('API v1', () => {
     let reportId
 
     it('creates a new report', () => {
-      cy.request('POST', '/api/v1/report/record-of-oral', { entityId: 10, crn: 'DX12340A' }).as('request')
+      cy.request('POST', '/api/v1/report/record-of-oral', { eventNumber: 10, crn: 'DX12340A' }).as('request')
       cy.get('@request').then(response => {
         expect(response.status).to.eq(201)
         assert.isObject(response.body, 'Response is Object')
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
           reportDefinitionId: 1,
-          entityId: 10,
+          eventNumber: 10,
         })
         reportId = response.body.id
       })
@@ -31,7 +31,7 @@ xcontext('API v1', () => {
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
           reportDefinitionId: 1,
-          entityId: '10',
+          eventNumber: '10',
         })
       })
     })
@@ -46,14 +46,14 @@ xcontext('API v1', () => {
     let reportId
 
     it('creates a new report', () => {
-      cy.request('POST', '/api/v1/report/short-format', { entityId: 20, crn: 'DX12340A' }).as('request')
+      cy.request('POST', '/api/v1/report/short-format', { eventNumber: 20, crn: 'DX12340A' }).as('request')
       cy.get('@request').then(response => {
         expect(response.status).to.eq(201)
         assert.isObject(response.body, 'Response is Object')
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
           reportDefinitionId: 2,
-          entityId: 20,
+          eventNumber: 20,
         })
         reportId = response.body.id
       })
@@ -67,7 +67,7 @@ xcontext('API v1', () => {
         cy.wrap(response.body).should('include', {
           status: 'NOT_STARTED',
           reportDefinitionId: 2,
-          entityId: '20',
+          eventNumber: '20',
         })
       })
     })
