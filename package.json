@@ -21,7 +21,8 @@
     "record-build-info": "node ./bin/record-build-info",
     "lint": "eslint . --cache --max-warnings 0",
     "typecheck": "tsc && tsc -p integration_tests",
-    "test": "npx jest --ci --runInBand --forceExit --testPathPattern=/server/.*",
+    "test": "npx jest --forceExit --testPathPattern=/server/.*",
+    "test:ci": "npx jest --ci --runInBand --forceExit --testPathPattern=/server/.*",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "DB_NAME=pre-sentence-service-int DB_PORT=5432 cypress run --config video=false",
     "int-test-ui": "DB_NAME=pre-sentence-service-int DB_PORT=5432 cypress open",
@@ -34,6 +35,11 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    },
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}"
     ],
