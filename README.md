@@ -22,7 +22,7 @@ The app requires:
 
 To start the main services excluding the typescript app: 
 
-`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose up --remove-orphans hmpps-auth redis postgres localstack gotenberg localstack community-api wproofreader`
+`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose up --remove-orphans hmpps-auth redis postgres wiremock localstack gotenberg wproofreader`
 
 Now in a separate terminal window or tab, at the project root.
 

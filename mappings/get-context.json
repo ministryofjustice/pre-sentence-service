@@ -1,0 +1,47 @@
+{
+  "id": "1b6ce63f-8544-40ab-a133-cc87eac3bb8b",
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/context/(.*)"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "crn": "X320741",
+      "name": {
+        "forename": "Lenore",
+        "surname": "Marquez",
+        "middleName": "Consuela"
+      },
+      "dateOfBirth": "1999-12-31T00:00:00.000Z",
+      "pnc": "2000/0002697F",
+      "address": {
+        "noFixedAbode": true,
+        "buildingName": "string",
+        "addressNumber": 32,
+        "streetName": "Scotland Street",
+        "town": "Sheffield",
+        "district": "Sheffield City Centre",
+        "county": "South Yorkshire",
+        "postcode": "S3 7BS"
+      },
+      "mainOffence": {
+        "description": "An Offence"
+      },
+      "otherOffences": [
+        {
+          "description": "An Offence"
+        }
+      ],
+      "court": {
+        "name": "Sheffield Magistrates Court",
+        "localJusticeArea": {
+          "name": "Probation Area Name"
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

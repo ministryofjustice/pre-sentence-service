@@ -9,7 +9,16 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '6379:6379'
+      - "6379:6379"
+
+  wiremock_auth:
+    image: wiremock/wiremock
+    networks:
+      - hmpps_int
+    container_name: wiremock_auth_int
+    restart: always
+    ports:
+      - "9091:8080"
 
   wiremock:
     image: wiremock/wiremock
@@ -17,8 +26,10 @@ services:
       - hmpps_int
     container_name: wiremock_int
     restart: always
+    volumes:
+      - ./mappings:/home/wiremock/mappings
     ports:
-      - "9091:8080"
+      - "9092:8080"
 
   gotenberg:
     image: thecodingmachine/gotenberg:6.4.4
