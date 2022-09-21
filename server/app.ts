@@ -49,7 +49,7 @@ export default function createApplication(userService: UserService, communitySer
     })
   )
 
-  app.use('/api', apiRouter(communityService))
+  app.use('/api', apiRouter())
   app.use('/', indexRoutes(standardRouter(userService, communityService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

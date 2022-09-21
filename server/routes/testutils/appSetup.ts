@@ -43,7 +43,7 @@ function appSetup(baseUrl: string, route: Router, production: boolean): Express 
 }
 
 export function appWithApiRoutes({ production = false }: { production?: boolean }): Express {
-  return appSetup('/api', apiRouter(new MockCommunityService()), production)
+  return appSetup('/api', apiRouter(), production)
 }
 
 export default function appWithViewRoutes({ production = false }: { production?: boolean }): Express {

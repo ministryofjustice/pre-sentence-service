@@ -11,7 +11,7 @@ export default function restrictionExclusionMiddleware(
   communityService: CommunityService
 ): RequestHandler {
   return asyncMiddleware(async (req, res, next) => {
-    if (req.session && req.session.isAllowedAccess) {
+    if ((!req.path || req.path === '/') && req.session && req.session.isAllowedAccess) {
       return next()
     }
     const report: Report = await reportService.getReportById(req.params.reportId)
