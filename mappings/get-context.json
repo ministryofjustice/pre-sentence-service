@@ -26,11 +26,11 @@
         "postcode": "S3 7BS"
       },
       "mainOffence": {
-        "description": "An Offence"
+        "description": "Aggravated burglary in a building other than a dwelling (including attempts) - 03100"
       },
       "otherOffences": [
         {
-          "description": "Another Offence"
+          "description": "Abstracting electricity - 04300"
         }
       ],
       "court": {
