@@ -3,7 +3,7 @@ import BaseController from './baseController'
 export default class LandingPageController extends BaseController {
   override templatePath = 'landing'
 
-  override updateReport = () => {
+  override updateReport = async () => {
     if (this.report && this.report.lastUpdated) {
       this.defaultTemplateData = {
         ...this.defaultTemplateData,

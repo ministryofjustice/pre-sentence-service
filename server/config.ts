@@ -69,8 +69,8 @@ export default {
       agent: new AgentConfig(),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
-    reportToDeliusApi: {
-      url: get('REPORT_TO_DELIUS_API_URL', 'http://localhost:9092', requiredInProduction),
+    preSentenceToDeliusApi: {
+      url: get('PRE_SENTENCE_TO_DELIUS_API_URL', 'http://localhost:9092', requiredInProduction),
       timeout: {
         response: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000)),
         deadline: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_DEADLINE', 5000)),

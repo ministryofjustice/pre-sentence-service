@@ -19,8 +19,13 @@ import ReportCompletedController from '../../controllers/short-format/reportComp
 
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 
-export default function Index(reportService: ReportService, eventService: EventService): Router {
+export default function Index(
+  reportService: ReportService,
+  eventService: EventService,
+  preSentenceToDeliusService: PreSentenceToDeliusService
+): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
@@ -35,7 +40,7 @@ export default function Index(reportService: ReportService, eventService: EventS
     res.redirect(301, `/short-format/${reportId}${section ? `/${section}` : ''}`)
   })
 
-  get('/:reportId', new LandingPageController(reportService, eventService).get)
+  get('/:reportId', new LandingPageController(reportService, null, preSentenceToDeliusService).get)
 
   getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService))
   getAndPost('/:reportId/court-details', new CourtDetailsController(reportService))

@@ -10,14 +10,14 @@
       "crn": "X320741",
       "name": {
         "forename": "Lenore",
-        "surname": "Marquez",
-        "middleName": "Consuela"
+        "middleName": "Consuela",
+        "surname": "Marquez"
       },
-      "dateOfBirth": "1999-12-31T00:00:00.000Z",
+      "dateOfBirth": "1979-08-18T00:00:00.000Z",
       "pnc": "2000/0002697F",
       "address": {
-        "noFixedAbode": true,
-        "buildingName": "string",
+        "noFixedAbode": false,
+        "buildingName": "Greenfield House",
         "addressNumber": 32,
         "streetName": "Scotland Street",
         "town": "Sheffield",
@@ -30,13 +30,13 @@
       },
       "otherOffences": [
         {
-          "description": "An Offence"
+          "description": "Another Offence"
         }
       ],
       "court": {
-        "name": "Sheffield Magistrates Court",
+        "name": "Sheffield Magistrate's Court",
         "localJusticeArea": {
-          "name": "Probation Area Name"
+          "name": "South Yorkshire"
         }
       }
     },

@@ -17,10 +17,15 @@ import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
 import CommunityService from '../services/communityService'
+import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-export default function standardRouter(userService: UserService, communityService: CommunityService): Router {
+export default function standardRouter(
+  userService: UserService,
+  communityService: CommunityService,
+  preSentenceToDeliusService: PreSentenceToDeliusService
+): Router {
   const router = Router({ mergeParams: true })
   const eventService = new EventService()
   const reportService = new ReportService()
@@ -45,8 +50,8 @@ export default function standardRouter(userService: UserService, communityServic
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, eventService))
-  router.use(recordOfOralRoutes(reportService, eventService))
+  router.use(shortFormatRoutes(reportService, eventService, preSentenceToDeliusService))
+  router.use(recordOfOralRoutes(reportService, eventService, preSentenceToDeliusService))
   router.use(pdfRoutes(reportService))
 
   return router
