@@ -1,0 +1,47 @@
+{
+  "id": "1b6ce63f-8544-40ab-a133-cc87eac3bb8b",
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/context/(.*)"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "crn": "X320741",
+      "name": {
+        "forename": "Lenore",
+        "middleName": "Consuela",
+        "surname": "Marquez"
+      },
+      "dateOfBirth": "1979-08-18T00:00:00.000Z",
+      "pnc": "2000/0002697F",
+      "address": {
+        "noFixedAbode": false,
+        "buildingName": "Greenfield House",
+        "addressNumber": 32,
+        "streetName": "Scotland Street",
+        "town": "Sheffield",
+        "district": "Sheffield City Centre",
+        "county": "South Yorkshire",
+        "postcode": "S3 7BS"
+      },
+      "mainOffence": {
+        "description": "Aggravated burglary in a building other than a dwelling (including attempts) - 03100"
+      },
+      "otherOffences": [
+        {
+          "description": "Abstracting electricity - 04300"
+        }
+      ],
+      "court": {
+        "name": "Sheffield Magistrate's Court",
+        "localJusticeArea": {
+          "name": "South Yorkshire"
+        }
+      }
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

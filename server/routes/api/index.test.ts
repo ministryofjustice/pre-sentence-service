@@ -79,72 +79,6 @@ jest.mock('../../services/reportService', () => {
   })
 })
 
-jest.mock('../../services/eventService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      sendReportEvent: () => {
-        return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
-        })
-      },
-    }
-  })
-})
-
-jest.mock('../../services/communityService', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getAllOffenderInformation: () => {
-        return new Promise(resolve => {
-          process.nextTick(() =>
-            resolve({
-              firstName: 'John',
-              surname: 'Smith',
-              contactDetails: {
-                addresses: [
-                  {
-                    buildingName: 'Greenfield House',
-                    addressNumber: 32,
-                    streetName: 'Scotland Street',
-                    town: 'Sheffield',
-                    postcode: 'S3 7DQ',
-                  },
-                ],
-              },
-              otherIds: {
-                pnc: 'A123456/C',
-              },
-            })
-          )
-        })
-      },
-      getOffenceInformation: () => {
-        return new Promise(resolve => {
-          process.nextTick(() =>
-            resolve({
-              offences: [
-                {
-                  mainOffence: true,
-                  detail: {
-                    description:
-                      'Stealing mail bags. On 13th January 2022 the defendant stole mail bags from a mail van.',
-                  },
-                },
-              ],
-              responsibleCourt: {
-                courtName: "Sheffield Magistrate's Court",
-                probationArea: {
-                  description: 'South Yorkshire LDU',
-                },
-              },
-            })
-          )
-        })
-      },
-    }
-  })
-})
-
 describe('Route Handlers - API', () => {
   let app: Express
 
@@ -156,7 +90,7 @@ describe('Route Handlers - API', () => {
     jest.resetAllMocks()
   })
 
-  xit('should create a report', () => {
+  it('should create a report', () => {
     return (
       request(app)
         .post('/api/v1/report/record-of-oral')
@@ -168,7 +102,7 @@ describe('Route Handlers - API', () => {
     )
   })
 
-  xit('should support nDelius report types when creating a Record of Oral report', () => {
+  it('should support nDelius report types when creating a Record of Oral report', () => {
     return request(app)
       .post('/api/v1/report/oralReport')
       .send({ crn: 'DX12340A', eventNumber: '100' })
@@ -178,7 +112,7 @@ describe('Route Handlers - API', () => {
       })
   })
 
-  xit('should support nDelius report types when creating Short Format report', () => {
+  it('should support nDelius report types when creating Short Format report', () => {
     return request(app)
       .post('/api/v1/report/shortFormatPreSentenceReport')
       .send({ crn: 'DX12340A', eventNumber: '100' })

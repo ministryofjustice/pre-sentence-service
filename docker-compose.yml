@@ -18,7 +18,7 @@ services:
     container_name: postgres
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=pre-sentence-service
       - POSTGRES_USER=pre-sentence-service
@@ -36,6 +36,17 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+
+  wiremock:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: wiremock
+    restart: always
+    volumes:
+      - ./mappings:/home/wiremock/mappings
+    ports:
+      - "9092:8080"
 
   gotenberg:
     image: thecodingmachine/gotenberg:6.4.4

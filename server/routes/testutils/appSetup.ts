@@ -10,6 +10,7 @@ import standardRouter from '../standardRouter'
 import apiRouter from '../apiRouter'
 import MockCommunityService from './mockCommunityService'
 import MockUserService from './mockUserService'
+import MockPreSentenceToDeliusService from './mockPreSentenceToDeliusService'
 
 const user = {
   name: 'john smith',
@@ -43,9 +44,13 @@ function appSetup(baseUrl: string, route: Router, production: boolean): Express 
 }
 
 export function appWithApiRoutes({ production = false }: { production?: boolean }): Express {
-  return appSetup('/api', apiRouter(new MockCommunityService()), production)
+  return appSetup('/api', apiRouter(), production)
 }
 
 export default function appWithViewRoutes({ production = false }: { production?: boolean }): Express {
-  return appSetup('/', allRoutes(standardRouter(new MockUserService(), new MockCommunityService())), production)
+  return appSetup(
+    '/',
+    allRoutes(standardRouter(new MockUserService(), new MockCommunityService(), new MockPreSentenceToDeliusService())),
+    production
+  )
 }

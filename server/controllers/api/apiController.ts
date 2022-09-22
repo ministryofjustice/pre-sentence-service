@@ -1,21 +1,11 @@
 import { Request, Response } from 'express'
-import ReportService, { IFieldValue } from '../../services/reportService'
+import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
 import config from '../../config'
-import CommunityService from '../../services/communityService'
-import ReportDefinition from '../../repositories/entities/reportDefinition'
-import Report from '../../repositories/entities/report'
-import { convertToTitleCase, getIsoDate } from '../../utils/utils'
 import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
-import type { Offence, OffenceInformation } from '../../@types/offence'
-import type { Address, Offender } from '../../@types/offender'
 
 export default class ApiController {
-  constructor(
-    protected readonly reportService: ReportService = null,
-    protected readonly eventService: EventService,
-    protected readonly communityService: CommunityService
-  ) {}
+  constructor(protected readonly reportService: ReportService = null, protected readonly eventService: EventService) {}
 
   // Support legacy nDelius report types
   private correctReportType(reportType: string): string {
@@ -33,111 +23,6 @@ export default class ApiController {
     return correctedReportType.length ? correctedReportType : reportType
   }
 
-  private configureFieldValue(
-    report: Report,
-    reportDefinition: ReportDefinition,
-    fieldName: string,
-    value: string
-  ): IFieldValue {
-    const definitionField = reportDefinition.fields.filter(field => field.name === fieldName)
-    return {
-      reportId: report.id,
-      fieldId: definitionField[0].id,
-      value,
-      version: 1,
-    }
-  }
-
-  private async getOffenderInformationFields(
-    report: Report,
-    reportDefinition: ReportDefinition,
-    crn: string
-  ): Promise<Array<IFieldValue>> {
-    const offenderInformation: Offender = await this.communityService.getAllOffenderInformation(crn)
-    const fieldValues: Array<IFieldValue> = []
-    fieldValues.push(
-      this.configureFieldValue(
-        report,
-        reportDefinition,
-        'name',
-        `${convertToTitleCase(offenderInformation.firstName)} ${convertToTitleCase(offenderInformation.surname)}`
-      )
-    )
-    fieldValues.push(
-      this.configureFieldValue(report, reportDefinition, 'dateOfBirth', getIsoDate(offenderInformation.dateOfBirth))
-    )
-    if (offenderInformation.otherIds && offenderInformation.otherIds.pncNumber) {
-      fieldValues.push(
-        this.configureFieldValue(report, reportDefinition, 'pnc', offenderInformation.otherIds.pncNumber.toUpperCase())
-      )
-    }
-    if (
-      offenderInformation.contactDetails &&
-      offenderInformation.contactDetails.addresses &&
-      offenderInformation.contactDetails.addresses.length
-    ) {
-      const address: Address = offenderInformation.contactDetails.addresses[0]
-      let configuredAddress
-      if (address.noFixedAbode) {
-        configuredAddress = 'No fixed abode'
-      } else {
-        configuredAddress = `${address.buildingName ? convertToTitleCase(address.buildingName) : ''} ${
-          address.addressNumber ? address.addressNumber : ''
-        } ${address.streetName ? convertToTitleCase(address.streetName) : ''} ${
-          address.district ? convertToTitleCase(address.district) : ''
-        } ${address.town ? convertToTitleCase(address.town) : ''} ${
-          address.county ? convertToTitleCase(address.county) : ''
-        } ${address.postcode ? address.postcode.toUpperCase() : ''}`
-      }
-      fieldValues.push(this.configureFieldValue(report, reportDefinition, 'address', configuredAddress))
-    }
-    return fieldValues
-  }
-
-  protected async getAdditionalInformationFields(
-    report: Report,
-    reportDefinition: ReportDefinition,
-    crn: string,
-    eventId: string
-  ): Promise<Array<IFieldValue>> {
-    const convictions: Array<OffenceInformation> = await this.communityService.getOffenceInformation(crn)
-    const offenceInformation = convictions.find(conviction => conviction.index === eventId)
-    const mainOffences = offenceInformation.offences.filter((offence: Offence) => offence.mainOffence)
-    const mainOffenceData: Array<string> = []
-    mainOffences.forEach((offence: Offence) => {
-      mainOffenceData.push(offence.detail.description)
-    })
-    const otherOffenceData: Array<string> = []
-    const otherOffences = offenceInformation.offences.filter((offence: Offence) => !offence.mainOffence)
-    otherOffences.forEach((offence: Offence) => {
-      otherOffenceData.push(offence.detail.description)
-    })
-    const fieldValues: Array<IFieldValue> = []
-    fieldValues.push(this.configureFieldValue(report, reportDefinition, 'mainOffence', mainOffenceData.join('/n')))
-    if (otherOffenceData.length) {
-      fieldValues.push(this.configureFieldValue(report, reportDefinition, 'otherOffences', otherOffenceData.join('/n')))
-    }
-    fieldValues.push(
-      this.configureFieldValue(
-        report,
-        reportDefinition,
-        'court',
-        offenceInformation.responsibleCourt && offenceInformation.responsibleCourt.courtName
-      )
-    )
-    fieldValues.push(
-      this.configureFieldValue(
-        report,
-        reportDefinition,
-        'localJusticeArea',
-        offenceInformation.responsibleCourt &&
-          offenceInformation.responsibleCourt.probationArea &&
-          offenceInformation.responsibleCourt.probationArea.description
-      )
-    )
-    return fieldValues
-  }
-
   createReport = async (req: Request, res: Response): Promise<void> => {
     let report
     try {
@@ -152,20 +37,17 @@ export default class ApiController {
         eventNumber: req.body.eventNumber.toString(),
         reportDefinitionId: reportDefinition.id,
       })
-      const offenderInformationFields = await this.getOffenderInformationFields(report, reportDefinition, req.body.crn)
-      const additionalInformationFields = await this.getAdditionalInformationFields(
-        report,
-        reportDefinition,
-        req.body.crn,
-        req.body.eventNumber.toString()
-      )
-      const fieldValues: Array<IFieldValue> = [
-        this.configureFieldValue(report, reportDefinition, 'crn', req.body.crn.toUpperCase()),
-      ]
-        .concat(offenderInformationFields)
-        .concat(additionalInformationFields)
 
-      await this.reportService.updateFieldValues(fieldValues)
+      const definitionField = reportDefinition.fields.find(field => field.name === 'crn')
+
+      await this.reportService.updateFieldValues([
+        {
+          reportId: report.id,
+          fieldId: definitionField.id,
+          value: req.body.crn.toUpperCase(),
+          version: 1,
+        },
+      ])
       await this.eventService.sendReportEvent({
         reportId: report.id,
         eventNumber: req.body.eventNumber.toString(),

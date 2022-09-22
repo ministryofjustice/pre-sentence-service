@@ -10,11 +10,6 @@ export default class OffenderDetailsController extends BaseController {
 
   override pageFields = pageFields
 
-  override data: {
-    dateOfBirth?: string
-    age?: number
-  } = {}
-
   override updateReport = async () => {
     const today = new Date()
     this.data = {

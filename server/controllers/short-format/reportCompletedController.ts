@@ -6,10 +6,6 @@ export default class ReportCompletedController extends BaseController {
 
   override templatePath = 'report-saved'
 
-  override data: {
-    crn?: string
-  } = {}
-
   override defaultTemplateData = {
     reportCompleted: true,
   }

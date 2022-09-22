@@ -1,10 +1,14 @@
 import { Request, Response } from 'express'
+import { format } from 'date-fns'
 
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
 import EventService from '../../services/eventService'
+import PreSentenceToDeliusService, { IContext } from '../../services/preSentenceToDeliusService'
+import formatAddress from '../../utils/formatAddress'
+import formatOffences from '../../utils/formatOffences'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -23,7 +27,12 @@ export default class SharedController {
 
   redirectPath = ''
 
-  data = {}
+  data: {
+    crn?: string
+    name?: string
+    age?: number
+    dateOfBirth?: string
+  } = {}
 
   defaultTemplateData = {}
 
@@ -46,6 +55,7 @@ export default class SharedController {
   constructor(
     protected readonly reportService: ReportService = null,
     protected readonly eventService: EventService = null,
+    protected readonly preSentenceToDeliusService: PreSentenceToDeliusService = null,
     protected report: Report = null
   ) {}
 
@@ -74,6 +84,30 @@ export default class SharedController {
       })
     }
     return data
+  }
+
+  private populateFieldValuesAndGetName = async (): Promise<string> => {
+    if (this.preSentenceToDeliusService) {
+      const context: IContext = await this.preSentenceToDeliusService.getContext(this.report.id)
+      const formattedName = `${context.name.forename} ${context.name.middleName ? context.name.middleName : ''} ${
+        context.name.surname
+      }`
+      await this.updateFields(
+        {
+          name: formattedName,
+          dateOfBirth: format(new Date(context.dateOfBirth), 'dd/MM/yyyy'),
+          pnc: context.pnc,
+          address: formatAddress(context.address),
+          court: context.court.name,
+          localJusticeArea: context.court.localJusticeArea.name,
+          mainOffence: context.mainOffence.description,
+          otherOffences: formatOffences(context.otherOffences),
+        },
+        true
+      )
+      return formattedName
+    }
+    return undefined
   }
 
   protected checkFieldValueVersions = (req: Request): boolean => {
@@ -127,6 +161,11 @@ export default class SharedController {
     this.report = await this.reportService.getReportById(req.params.reportId)
     if (this.report) {
       this.getStoredData()
+      const persistentData: { name?: string } = this.getPersistentData()
+      let formattedName
+      if (!persistentData.name) {
+        formattedName = await this.populateFieldValuesAndGetName()
+      }
       if (this.updateReport) {
         await this.updateReport()
       }
@@ -143,10 +182,11 @@ export default class SharedController {
         ...this.templateValues,
         reportId: req.params.reportId,
         data: {
+          name: formattedName,
           ...this.defaultTemplateData,
           ...this.data,
           ...this.report,
-          ...this.getPersistentData(),
+          ...persistentData,
         },
       })
     } else {
