@@ -11,3 +11,7 @@ dependencies:
     alias: gotenberg
     version: 1.6.0
     repository: https://ministryofjustice.github.io/hmpps-helm-charts
+  - name: generic-service
+    alias: wproofreader
+    version: 1.6.0
+    repository: https://ministryofjustice.github.io/hmpps-helm-charts
