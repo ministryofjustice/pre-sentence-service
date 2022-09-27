@@ -82,7 +82,8 @@ export default class PreSentenceToDeliusService {
           .get(path)
           .agent(keepaliveAgent)
           .retry(2, err => {
-            if (err) logger.warn(`Retry handler found API error with ${err.code} ${err.message}`)
+            if (err)
+              logger.warn(`PreSentenceToDeliusService: Retry handler found API error with ${err.code} ${err.message}`)
             return undefined // retry handler only for logging retries, not to influence retry logic
           })
           .query(query)
@@ -92,12 +93,18 @@ export default class PreSentenceToDeliusService {
           .timeout(timeout)
 
         const durationMillis = Math.ceil(time - new Date().getTime())
-        logger.debug({ path, query, durationMillis }, 'Client GET using clientId credentials')
+        logger.debug(
+          { path, query, durationMillis },
+          'PreSentenceToDeliusService: Client GET using clientId credentials'
+        )
 
         return raw ? result : result.body
       } catch (error) {
         const sanitisedError = sanitise(error)
-        logger.error({ ...sanitisedError, path, query }, 'Error in Client GET using clientId credentials')
+        logger.error(
+          { ...sanitisedError, path, query },
+          'PreSentenceToDeliusService: Error in Client GET using clientId credentials'
+        )
         throw sanitisedError
       }
     }
