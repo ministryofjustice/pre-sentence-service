@@ -56,6 +56,12 @@ export default class EventService {
       result = await this.sns
         .publish({
           Message: JSON.stringify(domainEvent),
+          MessageAttributes: {
+            eventType: {
+              DataType: 'String',
+              StringValue: domainEvent.eventType,
+            },
+          },
           TopicArn: config.aws.sns.topicArn,
         })
         .promise()
