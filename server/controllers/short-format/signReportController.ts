@@ -2,6 +2,7 @@ import { Response } from 'express'
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 import { TemplateValues } from '../shared/sharedController'
+import logger from '../../../logger'
 
 export const pageFields: Array<string> = [
   'reportAuthor',
@@ -59,6 +60,22 @@ export default class SignReportController extends BaseController {
     'completionDate-day': `0${this.today.getDate()}`.slice(-2),
     'completionDate-month': `0${this.today.getMonth() + 1}`.slice(-2),
     'completionDate-year': this.today.getFullYear(),
+  }
+
+  override additionalPostAction = async () => {
+    if (this.report) {
+      try {
+        await this.reportService.updateReport({ ...this.report, status: 'COMPLETED' })
+        await this.eventService.sendReportEvent({
+          reportId: this.report.id,
+          eventNumber: this.report.eventNumber,
+          crn: this.data.crn,
+          reportStatus: 'completed',
+        })
+      } catch (e: unknown) {
+        logger.error('Update completed report failed:', e)
+      }
+    }
   }
 
   override renderTemplate(res: Response, templateValues: TemplateValues) {
