@@ -167,6 +167,10 @@ export default class SharedController {
         formattedName = await this.populateFieldValuesAndGetName()
       }
       if (this.updateReport) {
+        this.data = {
+          ...this.data,
+          ...persistentData,
+        }
         await this.updateReport()
       }
       if (this.report.status === 'COMPLETED') {
