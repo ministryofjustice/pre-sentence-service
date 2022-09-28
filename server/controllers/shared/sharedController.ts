@@ -50,6 +50,8 @@ export default class SharedController {
 
   updateReport: () => void
 
+  additionalPostAction: () => void
+
   correctFormData: (req: Request) => object
 
   constructor(
@@ -160,6 +162,10 @@ export default class SharedController {
   public get = async (req: Request, res: Response): Promise<void> => {
     this.report = await this.reportService.getReportById(req.params.reportId)
     if (this.report) {
+      if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
+        res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
+        return
+      }
       this.getStoredData()
       const persistentData: { name?: string } = this.getPersistentData()
       let formattedName
@@ -172,14 +178,6 @@ export default class SharedController {
           ...persistentData,
         }
         await this.updateReport()
-      }
-      if (this.report.status === 'COMPLETED') {
-        this.path = 'shared'
-        this.templatePath = 'report-saved'
-        this.defaultTemplateData = {
-          ...this.defaultTemplateData,
-          reportCompleted: true,
-        }
       }
       req.session.fieldValues = this.report.fieldValues
       this.renderTemplate(res, {
@@ -215,6 +213,9 @@ export default class SharedController {
         }
         await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
         await this.updateFields(req.body)
+        if (this.additionalPostAction) {
+          await this.additionalPostAction()
+        }
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {
         this.report = await this.reportService.getReportById(req.params.reportId)
