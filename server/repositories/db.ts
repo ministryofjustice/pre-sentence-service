@@ -28,7 +28,7 @@ const connectionOptions: ConnectionOptions = {
   entities: [Field, FieldValue, Report, ReportDefinition],
   migrationsRun: config.db.migrations === 'true',
   migrations: ['dist/db/migrations/*.js'],
-  logging: true,
+  logging: false,
 }
 
 export default async function getDatabaseConnection(): Promise<ConnectionResult> {
