@@ -52,11 +52,11 @@ export default function Index(
   getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService))
   getAndPost('/:reportId/proposal', new ProposalController(reportService))
   getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService))
-  getAndPost('/:reportId/sign-report', new SignReportController(reportService))
+  getAndPost('/:reportId/sign-report', new SignReportController(reportService, eventService))
 
   get('/:reportId/check-report', new CheckReportController(reportService).get)
   get('/:reportId/report-saved', new ReportSavedController(reportService).get)
-  get('/:reportId/report-completed', new ReportCompletedController(reportService, eventService).get)
+  get('/:reportId/report-completed', new ReportCompletedController(reportService).get)
 
   post('/:reportId/auto-save', new AutoSaveController(reportService).post)
 
