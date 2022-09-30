@@ -1,3 +1,5 @@
+const emptyArray: Array<unknown> = []
+
 export const mockedReportData = {
   reportDefinitionId: 1,
   reportDefinition: {
@@ -8,7 +10,7 @@ export const mockedReportData = {
   eventNumber: '1',
   id: '27ea073b-7a38-4853-bdaa-b6a506053a9e',
   status: 'NOT_STARTED',
-  fieldValues: [],
+  fieldValues: emptyArray,
 }
 
 export default class ReportService {
