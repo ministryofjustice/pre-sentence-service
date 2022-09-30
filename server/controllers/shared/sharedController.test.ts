@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
+import { mockedReportData } from '../../services/__mocks__/reportService'
 
 jest.mock('../../services/reportService')
 
@@ -69,6 +70,7 @@ describe('Route Handlers - Shared Controller', () => {
         ...handler.templateValues,
         reportId: '12345678',
         data: {
+          ...mockedReportData,
           ...handler.data,
         },
       })
