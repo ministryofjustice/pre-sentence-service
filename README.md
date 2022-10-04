@@ -2,6 +2,11 @@
 
 Pre-Sentence Service is a service that allows probation staff to capture and store pre-sentence data. 
 
+[![CircleCI](https://circleci.com/gh/ministryofjustice/pre-sentence-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/pre-sentence-service)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://pre-sentence-service-dev.hmpps.service.justice.gov.uk/api/docs)
+
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fpre-sentence-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#pre-sentence-service "Link to report")
+
 ## Running the app
 The easiest way to run the app is to use docker compose to create the service and all dependencies. 
 
