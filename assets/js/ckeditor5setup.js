@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
-    CKSource.Editor.create($el, {
+    ClassicEditor.create($el, {
       autosave: {
         save(editor) {
           var xhr = new XMLHttpRequest()
