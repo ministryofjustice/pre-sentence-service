@@ -222,7 +222,6 @@ export default class SharedController {
         }
         res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
       } else {
-        this.report = await this.reportService.getReportById(req.params.reportId)
         this.renderTemplate(res, {
           ...this.templateValues,
           reportId: req.params.reportId,
