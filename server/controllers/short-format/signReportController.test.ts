@@ -3,8 +3,10 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 
 import SignReportController from './signReportController'
 import ReportService from '../../services/reportService'
+import EventService from '../../services/eventService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/eventService')
 jest.mock('../../utils/formValidation')
 
 describe('Route Handlers - Sign Report Controller', () => {
@@ -12,13 +14,15 @@ describe('Route Handlers - Sign Report Controller', () => {
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
   let mockedReportService: ReportService
+  let mockedEventService: EventService
   let handler: SignReportController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new SignReportController(mockedReportService)
+    mockedEventService = new EventService()
+    handler = new SignReportController(mockedReportService, mockedEventService)
   })
 
   afterAll(() => {
@@ -76,8 +80,10 @@ describe('Route Handlers - Sign Report Controller', () => {
         isValid: true,
         errors: [],
       })
+      const sendReportEventSpy = jest.spyOn(mockedEventService, 'sendReportEvent')
       await handler.post(req, res)
       expect(validateFormMock).toHaveBeenCalled()
+      expect(sendReportEventSpy).toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/${handler.redirectPath}`)
     })
   })

@@ -2,13 +2,10 @@ import { Request, Response } from 'express'
 
 import ReportCompletedController from './reportCompletedController'
 import ReportService from '../../services/reportService'
-import EventService from '../../services/eventService'
 
 jest.mock('../../services/reportService')
-jest.mock('../../services/eventService')
 
 describe('Route Handlers - Report Completed Controller', () => {
-  let mockedEventService: EventService
   let mockedReportService: ReportService
   let handler: ReportCompletedController
   let req: Request
@@ -16,8 +13,7 @@ describe('Route Handlers - Report Completed Controller', () => {
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    mockedEventService = new EventService()
-    handler = new ReportCompletedController(mockedReportService, mockedEventService)
+    handler = new ReportCompletedController(mockedReportService)
   })
 
   afterAll(() => {
@@ -26,9 +22,11 @@ describe('Route Handlers - Report Completed Controller', () => {
 
   beforeEach(() => {
     req = {
-      params: {},
+      params: {
+        reportType: 'short-format',
+      },
       session: {},
-    } as Request
+    } as unknown as Request
     res = {
       render: jest.fn(),
     } as unknown as Response
