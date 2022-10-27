@@ -2,7 +2,7 @@ version: '3.1'
 services:
 
   redis:
-    image: 'bitnami/redis:5.0'
+    image: 'bitnami/redis:7.0.5'
     networks:
       - hmpps
     container_name: redis
@@ -12,7 +12,7 @@ services:
       - "6379:6379"
 
   postgres:
-    image: postgres:13.3
+    image: postgres:13.8
     networks:
       - hmpps
     container_name: postgres
@@ -49,7 +49,7 @@ services:
       - "9092:8080"
 
   gotenberg:
-    image: thecodingmachine/gotenberg:6.4.4
+    image: thecodingmachine/gotenberg:7.7.0
     networks:
       - hmpps
     container_name: gotenberg
@@ -60,7 +60,7 @@ services:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:3000/ping' ]
 
   localstack:
-    image: localstack/localstack:0.13.2
+    image: localstack/localstack:1.2.0
     networks:
       - hmpps
     container_name: localstack

@@ -25,13 +25,17 @@ The app requires:
 
 ### Runing the app for development
 
+Ensure docker images are up-to-date
+
+`docker-compose pull`
+
 To start the main services excluding the typescript app: 
 
-`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose up --scale app=0`
+`docker-compose up --scale app=0`
 
 Now in a separate terminal window or tab, at the project root.
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v16.17.1` (Gallium) LTS or `Node v18.10.0` (Hydrogen)
+Install dependencies using `npm install`, ensuring you are using >= `Node v18.12.0` (Hydrogen) LTS
 
 And then, to build the assets and start the app with nodemon:
 
@@ -53,7 +57,7 @@ You can now access the service at `http://localhost:3000`
 
 For local running, start a test db, redis, and wiremock instance by:
 
-`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose -f docker-compose-test.yml up`
+`docker-compose -f docker-compose-test.yml up`
 
 Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
