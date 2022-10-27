@@ -37,7 +37,7 @@ To start the main services excluding the typescript app:
 
 Now in a separate terminal window or tab, at the project root.
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v16.17.1` (Gallium) LTS or `Node v18.10.0` (Hydrogen)
+Install dependencies using `npm install`, ensuring you are using >= `Node v18.12.0` (Hydrogen) LTS
 
 And then, to build the assets and start the app with nodemon:
 

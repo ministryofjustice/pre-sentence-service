@@ -21,7 +21,7 @@ export default class GotenbergClient {
     const { headerHtml, footerHtml, marginBottom, marginLeft, marginRight, marginTop } = options
     try {
       const request = superagent
-        .post(`${this.gotenbergHost}/convert/html`)
+        .post(`${this.gotenbergHost}/forms/chromium/convert/html`)
         .set('Content-Type', 'multi-part/form-data')
         .buffer(true)
         .attach('files', Buffer.from(html), 'index.html')
@@ -31,7 +31,9 @@ export default class GotenbergClient {
       if (headerHtml) request.attach('files', Buffer.from(headerHtml), 'header.html')
       if (footerHtml) request.attach('files', Buffer.from(footerHtml), 'footer.html')
 
-      // Gotenberg defaults to using A4 format. Page size and margins specified in inches
+      // Set paper size to A4. Page size and margins specified in inches
+      request.field('paperWidth', 8.27)
+      request.field('paperHeight', 11.7)
       if (marginTop) request.field('marginTop', marginTop)
       if (marginBottom) request.field('marginBottom', marginBottom)
       if (marginLeft) request.field('marginLeft', marginLeft)
@@ -41,7 +43,7 @@ export default class GotenbergClient {
       const response = await request
       return response.body
     } catch (err) {
-      logger.error(`Error POST to gotenberg:/convert/html - {}`, err)
+      logger.error(`Error POST to gotenberg:/forms/chromium/convert/html - {}`, err)
       return undefined
     }
   }
