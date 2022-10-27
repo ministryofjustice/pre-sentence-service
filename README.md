@@ -8,9 +8,11 @@ Pre-Sentence Service is a service that allows probation staff to capture and sto
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fpre-sentence-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#pre-sentence-service "Link to report")
 
 ## Running the app
-The easiest way to run the app is to use docker compose to create the service and all dependencies. 
+Ensure docker images are up-to-date
 
 `docker-compose pull`
+
+The easiest way to run the app is to use docker compose to create the service and all dependencies.
 
 `docker-compose up`
 
@@ -25,9 +27,13 @@ The app requires:
 
 ### Runing the app for development
 
+Ensure docker images are up-to-date
+
+`docker-compose pull`
+
 To start the main services excluding the typescript app: 
 
-`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose up --scale app=0`
+`docker-compose up --scale app=0`
 
 Now in a separate terminal window or tab, at the project root.
 
@@ -53,7 +59,7 @@ You can now access the service at `http://localhost:3000`
 
 For local running, start a test db, redis, and wiremock instance by:
 
-`WP_LICENSE_KEY=<LICENSE_KEY> docker-compose -f docker-compose-test.yml up`
+`docker-compose -f docker-compose-test.yml up`
 
 Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
