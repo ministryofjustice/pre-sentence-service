@@ -41,8 +41,8 @@ export default function setUpWebSecurity(): Router {
             `'nonce-${config.nonce}'`,
           ],
           connectSrc: ["'self'", wproofreaderUrl],
-          fontSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:'],
+          fontSrc: ["'self'", wproofreaderUrl],
+          imgSrc: ["'self'", 'data:', wproofreaderUrl],
         },
       },
     })
