@@ -55,6 +55,13 @@ services:
     container_name: gotenberg
     ports:
       - "3001:3000"
+    command:
+      - "gotenberg"
+      - "--api-port=3001"
+      - "--chromium-ignore-certificate-errors"
+      - "--api-timeout=30s"
+      - "--pdfengines-engines=pdftk"
+      - "--uno-listener-restart-threshold=0" #disables uno listener
     restart: always
     healthcheck:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:3001/health' ]
