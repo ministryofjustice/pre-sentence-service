@@ -29,4 +29,4 @@ wproofreader:
   ingress:
     v1_2_enabled: true
     enabled: true
-    host: 'http://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
+    host: pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk
