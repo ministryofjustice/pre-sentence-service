@@ -32,7 +32,7 @@ services:
       - "9092:8080"
 
   gotenberg:
-    image: thecodingmachine/gotenberg:7.7.0
+    image: gotenberg/gotenberg:7.7.0
     networks:
       - hmpps_int
     container_name: gotenberg_int
@@ -40,7 +40,7 @@ services:
       - "3001:3000"
     restart: always
     healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:3000/ping' ]
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:3001/health' ]
 
   postgres:
     image: postgres:13.8
