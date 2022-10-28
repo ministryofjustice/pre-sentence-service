@@ -18,6 +18,7 @@ generic-service:
     PRE_SENTENCE_URL: "http://pre-sentence-service"
     WPROOFREADER_PROTOCOL: 'https'
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk'
+    WPROOFREADER_PORT: null
 
   allowList:
     office: "217.33.148.210/32"
