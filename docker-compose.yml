@@ -107,8 +107,7 @@ services:
     container_name: wproofreader
     ports:
       - "8081:8081"
-    command:
-      - ${WP_LICENSE_KEY}
+      - "8443:8443"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
 
