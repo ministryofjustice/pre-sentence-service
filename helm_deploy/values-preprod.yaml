@@ -17,7 +17,7 @@ generic-service:
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
     WPROOFREADER_PROTOCOL: 'http'
-    WPROOFREADER_HOST: 'pre-sentence-service-wproofreader'
+    WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk'
 
   allowList:
     office: "217.33.148.210/32"
