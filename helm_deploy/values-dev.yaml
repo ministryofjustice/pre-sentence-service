@@ -24,6 +24,8 @@ generic-service:
 gotenberg:
   replicaCount: 1
 
+wproofreader:
+
   ingress:
     v1_2_enabled: true
     enabled: true
