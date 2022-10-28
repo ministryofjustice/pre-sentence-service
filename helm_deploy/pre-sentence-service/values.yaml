@@ -103,7 +103,6 @@ wproofreader:
     repository: quay.io/hmpps/pre-sentence-service-wproofreader
     tag: latest
     port: 8081
-    command: ["$(WP_LICENSE_KEY)"]
 
   ingress:
     enabled: false
