@@ -23,3 +23,8 @@ generic-service:
 
 gotenberg:
   replicaCount: 1
+
+  ingress:
+    v1_2_enabled: true
+    enabled: true
+    host: 'http://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
