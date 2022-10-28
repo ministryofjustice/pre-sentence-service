@@ -19,18 +19,7 @@ generic-service:
     WPROOFREADER_PROTOCOL: 'http'
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
 
+  allowlist: null
+
 gotenberg:
   replicaCount: 1
-
-  env:
-    GOOGLE_CHROME_IGNORE_CERTIFICATE_ERRORS: 1
-    DISABLE_UNOCONV: 1
-    DEFAULT_WAIT_TIMEOUT: 30
-
-wproofreader:
-  replicaCount: 1
-
-  ingress:
-    v1_2_enabled: true
-    enabled: true
-    host: "http://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk"
