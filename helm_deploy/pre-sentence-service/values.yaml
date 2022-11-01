@@ -113,9 +113,9 @@ wproofreader:
 
   resources:
     requests:
-      memory: "1Gi"
-    limits:
       memory: "2Gi"
+    limits:
+      memory: "4Gi"
 
   livenessProbe:
     httpGet:
