@@ -15,8 +15,27 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
-    WPROOFREADER_PROTOCOL: 'http'
+    WPROOFREADER_PROTOCOL: 'https'
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk'
+    WPROOFREADER_PORT: null
+
+  allowList:
+    office: "217.33.148.210/32"
+    health-kick: "35.177.252.195/32"
+    mojvpn: "81.134.202.29/32"
+    cloudplatform-live1-1: "35.178.209.113/32"
+    cloudplatform-live1-2: "3.8.51.207/32"
+    cloudplatform-live1-3: "35.177.252.54/32"
+    delius-prod-1: "52.56.115.146/32"
+    delius-prod-2: "35.178.104.253/32"
+    delius-prod-3: "35.177.47.45/32"
+
+wproofreader:
+
+  ingress:
+    v1_2_enabled: true
+    enabled: true
+    host: pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk
 
   allowList:
     office: "217.33.148.210/32"
