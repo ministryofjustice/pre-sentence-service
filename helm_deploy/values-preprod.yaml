@@ -37,8 +37,6 @@ gotenberg:
 wproofreader:
 
   ingress:
-    v1_2_enabled: true
-    enabled: true
     host: pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk
 
     allowList:
