@@ -11,6 +11,7 @@ generic-service:
 
   ingress:
     v1_2_enabled: true
+    v0_47_enabled: false
     enabled: true
     host: app-hostname.local    # override per environment
     tlsSecretName: pre-sentence-service-cert
@@ -109,7 +110,9 @@ wproofreader:
     port: 8081
 
   ingress:
-    enabled: false
+    v1_2_enabled: true
+    v0_47_enabled: false
+    enabled: true
 
   resources:
     requests:

@@ -33,8 +33,6 @@ generic-service:
 wproofreader:
 
   ingress:
-    v1_2_enabled: true
-    enabled: true
     host: pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk
 
   allowList:
