@@ -20766,7 +20766,7 @@
             lang: 'en_GB',
             serviceProtocol: sg,
             serviceHost: og,
-            servicePort: rg || '80',
+            servicePort: rg || (sg === 'https' ? '443' : '80'),
             servicePath: 'wscservice/api',
             removeBranding: !0,
             settingsSections: ['general', 'options'],
