@@ -38,6 +38,7 @@ wproofreader:
 
   ingress:
     host: pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk
+    tlsSecretName: court-probation-preprod-cert-secret
 
     allowList:
       office: "217.33.148.210/32"
