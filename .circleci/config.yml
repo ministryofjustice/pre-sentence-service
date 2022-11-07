@@ -147,6 +147,7 @@ jobs:
       - run:
           name: Run the node app.
           command: |
+            export WPROOFREADER_PORT=8081
             export AWS_ENDPOINT=http://localhost:4566
             npm run start-feature
           background: true

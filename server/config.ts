@@ -102,7 +102,7 @@ export default {
     wproofreader: {
       serviceProtocol: get('WPROOFREADER_PROTOCOL', 'http', requiredInProduction),
       serviceHost: get('WPROOFREADER_HOST', 'localhost', requiredInProduction),
-      servicePort: get('WPROOFREADER_PORT', 8081),
+      servicePort: get('WPROOFREADER_PORT', null), // Only set locally in order to use with wproofreader container
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
