@@ -19824,14 +19824,12 @@
             t.commands.add('insertParagraph', new Em(t)),
             e.schema.register('paragraph', { inheritAllFrom: '$block' }),
             t.conversion.elementToElement({ model: 'paragraph', view: 'p' }),
-            t.conversion
-              .for('upcast')
-              .elementToElement({
-                model: (t, { writer: e }) =>
-                  Tm.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
-                view: /.+/,
-                converterPriority: 'low',
-              })
+            t.conversion.for('upcast').elementToElement({
+              model: (t, { writer: e }) =>
+                Tm.paragraphLikeElements.has(t.name) ? (t.isEmpty ? null : e.createElement('paragraph')) : null,
+              view: /.+/,
+              converterPriority: 'low',
+            })
         }
       }
       function xm(t, e) {
@@ -20506,7 +20504,7 @@
       var sg = window.wproofreaderProtocol,
         og = window.wproofreaderHost,
         rg = window.wproofreaderPort,
-        ag = sg + '://' + og + (rg ? ':' + rg : '')
+        ag = sg + '://' + og + (rg && rg.length ? ':' + rg : '')
       ;(ig.builtinPlugins = [
         lu,
         class extends j {
@@ -20768,7 +20766,7 @@
             lang: 'en_GB',
             serviceProtocol: sg,
             serviceHost: og,
-            servicePort: rg || '80',
+            servicePort: rg || (sg === 'https' ? '443' : '80'),
             servicePath: 'wscservice/api',
             removeBranding: !0,
             settingsSections: ['general', 'options'],
