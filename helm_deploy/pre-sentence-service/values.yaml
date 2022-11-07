@@ -113,6 +113,8 @@ wproofreader:
     v1_2_enabled: true
     v0_47_enabled: false
     enabled: true
+    tlsSecretName: pre-sentence-service-cert
+    path: /
 
   resources:
     requests:
