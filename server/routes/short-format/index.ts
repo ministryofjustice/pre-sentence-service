@@ -20,11 +20,17 @@ import ReportCompletedController from '../../controllers/short-format/reportComp
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import CommunityService from '../../services/communityService'
+
+import restrictionExclusionMiddleware from '../../middleware/restrictionExclusionMiddleware'
+
+const testMode = process.env.NODE_ENV === 'test'
 
 export default function Index(
   reportService: ReportService,
   eventService: EventService,
-  preSentenceToDeliusService: PreSentenceToDeliusService
+  preSentenceToDeliusService: PreSentenceToDeliusService,
+  communityService: CommunityService
 ): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
@@ -39,6 +45,10 @@ export default function Index(
     const { reportId, section } = req.params
     res.redirect(301, `/short-format/${reportId}${section ? `/${section}` : ''}`)
   })
+
+  if (!testMode) {
+    router.use(restrictionExclusionMiddleware(reportService, communityService))
+  }
 
   get('/:reportId', new LandingPageController(reportService, null, preSentenceToDeliusService).get)
 

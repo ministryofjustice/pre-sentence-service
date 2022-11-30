@@ -7,7 +7,6 @@ import config from '../config'
 import tokenVerifier from '../data/tokenVerification'
 import setUpAuthentication from '../middleware/setUpAuthentication'
 import authorisationMiddleware from '../middleware/authorisationMiddleware'
-import restrictionExclusionMiddleware from '../middleware/restrictionExclusionMiddleware'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import shortFormatRoutes from './short-format'
 import recordOfOralRoutes from './record-of-oral'
@@ -35,7 +34,6 @@ export default function standardRouter(
     router.use(authorisationMiddleware())
     router.use(auth.authenticationMiddleware(tokenVerifier))
     router.use(csurf())
-    router.use(restrictionExclusionMiddleware(reportService, communityService))
   }
 
   router.use((req, res, next) => {
@@ -50,8 +48,8 @@ export default function standardRouter(
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, eventService, preSentenceToDeliusService))
-  router.use(recordOfOralRoutes(reportService, eventService, preSentenceToDeliusService))
+  router.use(shortFormatRoutes(reportService, eventService, preSentenceToDeliusService, communityService))
+  router.use(recordOfOralRoutes(reportService, eventService, preSentenceToDeliusService, communityService))
   router.use(pdfRoutes(reportService))
 
   return router
