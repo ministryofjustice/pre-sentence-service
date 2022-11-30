@@ -15,6 +15,7 @@ export default function restrictionExclusionMiddleware(
     if (req.session?.isAllowedAccess) {
       return next()
     }
+    logger.info(`Parameters: ${req.params}`)
     logger.info(`Get report with id: ${req.params.reportId}`)
     const report: Report = await reportService.getReportById(req.params.reportId)
     if (report?.fieldValues) {
