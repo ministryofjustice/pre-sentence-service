@@ -11,7 +11,7 @@ export default function restrictionExclusionMiddleware(
   communityService: CommunityService
 ): RequestHandler {
   return async (req, res, next) => {
-    if (req.session?.isAllowedAccess || !req.params?.reportId) {
+    if (req.session?.isAllowedAccess) {
       return next()
     }
     logger.info('Parameters:', req.params)
