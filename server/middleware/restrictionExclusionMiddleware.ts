@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express'
 import { UserAccess } from '../@types/userAccess'
-import asyncMiddleware from './asyncMiddleware'
 import CommunityService from '../services/communityService'
 import ReportService from '../services/reportService'
 import FieldValue from '../repositories/entities/fieldValue'
@@ -11,7 +10,7 @@ export default function restrictionExclusionMiddleware(
   reportService: ReportService,
   communityService: CommunityService
 ): RequestHandler {
-  return asyncMiddleware(async (req, res, next) => {
+  return async (req, res, next) => {
     if (req.session?.isAllowedAccess) {
       return next()
     }
@@ -49,5 +48,5 @@ export default function restrictionExclusionMiddleware(
       }
     }
     return null
-  })
+  }
 }
