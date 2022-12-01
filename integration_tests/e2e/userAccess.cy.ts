@@ -1,4 +1,4 @@
-context('User restriction / exclusion', () => {
+xcontext('User restriction / exclusion', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
