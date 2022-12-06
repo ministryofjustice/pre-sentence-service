@@ -116,9 +116,4 @@ export default class PreSentenceToDeliusService {
     const path = `${this.apiUrl}/context/${reportId}`
     return this.client({ path })
   }
-
-  async getUserAccess(crn: string, username: string) {
-    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/user/${username}/userAccess`
-    return this.client({ path })
-  }
 }
