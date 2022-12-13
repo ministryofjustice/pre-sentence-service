@@ -19,11 +19,13 @@ import ReportSavedController from '../../controllers/record-of-oral/reportSavedC
 import ReportCompletedController from '../../controllers/record-of-oral/reportCompletedController'
 
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 
 export default function Index(
   reportService: ReportService,
+  communityService: CommunityService,
   eventService: EventService,
   preSentenceToDeliusService: PreSentenceToDeliusService
 ): Router {
@@ -42,23 +44,23 @@ export default function Index(
     res.redirect(301, `/record-of-oral/${reportId}${section ? `/${section}` : ''}`)
   })
 
-  get('/:reportId', new LandingPageController(reportService, null, preSentenceToDeliusService).get)
+  get('/:reportId', new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get)
 
-  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService))
-  getAndPost('/:reportId/court-details', new CourtDetailsController(reportService))
-  getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService))
-  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService))
-  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController(reportService))
-  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService))
-  getAndPost('/:reportId/proposal', new ProposalController(reportService))
-  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService))
-  getAndPost('/:reportId/sign-report', new SignReportController(reportService, eventService))
+  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService))
+  getAndPost('/:reportId/court-details', new CourtDetailsController(reportService, communityService))
+  getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService))
+  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService))
+  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController(reportService, communityService))
+  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService, communityService))
+  getAndPost('/:reportId/proposal', new ProposalController(reportService, communityService))
+  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService, communityService))
+  getAndPost('/:reportId/sign-report', new SignReportController(reportService, communityService, eventService))
 
-  get('/:reportId/check-report', new CheckReportController(reportService).get)
-  get('/:reportId/report-saved', new ReportSavedController(reportService).get)
-  get('/:reportId/report-completed', new ReportCompletedController(reportService).get)
+  get('/:reportId/check-report', new CheckReportController(reportService, communityService).get)
+  get('/:reportId/report-saved', new ReportSavedController(reportService, communityService).get)
+  get('/:reportId/report-completed', new ReportCompletedController(reportService, communityService).get)
 
-  post('/:reportId/auto-save', new AutoSaveController(reportService).post)
+  post('/:reportId/auto-save', new AutoSaveController(reportService, communityService).post)
 
   return router
 }

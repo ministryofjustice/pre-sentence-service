@@ -6,7 +6,9 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
 import EventService from '../../services/eventService'
+import CommunityService from '../../services/communityService'
 import PreSentenceToDeliusService, { IContext } from '../../services/preSentenceToDeliusService'
+
 import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
 
@@ -16,6 +18,13 @@ export interface TemplateValues {
   reportId?: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
+}
+
+interface InclusionExclusion {
+  hasAccess: boolean
+  disallowedMessage?: string
+  disallowedStack?: string
+  status?: number
 }
 
 export default class SharedController {
@@ -56,6 +65,7 @@ export default class SharedController {
 
   constructor(
     protected readonly reportService: ReportService = null,
+    protected readonly communityService: CommunityService = null,
     protected readonly eventService: EventService = null,
     protected readonly preSentenceToDeliusService: PreSentenceToDeliusService = null,
     protected report: Report = null
@@ -63,6 +73,34 @@ export default class SharedController {
 
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
+  }
+
+  private checkInclusionExclusion = async (crn: string, user: string): Promise<InclusionExclusion> => {
+    try {
+      await this.communityService.getUserAccess(crn, user)
+      return {
+        hasAccess: true,
+      }
+    } catch (error) {
+      let disallowedMessage: string
+      let disallowedStack: string
+      if (error.data?.userExcluded) {
+        disallowedMessage = 'User Excluded'
+        disallowedStack = error.data.exclusionMessage
+      } else if (error.data?.userRestricted) {
+        disallowedMessage = 'User Restricted'
+        disallowedStack = error.data.restrictionMessage
+      } else {
+        disallowedMessage = 'Error'
+        disallowedStack = 'Unable to check restriction / exclusion'
+      }
+      return {
+        hasAccess: false,
+        disallowedMessage,
+        disallowedStack,
+        status: error?.status,
+      }
+    }
   }
 
   private getStoredData = () => {
@@ -167,7 +205,24 @@ export default class SharedController {
         return
       }
       this.getStoredData()
-      const persistentData: { name?: string } = this.getPersistentData()
+      const persistentData: { name?: string; crn?: string } = this.getPersistentData()
+
+      if (!req.session?.isAllowedAccess) {
+        const inclusionExclusionCheck = await this.checkInclusionExclusion(
+          persistentData.crn,
+          res.locals?.user?.username
+        )
+        if (!inclusionExclusionCheck.hasAccess) {
+          res.render('pages/error', {
+            message: inclusionExclusionCheck.disallowedMessage,
+            stack: inclusionExclusionCheck.disallowedStack,
+            status: inclusionExclusionCheck.status,
+          })
+          return
+        }
+        req.session.isAllowedAccess = true
+      }
+
       let formattedName
       if (!persistentData.name) {
         formattedName = await this.populateFieldValuesAndGetName()

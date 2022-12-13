@@ -2,18 +2,22 @@ import { Request, Response } from 'express'
 
 import LandingPageController from './landingPageController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 
 describe('Route Handlers - Record of Oral Pre-Sentence Report Landing Page Controller', () => {
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let handler: LandingPageController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new LandingPageController(mockedReportService)
+    mockedCommunityService = new CommunityService(null)
+    handler = new LandingPageController(mockedReportService, mockedCommunityService)
   })
 
   afterAll(() => {

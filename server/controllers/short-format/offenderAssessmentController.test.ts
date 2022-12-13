@@ -3,8 +3,10 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 
 import OffenderAssessmentController from './offenderAssessmentController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 jest.mock('../../utils/formValidation')
 
 describe('Route Handlers - Offender Assessment Controller', () => {
@@ -12,13 +14,15 @@ describe('Route Handlers - Offender Assessment Controller', () => {
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let handler: OffenderAssessmentController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new OffenderAssessmentController(mockedReportService)
+    mockedCommunityService = new CommunityService(null)
+    handler = new OffenderAssessmentController(mockedReportService, mockedCommunityService)
   })
 
   afterAll(() => {

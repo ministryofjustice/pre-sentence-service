@@ -14,6 +14,7 @@ import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
+import CommunityService from '../services/communityService'
 import EventService from '../services/eventService'
 import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
 
@@ -21,6 +22,7 @@ const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(
   userService: UserService,
+  communityService: CommunityService,
   preSentenceToDeliusService: PreSentenceToDeliusService
 ): Router {
   const router = Router({ mergeParams: true })
@@ -46,8 +48,8 @@ export default function standardRouter(
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, eventService, preSentenceToDeliusService))
-  router.use(recordOfOralRoutes(reportService, eventService, preSentenceToDeliusService))
+  router.use(shortFormatRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
+  router.use(recordOfOralRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
   router.use(pdfRoutes(reportService))
 
   return router
