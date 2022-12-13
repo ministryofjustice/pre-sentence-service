@@ -3,9 +3,11 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 
 import SignReportController from './signReportController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 jest.mock('../../services/eventService')
 jest.mock('../../utils/formValidation')
 
@@ -14,6 +16,7 @@ describe('Route Handlers - Sign Report Controller', () => {
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let mockedEventService: EventService
   let handler: SignReportController
   let req: Request
@@ -21,8 +24,9 @@ describe('Route Handlers - Sign Report Controller', () => {
 
   beforeAll(() => {
     mockedReportService = new ReportService()
+    mockedCommunityService = new CommunityService(null)
     mockedEventService = new EventService()
-    handler = new SignReportController(mockedReportService, mockedEventService)
+    handler = new SignReportController(mockedReportService, mockedCommunityService, mockedEventService)
   })
 
   afterAll(() => {

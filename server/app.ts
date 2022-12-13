@@ -12,6 +12,7 @@ import errorHandler from './errorHandler'
 import apiRouter from './routes/apiRouter'
 import standardRouter from './routes/standardRouter'
 import type UserService from './services/userService'
+import type CommunityService from './services/communityService'
 import type PreSentenceToDeliusService from './services/preSentenceToDeliusService'
 import GotenbergClient from './data/gotenbergClient'
 import pdfRenderer from './utils/pdfRenderer'
@@ -25,6 +26,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 
 export default function createApplication(
   userService: UserService,
+  communityService: CommunityService,
   preSentenceToDeliusService: PreSentenceToDeliusService
 ): Application {
   const app = express()
@@ -53,7 +55,7 @@ export default function createApplication(
   )
 
   app.use('/api', apiRouter())
-  app.use('/', indexRoutes(standardRouter(userService, preSentenceToDeliusService)))
+  app.use('/', indexRoutes(standardRouter(userService, communityService, preSentenceToDeliusService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))

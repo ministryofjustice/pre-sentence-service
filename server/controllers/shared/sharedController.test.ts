@@ -2,19 +2,23 @@ import { Request, Response } from 'express'
 
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 
 describe('Route Handlers - Shared Controller', () => {
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let handler: SharedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new SharedController(mockedReportService)
+    mockedCommunityService = new CommunityService(null)
+    handler = new SharedController(mockedReportService, mockedCommunityService)
   })
 
   afterAll(() => {

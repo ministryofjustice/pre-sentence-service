@@ -2,18 +2,22 @@ import { Request, Response } from 'express'
 
 import ReportSavedController from './reportSavedController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 
 describe('Route Handlers - Report Saved Controller', () => {
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let handler: ReportSavedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new ReportSavedController(mockedReportService)
+    mockedCommunityService = new CommunityService(null)
+    handler = new ReportSavedController(mockedReportService, mockedCommunityService)
   })
 
   afterAll(() => {

@@ -1,6 +1,6 @@
 import type { Express } from 'express'
 import request from 'supertest'
-import appWithAllRoutes from '../testutils/appSetup'
+import appWithViewRoutes from '../testutils/appSetup'
 
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
@@ -18,7 +18,7 @@ describe('GET /record-of-oral', () => {
   let app: Express
 
   beforeAll(() => {
-    app = appWithAllRoutes({})
+    app = appWithViewRoutes({})
   })
 
   afterAll(() => {

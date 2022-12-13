@@ -1,4 +1,4 @@
-xcontext('User restriction / exclusion', () => {
+context('User restriction / exclusion', () => {
   const path = '/short-format/0877ed35-e59a-4e94-b2bd-5d2283dd7dd7'
 
   beforeEach(() => {

@@ -1,0 +1,19 @@
+{
+  "id": "afad4dcb-d412-4e48-af9e-4b4c0c31d688",
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/secure/offenders/crn/(.*)/user/(.*)/userAccess"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "userExcluded": false,
+      "exclusionMessage": "",
+      "userRestricted": false,
+      "restrictionMessage": ""
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

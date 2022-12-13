@@ -3,8 +3,10 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 
 import CourtDetailsController from './courtDetailsController'
 import ReportService from '../../services/reportService'
+import CommunityService from '../../services/communityService'
 
 jest.mock('../../services/reportService')
+jest.mock('../../services/communityService')
 jest.mock('../../utils/formValidation')
 
 describe('Route Handlers - Court Details Controller', () => {
@@ -12,13 +14,15 @@ describe('Route Handlers - Court Details Controller', () => {
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
   let mockedReportService: ReportService
+  let mockedCommunityService: CommunityService
   let handler: CourtDetailsController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new CourtDetailsController(mockedReportService)
+    mockedCommunityService = new CommunityService(null)
+    handler = new CourtDetailsController(mockedReportService, mockedCommunityService)
   })
 
   afterAll(() => {
