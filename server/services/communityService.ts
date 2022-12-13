@@ -71,16 +71,6 @@ export default class CommunityService {
 
   private client = this.clientGetBuilder()
 
-  async getAllOffenderInformation(crn: string) {
-    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/all`
-    return this.client({ path })
-  }
-
-  async getOffenceInformation(crn: string) {
-    const path = `${this.apiUrl}/secure/offenders/crn/${crn}/convictions`
-    return this.client({ path })
-  }
-
   async getUserAccess(crn: string, username: string) {
     const path = `${this.apiUrl}/secure/offenders/crn/${crn}/user/${username}/userAccess`
     return this.client({ path })

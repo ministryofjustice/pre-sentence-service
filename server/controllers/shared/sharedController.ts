@@ -168,6 +168,7 @@ export default class SharedController {
       }
       this.getStoredData()
       const persistentData: { name?: string } = this.getPersistentData()
+
       let formattedName
       if (!persistentData.name) {
         formattedName = await this.populateFieldValuesAndGetName()
