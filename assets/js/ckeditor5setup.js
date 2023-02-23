@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     $($el).on('click', function (event) {
       event.preventDefault()
       var form = $(document.forms[0])
+      var baseURI = event.target.baseURI
       var redirectPath = event.target.attributes.href.value
       form.attr(
         'action',
-        event.target.baseURI + '?redirectPath=' + redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
+        baseURI.substr(baseURI.indexOf('/')) + '?redirectPath=' + redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
       )
       form.submit()
     })
