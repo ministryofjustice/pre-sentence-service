@@ -38,9 +38,6 @@ export interface IContext {
   otherOffences: Array<IContextOffence>
   court: {
     name: string
-    localJusticeArea: {
-      name: string
-    }
   }
 }
 
