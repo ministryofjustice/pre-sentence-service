@@ -6,12 +6,14 @@ export default class IndexPage extends Page {
   }
 
   clearForm(): void {
+    cy.get('#localJusticeArea').clear()
     cy.get('#dateOfHearing-day').clear()
     cy.get('#dateOfHearing-month').clear()
     cy.get('#dateOfHearing-year').clear()
   }
 
   completeForm(): void {
+    cy.get('#localJusticeArea').type('Some local justice area')
     cy.get('#dateOfHearing-day').type('27')
     cy.get('#dateOfHearing-month').type('10')
     cy.get('#dateOfHearing-year').type('2021')

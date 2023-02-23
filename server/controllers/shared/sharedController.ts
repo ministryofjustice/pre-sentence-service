@@ -139,7 +139,6 @@ export default class SharedController {
           pnc: context.pnc,
           address: formatAddress(context.address),
           court: context.court.name,
-          localJusticeArea: context.court.localJusticeArea.name,
           mainOffence: context.mainOffence.description,
           otherOffences: formatOffences(context.otherOffences),
         },
