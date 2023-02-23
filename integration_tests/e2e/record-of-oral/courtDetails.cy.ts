@@ -49,7 +49,7 @@ context('Oral - Sentencing court details report page', () => {
 
     it('should display the pre-stored data', () => {
       cy.get('p').contains('Sheffield Magistrates Court').should('exist')
-      cy.get('p').contains('South Yorkshire').should('exist')
+      cy.get('#localJusticeArea').should('have.value', 'South Yorkshire')
     })
 
     it('should include the required form elements', () => {
@@ -84,11 +84,11 @@ context('Oral - Sentencing court details report page', () => {
 
     it('should retain inputted data', () => {
       cy.get('p').contains('Sheffield Magistrates Court').should('exist')
-      cy.get('p').contains('South Yorkshire').should('exist')
       currentPage
         .inputText()
         .parent()
         .within(() => {
+          cy.get('#localJusticeArea').should('have.value', 'Some local justice area')
           cy.get('#dateOfHearing-day').should('have.value', '27')
           cy.get('#dateOfHearing-month').should('have.value', '10')
           cy.get('#dateOfHearing-year').should('have.value', '2021')
