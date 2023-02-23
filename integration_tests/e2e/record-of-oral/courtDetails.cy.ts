@@ -49,7 +49,7 @@ context('Oral - Sentencing court details report page', () => {
 
     it('should display the pre-stored data', () => {
       cy.get('p').contains('Sheffield Magistrates Court').should('exist')
-      cy.get('p').contains('South Yorkshire').should('exist')
+      cy.get('#localJusticeArea').should('have.value', 'Some local justice area')
     })
 
     it('should include the required form elements', () => {

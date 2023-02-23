@@ -19,6 +19,10 @@ export default class CourtDetailsController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
+        id: 'localJusticeArea',
+        errorMessage: 'Enter a local justice area',
+      },
+      {
         id: 'dateOfHearing-day',
         errorMessage: 'Enter a valid day',
       },
