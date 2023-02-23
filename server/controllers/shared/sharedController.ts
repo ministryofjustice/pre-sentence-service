@@ -253,7 +253,7 @@ export default class SharedController {
   public post = async (req: Request, res: Response): Promise<void> => {
     this.report = await this.reportService.getReportById(req.params.reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
-    if (validatedForm.isValid) {
+    if (validatedForm.isValid || req.query?.redirectPath) {
       if (this.correctFormData) {
         req.body = {
           ...req.body,
@@ -274,7 +274,7 @@ export default class SharedController {
           }
           await this.additionalPostAction()
         }
-        res.redirect(`/${this.path}/${req.params.reportId}/${this.redirectPath}`)
+        res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
       } else {
         this.renderTemplate(res, {
           ...this.templateValues,
