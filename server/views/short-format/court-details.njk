@@ -13,6 +13,8 @@
     <p class="govuk-body">{{ data.court }}</p>
     <input type="hidden" name="court" id="court" value="{{ data.court }}">
 
+    {% from "govuk/components/input/macro.njk" import govukInput %}
+
     {{ govukInput({
       label: {
         text: "Local justice area"
