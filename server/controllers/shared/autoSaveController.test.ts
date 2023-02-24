@@ -47,6 +47,7 @@ describe('Route Handlers - Auto Save Controller', () => {
     })
 
     it('should send http 409 status when field validations fail', async () => {
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
       const fieldValueVersionsSpy = jest.spyOn(handler as any, 'checkFieldValueVersions')
       fieldValueVersionsSpy.mockReturnValueOnce(false)
       await handler.post(req, res)
