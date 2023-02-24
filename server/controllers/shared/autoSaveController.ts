@@ -42,7 +42,7 @@ export default class AutoSaveController extends SharedController {
       res.status(201)
       res.send()
     } else {
-      res.status(403)
+      res.status(409)
       res.send()
     }
   }

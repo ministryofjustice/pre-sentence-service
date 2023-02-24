@@ -45,5 +45,14 @@ describe('Route Handlers - Auto Save Controller', () => {
       expect(res.status).toHaveBeenCalledWith(201)
       expect(res.send).toHaveBeenCalled()
     })
+
+    it('should send http 409 status when field validations fail', async () => {
+      const fieldValueVersionsSpy = jest.spyOn(handler as any, 'checkFieldValueVersions')
+      fieldValueVersionsSpy.mockReturnValueOnce(false)
+      await handler.post(req, res)
+      expect(res.status).toHaveBeenCalledWith(409)
+      expect(fieldValueVersionsSpy).toHaveBeenCalledWith(req)
+      expect(res.send).toHaveBeenCalled()
+    })
   })
 })
