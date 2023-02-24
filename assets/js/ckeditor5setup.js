@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.removeAttribute('aria-hidden')
   }
 
+  document.querySelectorAll('.moj-side-navigation__item a').forEach(function ($el) {
+    $($el).on('click', function (event) {
+      event.preventDefault()
+      var form = $(document.forms[0])
+      var baseURI = event.target.baseURI
+      var redirectPath = event.target.attributes.href.value
+      form.attr(
+        'action',
+        baseURI.substr(baseURI.indexOf('/')) + '?redirectPath=' + redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
+      )
+      form.submit()
+    })
+  })
+
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
     ClassicEditor.create($el, {
       autosave: {
