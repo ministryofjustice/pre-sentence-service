@@ -149,10 +149,10 @@ export default class SharedController {
     return undefined
   }
 
-  protected checkFieldValueVersions = (req: Request): boolean => {
+  protected checkFieldValueVersions = (req: Request, report: Report): boolean => {
     let validVersions = true
-    if (this.report && this.report.fieldValues && req.session.fieldValues) {
-      this.report.fieldValues.forEach(savedValue => {
+    if (report && report.fieldValues && req.session.fieldValues) {
+      report.fieldValues.forEach(savedValue => {
         const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
         if ((compare ? compare.version : 1) !== savedValue.version) {
           validVersions = false
@@ -260,7 +260,7 @@ export default class SharedController {
           ...this.correctFormData(req),
         }
       }
-      if (this.checkFieldValueVersions(req)) {
+      if (this.checkFieldValueVersions(req, this.report)) {
         if (this.report && this.report.status === 'NOT_STARTED') {
           await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
           await this.setStartedDate()
