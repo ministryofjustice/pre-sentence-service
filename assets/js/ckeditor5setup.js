@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
           xhr.open('POST', 'auto-save', true)
           xhr.setRequestHeader('Content-Type', 'application/json')
           xhr.setRequestHeader('x-csrf-token', window.csrfToken)
+          xhr.setRequestHeader('Accept', 'application/json')
           xhr.onload = function () {
             this.status >= 200 && this.status < 400 ? hideError() : showError()
           }
