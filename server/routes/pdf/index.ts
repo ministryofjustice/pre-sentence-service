@@ -8,10 +8,8 @@ export default function Index(reportService: ReportService): Router {
 
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  const pdfHandlers = new PdfController(reportService)
-
-  get('/:reportId/pdf', pdfHandlers.renderPdf)
-  get('/:reportId/preview', pdfHandlers.preview)
+  get('/:reportId/pdf', new PdfController(reportService).renderPdf)
+  get('/:reportId/preview', new PdfController(reportService).preview)
 
   return router
 }

@@ -32,10 +32,6 @@ export default function Index(
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
-  const getAndPost = (path: string, handler: BaseController) => {
-    get(path, handler.get)
-    post(path, handler.post)
-  }
 
   router.get('/shortFormatPreSentenceReport/:reportId/:section?', (req, res) => {
     const { reportId, section } = req.params
@@ -43,21 +39,28 @@ export default function Index(
   })
 
   get('/:reportId', new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get)
-
-  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService))
-  getAndPost('/:reportId/court-details', new CourtDetailsController(reportService, communityService))
-  getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService))
-  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService))
-  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController(reportService, communityService))
-  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService, communityService))
-  getAndPost('/:reportId/proposal', new ProposalController(reportService, communityService))
-  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService, communityService))
-  getAndPost('/:reportId/sign-report', new SignReportController(reportService, communityService, eventService))
-
+  get('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService).get)
+  get('/:reportId/court-details', new CourtDetailsController(reportService, communityService).get)
+  get('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService).get)
+  get('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService).get)
+  get('/:reportId/offender-assessment', new OffenderAssessmentController(reportService, communityService).get)
+  get('/:reportId/risk-assessment', new RiskAssessmentController(reportService, communityService).get)
+  get('/:reportId/proposal', new ProposalController(reportService, communityService).get)
+  get('/:reportId/sources-of-information', new SourcesOfInformationController(reportService, communityService).get)
+  get('/:reportId/sign-report', new SignReportController(reportService, communityService, eventService).get)
   get('/:reportId/check-report', new CheckReportController(reportService, communityService).get)
   get('/:reportId/report-saved', new ReportSavedController(reportService, communityService).get)
   get('/:reportId/report-completed', new ReportCompletedController(reportService, communityService).get)
 
+  post('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService).post)
+  post('/:reportId/court-details', new CourtDetailsController(reportService, communityService).post)
+  post('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService).post)
+  post('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService).post)
+  post('/:reportId/offender-assessment', new OffenderAssessmentController(reportService, communityService).post)
+  post('/:reportId/risk-assessment', new RiskAssessmentController(reportService, communityService).post)
+  post('/:reportId/proposal', new ProposalController(reportService, communityService).post)
+  post('/:reportId/sources-of-information', new SourcesOfInformationController(reportService, communityService).post)
+  post('/:reportId/sign-report', new SignReportController(reportService, communityService, eventService).post)
   post('/:reportId/auto-save', new AutoSaveController(reportService, communityService).post)
 
   return router
