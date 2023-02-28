@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.moj-side-navigation__item a').forEach(function ($el) {
     $($el).on('click', function (event) {
+      const baseURI = event.target.baseURI
+      if (baseURI.indexOf('/sign-report') > 0) {
+        return true
+      }
       event.preventDefault()
-      var form = $(document.forms[0])
-      var baseURI = event.target.baseURI
-      var redirectPath = event.target.attributes.href.value
+      const form = $(document.forms[0])
+      const redirectPath = event.target.attributes.href.value
       form.attr(
         'action',
         baseURI.substr(baseURI.indexOf('/')) + '?redirectPath=' + redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
