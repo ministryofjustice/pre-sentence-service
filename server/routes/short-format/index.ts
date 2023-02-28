@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from 'express'
+import { Request, RequestHandler, Response, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import AutoSaveController from '../../controllers/shared/autoSaveController'
@@ -44,7 +44,14 @@ export default function Index(
 
   get('/:reportId', new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get)
 
-  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService))
+  get('/:reportId/offender-details', async (req: Request, res: Response) => {
+    return new OffenderDetailsController(reportService, communityService).get(req, res) // a new instance created to process a new request, so every reqyest has its own fields
+  })
+
+  post('/:reportId/offender-details', async (req: Request, res: Response) => {
+    return new OffenderDetailsController(reportService, communityService).post(req, res)
+  })
+
   getAndPost('/:reportId/court-details', new CourtDetailsController(reportService, communityService))
   getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService))
   getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService))
