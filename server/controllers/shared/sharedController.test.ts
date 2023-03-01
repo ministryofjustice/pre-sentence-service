@@ -75,7 +75,6 @@ describe('Route Handlers - Shared Controller', () => {
         reportId: '12345678',
         data: {
           ...mockedReportData,
-          ...handler.data,
         },
       })
     })

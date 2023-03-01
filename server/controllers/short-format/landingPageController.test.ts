@@ -39,8 +39,9 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        reportId: undefined,
         data: {
-          ...handler.data,
+          name: undefined,
         },
       })
     })

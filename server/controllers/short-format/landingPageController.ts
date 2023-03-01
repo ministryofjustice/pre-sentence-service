@@ -1,9 +1,10 @@
 import BaseController from './baseController'
+import { Data } from '../shared/sharedController'
 
 export default class LandingPageController extends BaseController {
   override templatePath = 'landing'
 
-  override updateReport = () => {
+  override updateReport = (data: Data): Data => {
     if (this.report && this.report.lastUpdated) {
       this.defaultTemplateData = {
         ...this.defaultTemplateData,
@@ -11,6 +12,9 @@ export default class LandingPageController extends BaseController {
           new Date(this.report.lastUpdated)
         ),
       }
+    }
+    return {
+      ...data,
     }
   }
 

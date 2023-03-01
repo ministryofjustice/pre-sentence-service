@@ -41,8 +41,10 @@ describe('Route Handlers - Report Completed Controller', () => {
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        reportId: undefined,
         data: {
-          ...handler.defaultTemplateData,
+          name: undefined,
+          reportCompleted: true,
         },
       })
     })

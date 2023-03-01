@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
-import { TemplateValues } from '../shared/sharedController'
+import { Data, TemplateValues } from '../shared/sharedController'
 import logger from '../../../logger'
 
 export const pageFields: Array<string> = [
@@ -61,14 +61,14 @@ export default class SignReportController extends BaseController {
     'completionDate-year': this.today.getFullYear(),
   }
 
-  override additionalPostAction = async () => {
+  override additionalPostAction = async (data: Data) => {
     if (this.report) {
       try {
         await this.reportService.updateReport({ ...this.report, status: 'COMPLETED' })
         await this.eventService.sendReportEvent({
           reportId: this.report.id,
           eventNumber: this.report.eventNumber,
-          crn: this.data.crn,
+          crn: data.crn,
           reportStatus: 'completed',
         })
       } catch (e: unknown) {

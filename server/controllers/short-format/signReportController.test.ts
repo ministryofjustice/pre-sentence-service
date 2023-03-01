@@ -61,9 +61,10 @@ describe('Route Handlers - Sign Report Controller', () => {
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        reportId: undefined,
         data: {
+          name: undefined,
           reportAuthor: '',
-          ...handler.data,
           'completionDate-day': `0${today.getDate()}`.slice(-2),
           'completionDate-month': `0${today.getMonth() + 1}`.slice(-2),
           'completionDate-year': today.getFullYear(),
