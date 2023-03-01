@@ -32,33 +32,82 @@ export default function Index(
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
-  const getAndPost = (path: string, handler: BaseController) => {
-    get(path, handler.get)
-    post(path, handler.post)
-  }
 
   router.get('/shortFormatPreSentenceReport/:reportId/:section?', (req, res) => {
     const { reportId, section } = req.params
     res.redirect(301, `/short-format/${reportId}${section ? `/${section}` : ''}`)
   })
 
-  get('/:reportId', new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get)
+  get('/:reportId', (req, res) => {
+    return new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get(req, res)
+  })
+  get('/:reportId/offender-details', (req, res) => {
+    return new OffenderDetailsController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/court-details', (req, res) => {
+    return new CourtDetailsController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/offence-details', (req, res) => {
+    return new OffenceDetailsController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/offence-analysis', (req, res) => {
+    return new OffenceAnalysisController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/offender-assessment', (req, res) => {
+    return new OffenderAssessmentController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/risk-assessment', (req, res) => {
+    return new RiskAssessmentController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/proposal', (req, res) => {
+    return new ProposalController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/sources-of-information', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/sign-report', (req, res) => {
+    return new SignReportController(reportService, communityService, eventService).get(req, res)
+  })
+  get('/:reportId/check-report', (req, res) => {
+    return new CheckReportController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/report-saved', (req, res) => {
+    return new ReportSavedController(reportService, communityService).get(req, res)
+  })
+  get('/:reportId/report-completed', (req, res) => {
+    return new ReportCompletedController(reportService, communityService).get(req, res)
+  })
 
-  getAndPost('/:reportId/offender-details', new OffenderDetailsController(reportService, communityService))
-  getAndPost('/:reportId/court-details', new CourtDetailsController(reportService, communityService))
-  getAndPost('/:reportId/offence-details', new OffenceDetailsController(reportService, communityService))
-  getAndPost('/:reportId/offence-analysis', new OffenceAnalysisController(reportService, communityService))
-  getAndPost('/:reportId/offender-assessment', new OffenderAssessmentController(reportService, communityService))
-  getAndPost('/:reportId/risk-assessment', new RiskAssessmentController(reportService, communityService))
-  getAndPost('/:reportId/proposal', new ProposalController(reportService, communityService))
-  getAndPost('/:reportId/sources-of-information', new SourcesOfInformationController(reportService, communityService))
-  getAndPost('/:reportId/sign-report', new SignReportController(reportService, communityService, eventService))
-
-  get('/:reportId/check-report', new CheckReportController(reportService, communityService).get)
-  get('/:reportId/report-saved', new ReportSavedController(reportService, communityService).get)
-  get('/:reportId/report-completed', new ReportCompletedController(reportService, communityService).get)
-
-  post('/:reportId/auto-save', new AutoSaveController(reportService, communityService).post)
+  post('/:reportId/offender-details', (req, res) => {
+    return new OffenderDetailsController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/court-details', (req, res) => {
+    return new CourtDetailsController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/offence-details', (req, res) => {
+    return new OffenceDetailsController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/offence-analysis', (req, res) => {
+    return new OffenceAnalysisController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/offender-assessment', (req, res) => {
+    return new OffenderAssessmentController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/risk-assessment', (req, res) => {
+    return new RiskAssessmentController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/proposal', (req, res) => {
+    return new ProposalController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/sources-of-information', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/sign-report', (req, res) => {
+    return new SignReportController(reportService, communityService, eventService).post(req, res)
+  })
+  post('/:reportId/auto-save', (req, res) => {
+    return new AutoSaveController(reportService, communityService).post(req, res)
+  })
 
   return router
 }
