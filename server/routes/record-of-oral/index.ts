@@ -76,6 +76,9 @@ export default function Index(
   get('/:reportId/report-completed', (req, res) => {
     return new ReportCompletedController(reportService, communityService).get(req, res)
   })
+  get('/:reportId/sign-report', (req, res) => {
+    return new SignReportController(reportService, communityService, eventService).get(req, res)
+  })
 
   post('/:reportId/offender-details', (req, res) => {
     return new OffenderDetailsController(reportService, communityService).post(req, res)
@@ -97,6 +100,9 @@ export default function Index(
   })
   post('/:reportId/proposal', (req, res) => {
     return new ProposalController(reportService, communityService).post(req, res)
+  })
+  post('/:reportId/sources-of-information', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).post(req, res)
   })
   post('/:reportId/sign-report', (req, res) => {
     return new SignReportController(reportService, communityService, eventService).post(req, res)
