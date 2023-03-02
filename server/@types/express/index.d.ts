@@ -9,6 +9,7 @@ declare module 'express-session' {
     nowInMinutes: number
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
+    userDetails: UserDetails
   }
 }
 
