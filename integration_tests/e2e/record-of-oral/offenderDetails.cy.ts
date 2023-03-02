@@ -88,7 +88,7 @@ context('Oral - Offender details report page', () => {
       cy.get('p').contains('Lenore Marquez').should('exist')
       cy.get('p').contains('18/08/1979').should('exist')
       cy.get('p').contains('X320741').should('exist')
-      cy.get('p').contains('Some address').should('exist')
+      cy.get('textarea').contains('Some address').should('exist')
       cy.get('p').contains('A123467B').should('exist')
     })
   })
