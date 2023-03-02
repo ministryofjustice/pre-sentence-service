@@ -6,7 +6,13 @@ export default function populateCurrentUser(userService: UserService): RequestHa
   return async (req, res, next) => {
     try {
       if (res.locals.user) {
-        const user = res.locals.user && (await userService.getUser(res.locals.user.token))
+        let user
+        if (req.session.userDetails) {
+          user = req.session.userDetails
+        } else {
+          user = res.locals.user && (await userService.getUser(res.locals.user.token))
+          req.session.userDetails = user
+        }
         if (user) {
           res.locals.user = { ...user, ...res.locals.user }
         } else {
