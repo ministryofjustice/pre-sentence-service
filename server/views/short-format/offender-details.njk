@@ -25,21 +25,15 @@
     <p class="govuk-body">{{ data.crn }}</p>
     <input type="hidden" name="crn" id="crn" value="{{ data.crn }}">
 
-    {% if data.address | length %}
-      <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Address</p>
-      <p class="govuk-body">{{ data.address | replace('\n', '<br/>') | safe }}</p>
-      <input type="hidden" name="address" id="address" value="{{ data.address }}">
-    {% else %}
-      {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-
-      {{ govukTextarea({
-        name: "address",
-        id: "address",
-        label: {
-          text: "Address"
-        }
-      }) }}
-    {% endif %}
+    {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+    {{ govukTextarea({
+      name: "address",
+      id: "address",
+      label: {
+        text: "Address"
+      },
+      value: data.address
+    }) }}
 
     {% if data.pnc | length %}
       <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">PNC ID</p>
