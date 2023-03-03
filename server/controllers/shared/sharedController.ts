@@ -162,6 +162,7 @@ export default class SharedController {
             reportId: report.id,
             sessionField: { ...compare, value: '***' },
             dbField: { ...savedValue, value: '***' },
+            userName: req.session.userDetails.username,
           })
         }
       })
