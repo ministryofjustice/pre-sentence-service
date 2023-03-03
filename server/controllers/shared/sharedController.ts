@@ -11,6 +11,7 @@ import PreSentenceToDeliusService, { IContext } from '../../services/preSentence
 
 import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
+import logger from '../../../logger'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -156,6 +157,12 @@ export default class SharedController {
         const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
         if ((compare ? compare.version : 1) !== savedValue.version) {
           validVersions = false
+          logger.warn({
+            versionMismatch: true,
+            reportId: report.id,
+            sessionField: { ...compare, value: '***' },
+            dbField: { ...savedValue, value: '***' },
+          })
         }
       })
     }
