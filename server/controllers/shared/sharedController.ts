@@ -164,6 +164,14 @@ export default class SharedController {
             dbField: { ...savedValue, value: '***' },
             userName: req.session.userDetails.username,
           })
+        } else {
+          logger.info({
+            versionMismatch: false,
+            reportId: report.id,
+            sessionField: { ...compare, value: '***' },
+            dbField: { ...savedValue, value: '***' },
+            userName: req.session.userDetails.username,
+          })
         }
       })
     }
