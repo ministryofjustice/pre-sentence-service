@@ -49,10 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ClassicEditor.create($el, {
       autosave: {
         save (editor) {
-          if (isAutoSaving) {
-            // Disable save if any field is already saving...
-            return
-          }
           var xhr = new XMLHttpRequest()
           xhr.open('POST', 'auto-save', true)
           xhr.setRequestHeader('Content-Type', 'application/json')
