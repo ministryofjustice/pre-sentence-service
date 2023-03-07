@@ -13,13 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.removeAttribute('aria-hidden')
   }
 
-  function handleStatusChange (editor, error) {
+  function showStatusMessage(id, message) {
+    document.getElementById(id + '-status').innerText = message
+    document.getElementById(id + '-status-container').classList.remove('govuk-!-display-none')
+  }
+
+  function handleStatusChange (editor) {
     const pendingActions = editor.plugins.get('PendingActions')
     pendingActions.on('change:hasAny', (evt, propertyName, newValue) => {
       isAutoSaving = newValue
-      document.getElementById(editor.sourceElement.id + '-status').innerText = error ? 'Error' : newValue ? 'Saving...' : 'Saved'
-      document.getElementById(editor.sourceElement.id + '-status-container').classList.remove('govuk-!-display-none')
+      showStatusMessage(editor.sourceElement.id, newValue ? 'Saving...' : 'Saved')
     })
+  }
+
+  function handleStatusError (editor) {
+    isAutoSaving = false
+    showStatusMessage(editor.sourceElement.id, 'Error, changes not saved')
   }
 
   var buttons = document.getElementsByClassName('govuk-button')
@@ -44,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'action',
         baseURI.substr(baseURI.indexOf('/')) + '?redirectPath=' + redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
       )
-      form.submit()
+      form.trigger('submit')
     })
   })
 
@@ -59,9 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
           xhr.setRequestHeader('Accept', 'application/json')
           xhr.onload = function () {
             this.status >= 200 && this.status < 400 ? hideError() : showError()
-            if (this.status > 400) {
-              handleStatusChange(editor, true)
-            }
+          }
+          xhr.onerror = function () {
+            handleStatusError(editor)
           }
           xhr.send(
             JSON.stringify([
