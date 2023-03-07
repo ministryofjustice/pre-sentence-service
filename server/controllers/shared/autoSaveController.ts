@@ -16,6 +16,7 @@ export default class AutoSaveController extends SharedController {
     report: Report = undefined
   ) => {
     const fieldValues: Array<IFieldValue> = []
+    console.log(JSON.stringify(report.fieldValues))
     if (report && report.reportDefinition && report.reportDefinition.fields) {
       report.reportDefinition.fields.forEach(item => {
         pageFields.forEach(field => {

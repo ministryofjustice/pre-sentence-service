@@ -6,6 +6,7 @@ import ReportService, { IFieldValue, IReport } from '../../services/reportServic
 import EventService, { IReportEventData } from '../../services/eventService'
 import reportDefinition from '../../repositories/entities/reportDefinition'
 import report from '../../repositories/entities/report'
+import { getRepository } from 'typeorm'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/eventService')
@@ -22,7 +23,7 @@ describe('Route Handlers - API Controller', () => {
   let deleteReportSpy: jest.SpyInstance<Promise<report>, [report: report]>
 
   beforeAll(() => {
-    const mockedReportService = new ReportService()
+    const mockedReportService = new ReportService(() => getRepository)
     const mockedEventService = new EventService()
     getDefinitionByTypeSpy = jest.spyOn(mockedReportService, 'getDefinitionByType')
     createReportSpy = jest.spyOn(mockedReportService, 'createReport')

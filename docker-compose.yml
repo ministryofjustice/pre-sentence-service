@@ -111,30 +111,44 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
 
-  app:
+  pssapp:
     build: .
     networks:
       - hmpps
-    container_name: pre-sentence-service
     depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack, community-api, wproofreader ]
-    ports:
-      - "3000:3000"
+    expose:
+      - "4000"
     environment:
+      - PORT=4000
+      - NODE_ENV=dev
       - REDIS_HOST=redis
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
+      - COMMUNITY_API_URL=http://community-api:8080
+      - DB_SERVER=postgres
       # These will need to match new creds in the seed auth service auth
       - API_CLIENT_ID=pre-sentence-service
       - API_CLIENT_SECRET=clientsecret
-      - TOKEN_VERIFICATION_API_URL=http://localhost:8100
+      - TOKEN_VERIFICATION_API_URL=http://hmpps-auth:8100
       - SYSTEM_CLIENT_ID=pre-sentence-service
       - SYSTEM_CLIENT_SECRET=system-client-secret
       - SESSION_SECRET=app-insecure-default-session
-      - GOTENBERG_API_URL=http://localhost:3001
+      - GOTENBERG_API_URL=http://gotenberg:3001
       - INGRESS_URL=http://localhost:3000
-      - AWS_ENDPOINT=http://localhost:4566
+      - AWS_ENDPOINT=http://localstack:4566
       - ACCESS_KEY_ID=pre-sentence-service
       - SECRET_ACCESS_KEY=pre-sentence-service
+
+  nginx:
+    image: nginx:latest
+    networks:
+      - hmpps
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - pssapp
+    ports:
+      - "3000:3000"
 
 networks:
   hmpps:

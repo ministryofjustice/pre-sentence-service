@@ -18,9 +18,13 @@ export interface IFieldValue {
   version: number
 }
 
+export type RepositoryType = typeof getRepository
+
 export default class ReportService {
+  constructor(private repositoryFactory: () => RepositoryType = () => getRepository) {}
+
   public async createReport(report: IReport): Promise<Report> {
-    const reportRepository = getRepository(Report)
+    const reportRepository = this.repositoryFactory()(Report)
     const result = await reportRepository.create(report)
     return reportRepository.save(result)
   }
@@ -57,7 +61,7 @@ export default class ReportService {
     return Promise.all(
       fieldValues.map(async fieldValue => {
         const { reportId, fieldId } = fieldValue
-        const foundFieldValue = await getRepository(FieldValue).findOne({ where: { reportId, fieldId } })
+        const foundFieldValue = await this.repositoryFactory()(FieldValue).findOne({ where: { reportId, fieldId } })
         if (foundFieldValue) {
           if (fieldValue.value === null) {
             await getRepository(FieldValue).delete(foundFieldValue.id)
