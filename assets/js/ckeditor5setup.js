@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   var isAutoSaving = false
+
   function hideError () {
     var $el = document.querySelector('#pss-version-mismatch')
     $el.classList.add('govuk-!-display-none')
@@ -12,15 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.removeAttribute('aria-hidden')
   }
 
-  function handleStatusChange (editor) {
+  function handleStatusChange (editor, error) {
     const pendingActions = editor.plugins.get('PendingActions')
     pendingActions.on('change:hasAny', (evt, propertyName, newValue) => {
       isAutoSaving = newValue
+      document.getElementById(editor.sourceElement.id + '-status').innerText = error ? 'Error' : newValue ? 'Saving...' : 'Saved'
+      document.getElementById(editor.sourceElement.id + '-status-container').classList.remove('govuk-!-display-none')
     })
   }
 
   var buttons = document.getElementsByClassName('govuk-button')
-  for (var i = 0, len = buttons.length; i < len; i ++) {
+  for (var i = 0, len = buttons.length; i < len; i++) {
     $(buttons[i]).on('click', function (event) {
       if (isAutoSaving) {
         event.preventDefault()
@@ -56,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
           xhr.setRequestHeader('Accept', 'application/json')
           xhr.onload = function () {
             this.status >= 200 && this.status < 400 ? hideError() : showError()
+            if (this.status > 400) {
+              handleStatusChange(editor, true)
+            }
           }
           xhr.send(
             JSON.stringify([
