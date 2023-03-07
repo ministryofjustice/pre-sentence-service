@@ -58,4 +58,8 @@
     {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value }}</textarea>
 
+  <div class="app-ckeditor5-autosave-container govuk-!-display-none" id="{{ params.id }}-status-container">
+    <span class="govuk-hint"><strong>Changes:</strong> <span id="{{ params.id }}-status"></span></span>
+  </div>
+
 </div>

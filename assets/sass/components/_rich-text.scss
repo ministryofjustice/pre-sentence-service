@@ -12,3 +12,11 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.app-ckeditor5-autosave-container {
+  background: var(--ck-color-toolbar-background);
+  position: relative;
+  top: -1px;
+  border: 1px solid var(--ck-color-toolbar-border);
+  padding: 5px 0 5px 10px;
+}
