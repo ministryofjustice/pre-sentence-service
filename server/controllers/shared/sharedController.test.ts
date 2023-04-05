@@ -9,6 +9,7 @@ jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
 
 describe('Route Handlers - Shared Controller', () => {
+  // const validateUUIDMock = checkValidUuid as jest.MockedFunction<(uuid: string) => true>
   let mockedReportService: ReportService
   let mockedCommunityService: CommunityService
   let handler: SharedController
