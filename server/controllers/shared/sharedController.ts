@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { validate } from 'uuid'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
@@ -115,23 +116,27 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    this.report = await this.reportService.getReportById(req.params.reportId)
-    if (this.report) {
-      this.getStoredData()
-      if (this.updateReport) {
-        this.updateReport()
+    if (validate(req.params.reportId)) {
+      this.report = await this.reportService.getReportById(req.params.reportId)
+      if (this.report) {
+        this.getStoredData()
+        if (this.updateReport) {
+          this.updateReport()
+        }
+        req.session.fieldValues = this.report.fieldValues
+        this.renderTemplate(res, {
+          ...this.templateValues,
+          reportId: req.params.reportId,
+          data: {
+            ...this.defaultTemplateData,
+            ...this.data,
+            ...this.report,
+            ...this.getPersistentData(),
+          },
+        })
+      } else {
+        res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
       }
-      req.session.fieldValues = this.report.fieldValues
-      this.renderTemplate(res, {
-        ...this.templateValues,
-        reportId: req.params.reportId,
-        data: {
-          ...this.defaultTemplateData,
-          ...this.data,
-          ...this.report,
-          ...this.getPersistentData(),
-        },
-      })
     } else {
       res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
     }
