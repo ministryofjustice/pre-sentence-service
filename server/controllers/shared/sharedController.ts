@@ -91,6 +91,10 @@ export default class SharedController {
     return validVersions
   }
 
+  public checkValidUuid = (uuid: string): boolean => {
+    return validate(uuid)
+  }
+
   protected updateFields = async (formData: unknown) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
@@ -116,7 +120,7 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if (validate(req.params.reportId)) {
+    if (this.checkValidUuid(req.params.reportId)) {
       this.report = await this.reportService.getReportById(req.params.reportId)
       if (this.report) {
         this.getStoredData()
