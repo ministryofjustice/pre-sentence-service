@@ -213,12 +213,12 @@ export default class SharedController {
     await this.updateFields(startDateFields, true)
   }
 
-  public checkValidUuid = (uuid: string): boolean => {
+  public isValidReportId = (uuid: string): boolean => {
     return validate(uuid)
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if(this.checkValidUuid(req.params.reportId)) {
+    if(this.isValidReportId(req.params.reportId)) {
       this.report = await this.reportService.getReportById(req.params.reportId)
       if (this.report) {
         if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
