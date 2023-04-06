@@ -13,6 +13,7 @@ import PreSentenceToDeliusService, { IContext } from '../../services/preSentence
 import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
 import logger from '../../../logger'
+import { validateUUID } from '../../utils/reportValidation'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -214,7 +215,7 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if(isValidReportId(req.params.reportId)) {
+    if(validateUUID(req.params.reportId)) {
       this.report = await this.reportService.getReportById(req.params.reportId)
       if (this.report) {
         if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
@@ -323,7 +324,4 @@ export default class SharedController {
       })
     }
   }
-}
-export const isValidReportId = (uuid: string): boolean => {
-  return validate(uuid)
 }

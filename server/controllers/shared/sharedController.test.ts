@@ -1,16 +1,18 @@
 import { Request, Response } from 'express'
 
-import SharedController, {isValidReportId} from './sharedController'
+import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
-import {v4 as uuid4} from 'uuid';
+import { validateUUID } from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
 
 describe('Route Handlers - Shared Controller', () => {
-  const validateUUIDMock = isValidReportId as jest.MockedFunction<(uuid: string) => true>
+  const validateUUIDMock = validateUUID as jest.MockedFunction<
+    (uuid: string) => boolean
+  >
   let mockedReportService: ReportService
   let mockedCommunityService: CommunityService
   let handler: SharedController
@@ -30,7 +32,7 @@ describe('Route Handlers - Shared Controller', () => {
   beforeEach(() => {
     req = {
       params: {
-        reportId: uuid4(),
+        reportId: 12345678,
       },
       body: {},
       session: {},
