@@ -39,6 +39,8 @@ describe('Route Handlers - Shared Controller', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
+
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('values', () => {
