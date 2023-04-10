@@ -96,8 +96,8 @@
   "dependencies": {
     "@ministryofjustice/frontend": "1.6.3",
     "agentkeepalive": "4.2.1",
-    "applicationinsights": "2.3.6",
-    "aws-sdk": "2.1269.0",
+    "applicationinsights": "2.5.1",
+    "aws-sdk": "2.1354.0",
     "body-parser": "1.20.1",
     "bunyan": "1.8.15",
     "bunyan-format": "0.2.1",
@@ -127,7 +127,7 @@
     "reflect-metadata": "0.1.13",
     "superagent": "8.0.5",
     "swagger-ui-express": "4.6.0",
-    "typeorm": "0.3.11",
+    "typeorm": "0.3.14",
     "uuid": "9.0.0"
   },
   "devDependencies": {
