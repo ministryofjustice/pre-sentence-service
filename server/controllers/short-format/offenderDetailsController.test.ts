@@ -3,9 +3,11 @@ import { Request, Response } from 'express'
 import OffenderDetailsController from './offenderDetailsController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
+import { validateUUID } from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Offender Details Controller', () => {
   let mockedReportService: ReportService
@@ -13,6 +15,8 @@ describe('Route Handlers - Offender Details Controller', () => {
   let handler: OffenderDetailsController
   let req: Request
   let res: Response
+
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
 
   beforeAll(() => {
     mockedReportService = new ReportService()
@@ -34,11 +38,13 @@ describe('Route Handlers - Offender Details Controller', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
+      expect(validateUUIDMock).toHaveBeenCalled()
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {

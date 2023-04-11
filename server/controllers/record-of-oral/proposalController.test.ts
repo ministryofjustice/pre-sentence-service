@@ -4,15 +4,18 @@ import { FormValidation, ValidatedForm, validateForm } from '../../utils/formVal
 import ProposalController from './proposalController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
+import { validateUUID } from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
 jest.mock('../../utils/formValidation')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Proposal Controller', () => {
   const validateFormMock = validateForm as jest.MockedFunction<
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
   let mockedReportService: ReportService
   let mockedCommunityService: CommunityService
   let handler: ProposalController
@@ -49,6 +52,7 @@ describe('Route Handlers - Proposal Controller', () => {
         },
       ],
     })
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('GET', () => {

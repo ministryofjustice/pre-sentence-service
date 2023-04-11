@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { format } from 'date-fns'
-import { validate } from 'uuid'
 
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
@@ -215,7 +214,7 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if(validateUUID(req.params.reportId)) {
+    if (validateUUID(req.params.reportId)) {
       this.report = await this.reportService.getReportById(req.params.reportId)
       if (this.report) {
         if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
@@ -227,8 +226,8 @@ export default class SharedController {
 
         if (!req.session?.isAllowedAccess) {
           const inclusionExclusionCheck = await this.checkInclusionExclusion(
-              persistentData.crn,
-              res.locals?.user?.username
+            persistentData.crn,
+            res.locals?.user?.username
           )
           if (!inclusionExclusionCheck.hasAccess) {
             res.render('pages/error', {
@@ -267,11 +266,9 @@ export default class SharedController {
       } else {
         res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
       }
-    }else{
+    } else {
       res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
-
     }
-
   }
 
   public post = async (req: Request, res: Response): Promise<void> => {

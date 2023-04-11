@@ -3,9 +3,11 @@ import { Request, Response } from 'express'
 import ReportCompletedController from './reportCompletedController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
+import { validateUUID } from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Report Completed Controller', () => {
   let mockedReportService: ReportService
@@ -13,6 +15,7 @@ describe('Route Handlers - Report Completed Controller', () => {
   let handler: ReportCompletedController
   let req: Request
   let res: Response
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
 
   beforeAll(() => {
     mockedReportService = new ReportService()
@@ -32,6 +35,7 @@ describe('Route Handlers - Report Completed Controller', () => {
     res = {
       render: jest.fn(),
     } as unknown as Response
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('GET', () => {

@@ -3,9 +3,11 @@ import { Request, Response } from 'express'
 import LandingPageController from './landingPageController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
+import { validateUUID } from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Controller', () => {
   let mockedReportService: ReportService
@@ -13,6 +15,8 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
   let handler: LandingPageController
   let req: Request
   let res: Response
+
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
 
   beforeAll(() => {
     mockedReportService = new ReportService()
@@ -32,6 +36,7 @@ describe('Route Handlers - Short Format Pre-Sentence Report Landing Page Control
     res = {
       render: jest.fn(),
     } as unknown as Response
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('GET', () => {
