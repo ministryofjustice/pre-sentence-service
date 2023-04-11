@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import ReportCompletedController from './reportCompletedController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')

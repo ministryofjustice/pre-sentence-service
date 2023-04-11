@@ -4,7 +4,7 @@ import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')

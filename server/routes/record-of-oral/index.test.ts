@@ -1,7 +1,7 @@
 import type { Express } from 'express'
 import request from 'supertest'
 import appWithViewRoutes from '../testutils/appSetup'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
@@ -18,9 +18,7 @@ jest.mock('../../utils/reportValidation')
 
 describe('GET /record-of-oral', () => {
   let app: Express
-  const validateUUIDMock = validateUUID as jest.MockedFunction<
-    (uuid: string) => boolean
-  >
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
 
   beforeAll(() => {
     app = appWithViewRoutes({})

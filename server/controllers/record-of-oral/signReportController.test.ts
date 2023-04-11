@@ -5,7 +5,7 @@ import SignReportController from './signReportController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')

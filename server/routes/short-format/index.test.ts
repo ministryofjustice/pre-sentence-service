@@ -1,7 +1,7 @@
 import type { Express } from 'express'
 import request from 'supertest'
 import appWithViewRoutes from '../testutils/appSetup'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {

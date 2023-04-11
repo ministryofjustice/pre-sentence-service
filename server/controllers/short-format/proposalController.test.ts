@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
-import { validateUUID } from '../../utils/reportValidation'
+import validateUUID from '../../utils/reportValidation'
 
 import ProposalController from './proposalController'
 import ReportService from '../../services/reportService'
