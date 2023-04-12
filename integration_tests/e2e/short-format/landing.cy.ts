@@ -82,8 +82,8 @@ context('Short Format Pre-Sentence Report landing page error statuses', () => {
   describe('The Page should return a 404 for a missing report', () => {
     it('return a 404', () => {
       cy.request({ url: `${path}/${notFoundReportId}`, failOnStatusCode: false })
-          .its('status')
-          .should('equal', 404)
+        .its('status')
+        .should('equal', 404)
       cy.visit(`${path}/${notFoundReportId}`, { failOnStatusCode: false })
     })
   })
@@ -91,8 +91,8 @@ context('Short Format Pre-Sentence Report landing page error statuses', () => {
   describe('The Page should return a 404 for an invalid report id', () => {
     it('return a 404', () => {
       cy.request({ url: `${path}/${inlaidReportId}`, failOnStatusCode: false })
-          .its('status')
-          .should('equal', 404)
+        .its('status')
+        .should('equal', 404)
       cy.visit(`${path}/${inlaidReportId}`, { failOnStatusCode: false })
     })
   })
