@@ -29,6 +29,7 @@ generic-service:
     delius-prod-1: "52.56.115.146/32"
     delius-prod-2: "35.178.104.253/32"
     delius-prod-3: "35.177.47.45/32"
+    global-protect: "35.176.93.186/32"
 
 wproofreader:
 
@@ -46,3 +47,4 @@ wproofreader:
     delius-prod-1: "52.56.115.146/32"
     delius-prod-2: "35.178.104.253/32"
     delius-prod-3: "35.177.47.45/32"
+    global-protect: "35.176.93.186/32"
