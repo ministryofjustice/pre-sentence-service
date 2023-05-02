@@ -30,6 +30,7 @@ generic-service:
     delius-pre-prod-1: "52.56.240.62/32"
     delius-pre-prod-2: "18.130.110.168/32"
     delius-pre-prod-3: "35.178.44.184/32"
+    global-protect: "35.176.93.186/32"
 
 gotenberg:
   replicaCount: 1
@@ -50,3 +51,4 @@ wproofreader:
       delius-pre-prod-1: "52.56.240.62/32"
       delius-pre-prod-2: "18.130.110.168/32"
       delius-pre-prod-3: "35.178.44.184/32"
+      global-protect: "35.176.93.186/32"
