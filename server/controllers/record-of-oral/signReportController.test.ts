@@ -63,7 +63,6 @@ describe('Route Handlers - Sign Report Controller', () => {
         ...handler.templateValues,
         data: {
           reportAuthor: '',
-          ...handler.data,
           'completionDate-day': `0${today.getDate()}`.slice(-2),
           'completionDate-month': `0${today.getMonth() + 1}`.slice(-2),
           'completionDate-year': today.getFullYear(),

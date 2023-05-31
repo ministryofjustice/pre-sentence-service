@@ -21,6 +21,13 @@ export interface TemplateValues {
   formValidation?: ValidatedForm
 }
 
+export interface Data {
+  crn?: string
+  name?: string
+  age?: number
+  dateOfBirth?: string
+}
+
 interface InclusionExclusion {
   hasAccess: boolean
   disallowedMessage?: string
@@ -37,13 +44,6 @@ export default class SharedController {
 
   redirectPath = ''
 
-  data: {
-    crn?: string
-    name?: string
-    age?: number
-    dateOfBirth?: string
-  } = {}
-
   defaultTemplateData = {}
 
   pageFields: Array<string> = []
@@ -58,9 +58,9 @@ export default class SharedController {
     required: [],
   }
 
-  updateReport: () => void
+  updateReport: (data?: Data) => Data | null
 
-  additionalPostAction: () => void
+  additionalPostAction: (data?: Data) => void
 
   correctFormData: (req: Request) => object
 
@@ -104,15 +104,16 @@ export default class SharedController {
     }
   }
 
-  private getStoredData = () => {
-    this.data = {}
+  private getStoredData = (): Data => {
+    const data = {}
     if (this.report && this.report.fieldValues) {
       this.report.fieldValues.forEach(item => {
         if (this.pageFields.includes(item.field.name)) {
-          this.data[item.field.name] = item.value
+          data[item.field.name] = item.value
         }
       })
     }
+    return data
   }
 
   private getPersistentData = (): object => {
@@ -219,7 +220,7 @@ export default class SharedController {
         res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
         return
       }
-      this.getStoredData()
+      let data = this.getStoredData()
       const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
       if (!req.session?.isAllowedAccess) {
@@ -243,11 +244,10 @@ export default class SharedController {
         formattedName = await this.populateFieldValuesAndGetName()
       }
       if (this.updateReport) {
-        this.data = {
-          ...this.data,
+        data = this.updateReport({
+          ...data,
           ...persistentData,
-        }
-        await this.updateReport()
+        })
       }
       req.session.fieldValues = this.report.fieldValues
       this.renderTemplate(res, {
@@ -256,7 +256,7 @@ export default class SharedController {
         data: {
           name: formattedName,
           ...this.defaultTemplateData,
-          ...this.data,
+          ...data,
           ...this.report,
           ...persistentData,
         },
@@ -269,6 +269,7 @@ export default class SharedController {
   public post = async (req: Request, res: Response): Promise<void> => {
     this.report = await this.reportService.getReportById(req.params.reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
+    let data = this.getStoredData()
     if (validatedForm.isValid || req.query?.redirectPath) {
       if (this.correctFormData) {
         req.body = {
@@ -284,11 +285,11 @@ export default class SharedController {
         await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
         await this.updateFields(req.body)
         if (this.additionalPostAction) {
-          this.data = {
-            ...this.data,
+          data = {
+            ...data,
             ...this.getPersistentData(),
           }
-          await this.additionalPostAction()
+          await this.additionalPostAction(data)
         }
         res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
       } else {
@@ -297,7 +298,7 @@ export default class SharedController {
           reportId: req.params.reportId,
           data: {
             versionMismatch: true,
-            ...this.data,
+            ...data,
             ...req.body,
             ...this.getPersistentData(),
           },
@@ -308,7 +309,7 @@ export default class SharedController {
         ...this.templateValues,
         reportId: req.params.reportId,
         data: {
-          ...this.data,
+          ...data,
           ...req.body,
           ...this.getPersistentData(),
         },

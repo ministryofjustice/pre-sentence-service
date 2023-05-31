@@ -56,8 +56,9 @@ describe('Route Handlers - Offence Analysis Controller', () => {
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        reportId: undefined,
         data: {
-          ...handler.data,
+          name: undefined,
         },
       })
     })

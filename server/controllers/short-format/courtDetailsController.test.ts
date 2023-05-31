@@ -56,8 +56,12 @@ describe('Route Handlers - Court Details Controller', () => {
       await handler.get(req, res)
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        reportId: undefined,
         data: {
-          ...handler.data,
+          name: undefined,
+          'dateOfHearing-day': '01',
+          'dateOfHearing-month': '03',
+          'dateOfHearing-year': 2023,
         },
       })
     })
