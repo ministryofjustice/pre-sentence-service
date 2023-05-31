@@ -65,3 +65,35 @@ context('Short Format Pre-Sentence Report landing page', () => {
     })
   })
 })
+
+context('Short Format Pre-Sentence Report landing page error statuses', () => {
+  const notFoundReportId = '0877ed35-e59a-4e94-b2bd-11111111111111'
+  const inlaidReportId = '0877ed35-'
+  const path = `/${new BaseController().path}`
+
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubSignIn')
+    cy.task('stubAuthUser')
+    cy.task('stubUserAccess')
+    cy.signIn()
+  })
+
+  describe('The Page should return a 404 for a missing report', () => {
+    it('return a 404', () => {
+      cy.request({ url: `${path}/${notFoundReportId}`, failOnStatusCode: false })
+        .its('status')
+        .should('equal', 404)
+      cy.visit(`${path}/${notFoundReportId}`, { failOnStatusCode: false })
+    })
+  })
+
+  describe('The Page should return a 404 for an invalid report id', () => {
+    it('return a 404', () => {
+      cy.request({ url: `${path}/${inlaidReportId}`, failOnStatusCode: false })
+        .its('status')
+        .should('equal', 404)
+      cy.visit(`${path}/${inlaidReportId}`, { failOnStatusCode: false })
+    })
+  })
+})

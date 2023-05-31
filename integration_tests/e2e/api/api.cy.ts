@@ -77,4 +77,20 @@ xcontext('API v1', () => {
       cy.get('h1').contains('Short Format Pre-Sentence Report')
     })
   })
+
+  describe('Error handling', () => {
+    it('should return a 404 for an invalid UUID on GET', () => {
+      cy.request('GET', `/api/v1/report/123-not-valid-456`).as('request')
+      cy.get('@request').then(response => {
+        expect(response.status).to.eq(404)
+      })
+    })
+
+    it('should return a 404 for a non-existent on GET', () => {
+      cy.request('GET', `/api/v1/report/B90C4EAF-9D07-45B0-9CB2-FAFF60744BBE`).as('request')
+      cy.get('@request').then(response => {
+        expect(response.status).to.eq(404)
+      })
+    })
+  })
 })

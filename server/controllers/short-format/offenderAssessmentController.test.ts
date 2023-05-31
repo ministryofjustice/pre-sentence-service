@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
+import validateUUID from '../../utils/reportValidation'
 
 import OffenderAssessmentController from './offenderAssessmentController'
 import ReportService from '../../services/reportService'
@@ -8,11 +9,14 @@ import CommunityService from '../../services/communityService'
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
 jest.mock('../../utils/formValidation')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Offender Assessment Controller', () => {
   const validateFormMock = validateForm as jest.MockedFunction<
     (formData: FormData, formValidation: FormValidation) => ValidatedForm
   >
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
+
   let mockedReportService: ReportService
   let mockedCommunityService: CommunityService
   let handler: OffenderAssessmentController
@@ -49,11 +53,13 @@ describe('Route Handlers - Offender Assessment Controller', () => {
         },
       ],
     })
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
+      expect(validateUUIDMock).toHaveBeenCalled()
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
         data: {

@@ -12,6 +12,7 @@ import PreSentenceToDeliusService, { IContext } from '../../services/preSentence
 import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
 import logger from '../../../logger'
+import validateUUID from '../../utils/reportValidation'
 
 export interface TemplateValues {
   preSentenceType: string
@@ -213,54 +214,58 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    this.report = await this.reportService.getReportById(req.params.reportId)
-    if (this.report) {
-      if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
-        res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
-        return
-      }
-      this.getStoredData()
-      const persistentData: { name?: string; crn?: string } = this.getPersistentData()
-
-      if (!req.session?.isAllowedAccess) {
-        const inclusionExclusionCheck = await this.checkInclusionExclusion(
-          persistentData.crn,
-          res.locals?.user?.username
-        )
-        if (!inclusionExclusionCheck.hasAccess) {
-          res.render('pages/error', {
-            message: inclusionExclusionCheck.disallowedMessage,
-            stack: inclusionExclusionCheck.disallowedStack,
-            status: inclusionExclusionCheck.status,
-          })
+    if (validateUUID(req.params.reportId)) {
+      this.report = await this.reportService.getReportById(req.params.reportId)
+      if (this.report) {
+        if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
+          res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
           return
         }
-        req.session.isAllowedAccess = true
-      }
+        this.getStoredData()
+        const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
-      let formattedName
-      if (!persistentData.name) {
-        formattedName = await this.populateFieldValuesAndGetName()
-      }
-      if (this.updateReport) {
-        this.data = {
-          ...this.data,
-          ...persistentData,
+        if (!req.session?.isAllowedAccess) {
+          const inclusionExclusionCheck = await this.checkInclusionExclusion(
+            persistentData.crn,
+            res.locals?.user?.username
+          )
+          if (!inclusionExclusionCheck.hasAccess) {
+            res.render('pages/error', {
+              message: inclusionExclusionCheck.disallowedMessage,
+              stack: inclusionExclusionCheck.disallowedStack,
+              status: inclusionExclusionCheck.status,
+            })
+            return
+          }
+          req.session.isAllowedAccess = true
         }
-        await this.updateReport()
+
+        let formattedName
+        if (!persistentData.name) {
+          formattedName = await this.populateFieldValuesAndGetName()
+        }
+        if (this.updateReport) {
+          this.data = {
+            ...this.data,
+            ...persistentData,
+          }
+          await this.updateReport()
+        }
+        req.session.fieldValues = this.report.fieldValues
+        this.renderTemplate(res, {
+          ...this.templateValues,
+          reportId: req.params.reportId,
+          data: {
+            name: formattedName,
+            ...this.defaultTemplateData,
+            ...this.data,
+            ...this.report,
+            ...persistentData,
+          },
+        })
+      } else {
+        res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
       }
-      req.session.fieldValues = this.report.fieldValues
-      this.renderTemplate(res, {
-        ...this.templateValues,
-        reportId: req.params.reportId,
-        data: {
-          name: formattedName,
-          ...this.defaultTemplateData,
-          ...this.data,
-          ...this.report,
-          ...persistentData,
-        },
-      })
     } else {
       res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
     }

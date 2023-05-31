@@ -4,11 +4,14 @@ import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
+import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
+jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Shared Controller', () => {
+  const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
   let mockedReportService: ReportService
   let mockedCommunityService: CommunityService
   let handler: SharedController
@@ -28,7 +31,7 @@ describe('Route Handlers - Shared Controller', () => {
   beforeEach(() => {
     req = {
       params: {
-        reportId: '12345678',
+        reportId: 12345678,
       },
       body: {},
       session: {},
@@ -37,6 +40,8 @@ describe('Route Handlers - Shared Controller', () => {
       render: jest.fn(),
       redirect: jest.fn(),
     } as unknown as Response
+
+    validateUUIDMock.mockReturnValue(true)
   })
 
   describe('values', () => {
@@ -70,9 +75,11 @@ describe('Route Handlers - Shared Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
+      expect(validateUUIDMock).toHaveBeenCalled()
+      const { reportId } = req.params
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
-        reportId: '12345678',
+        reportId,
         data: {
           ...mockedReportData,
           ...handler.data,
