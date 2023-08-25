@@ -57,6 +57,7 @@ export default class ApiController {
       res.status(201).json({
         ...report,
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
+        url: `${config.domain}/api/v1/report/${report.id}`,
       })
     } catch (error) {
       if (report) {
