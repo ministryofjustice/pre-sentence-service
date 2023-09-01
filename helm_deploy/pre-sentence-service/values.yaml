@@ -4,6 +4,8 @@ generic-service:
 
   replicaCount: 4
 
+  serviceAccountName: "court-case-service"
+
   image:
     repository: quay.io/hmpps/pre-sentence-service
     tag: app_version    # override at deployment time
