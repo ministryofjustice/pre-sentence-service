@@ -37,7 +37,7 @@ parameters:
 
   node-version:
     type: string
-    default: 18.12.0-browsers
+    default: 20.5.1-browsers
 
 
 jobs:
