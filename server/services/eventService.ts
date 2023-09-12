@@ -35,8 +35,6 @@ export default class EventService {
   private sns = new SNS({
     endpoint: config.aws.sns.endpoint,
     region: config.aws.sns.region,
-    accessKeyId: config.aws.sns.accessKeyId,
-    secretAccessKey: config.aws.sns.secretAccessKey,
   })
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {

@@ -59,8 +59,6 @@ generic-service:
     pre-sentence-service-wproofreader:
       WP_LICENSE_KEY: "WP_LICENSE_KEY"
     hmpps-domain-events-topic:
-      ACCESS_KEY_ID: "access_key_id"
-      SECRET_ACCESS_KEY: "secret_access_key"
       TOPIC_ARN: "topic_arn"
 
 gotenberg:
