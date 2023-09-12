@@ -94,6 +94,8 @@
     ]
   },
   "dependencies": {
+    "@aws-sdk/client-sts": "^3.410.0",
+    "@aws-sdk/credential-provider-web-identity": "^3.410.0",
     "@ministryofjustice/frontend": "1.6.3",
     "agentkeepalive": "4.2.1",
     "applicationinsights": "2.3.6",
