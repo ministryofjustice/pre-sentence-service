@@ -1,8 +1,5 @@
 import { SNS, TokenFileWebIdentityCredentials } from 'aws-sdk'
 import { SendMessageResult } from 'aws-sdk/clients/sqs'
-// import { getDefaultRoleAssumerWithWebIdentity } from '@aws-sdk/client-sts'
-// import { fromTokenFile } from '@aws-sdk/credential-provider-web-identity'
-
 import logger from '../../logger'
 import config from '../config'
 
