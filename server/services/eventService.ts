@@ -37,7 +37,7 @@ export default class EventService {
   private sns = new SNS({
     endpoint: config.aws.sns.endpoint,
     region: config.aws.sns.region,
-    credentialProvider: new TokenFileWebIdentityCredentials(),
+    credentials: new TokenFileWebIdentityCredentials(),
   })
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
