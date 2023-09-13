@@ -1,5 +1,9 @@
 import { SNS } from 'aws-sdk'
 import { SendMessageResult } from 'aws-sdk/clients/sqs'
+// eslint-disable-next-line import/no-unresolved
+import { getDefaultRoleAssumerWithWebIdentity } from 'aws-sdk/client-sts'
+// eslint-disable-next-line import/no-unresolved
+import { fromTokenFile } from 'aws-sdk/credential-provider-web-identity'
 
 import logger from '../../logger'
 import config from '../config'
@@ -35,6 +39,9 @@ export default class EventService {
   private sns = new SNS({
     endpoint: config.aws.sns.endpoint,
     region: config.aws.sns.region,
+    credentials: fromTokenFile({
+      roleAssumerWithWebIdentity: getDefaultRoleAssumerWithWebIdentity(),
+    }),
   })
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
