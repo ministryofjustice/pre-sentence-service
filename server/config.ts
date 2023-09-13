@@ -125,8 +125,6 @@ export default {
         'arn:aws:sns:eu-west-2:000000000000:pre-sentence-service-topic-arn',
         requiredInProduction
       ),
-      accessKeyId: get('ACCESS_KEY_ID', 'pre-sentence-service', requiredInProduction),
-      secretAccessKey: get('SECRET_ACCESS_KEY', 'pre-sentence-service', requiredInProduction),
       eventVersion: 1,
     },
   },

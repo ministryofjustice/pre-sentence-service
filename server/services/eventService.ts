@@ -1,6 +1,5 @@
-import { SNS } from 'aws-sdk'
+import { SNS, TokenFileWebIdentityCredentials } from 'aws-sdk'
 import { SendMessageResult } from 'aws-sdk/clients/sqs'
-
 import logger from '../../logger'
 import config from '../config'
 
@@ -35,8 +34,7 @@ export default class EventService {
   private sns = new SNS({
     endpoint: config.aws.sns.endpoint,
     region: config.aws.sns.region,
-    accessKeyId: config.aws.sns.accessKeyId,
-    secretAccessKey: config.aws.sns.secretAccessKey,
+    credentials: new TokenFileWebIdentityCredentials(),
   })
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
