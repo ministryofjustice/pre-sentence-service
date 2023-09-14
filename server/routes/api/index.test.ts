@@ -2,7 +2,7 @@ import { Express } from 'express'
 import request from 'supertest'
 import { appWithApiRoutes } from '../testutils/appSetup'
 
-const mockReportData = {
+const mockShortFormatData = {
   id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
   status: 'NOT_STARTED',
   reportDefinitionId: 1,
@@ -21,6 +21,27 @@ const mockReportData = {
   },
   urn: 'uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
   url: 'http://localhost:3000/short-format/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+}
+
+const mockOralReportData = {
+  id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  status: 'NOT_STARTED',
+  reportDefinitionId: 1,
+  eventNumber: '10',
+  fieldValues: [
+    {
+      value: 'Some field value',
+      field: {
+        name: 'some_field_name',
+      },
+    },
+  ],
+  reportDefinition: {
+    type: 'some_report_type',
+    version: 1,
+  },
+  urn: 'uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  url: 'http://localhost:3000/record-of-oral/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
 }
 
 const mockReportsData = [
@@ -43,12 +64,12 @@ jest.mock('../../services/reportService', () => {
     return {
       createReport: () => {
         return new Promise(resolve => {
-          process.nextTick(() => resolve(mockReportData))
+          process.nextTick(() => resolve(mockShortFormatData))
         })
       },
       getReportById: () => {
         return new Promise(resolve => {
-          process.nextTick(() => resolve(mockReportData))
+          process.nextTick(() => resolve(mockShortFormatData))
         })
       },
       getAllReportsByType: () => {
@@ -98,7 +119,7 @@ describe('Route Handlers - API', () => {
         .send({ crn: 'DX12340A', eventNumber: '100' })
         // .expect('Content-Type', /json/)
         .expect(res => {
-          expect(res.text).toEqual(JSON.stringify(mockReportData))
+          expect(res.text).toEqual(JSON.stringify(mockOralReportData))
         })
     )
   })
@@ -109,7 +130,7 @@ describe('Route Handlers - API', () => {
       .send({ crn: 'DX12340A', eventNumber: '100' })
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockReportData))
+        expect(res.text).toEqual(JSON.stringify(mockOralReportData))
       })
   })
 
@@ -119,7 +140,7 @@ describe('Route Handlers - API', () => {
       .send({ crn: 'DX12340A', eventNumber: '100' })
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockReportData))
+        expect(res.text).toEqual(JSON.stringify(mockShortFormatData))
       })
   })
 
@@ -128,7 +149,7 @@ describe('Route Handlers - API', () => {
       .get('/api/v1/report/0a15ce57-c46e-4b71-84f0-49dbed4bb81e')
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockReportData))
+        expect(res.text).toEqual(JSON.stringify(mockShortFormatData))
       })
   })
 
