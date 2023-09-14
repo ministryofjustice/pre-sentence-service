@@ -20,7 +20,7 @@ const mockReportData = {
     version: 1,
   },
   urn: 'uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
-  url: 'http://localhost:3000/api/v1/report/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  url: 'http://localhost:3000/short-format/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
 }
 
 const mockReportsData = [
