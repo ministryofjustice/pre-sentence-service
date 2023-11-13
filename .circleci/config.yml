@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@6.1.0
+  hmpps: ministryofjustice/hmpps@7
   slack: circleci/slack@4.10.1
 
 executors:
@@ -20,11 +20,9 @@ executors:
           POSTGRES_USER: pre-sentence-service
           POSTGRES_DB: pre-sentence-service
       - image: bitnami/redis:7.0.5
-        environment:
-          ALLOW_EMPTY_PASSWORD=yes
+        environment: ALLOW_EMPTY_PASSWORD=yes
       - image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
     working_directory: ~/app
-
 
 parameters:
   alerts-slack-channel:
@@ -38,7 +36,6 @@ parameters:
   node-version:
     type: string
     default: 20.5.1-browsers
-
 
 jobs:
   build:
@@ -67,7 +64,8 @@ jobs:
             export BUILD_NUMBER=${DATE}.${CIRCLE_BUILD_NUM}
             export GIT_REF="$CIRCLE_SHA1"
             npm run record-build-info
-      - run: # Run linter after build because the integration test code depend on compiled typescript...
+      - run:
+          # Run linter after build because the integration test code depend on compiled typescript...
           name: Linter check
           command: npm run lint
       - persist_to_workspace:
