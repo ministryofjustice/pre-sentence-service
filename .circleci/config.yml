@@ -194,7 +194,6 @@ workflows:
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
           context:
             - hmpps-common-vars
-            - court-probation-live-dev
           filters:
             branches:
               only:
