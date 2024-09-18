@@ -1,0 +1,7 @@
+.app-notification-banner-error {
+  border-color: $govuk-error-colour;
+
+  .govuk-notification-banner__header {
+    background-color: $govuk-error-colour;
+  }
+}
