@@ -15,9 +15,8 @@ enum DateFieldProp {
 
 export const SummaryPage = (props: { id: string }) => {
     const pathname = usePathname()
-    const { updatePageSaveState, questions, pageSaveState } = useReportStore((state) => state)
+    const { updatePageSaveState, questions, pageSaveState, errors } = useReportStore((state) => state)
 
-    console.log("🚀 ~ SummaryList ~ questions:", pageSaveState)
     const unsavedPages = []
 
     for (var key in pageSaveState) {
@@ -26,8 +25,6 @@ export const SummaryPage = (props: { id: string }) => {
                 unsavedPages.push(key)
         }
     }
-
-    console.log("🚀 ~ SummaryPage ~ unsavedPages:", unsavedPages)
 
     const savePage = () => {
         // do client side zustand state update, then do actual server side save to persist page to database
@@ -53,9 +50,9 @@ export const SummaryPage = (props: { id: string }) => {
         <div className="govuk-grid-column-two-thirds">
             <Heading size="LARGE">Check your answers</Heading>
 
-            {unsavedPages.length > 0 ?
+            {unsavedPages.length > 0 || errors.length > 0 ?
                 <ErrorSummary
-                    description="You have unsaved data, check the navigation bar for unsaved pages"
+                    description="You have unsaved data or errors, check the navigation bar for affected pages"
 
                     heading="Unsaved data"
                 /> : null}
@@ -70,8 +67,8 @@ export const SummaryPage = (props: { id: string }) => {
                     data: getDateQuestion('defendant-date-of-birth')
                 },
                 {
-                    displayName: 'Sample text field',
-                    data: getTextQuestion('summary-of-offences-sample-text-field')
+                    displayName: 'Culpability',
+                    data: getTextQuestion('culpability-and-risk-culpability')
                 }
             ]} questionId='summary' page={pathname} />
             <br />
