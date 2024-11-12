@@ -16,7 +16,6 @@ export const DefendantDetailsPage = (props: { id: string }) => {
     const { updateQuestion, questions, updatePageSaveState, pageSaveState } = useReportStore((state) => state)
 
     const savePage = () => {
-        // do client side zustand state update, then do actual server side save to persist page to database
         updatePageSaveState(pathname, 'saved')
     }
 
@@ -35,11 +34,19 @@ export const DefendantDetailsPage = (props: { id: string }) => {
         <div className="govuk-grid-column-two-thirds">
             <Caption>Dylan Adam Armstrong CRN: E234516</Caption>
             <Heading size="LARGE">Defendant details</Heading>
+
             <ErrorSummaryState page={pathname} />
+
+            {/* <TextInput page={pathname} questionId='defendant-full-name' heading="Full name" /> */}
             <TextInput page={pathname} questionId='defendant-full-name' validators={[nameValidator]} heading="Full name" />
+
+            <hr className='mb-4 mt-4' />
+
             <DateInput page={pathname} questionId='defendant-date-of-birth' hintText="For example, 27 3 2004" heading="Date of birth" />
 
-            <Heading size="LARGE">Current address</Heading>
+            <hr className='mb-4 mt-4' />
+
+            <Heading size="MEDIUM">Current address</Heading>
             <TextInput page={pathname} required={true} questionId='defendant-current-address-line1' subheading="Address line 1" />
             <TextInput page={pathname} questionId='defendant-current-address-line2' subheading="Address line 2 (optional)" />
             <TextInput page={pathname} questionId='defendant-current-address-town' subheading="Town or city" />

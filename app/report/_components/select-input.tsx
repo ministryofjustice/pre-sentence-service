@@ -33,13 +33,13 @@ function SelectInput(props: SelectInputProps) {
         <Select
             input={{
                 name: props.questionId,
-                onChange: validateAndUpdate
+                onChange: validateAndUpdate,
             }}
             label={props.label ?? ''}
         >
             {props.items?.map(item =>
             (
-                <option value={item.value}>
+                <option value={item.value} selected={questions[props.questionId] === item.value}>
                     {item.key}
                 </option>
             ))}

@@ -57,6 +57,7 @@ export const SummaryPage = (props: { id: string }) => {
                     heading="Unsaved data"
                 /> : null}
 
+            <Heading size="MEDIUM">Defendant details</Heading>
             <SummaryList questions={[
                 {
                     displayName: 'Full name',
@@ -67,11 +68,56 @@ export const SummaryPage = (props: { id: string }) => {
                     data: getDateQuestion('defendant-date-of-birth')
                 },
                 {
+                    displayName: 'Address line 1',
+                    data: getTextQuestion('defendant-current-address-line1')
+                },
+                {
+                    displayName: 'Address line 2',
+                    data: getTextQuestion('defendant-current-address-line2')
+                },
+                {
+                    displayName: 'Town',
+                    data: getTextQuestion('defendant-current-address-town')
+                },
+                {
+                    displayName: 'County',
+                    data: getTextQuestion('defendant-current-address-county')
+                },
+                {
+                    displayName: 'Postcode',
+                    data: getTextQuestion('defendant-current-address-postcode')
+                }
+            ]} questionId='summary-defendant-details' page={pathname} changeLink={`/report/${props.id}/defendant-details`} />
+            <br />
+
+
+            <Heading size="MEDIUM">Culpability and risk</Heading>
+            <SummaryList questions={[
+                {
                     displayName: 'Culpability',
                     data: getTextQuestion('culpability-and-risk-culpability')
+                },
+                {
+                    displayName: 'Risk of domestic abuse',
+                    data: getTextQuestion('culpability-and-risk-risk-of-domestic-abuse')
+                },
+                {
+                    displayName: 'Risk of harm to children',
+                    data: getTextQuestion('culpability-and-risk-risk-of-harm-to-children')
+                },
+                {
+                    displayName: 'Risk of reconviction',
+                    data: getTextQuestion('culpability-and-risk-risk-of-reconviction')
+                },
+                {
+                    displayName: 'Risk of recidivism',
+                    data: getTextQuestion('culpability-and-risk-risk-of-recidivism')
+                },
+                {
+                    displayName: 'Risk of harm to self',
+                    data: getTextQuestion('culpability-and-risk-risk-of-harm-to-self')
                 }
-            ]} questionId='summary' page={pathname} />
-            <br />
+            ]} questionId='summary-defendant-details' page={pathname} changeLink={`/report/${props.id}/culpability-and-risk`} />
 
             <Link onClick={savePage} href={`/report/${props.id}/summary`}>
                 <Button disabled={unsavedPages.length > 0}>Generate Report</Button>

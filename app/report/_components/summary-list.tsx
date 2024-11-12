@@ -9,6 +9,7 @@ type SummaryListInputProps = {
         displayName: string;
         data: string;
     }[]
+    changeLink?: string
 } & BaseComponentProps
 
 export function SummaryList(props: SummaryListInputProps) {
@@ -26,7 +27,7 @@ export function SummaryList(props: SummaryListInputProps) {
                                 {question.data}
                             </dd>
                             <dd className="govuk-summary-list__actions">
-                                <a className="govuk-link" href="#">Change<span className="govuk-visually-hidden"> name</span></a>
+                                <a className="govuk-link" href={props.changeLink}>Change<span className="govuk-visually-hidden"> name</span></a>
                             </dd>
                         </div>
                     </>)

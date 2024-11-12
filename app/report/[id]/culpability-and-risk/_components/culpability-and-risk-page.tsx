@@ -30,39 +30,48 @@ export const CulpabilityAndRiskPage = (props: { id: string }) => {
                 heading="Culpability"
                 subheading='Are there any exenuating circumstances that might make the defendant less accountable for their action or inaction?' />
 
+            <hr className='mb-4' />
+            <Heading size="MEDIUM">Risk factors</Heading>
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-harm-to-others'
                 heading='What is the risk of serious harm to others?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-harm-to-known-individuals'
                 heading='What is the risk of serious harm to known individuals?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
-                questionId='culpability-and-risk-risk-of-domestic abuse'
+                questionId='culpability-and-risk-risk-of-domestic-abuse'
                 heading='What is the risk of domestic abuse?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-harm-to-children'
                 heading='What is the risk of serious harm to children?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-reconviction'
                 heading='What is the risk of serious harm to reconviction?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-recidivism'
                 heading='What is the risk of serious recidivism?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
             <SelectInput page={pathname}
                 questionId='culpability-and-risk-risk-of-harm-to-self'
                 heading='What is the risk of serious harm to themselves?'
+                headingSize='SMALL'
                 items={[{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]} />
 
 
