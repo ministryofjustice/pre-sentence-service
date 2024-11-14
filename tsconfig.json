@@ -30,6 +30,14 @@
       }
     ]
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "cypress.config.ts", "**/*/__mocks__"],
+  "exclude": [
+    "node_modules",
+    "assets/**/*.js",
+    "integration_tests",
+    "dist",
+    "cypress.config.ts",
+    "**/*/__mocks__",
+    "public"
+  ],
   "include": ["**/*.js", "**/*.ts", ".next/types/**/*.ts"]
 }
