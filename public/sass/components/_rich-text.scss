@@ -1,0 +1,14 @@
+.app-ckeditor5-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--ck-color-toolbar-background);
+  border: 1px solid var(--ck-color-toolbar-border);
+  padding: 10px;
+  border-radius: var(--ck-border-radius);
+  margin-top: -1.5em;
+  margin-bottom: 1.5em;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}

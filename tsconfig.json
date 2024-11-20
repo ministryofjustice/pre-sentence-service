@@ -17,8 +17,27 @@
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "cypress.config.ts", "**/*/__mocks__"],
-  "include": ["**/*.js", "**/*.ts"]
+  "exclude": [
+    "node_modules",
+    "assets/**/*.js",
+    "integration_tests",
+    "dist",
+    "cypress.config.ts",
+    "**/*/__mocks__",
+    "public"
+  ],
+  "include": ["**/*.js", "**/*.ts", ".next/types/**/*.ts"]
 }
