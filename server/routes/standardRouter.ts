@@ -8,8 +8,6 @@ import tokenVerifier from '../data/tokenVerification'
 import setUpAuthentication from '../middleware/setUpAuthentication'
 import authorisationMiddleware from '../middleware/authorisationMiddleware'
 import populateCurrentUser from '../middleware/populateCurrentUser'
-import shortFormatRoutes from './short-format'
-import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
@@ -48,8 +46,6 @@ export default function standardRouter(
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
-  router.use(recordOfOralRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
   router.use(pdfRoutes(reportService))
 
   return router
