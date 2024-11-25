@@ -135,6 +135,15 @@ services:
       - AWS_ENDPOINT=http://localhost:4566
       - ACCESS_KEY_ID=pre-sentence-service
       - SECRET_ACCESS_KEY=pre-sentence-service
+      - AUTH_API_CLIENT_ID=pre-sentence-service
+      - AUTH_API_CLIENT_SECRET=client-secret
+      - PRE_SENTENCE_TO_DELIUS_API_URL=delius-url
+      - COMMUNITY_API_URL=http://localhost:9091
+      - PRE_SENTENCE_URL=pre-sentence-url
+      - WPROOFREADER_PROTOCOL=protocol
+      - WPROOFREADER_HOST=host
+      - TOPIC_ARN=arn
+      - DB_SERVER=postgres
 
 networks:
   hmpps:

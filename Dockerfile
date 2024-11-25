@@ -1,5 +1,5 @@
 # Stage: base image
-FROM node:18.12.0-bullseye-slim as base
+FROM node:18.17.0-bullseye-slim as base
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
@@ -33,6 +33,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit
 
 COPY . .
 RUN npm run build
+RUN npm run next:build
 
 RUN export BUILD_NUMBER=${BUILD_NUMBER} && \
     export GIT_REF=${GIT_REF} && \
@@ -64,8 +65,14 @@ COPY --from=build --chown=appuser:appgroup \
 COPY --from=build --chown=appuser:appgroup \
         /app/node_modules ./node_modules
 
+COPY --from=build --chown=appuser:appgroup \
+        /app/.next ./.next
+
+COPY --from=build --chown=appuser:appgroup \
+        /app/public ./public
+
 EXPOSE 3000
 ENV NODE_ENV='production'
 USER 2000
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "next:start" ]

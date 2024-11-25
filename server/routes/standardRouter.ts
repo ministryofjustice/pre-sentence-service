@@ -8,25 +8,21 @@ import tokenVerifier from '../data/tokenVerification'
 import setUpAuthentication from '../middleware/setUpAuthentication'
 import authorisationMiddleware from '../middleware/authorisationMiddleware'
 import populateCurrentUser from '../middleware/populateCurrentUser'
-import shortFormatRoutes from './short-format'
-import recordOfOralRoutes from './record-of-oral'
 import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
 import CommunityService from '../services/communityService'
-import EventService from '../services/eventService'
 import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
 
 const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(
   userService: UserService,
-  communityService: CommunityService,
-  preSentenceToDeliusService: PreSentenceToDeliusService
+  _communityService: CommunityService,
+  _preSentenceToDeliusService: PreSentenceToDeliusService
 ): Router {
   const router = Router({ mergeParams: true })
-  const eventService = new EventService()
   const reportService = new ReportService()
 
   if (!testMode) {
@@ -48,8 +44,6 @@ export default function standardRouter(
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(shortFormatRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
-  router.use(recordOfOralRoutes(reportService, communityService, eventService, preSentenceToDeliusService))
   router.use(pdfRoutes(reportService))
 
   return router
