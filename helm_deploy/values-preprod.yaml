@@ -20,17 +20,9 @@ generic-service:
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk'
     WPROOFREADER_PORT: null
 
-  allowList:
-    office: "217.33.148.210/32"
-    health-kick: "35.177.252.195/32"
-    mojvpn: "81.134.202.29/32"
-    cloudplatform-live1-1: "35.178.209.113/32"
-    cloudplatform-live1-2: "3.8.51.207/32"
-    cloudplatform-live1-3: "35.177.252.54/32"
-    delius-pre-prod-1: "52.56.240.62/32"
-    delius-pre-prod-2: "18.130.110.168/32"
-    delius-pre-prod-3: "35.178.44.184/32"
-    global-protect: "35.176.93.186/32"
+  allowlist:
+    groups:
+      - delius-pre-prod
 
 gotenberg:
   replicaCount: 1
@@ -41,14 +33,6 @@ wproofreader:
     host: pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk
     tlsSecretName: court-probation-preprod-cert-secret
 
-    allowList:
-      office: "217.33.148.210/32"
-      health-kick: "35.177.252.195/32"
-      mojvpn: "81.134.202.29/32"
-      cloudplatform-live1-1: "35.178.209.113/32"
-      cloudplatform-live1-2: "3.8.51.207/32"
-      cloudplatform-live1-3: "35.177.252.54/32"
-      delius-pre-prod-1: "52.56.240.62/32"
-      delius-pre-prod-2: "18.130.110.168/32"
-      delius-pre-prod-3: "35.178.44.184/32"
-      global-protect: "35.176.93.186/32"
+    allowlist:
+      groups:
+        - delius-pre-prod
