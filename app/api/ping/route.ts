@@ -1,11 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import { NextApiRequest, NextApiResponse } from 'next'
 import { NextResponse } from 'next/server'
 
-type StatusResponse = {
-  status: string
-}
-
-export async function GET(_req: NextApiRequest, res: NextApiResponse<StatusResponse>) {
+export async function GET() {
   return NextResponse.json({ status: 'UP' }, { status: 200 })
 }

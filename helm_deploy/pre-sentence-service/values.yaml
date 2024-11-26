@@ -18,11 +18,11 @@ generic-service:
 
   livenessProbe:
     httpGet:
-      path: /ping
+      path: /api/ping
 
   readinessProbe:
     httpGet:
-      path: /ping
+      path: /api/ping
 
   # Environment variables to load into the deployment
   env:
