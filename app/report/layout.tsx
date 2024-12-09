@@ -3,6 +3,7 @@ import { PropsWithChildren } from "react";
 import { ReportStoreProvider } from '../_providers/report-store-provider'
 import { headers } from 'next/headers'
 import { Sidebar } from './_components/sidebar'
+import React from "react";
 
 export default function ReportLayout({ children }: PropsWithChildren) {
     const requestUrl = headers().get('x-url')
