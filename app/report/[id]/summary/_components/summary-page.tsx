@@ -17,7 +17,7 @@ export const SummaryPage = (props: { id: string }) => {
     const pathname = usePathname()
     const { updatePageSaveState, questions, pageSaveState, errors } = useReportStore((state) => state)
 
-    const unsavedPages = []
+    const unsavedPages:any[] = []
 
     for (var key in pageSaveState) {
         if (pageSaveState.hasOwnProperty(key)) {
