@@ -54,6 +54,7 @@ function Sidebar() {
                 <SidebarItem title='Victim impact assessment' path='/report/1234/victim-impact-assessment' />
                 <SidebarItem title='Culpability and risk' path='/report/1234/culpability-and-risk' />
                 <SidebarItem title='Sign your report' path='/report/1234/sign-your-report' />
+                <SidebarItem title='Publish report' path='/report/1234/publish-report' />
                 <SidebarItem title='Summary' path='/report/1234/summary' />
             </ul>
         </nav>
