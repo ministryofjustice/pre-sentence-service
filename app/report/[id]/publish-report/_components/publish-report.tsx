@@ -9,16 +9,6 @@ import { ParagraphText } from "../../../_components/paragraph"
 export const PublishReport = (props: { id: string }) => {
   const pathname = usePathname();
 
-  const itemListProps = {
-    items: [
-      "attitudes",
-      "responsibility",
-      "circumstances",
-      "motivations",
-      "the defendant's interpretation of the offence",
-    ],
-  };
-
   return (
     <div className="govuk-grid-column-full">
 
