@@ -5,7 +5,6 @@ import { TextInput } from '../../../_components/text-input'
 import React from "react";
 import { usePathname } from "next/navigation";
 import { useReportStore } from "../../../../_providers/report-store-provider";
-import { GREY_3 } from 'govuk-colours';
 
 export const SignYourReportPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -24,7 +23,7 @@ export const SignYourReportPage = (props: { id: string }) => {
                 <Button className="!mt-2 !mr-2">Save and continue</Button>
             </Link>
             <Link onClick={savePage} href={`/report/${props.id}/publish-report`}>
-                <Button className="!mt-2" buttonColour={GREY_3} buttonTextColour="#0b0c0c">Save draft</Button>
+                <Button className="!mt-2" buttonColour="#f3f2f1" buttonTextColour="#0b0c0c">Save draft</Button>
             </Link>
         </div>
     </>
