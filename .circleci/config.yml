@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@6.1.0
+  hmpps: ministryofjustice/hmpps@10.1.1
   slack: circleci/slack@4.10.1
 
 executors:
@@ -192,6 +192,7 @@ workflows:
           name: deploy_dev
           env: "dev"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
+          helm_timeout: "30m"
           context:
             - hmpps-common-vars
             - court-probation-live-dev
