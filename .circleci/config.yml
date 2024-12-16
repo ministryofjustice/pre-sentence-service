@@ -192,6 +192,7 @@ workflows:
           name: deploy_dev
           env: "dev"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
+          helm_timeout: "30m"
           context:
             - hmpps-common-vars
             - court-probation-live-dev
