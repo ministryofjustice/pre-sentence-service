@@ -3,9 +3,13 @@
 import { Heading, Table, Button } from 'govuk-react'
 import Link from 'next/link'
 import React from 'react'
-import { DoAndDont } from "../../_components/do-and-dont"
+import { DoAndDont } from "../../../../_components/do-and-dont"
+import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
 
-export default function DefendantDetailsForm() {
+
+export default function DefendantDetailsForm(props:{ ndeliusContext: IContext }) {
+
+    console.log(props.ndeliusContext)
     return <>
         <Heading size="LARGE" >Writing a pre-sentence report</Heading>
         <p className="govuk-body">Pre-sentence reports help the judiciary determine appropriate sentences in line with their assessment of the seriousness of the offence and the sentencing range set out in Sentencing Council Guidelines.
