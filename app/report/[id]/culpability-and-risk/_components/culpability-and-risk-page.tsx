@@ -8,6 +8,7 @@ import { Button, Caption, Heading } from 'govuk-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
+import { PageHeading } from '../../../_components/page-heading'
 
 export const CulpabilityAndRiskPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -22,8 +23,8 @@ export const CulpabilityAndRiskPage = (props: { id: string }) => {
     return (
 
         <div className="govuk-grid-column-two-thirds">
-            <Caption>Dylan Adam Armstrong CRN: E234516</Caption>
-            <Heading size="LARGE">Culpability and risk</Heading>
+            <PageHeading title='Culpability and risk' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
+
             <TextAreaInput
                 page={pathname}
                 questionId='culpability-and-risk-culpability'

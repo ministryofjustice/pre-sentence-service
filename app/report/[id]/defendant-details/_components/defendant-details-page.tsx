@@ -1,19 +1,36 @@
 // src/components/pages/home-page.tsx
 'use client'
 
-import React from 'react'
+import React, {useEffect} from 'react'
 
 import { useReportStore } from '../../../../_providers/report-store-provider'
 import { Button, Caption, Heading } from 'govuk-react'
 import { TextInput } from '../../../_components/text-input'
 import { DateInput } from '../../../_components/date-input'
+import { PageHeading } from '../../../_components/page-heading'
 import { ErrorSummaryState } from '../../../_components/error-summary-state'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
 
-export const DefendantDetailsPage = (props: { id: string }) => {
+export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IContext  }) => {
     const pathname = usePathname()
     const { updateQuestion, questions, updatePageSaveState, pageSaveState } = useReportStore((state) => state)
+
+    useEffect(() => {
+        updateQuestion('defendant-full-name', pathname, `${props.ndeliusContext.name.forename} ${props.ndeliusContext.name.surname}`)
+        updateQuestion('defendant-crn', pathname, props.ndeliusContext.crn)
+
+        const dob = new Date(props.ndeliusContext.dateOfBirth);
+        updateQuestion('defendant-date-of-birth-DateFieldDay', pathname, dob.getDay())
+        updateQuestion('defendant-date-of-birth-DateFieldMonth', pathname, dob.getMonth() + 1)
+        updateQuestion('defendant-date-of-birth-DateFieldYear', pathname, dob.getFullYear())
+
+        updateQuestion('defendant-current-address-line1', pathname, `${props.ndeliusContext.address.addressNumber} ${props.ndeliusContext.address.buildingName} ${props.ndeliusContext.address.streetName}`)
+        updateQuestion('defendant-current-address-town', pathname, props.ndeliusContext.address.town)
+        updateQuestion('defendant-current-address-county', pathname, props.ndeliusContext.address.county)
+        updateQuestion('defendant-current-address-postcode', pathname, props.ndeliusContext.address.postcode)
+    }, [])
 
     const savePage = () => {
         updatePageSaveState(pathname, 'saved')
@@ -32,17 +49,15 @@ export const DefendantDetailsPage = (props: { id: string }) => {
 
     return (<>
         <div className="govuk-grid-column-two-thirds">
-            <Caption>Dylan Adam Armstrong CRN: E234516</Caption>
-            <Heading size="LARGE">Defendant details</Heading>
+            <PageHeading title='Defendant details' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
 
             <ErrorSummaryState page={pathname} />
 
-            {/* <TextInput page={pathname} questionId='defendant-full-name' heading="Full name" /> */}
-            <TextInput page={pathname} questionId='defendant-full-name' validators={[nameValidator]} heading="Full name" />
+            <TextInput disabled={true} page={pathname} questionId='defendant-full-name' validators={[nameValidator]} heading="Full name" />
 
             <hr className='mb-4 mt-4' />
 
-            <DateInput page={pathname} questionId='defendant-date-of-birth' hintText="For example, 27 3 2004" heading="Date of birth" />
+            <DateInput disabled={true} page={pathname} questionId='defendant-date-of-birth' hintText="For example, 27 3 2004" heading="Date of birth" />
 
             <hr className='mb-4 mt-4' />
 

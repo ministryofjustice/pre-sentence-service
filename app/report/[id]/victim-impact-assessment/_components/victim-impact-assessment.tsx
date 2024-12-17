@@ -8,6 +8,7 @@ import { useReportStore } from "../../../../_providers/report-store-provider"
 import { DetailsComponent } from "../../../_components/details"
 import { ParagraphText } from "../../../_components/paragraph"
 import { TextAreaInput } from "../../../_components/text-area"
+import { PageHeading } from "../../../_components/page-heading";
 
 export const VictimImpactAssessment = (props: { id: string }) => {
   const pathname = usePathname();
@@ -29,8 +30,8 @@ export const VictimImpactAssessment = (props: { id: string }) => {
 
   return (
     <div className="govuk-grid-column-full">
-      <Caption>Dylan Adam Armstrong CRN: E234516</Caption>
-      <Heading size="LARGE">Victim impact assessment</Heading>
+      <PageHeading title='Victim impact assessment' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
+
 
       <ParagraphText text="The victim impact assessment is used to inform sentencing options such as exclusion zones. You will be able to review this later as you are writing your sentencing proposal." />
 

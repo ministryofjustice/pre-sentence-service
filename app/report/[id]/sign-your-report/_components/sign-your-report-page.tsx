@@ -5,6 +5,7 @@ import { TextInput } from '../../../_components/text-input'
 import React from "react";
 import { usePathname } from "next/navigation";
 import { useReportStore } from "../../../../_providers/report-store-provider";
+import { PageHeading } from "../../../_components/page-heading";
 
 export const SignYourReportPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -16,8 +17,8 @@ export const SignYourReportPage = (props: { id: string }) => {
 
     return <>
         <div className="govuk-grid-column-two-thirds">
-            <Caption>Dylan Adam Armstrong CRN: E234516</Caption>
-            <Heading size="LARGE">Sign your report</Heading>
+            <PageHeading title='Sign your report' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
+
             <TextInput page={pathname} questionId='sign-your-report-signature' heading="Full name" />
             <Link onClick={savePage} href={`/report/${props.id}/publish-report`}>
                 <Button className="!mt-2 !mr-2">Save and continue</Button>

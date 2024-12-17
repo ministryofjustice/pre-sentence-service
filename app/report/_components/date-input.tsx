@@ -10,6 +10,7 @@ import { questionHasErrors } from '../../_lib/store-utils'
 type DateInputProps = {
     heading: string
     hintText: string
+    disabled?: boolean;
 } & BaseComponentProps
 
 enum DateFieldProp {

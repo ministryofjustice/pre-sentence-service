@@ -10,6 +10,7 @@ type TextInputProps = {
     heading?: string
     headingSize?: string
     subheading?: string;
+    disabled?: boolean;
 } & BaseComponentProps
 
 function TextInput(props: TextInputProps) {
@@ -61,6 +62,8 @@ function TextInput(props: TextInputProps) {
             defaultValue={questions[props.questionId]}
             onChange={validateAndUpdate}
             error={questionHasErrors(props.page, props.questionId)}
+            disabled={props.disabled}
+            
         />
     </>
 }

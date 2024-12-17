@@ -112,8 +112,9 @@ export default class PreSentenceToDeliusService {
 
   private client = this.clientGetBuilder()
 
-  async getContext(reportId: string) {
+  async getContext(reportId: string): Promise<IContext> {
     const path = `${this.apiUrl}/context/${reportId}`
-    return this.client({ path })
+    const context = await this.client({ path })
+    return context as IContext
   }
 }
