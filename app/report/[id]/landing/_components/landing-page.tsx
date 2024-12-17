@@ -7,9 +7,8 @@ import { DoAndDont } from "../../../../_components/do-and-dont"
 import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
 
 
-export default function DefendantDetailsForm(props:{ ndeliusContext: IContext }) {
+export default function LandingPage(props:{ id: string}) {
 
-    console.log(props.ndeliusContext)
     return <>
         <Heading size="LARGE" >Writing a pre-sentence report</Heading>
         <p className="govuk-body">Pre-sentence reports help the judiciary determine appropriate sentences in line with their assessment of the seriousness of the offence and the sentencing range set out in Sentencing Council Guidelines.
@@ -54,7 +53,7 @@ export default function DefendantDetailsForm(props:{ ndeliusContext: IContext })
         <p className='govuk-body'>Depending on the complexity and nature of the case, you may need to complete other relevant risk assessment tools such as a SARA (Spousal Assault Risk Assessment).</p>
         <p className='govuk-body'>If requested by court you may also need to provide additional detail through dangerousness assessments to get a better understanding of risk.</p>
 
-        <Link href="/report/1234/defendant-details">
+        <Link href={`/report/${props.id}/defendant-details`}>
             <Button start={true}>Start</Button>
         </Link>
     </>
