@@ -6,6 +6,7 @@ import { Button, ErrorSummary, Heading } from 'govuk-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
+import { PageHeading } from '../../../_components/page-heading'
 
 enum DateFieldProp {
     DateFieldDay = 'DateFieldDay',
@@ -48,7 +49,8 @@ export const SummaryPage = (props: { id: string }) => {
 
 
         <div className="govuk-grid-column-two-thirds">
-            <Heading size="LARGE">Check your answers</Heading>
+            <PageHeading title='Check your answers' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
+
 
             {unsavedPages.length > 0 || errors.length > 0 ?
                 <ErrorSummary

@@ -6,6 +6,7 @@ import { Button, Heading } from 'govuk-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
+import { PageHeading } from '../../../_components/page-heading'
 
 export const SummaryOfOffencesPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -20,7 +21,8 @@ export const SummaryOfOffencesPage = (props: { id: string }) => {
     return (
 
         <div className="govuk-grid-column-two-thirds">
-            <Heading size="LARGE">Summary of offences</Heading>
+            <PageHeading title='Summary of offences' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
+
             <TextInput page={pathname} questionId='summary-of-offences-sample-text-field' heading="Sample text field" />
 
             <Link onClick={savePage} href={`/report/${props.id}/summary`}>
