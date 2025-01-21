@@ -7,13 +7,14 @@ import { ParagraphText } from "./paragraph";
 
 export type DetailsProps = {
     summary: string;
+    text?: string;
     itemList?: ItemListProps;
 };
 
-function DetailsComponent({ summary, itemList }: DetailsProps) {
+function DetailsComponent({ summary, itemList, text }: DetailsProps) {
   return (
     <Details summary={summary} open>
-      <ParagraphText itemList={itemList} />
+      <ParagraphText text={text} itemList={itemList} />
     </Details>
   );
 };

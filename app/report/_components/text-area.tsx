@@ -27,9 +27,10 @@ function TextAreaInput(props: TextInputProps) {
         {props.heading ? <Heading size={headingSize}>{props.heading}</Heading> : null}
 
         <TextArea
-            className="!mb-2"
+        
+            
             error={questionHasErrors(props.page, props.questionId)}
-            input={{ onChange: validateAndUpdate, defaultValue: questions[props.questionId] }}>
+            input={{ rows: 15, onChange: validateAndUpdate, defaultValue: questions[props.questionId] }}>
             <Caption className="mb-1" size="MEDIUM">{props.subheading}</Caption>
         </TextArea>
     </div>

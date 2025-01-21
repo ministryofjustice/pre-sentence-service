@@ -51,6 +51,7 @@ function Sidebar() {
         <nav className="moj-side-navigation !pt-0" aria-label="Side navigation">
             <ul className="moj-side-navigation__list">
                 <SidebarItem title='Defendant Details' path='/report/1234/defendant-details' />
+                <SidebarItem title='Behavioural factors and lifestyle considerations' path='/report/1234/behavioural-factors' />
                 <SidebarItem title='Victim impact assessment' path='/report/1234/victim-impact-assessment' />
                 <SidebarItem title='Culpability and risk' path='/report/1234/culpability-and-risk' />
                 <SidebarItem title='Sign your report' path='/report/1234/sign-your-report' />
