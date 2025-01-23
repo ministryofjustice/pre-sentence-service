@@ -29,6 +29,7 @@ function TextAreaInput(props: TextInputProps) {
             className="!mb-2"
             error={questionHasErrors(props.page, props.questionId)}
             input={{
+                rows: 15,
                 onChange: validateAndUpdate,
                 defaultValue: questions[props.questionId],
             }}
