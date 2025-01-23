@@ -5,6 +5,7 @@ import React, {useEffect} from 'react'
 
 import { useReportStore } from '../../../../_providers/report-store-provider'
 import { Button, Caption, Heading } from 'govuk-react'
+import { SummaryList } from '../../../_components/summary-list'
 import { TextInput } from '../../../_components/text-input'
 import { DateInput } from '../../../_components/date-input'
 import { PageHeading } from '../../../_components/page-heading'
@@ -12,6 +13,13 @@ import { ErrorSummaryState } from '../../../_components/error-summary-state'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
+import { ParagraphText } from '../../../_components/paragraph'
+
+enum DateFieldProp {
+    DateFieldDay = 'DateFieldDay',
+    DateFieldMonth = 'DateFieldMonth',
+    DateFieldYear = 'DateFieldYear'
+}
 
 export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IContext  }) => {
     const pathname = usePathname()
@@ -36,41 +44,49 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
         updatePageSaveState(pathname, 'saved')
     }
 
-
-    const nameValidator = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const validationRegex = /^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$/
-
-        if (!e.target.value.match(validationRegex)) {
-            return 'You have entered an incorrect name'
-        }
-
-        return null
+    const getTextQuestion = (questionId: string) => {
+        return questions[questionId];
     }
+
+    const getDateQuestion = (questionId: string) => {
+        const day = questions[`${questionId}-${DateFieldProp.DateFieldDay}`]
+        const month = questions[`${questionId}-${DateFieldProp.DateFieldMonth}`]
+        const year = questions[`${questionId}-${DateFieldProp.DateFieldYear}`]
+
+        return `${day} ${month} ${year}`
+    }
+
 
     return (<>
         <div className="govuk-grid-column-two-thirds">
             <PageHeading title='Defendant details' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
 
-            <ErrorSummaryState page={pathname} />
+            <ParagraphText text="If any of this information is incorrect you will need to go to NDelius to update it.  Any changes you make to the defendant’s details in NDelius will be updated after you refresh a page in this PSR." />
 
-            <TextInput disabled={true} page={pathname} questionId='defendant-full-name' validators={[nameValidator]} heading="Full name" />
 
-            <hr className='mb-4 mt-4' />
+            <SummaryList questions={[
+                {
+                    displayName: 'Full name',
+                    data: getTextQuestion('defendant-full-name')
+                },
+                {
+                    displayName: 'Date of birth',
+                    data: getDateQuestion('defendant-date-of-birth')
+                },
+                {
+                    displayName: 'Current address',
+                    data: getTextQuestion('defendant-current-address-line1')
+                },
 
-            <DateInput disabled={true} page={pathname} questionId='defendant-date-of-birth' hintText="For example, 27 3 2004" heading="Date of birth" />
+            ]} questionId='defendant-details' page={pathname} />
 
-            <hr className='mb-4 mt-4' />
 
-            <Heading size="MEDIUM">Current address</Heading>
-            <TextInput page={pathname} required={true} questionId='defendant-current-address-line1' subheading="Address line 1" />
-            <TextInput page={pathname} questionId='defendant-current-address-line2' subheading="Address line 2 (optional)" />
-            <TextInput page={pathname} questionId='defendant-current-address-town' subheading="Town or city" />
-            <TextInput page={pathname} questionId='defendant-current-address-county' subheading="County (optional)" />
-            <TextInput page={pathname} questionId='defendant-current-address-postcode' subheading="Postcode" />
-
+            <Link className="mr-2" onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
+                <Button className="!mt-2">Save and continue</Button>
+            </Link>
 
             <Link onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
-                <Button className="!mt-2">Save and continue</Button>
+                <Button className="!mt-2">Save draft</Button>
             </Link>
         </div>
     </>
