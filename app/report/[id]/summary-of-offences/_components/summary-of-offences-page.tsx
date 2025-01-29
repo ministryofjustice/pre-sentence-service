@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
 import { PageHeading } from '../../../_components/page-heading'
+import { getRoutePath, getNextPageKey } from "../../../_lib/util/routes";
+
 
 export const SummaryOfOffencesPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -25,7 +27,7 @@ export const SummaryOfOffencesPage = (props: { id: string }) => {
 
             <TextInput page={pathname} questionId='summary-of-offences-sample-text-field' heading="Sample text field" />
 
-            <Link onClick={savePage} href={`/report/${props.id}/summary`}>
+            <Link onClick={savePage} href={getRoutePath(getNextPageKey('summaryOfOffences'), {id: props.id})}>
                 <Button>Save and continue</Button>
             </Link>
         </div>

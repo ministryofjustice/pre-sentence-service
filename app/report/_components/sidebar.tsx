@@ -3,13 +3,16 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation';
 import { useReportStore } from '../../_providers/report-store-provider'
 import { useRouter } from "next/navigation";
 import { pageHasErrors } from '../../_lib/store-utils'
+import { getRoutePath, reportPageFlow } from '../_lib/util/routes';
 
 function Sidebar() {
     const router = useRouter();
     const pathname = usePathname()
+    const params = useParams<{ id: string}>()
     const { updatePageSaveState, pageSaveState } = useReportStore((state) => state)
 
     const SidebarItem = (params: { title: string, path: string }) => {
@@ -40,27 +43,21 @@ function Sidebar() {
         return (
             <li className={`moj-side-navigation__item ${isCurrent() ? 'moj-side-navigation__item--active' : ''} `}>
                 <Link onClick={(e) => updateSavedState(params.path, e)} className='flex items-center' href={params.path} aria-current={isCurrent() ? 'location' : false}>
-                    {isUnsavedOrHasErrors() ? <div className="govuk-warning-text__icon !relative !h-[25px] !w-[25px] !max-h-[25px] !max-w-[25px] !min-h-[25px] !min-w-[25px] !text-lg mr-[5px] !bg-red-500 !border-red-500" aria-hidden="true">!</div> : null}
                     {params.title}
                 </Link>
             </li>
         )
     }
 
-    return <div className="col-span-1">
+    return pathname.includes('landing') ? <></> : (
+    <div className="col-span-1">
         <nav className="moj-side-navigation !pt-0" aria-label="Side navigation">
             <ul className="moj-side-navigation__list">
-                <SidebarItem title='Defendant Details' path='/report/1234/defendant-details' />
-                <SidebarItem title='Offence analysis' path='/report/1234/offence-analysis' />
-                <SidebarItem title='Behavioural factors and lifestyle considerations' path='/report/1234/behavioural-factors' />
-                <SidebarItem title='Victim impact assessment' path='/report/1234/victim-impact-assessment' />
-                <SidebarItem title='Culpability and risk' path='/report/1234/culpability-and-risk' />
-                <SidebarItem title='Sign your report' path='/report/1234/sign-your-report' />
-                <SidebarItem title='Publish report' path='/report/1234/publish-report' />
-                <SidebarItem title='Summary' path='/report/1234/summary' />
+                {reportPageFlow.map(page => <SidebarItem key={page.routeKey} title={page.displayName} path={getRoutePath(page.routeKey, {id: params.id})} />)}
             </ul>
         </nav>
     </div>
+    )
 }
 
 export { Sidebar }

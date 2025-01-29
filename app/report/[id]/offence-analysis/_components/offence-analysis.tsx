@@ -6,6 +6,7 @@ import { Button, Caption, Heading } from 'govuk-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
+import { getRoutePath, getNextPageKey } from '../../../_lib/util/routes'
 
 export const OffenceAnalysis = (props: { id: string }) => {
     const pathname = usePathname()
@@ -50,7 +51,7 @@ export const OffenceAnalysis = (props: { id: string }) => {
           />
 
 
-          <Link onClick={savePage} href={`/report/${props.id}/summary`}>
+          <Link onClick={savePage} href={getRoutePath(getNextPageKey('offenceAnalysis'), {id: props.id})}>
                 <Button>Save and continue</Button>
             </Link>
         </div>
