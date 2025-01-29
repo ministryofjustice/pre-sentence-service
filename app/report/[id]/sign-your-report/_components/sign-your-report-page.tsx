@@ -6,6 +6,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { useReportStore } from "../../../../_providers/report-store-provider";
 import { PageHeading } from "../../../_components/page-heading";
+import { getRoutePath, getNextPageKey } from "../../../_lib/util/routes";
 
 export const SignYourReportPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -20,10 +21,10 @@ export const SignYourReportPage = (props: { id: string }) => {
             <PageHeading title='Sign your report' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
 
             <TextInput page={pathname} questionId='sign-your-report-signature' heading="Full name" />
-            <Link onClick={savePage} href={`/report/${props.id}/publish-report`}>
+            <Link onClick={savePage} href={getRoutePath(getNextPageKey('signReport'), {id: props.id})}>
                 <Button className="!mt-2 !mr-2">Save and continue</Button>
             </Link>
-            <Link onClick={savePage} href={`/report/${props.id}/publish-report`}>
+            <Link onClick={savePage} href={getRoutePath(getNextPageKey('signReport'), {id: props.id})}>
                 <Button className="!mt-2" buttonColour="#f3f2f1" buttonTextColour="#0b0c0c">Save draft</Button>
             </Link>
         </div>

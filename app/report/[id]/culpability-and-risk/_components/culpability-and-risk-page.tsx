@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useReportStore } from '../../../../_providers/report-store-provider'
 import { PageHeading } from '../../../_components/page-heading'
+import { getRoutePath, getNextPageKey } from '../../../_lib/util/routes'
 
 export const CulpabilityAndRiskPage = (props: { id: string }) => {
     const pathname = usePathname()
@@ -21,8 +22,7 @@ export const CulpabilityAndRiskPage = (props: { id: string }) => {
     }
 
     return (
-
-        <div className="govuk-grid-column-two-thirds">
+<>
             <PageHeading title='Culpability and risk' crnDataQuestionId='defendant-crn'  nameDataQuestionId='defendant-full-name' />
 
             <TextAreaInput
@@ -88,9 +88,9 @@ export const CulpabilityAndRiskPage = (props: { id: string }) => {
                 heading="Risk of serious harm"
                 subheading='Summarise the risk of serious harm' />
 
-            <Link onClick={savePage} href={`/report/${props.id}/summary`}>
+            <Link onClick={savePage} href={getRoutePath(getNextPageKey('culpabilityAndRisk'), {id: props.id})}>
                 <Button>Save and continue</Button>
             </Link>
-        </div>
+        </>
     )
 }

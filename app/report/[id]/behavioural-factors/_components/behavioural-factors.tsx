@@ -9,6 +9,7 @@ import { DetailsComponent } from "../../../_components/details"
 import { ParagraphText } from "../../../_components/paragraph"
 import { TextAreaInput } from "../../../_components/text-area"
 import { PageHeading } from "../../../_components/page-heading";
+import { getNextPageKey, getRoutePath } from "../../../_lib/util/routes";
 
 export const BehaviouralFactors = (props: { id: string }) => {
   const pathname = usePathname();
@@ -54,10 +55,10 @@ export const BehaviouralFactors = (props: { id: string }) => {
 
       <TextAreaInput
         page={pathname}
-        questionId="victim-impact-assessment-hint-p2"
+        questionId="behavioural-factors-text"
       />
 
-      <Link onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
+      <Link onClick={savePage} href={getRoutePath(getNextPageKey('behaviouralFactors'), {id: props.id})}>
         <Button>Save and continue</Button>
       </Link>
     </div>
