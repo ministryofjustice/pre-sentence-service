@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 import { DoAndDont } from "../../../../_components/do-and-dont"
 import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
+import { getRoutePath } from '../../../_lib/util/routes'
 
 
 export default function LandingPage(props:{ id: string}) {
@@ -19,8 +20,6 @@ export default function LandingPage(props:{ id: string}) {
             <li>following a guided experience through the steps to write this report</li>
             <li>generating the final report as a PDF to share with the judiciary</li>
         </ul>
-
-
 
         <DoAndDont
             dos={
@@ -53,7 +52,7 @@ export default function LandingPage(props:{ id: string}) {
         <p className='govuk-body'>Depending on the complexity and nature of the case, you may need to complete other relevant risk assessment tools such as a SARA (Spousal Assault Risk Assessment).</p>
         <p className='govuk-body'>If requested by court you may also need to provide additional detail through dangerousness assessments to get a better understanding of risk.</p>
 
-        <Link href={`/report/${props.id}/defendant-details`}>
+        <Link href={getRoutePath('defendantDetails', {id: props.id})}>
             <Button start={true}>Start</Button>
         </Link>
     </>

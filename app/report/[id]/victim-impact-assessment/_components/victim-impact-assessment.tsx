@@ -9,6 +9,7 @@ import { DetailsComponent } from "../../../_components/details"
 import { ParagraphText } from "../../../_components/paragraph"
 import { TextAreaInput } from "../../../_components/text-area"
 import { PageHeading } from "../../../_components/page-heading";
+import { getRoutePath, getNextPageKey } from "../../../_lib/util/routes";
 
 export const VictimImpactAssessment = (props: { id: string }) => {
   const pathname = usePathname();
@@ -49,7 +50,7 @@ export const VictimImpactAssessment = (props: { id: string }) => {
         questionId="victim-impact-assessment-hint-p2"
       />
 
-      <Link onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
+      <Link onClick={savePage} href={getRoutePath(getNextPageKey('victimImpactAssessment'), {id: props.id})}>
         <Button>Save and continue</Button>
       </Link>
     </div>

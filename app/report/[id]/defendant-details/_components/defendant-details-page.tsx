@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
 import { ParagraphText } from '../../../_components/paragraph'
+import { getRoutePath, getNextPageKey } from '../../../_lib/util/routes'
 
 enum DateFieldProp {
     DateFieldDay = 'DateFieldDay',
@@ -81,12 +82,13 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
             ]} questionId='defendant-details' page={pathname} />
 
 
-            <Link className="mr-2" onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
+            <Link className="mr-2" onClick={savePage} href={`/report/${props.id}/offence-analysis`}>
                 <Button className="!mt-2">Save and continue</Button>
             </Link>
 
-            <Link onClick={savePage} href={`/report/${props.id}/culpability-and-risk`}>
-                <Button className="!mt-2">Save draft</Button>
+            <Link onClick={savePage} href={getRoutePath(getNextPageKey('defendantDetails'), {id: props.id})}>
+                <Button className="!mt-2" buttonColour="#f3f2f1" buttonTextColour="#0b0c0c">Save draft</Button>
+
             </Link>
         </div>
     </>
