@@ -1,7 +1,8 @@
-import HmppsAuthClient from '../../../../server/data/hmppsAuthClient'
-import { createRedisClient } from '../../../../server/data/redisClient'
-import TokenStore from '../../../../server/data/tokenStore'
-import PreSentenceToDeliusService from '../../../../server/services/preSentenceToDeliusService'
+import { createRedisClient } from './redisClient'
+
+import HmppsAuthClient from './hmppsAuthClient'
+import TokenStore from './tokenStore'
+import PreSentenceToDeliusService from './preSentenceToDeliusService'
 
 export default class NdeliusService {
   private static instance: PreSentenceToDeliusService
@@ -10,8 +11,8 @@ export default class NdeliusService {
     if (this.instance) {
       return this.instance
     }
-
-    const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+    const redisClient = createRedisClient({ legacyMode: false })
+    const hmppsAuthClient = new HmppsAuthClient(new TokenStore(redisClient))
     const ndeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
     return ndeliusService
