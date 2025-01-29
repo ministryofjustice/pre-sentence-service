@@ -1,4 +1,5 @@
 import React from 'react';
+import { PublicEnvScript } from 'next-runtime-env';
 import './globals.css'
 
 export default function RootLayout({
@@ -10,6 +11,7 @@ export default function RootLayout({
         <html lang="en">
             <head>
                 <meta charSet='utf-8' />
+                <PublicEnvScript />
                 <link rel="stylesheet" href="/vendor/govuk-frontend-4.4.0.min.css" />
                 <link rel="stylesheet" href="/stylesheets/application.css" />
             </head>
