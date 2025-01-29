@@ -75,7 +75,7 @@ export default class PreSentenceToDeliusService {
       raw = false,
       timeout = timeoutSpec,
     } = {}) => {
-      const time = new Date().getTime()
+      // const time = new Date().getTime()
       try {
         const clientToken = await this.getApiClientToken()
         const result = await superagent
@@ -92,7 +92,7 @@ export default class PreSentenceToDeliusService {
           .responseType(responseType)
           .timeout(timeout)
 
-        const durationMillis = Math.ceil(time - new Date().getTime())
+        // const durationMillis = Math.ceil(time - new Date().getTime())
         // logger.debug(
         //   { path, query, durationMillis },
         //   'PreSentenceToDeliusService: Client GET using clientId credentials'
