@@ -7,7 +7,7 @@ import { BaseComponentProps } from "../../_lib/base-components-props";
 type SummaryListInputProps = {
     questions: {
         displayName: string;
-        data: string;
+        data: string | React.ReactElement;
     }[]
     changeLink?: string
 } & BaseComponentProps
