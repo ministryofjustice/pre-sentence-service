@@ -57,6 +57,20 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
         return `${day} ${month} ${year}`
     }
 
+    const getAddressDataBlock = (questionId: string) => {
+        return (
+            <>
+            <span>{getTextQuestion(`${questionId}-line1`)}</span>
+            <br/>
+            <span>{getTextQuestion(`${questionId}-town`)}</span>
+            <br/>
+            <span>{getTextQuestion(`${questionId}-county`)}</span>
+            <br/>
+            <span>{getTextQuestion(`${questionId}-postcode`)}</span>
+            </>
+        )
+    }
+
 
     return (<>
         <div className="govuk-grid-column-two-thirds">
@@ -76,7 +90,7 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
                 },
                 {
                     displayName: 'Current address',
-                    data: getTextQuestion('defendant-current-address-line1')
+                    data: getAddressDataBlock('defendant-current-address')
                 },
 
             ]} questionId='defendant-details' page={pathname} />
@@ -88,7 +102,6 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
 
             <Link onClick={savePage} href={getRoutePath(getNextPageKey('defendantDetails'), {id: props.id})}>
                 <Button className="!mt-2" buttonColour="#f3f2f1" buttonTextColour="#0b0c0c">Save draft</Button>
-
             </Link>
         </div>
     </>
