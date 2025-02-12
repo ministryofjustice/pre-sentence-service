@@ -16,7 +16,7 @@ function PageHeading({ title, nameDataQuestionId, crnDataQuestionId }: PageHeadi
 
   return (
     <>
-        <Caption>{questions[nameDataQuestionId]} CRN: {questions[crnDataQuestionId]}</Caption>
+        <Caption>{questions[nameDataQuestionId]} | CRN: {questions[crnDataQuestionId]}</Caption>
         <Heading size="LARGE">{title}</Heading>
     </>
   );
