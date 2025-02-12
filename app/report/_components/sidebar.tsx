@@ -9,45 +9,49 @@ import { useRouter } from "next/navigation";
 import { pageHasErrors } from '../../_lib/store-utils'
 import { getRoutePath, reportPageFlow } from '../_lib/util/routes';
 
-function Sidebar() {
+function SidebarItem(params: { title: string, path: string }) {
     const router = useRouter();
     const pathname = usePathname()
-    const params = useParams<{ id: string}>()
-    const { updatePageSaveState, pageSaveState } = useReportStore((state) => state)
 
-    const SidebarItem = (params: { title: string, path: string }) => {
-        const isCurrent = () => {
-            return pathname === params.path
-        }
+    const { pageSaveState } = useReportStore((state) => state)
 
-        const isUnsaved = () => {
-            const saveState = pageSaveState[params.path];
-            const unsaved = saveState === 'visited' ? true : false
-            return unsaved;
-        }
 
-        const isUnsavedOrHasErrors = () => {
-            return isUnsaved() || pageHasErrors(params.path)
-        }
-
-        const updateSavedState = async (path: string, e: any) => {
-            e.preventDefault()
-            const saveState = pageSaveState[pathname];
-            if (saveState !== 'saved') {
-                //updatePageSaveState(pathname, 'visited')
-            }
-
-            await router.push(path);
-        }
-
-        return (
-            <li className={`moj-side-navigation__item ${isCurrent() ? 'moj-side-navigation__item--active' : ''} `}>
-                <Link onClick={(e) => updateSavedState(params.path, e)} className='flex items-center' href={params.path} aria-current={isCurrent() ? 'location' : false}>
-                    {params.title}
-                </Link>
-            </li>
-        )
+    const isCurrent = () => {
+        return pathname === params.path
     }
+
+    const isUnsaved = () => {
+        const saveState = pageSaveState[params.path];
+        const unsaved = saveState === 'visited' ? true : false
+        return unsaved;
+    }
+
+    const isUnsavedOrHasErrors = () => {
+        return isUnsaved() || pageHasErrors(params.path)
+    }
+
+    const updateSavedState = async (path: string, e: any) => {
+        e.preventDefault()
+        const saveState = pageSaveState[pathname];
+        if (saveState !== 'saved') {
+            //updatePageSaveState(pathname, 'visited')
+        }
+
+        await router.push(path);
+    }
+
+    return (
+        <li className={`moj-side-navigation__item ${isCurrent() ? 'moj-side-navigation__item--active' : ''} `}>
+            <Link onClick={(e) => updateSavedState(params.path, e)} className='flex items-center' href={params.path} aria-current={isCurrent() ? 'location' : false}>
+                {params.title}
+            </Link>
+        </li>
+    )
+}
+
+function Sidebar() {
+    const pathname = usePathname()
+    const params = useParams<{ id: string}>()
 
     return pathname.includes('landing') ? <></> : (
     <div className="col-span-1">
@@ -60,4 +64,4 @@ function Sidebar() {
     )
 }
 
-export { Sidebar }
+export { Sidebar, SidebarItem }
