@@ -24,6 +24,11 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    // Using "paths" allows you to configure module path aliases
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
