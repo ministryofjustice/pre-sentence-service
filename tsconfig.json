@@ -42,7 +42,8 @@
     "dist",
     "cypress.config.ts",
     "**/*/__mocks__",
-    "public"
+    "public",
+    ".next"
   ],
   "include": ["**/*.js", "**/*.ts", ".next/types/**/*.ts"]
 }
