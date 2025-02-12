@@ -3,11 +3,10 @@
 import { Heading, Table, Button, ButtonArrow } from 'govuk-react'
 import Link from 'next/link'
 import React from 'react'
-import { DoAndDont } from '../../../../_components/do-and-dont'
-import { IContext } from '../../../../../server/services/preSentenceToDeliusService'
-import { getRoutePath } from '../../../_lib/util/routes'
+import { DoAndDont } from '@/app/_components/do-and-dont'
+import { getRoutePath } from '@/app/report/_lib/util/routes'
 
-export default function LandingPage(props: { id: string }) {
+export default function LandingPage(props: { id: string, dangerousnessAssessmentLink: string }) {
   return (
     <>
       <Heading size="LARGE">Write a pre-sentence report (PSR)</Heading>
@@ -57,7 +56,7 @@ export default function LandingPage(props: { id: string }) {
         If requested by court you may also need to provide additional detail through a{' '}
         <a
           className="govuk-link"
-          href="https://equip-portal.equip.service.justice.gov.uk/CtrlWebIsapi.dll/app/documents/60BA213882A84926AD26C6A2A2A3A4A2/master"
+          href={props.dangerousnessAssessmentLink}
         >
           dangerousness assessment.
         </a>
