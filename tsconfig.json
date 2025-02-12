@@ -24,6 +24,11 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    // Using "paths" allows you to configure module path aliases
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
@@ -37,7 +42,8 @@
     "dist",
     "cypress.config.ts",
     "**/*/__mocks__",
-    "public"
+    "public",
+    ".next"
   ],
   "include": ["**/*.js", "**/*.ts", ".next/types/**/*.ts"]
 }
