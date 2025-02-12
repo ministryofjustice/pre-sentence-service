@@ -4,8 +4,8 @@ export type RedisClient = ReturnType<typeof createClient>
 
 const url =
   process.env.REDIS_TLS_ENABLED === 'true'
-    ? `rediss://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
-    : `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+    ? `rediss://${process.env.REDIS_HOST}:${process.env.REDIS_PORT ?? 6379}`
+    : `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT ?? 6379}`
 
 export const createRedisClient = ({ legacyMode }: { legacyMode: boolean }): RedisClient => {
   const client = createClient({
