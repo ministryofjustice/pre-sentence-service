@@ -27,7 +27,7 @@ const connectionOptions: ConnectionOptions = {
       : false,
   entities: [Field, FieldValue, Report, ReportDefinition],
   migrationsRun: config.db.migrations === 'true',
-  migrations: ['dist/db/migrations/*.js'],
+  migrations: ['/_db/migrations/*.js'],
   logging: false,
 }
 
@@ -36,7 +36,7 @@ export default async function getDatabaseConnection(): Promise<ConnectionResult>
     const connection = await createConnection(connectionOptions)
     return [null, connection]
   } catch (error) {
-    logger.error(`Failed to get database connectionsss: ${error.message}`)
+    logger.error(`Failed to get database connection: ${error.message}`)
     return [error]
   }
 }

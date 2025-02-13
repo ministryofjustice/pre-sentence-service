@@ -3,7 +3,7 @@
   "env": {
     "cypress/globals": true
   },
-  "extends": ["plugin:cypress/recommended"],
+  "extends": ["plugin:cypress/recommended", "plugin:@next/next/recommended"],
   "rules": {
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
   }

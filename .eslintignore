@@ -6,3 +6,5 @@ reporter-config.json
 dist/
 db/migrations
 server/repositories/entities
+.next
+app

@@ -79,7 +79,7 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
             <ParagraphText text="If any of this information is incorrect you will need to go to NDelius to update it.  Any changes you make to the defendant’s details in NDelius will be updated after you refresh a page in this PSR." />
 
 
-            <SummaryList questions={[
+            {/* <SummaryList questions={[
                 {
                     displayName: 'Full name',
                     data: getTextQuestion('defendant-full-name')
@@ -94,7 +94,7 @@ export const DefendantDetailsPage = (props: { id: string, ndeliusContext: IConte
                 },
 
             ]} questionId='defendant-details' page={pathname} />
-
+ */}
 
             <Link className="mr-2" onClick={savePage} href={`/report/${props.id}/offence-analysis`}>
                 <Button className="!mt-2">Save and continue</Button>

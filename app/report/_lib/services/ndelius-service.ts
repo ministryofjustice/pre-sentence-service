@@ -14,7 +14,8 @@ export default class NdeliusService {
     const redisClient = createRedisClient({ legacyMode: false })
     const hmppsAuthClient = new HmppsAuthClient(new TokenStore(redisClient))
     const ndeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
+    this.instance = ndeliusService
 
-    return ndeliusService
+    return this.instance
   }
 }

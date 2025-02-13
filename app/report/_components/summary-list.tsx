@@ -17,9 +17,9 @@ export function SummaryList(props: SummaryListInputProps) {
     return (
         <>
             <dl className="govuk-summary-list">
-                {props.questions.map(question => {
+                {props.questions.map((question, index) => {
                     return (<>
-                        <div className="govuk-summary-list__row">
+                        <div key={`${question}-${index}`} className="govuk-summary-list__row">
                             <dt className="govuk-summary-list__key">
                                 {question.displayName}
                             </dt>
