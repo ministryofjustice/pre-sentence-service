@@ -128,4 +128,3 @@ integration_tests/screenshots/
 */*.iml
 **/Chart.lock
 /.localstack
-.DS_Store

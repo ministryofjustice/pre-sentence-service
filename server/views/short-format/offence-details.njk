@@ -1,0 +1,63 @@
+{% extends "../partials/shortFormatPageLayout.njk" %}
+
+{% set currentPage = 'Offence details' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set offenceSummaryHelp %}
+  <p class="govuk-body">Describe the offence or the incident. In this summary, judges and magistrates need to know where
+    your information is coming from. You need to be clear when it’s from CPS, probation or from the offender.</p>
+  <p class="govuk-body">Details should be provided for any basis of plea. Reference should also be made as to whether
+    the report is following a guilty plea or a finding of guilt after trial. The summary should provide the reader with
+    a sound overview of the offence.</p>
+  <p class="govuk-body">Remember to highlight domestic abuse, safeguarding or any other significant features. Diversity
+    considerations may also be relevant here, both in terms of the offender and the victim.</p>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <form method="post" novalidate>
+
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {{ picRichTextEditor({
+      name: "mainOffence",
+      id: "mainOffence",
+      label: {
+        text: "Main offence and date"
+      },
+      value: data.mainOffence,
+      errorMessage: {
+        text: "Enter the main offence and date"
+      } if 'mainOffence' in elementsWithError
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "otherOffences",
+      id: "otherOffences",
+      label: {
+        text: "Other offence(s) and dates (if applicable)"
+      },
+      value: data.otherOffences
+    }) }}
+
+    {{ picRichTextEditor({
+      name: "offenceSummary",
+      id: "offenceSummary",
+      label: {
+        text: "Brief summary of the offence"
+      },
+      whatToInclude: offenceSummaryHelp,
+      value: data.offenceSummary,
+      errorMessage: {
+        text: "Enter a brief summary of the offence"
+      } if 'offenceSummary' in elementsWithError
+    }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+  </form>
+
+{% endblock %}

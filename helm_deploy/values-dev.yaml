@@ -20,6 +20,8 @@ generic-service:
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
     WPROOFREADER_PORT: null
 
+  allowlist: null
+
 gotenberg:
   replicaCount: 1
 

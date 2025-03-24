@@ -1,13 +1,13 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@10.1.1
+  hmpps: ministryofjustice/hmpps@6.1.0
   slack: circleci/slack@4.10.1
 
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:22.12.0-browsers
+      - image: cimg/node:20.5.1-browsers
       - image: localstack/localstack:1.2.0
         environment:
           SERVICES: sns
@@ -37,7 +37,7 @@ parameters:
 
   node-version:
     type: string
-    default: 22.12.0-browsers
+    default: 20.5.1-browsers
 
 
 jobs:
@@ -192,7 +192,6 @@ workflows:
           name: deploy_dev
           env: "dev"
           helm_additional_args: --values ./pre-sentence-service/values-live.yaml
-          helm_timeout: "30m"
           context:
             - hmpps-common-vars
             - court-probation-live-dev
