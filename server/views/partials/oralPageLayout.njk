@@ -1,0 +1,58 @@
+{% extends "./sharedPageLayout.njk" %}
+
+{% block sideNavigation %}
+
+  {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
+
+  {{ mojSideNavigation({
+    label: 'Side navigation',
+    classes: 'govuk-!-padding-top-0',
+    sections: [{
+      heading: {
+        text: 'Report sections'
+      },
+      items: [{
+        text: 'Offender details',
+        href: '/record-of-oral/' + reportId + '/offender-details',
+        active: currentPage === 'Offender details'
+      }, {
+        text: 'Sentencing court details',
+        href: '/record-of-oral/' + reportId + '/court-details',
+        active: currentPage === 'Sentencing court details'
+      }, {
+        text: 'Offence details',
+        href: '/record-of-oral/' + reportId + '/offence-details',
+        active: currentPage === 'Offence details'
+      }, {
+        text: 'Offence analysis',
+        href: '/record-of-oral/' + reportId + '/offence-analysis',
+        active: currentPage === 'Offence analysis'
+      }, {
+        text: 'Offender assessment',
+        href: '/record-of-oral/' + reportId + '/offender-assessment',
+        active: currentPage === 'Offender assessment'
+      }, {
+        text: 'Risk assessment',
+        href: '/record-of-oral/' + reportId + '/risk-assessment',
+        active: currentPage === 'Risk assessment'
+      }, {
+        text: 'Proposal',
+        href: '/record-of-oral/' + reportId + '/proposal',
+        active: currentPage === 'Proposal'
+      }, {
+        text: 'Sources of information',
+        href: '/record-of-oral/' + reportId + '/sources-of-information',
+        active: currentPage === 'Sources of information'
+      }, {
+        text: 'Check your report',
+        href: '/record-of-oral/' + reportId + '/check-report',
+        active: currentPage === 'Check your report'
+      }]
+    }]
+  }) }}
+
+  <p class="govuk-body govuk-!-margin-top-8">
+    <a class="govuk-button govuk-button--secondary" href="/record-of-oral/{{ reportId }}/report-saved">Save draft report</a>
+  </p>
+
+{% endblock %}
