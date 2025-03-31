@@ -252,6 +252,7 @@ export default class SharedController {
           await this.updateReport()
         }
         req.session.fieldValues = this.report.fieldValues
+
         this.renderTemplate(res, {
           ...this.templateValues,
           reportId: req.params.reportId,
