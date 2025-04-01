@@ -4,8 +4,6 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import BaseController from '../../controllers/psr/baseController'
 import LandingPageController from '../../controllers/psr/landingPageController'
 
-import OffenderDetailsController from '../../controllers/short-format/offenderDetailsController'
-
 import ReportService from '../../services/reportService'
 import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
@@ -15,13 +13,12 @@ import DefendantDetailsController from '../../controllers/psr/defendant-details-
 export default function Index(
   reportService: ReportService,
   communityService: CommunityService,
-  eventService: EventService,
+  _eventService: EventService,
   preSentenceToDeliusService: PreSentenceToDeliusService
 ): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController().path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
     return new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get(req, res)
