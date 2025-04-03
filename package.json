@@ -119,7 +119,7 @@
     "jwks-rsa": "3.0.0",
     "jwt-decode": "3.1.2",
     "nocache": "3.0.4",
-    "nunjucks": "3.2.3",
+    "nunjucks": "3.2.4",
     "passport": "0.6.0",
     "passport-jwt": "4.0.0",
     "passport-oauth2": "1.6.1",
