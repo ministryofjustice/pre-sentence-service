@@ -1,0 +1,11 @@
+import BaseController from './baseController'
+
+export const pageFields: Array<string> = ['name', 'dateOfBirth', 'age', 'crn', 'address', 'pnc']
+
+export default class DefendantDetails extends BaseController {
+  override templatePath = 'psr-defendant-details'
+
+  override pageFields = pageFields
+
+  override redirectPath = 'offence-analysis'
+}

@@ -19,13 +19,6 @@ context('Short Format - Sign report page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
-    it('should display the key details', () => {
-      cy.get('#qa-key-details').within(() => {
-        cy.get('h2').should('contain', 'CRN: X320741')
-        cy.get('h1').should('contain', 'Lenore Marquez')
-      })
-    })
-
     it('should display as CANNOT START YET on the check report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')

@@ -1,0 +1,19 @@
+{% extends "./sharedPageLayout.njk" %}
+
+{% block sideNavigation %}
+
+  {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
+
+  {{ mojSideNavigation({
+    label: 'Side navigation',
+    classes: 'govuk-!-padding-top-0',
+    sections: [{
+      items: [{
+        text: 'Defendant details',
+        href: '/psr/' + reportId + '/defendant-details',
+        active: currentPage === 'Defendant details'
+      }]
+    }]
+  }) }}
+
+{% endblock %}

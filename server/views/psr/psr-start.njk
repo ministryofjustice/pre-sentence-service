@@ -1,0 +1,97 @@
+{% extends "../partials/layout.njk" %}
+{% from 'do-dont-list/macro.njk' import list %}
+
+{% set pageTitle = preSentenceType + " - Home" %}
+
+{% block content %}
+
+  <main class="app-container govuk-body">
+    <h1 class="govuk-heading-l">Write a pre-sentence report (PSR)</h1>
+    <p class="govuk-body">PSRs help the judiciary determine appropriate sentences in line with their assessment of the seriousness of the offence and the sentencing range set out in Sentencing Council Guidelines.</p>
+    <p class="govuk-body">Use this service to write a PSR by:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>collating your notes from the PSR interview and any other sources of information
+      </li>
+      <li class="govuk-!-margin-top-3">following a guided experience through the steps to write this report
+      </li>
+      <li class="govuk-!-margin-top-3">generating the final PSR as a PDF to share with the judiciary
+      </li>
+    </ul>
+
+    {{ list({
+      title: "Do",
+      type: "tick",
+      items: [
+        {
+          item: "provide an evidence-based assessment using critical analysis"
+        },
+        {
+          item: "use professional curiosity to look beyond the information disclosed at interview and the CPS pack"
+        },
+        {
+          item: "use sentencing guidelines as a basis for your proposal"
+        },
+        {
+          item: "consider issues related to diversity and inclusion so that the PSR is tailored to the needs of the person"
+        },
+        {
+          item: "adhere to child safeguarding and domestic abuse policy expectations"
+        }
+      ]
+    }) }}
+
+    {{ list({
+      title: "Don't",
+      type: "cross",
+      items: [
+        {
+          item: "do not provide a solely descriptive account"
+        },
+        {
+          item: "do not accept information disclosed at face value"
+        },
+        {
+          item: "do not be unrealistic in your proposal or deviate from sentencing guidelines without explaining your rationale"
+        },
+        {
+          item: "do not disregard any diversity and inclusion issues that may present"
+        }
+      ]
+    }) }}
+
+    <h1 class="govuk-heading-l">Before you finish a PSR</h1>
+    <p class="govuk-body">You can start the PSR at any time to enter information.</p>
+    <p class="govuk-body"><b>You will need to finish all relevant risk assessment tools before you complete and share your report.</b></p>
+    <p class="govuk-body">You must complete both an:</p>
+
+    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-8">
+      <li>EPF 1 form</li>
+      <li>OASys LEVEL 1 risk assessment</li>
+    </ul>
+
+    <p class="govuk-body">
+      Depending on the complexity and nature of the case, you may need to complete other relevant risk assessment tools.
+    </p>
+
+    <p class="govuk-body">
+      If requested by court, you may also need to give them additional risk information through a <a class="govkuk-link" href="https://equip-portal.equip.service.justice.gov.uk/CtrlWebIsapi.dll/app/documents/60BA213882A84926AD26C6A2A2A3A4A2/master">dangerousness assessment</a>.
+    </p>
+
+    <p class="govuk-body">The gatekeeping process should be applied to all PSRs before they are shared with the court.</p> 
+
+    {% if data.timestamp | length %}
+      <p class="govkuk-body govuk-!-margin-bottom-6 qa-last-saved">This report was last updated on {{ data.timestamp }}.</p>
+    {% endif %}
+
+    <p class="govuk-body govuk-!-margin-top-4">
+      <a href="/psr/{{ reportId }}/defendant-details" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+        {{ "Continue" if data.timestamp | length else "Start" }} now
+        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+        </svg></a>
+    </p>
+
+  </main>
+
+{% endblock %}

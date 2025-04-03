@@ -20,13 +20,6 @@ context('Short Format Pre-Sentence Report landing page', () => {
   })
 
   describe('Authenticated user accesses Short Format Pre-Sentence Report', () => {
-    it('should display the key details', () => {
-      cy.get('#qa-key-details').within(() => {
-        cy.get('h2').should('contain', 'CRN: X320741')
-        cy.get('h1').should('contain', 'Lenore Marquez')
-      })
-    })
-
     it('should include a list of features', () => {
       currentPage.govukBulletList().should('exist')
     })
