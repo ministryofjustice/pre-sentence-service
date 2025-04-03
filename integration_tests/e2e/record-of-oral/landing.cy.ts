@@ -22,7 +22,7 @@ context('Record of Oral Pre-Sentence Report landing page', () => {
   describe('Authenticated user accesses Record of Oral Pre-Sentence Report', () => {
     it('should display the key details', () => {
       cy.get('#qa-key-details').within(() => {
-        cy.get('h2').should('contain', 'CRN: X320741')
+        cy.get('h1').should('contain', 'X320741')
         cy.get('h1').should('contain', 'Lenore Marquez')
       })
     })
