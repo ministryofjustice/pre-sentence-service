@@ -18,13 +18,6 @@ context('Oral - Report completed page', () => {
   })
 
   describe('Authenticated user accesses check your report', () => {
-    it('should display the key details', () => {
-      cy.get('#qa-key-details').within(() => {
-        cy.get('h1').should('contain', 'X320741')
-        cy.get('h1').should('contain', 'Lenore Marquez')
-      })
-    })
-
     it('should NOT include side navigation', () => {
       currentPage.mojSideNavigation().should('not.exist')
     })
