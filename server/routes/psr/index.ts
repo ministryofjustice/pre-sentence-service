@@ -9,6 +9,7 @@ import CommunityService from '../../services/communityService'
 import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
+import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -26,6 +27,10 @@ export default function Index(
 
   get('/:reportId/defendant-details', (req, res) => {
     return new DefendantDetailsController(reportService, communityService).get(req, res)
+  })
+
+  get('/:reportId/offence-analysis', (req, res) => {
+    return new OffenceAnalysisController(reportService, communityService).get(req, res)
   })
 
   return router

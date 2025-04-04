@@ -8,6 +8,18 @@
     label: 'Side navigation',
     classes: 'govuk-!-padding-top-0',
     sections: [{
+      items: [
+        {
+        text: 'Defendant details',
+        href: '/psr/' + reportId + '/defendant-details',
+        active: currentPage === 'Defendant details'
+        },
+        {
+          text: 'Offence Analysis',
+          href: '/psr/' + reportId + '/offence-analysis',
+          active: currentPage === 'Offence Analysis'
+        }
+      ]
       items: [{
         text: 'Defendant details',
         href: '/psr/' + reportId + '/defendant-details',
