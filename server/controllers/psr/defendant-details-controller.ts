@@ -6,6 +6,4 @@ export default class DefendantDetails extends BaseController {
   override templatePath = 'psr-defendant-details'
 
   override pageFields = pageFields
-
-  override redirectPath = 'offence-analysis'
 }
