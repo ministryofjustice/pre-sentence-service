@@ -31,7 +31,7 @@
     {% from "govuk/components/details/macro.njk" import govukDetails %}
 
     {{ govukDetails({
-      summaryText: "What to include",
+      summaryText: params.whatToIncludeTitle if params.whatToIncludeTitle else "What to include",
       text: params.whatToInclude | safe,
       classes: "govuk-!-margin-bottom-2"
     }) }}

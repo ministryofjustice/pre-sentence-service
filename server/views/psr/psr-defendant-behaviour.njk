@@ -1,0 +1,64 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set currentPage = 'Defendant behaviour and lifestyle assessment' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set defendantBehaviourHelp %}
+  <p class="govuk-body">Use your professional judgement to identify relevant circumstances. You may wish to consider these areas when deciding what is relevant to include in your assessment:</p>
+  <ul>
+    <li>Accommodation</li>
+    <li>Caring responsibilities for children, dependants or vulnerable adults</li>
+    <li>Employment, training and education</li>
+    <li>Finance</li>
+    <li>Relationships</li>
+    <li>Substance misuse</li>
+    <li>Physical and mental health</li>
+    <li>Thinking and behaviour</li>
+    <li>Trauma</li>
+`</ul>
+{% endset %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <p class="govuk-body">
+    A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending
+    behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.
+  </p>
+
+  <p class="govuk-body">
+    Consider the defendant's behaviour and lifestyle by:
+  </p>
+
+  <ul>
+    <li>analysing rehabilitative needs that require intervention focusing on circumstances relevant to a sentencing decision</li>
+    <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
+    <li>identifying protective factors that may reduce the likelihood of reoffending</li>
+  </ul>
+
+  <form method="post" novalidate>
+
+    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+    {{ picRichTextEditor({
+      name: "defendantBehaviour",
+      id: "defendantBehaviour",
+      value: data.defendantBehaviour,
+      whatToInclude: defendantBehaviourHelp,
+      whatToIncludeTitle: "Help with defendant behaviour and lifestyle assessment",
+      errorMessage: {
+        text: "Assess the defendants behaviour and lifestyle"
+      } if 'offenceAnalysis' in elementsWithError
+    }) }}
+
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+  </form>
+
+{% endblock %}
