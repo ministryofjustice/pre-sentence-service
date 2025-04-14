@@ -1,0 +1,88 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
+
+
+{% set currentPage = 'Sentencing proposal' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set proposedSentenceHelp %}
+  <p class="govuk-body">Where a community sentence is proposed you should:</p>
+  <ul>
+    <li>include the duration, number and length of any requirements</li>
+    <li>ensure that the requirements are commensurate with the seriousness of the offence</li>
+`</ul>
+{% endset %}
+
+{% set proposedSentenceRationaleHelp %}
+  <p class="govuk-body">You should outline the intended outcomes of the sentence by:</p>
+  <ul>
+    <li>explaining how the proposal addresses identified risks and needs</li>
+    <li>considering how the proposal may reduce the person's risk of reconviction</li>
+    <li>stating how the proposed sentence will manage identified risks of harm and any risks to identified victims</li>
+`</ul>
+{% endset %}
+
+{% block reportForm %}
+
+    <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+    <h2 class="govuk-heading-m">Enter the proposed sentence</h2>
+    <p class="govuk-body">Consult the relevant sentencing guidelines and any indication the court has given regarding the sentence. You should use the Effective Proposal Framework (EPF) tool to inform your proposal.</p>
+    {{ picRichTextEditor({
+        name: "proposedSentence",
+        id: "proposedSentence",
+        value: data.proposedSentence,
+        whatToInclude: proposedSentenceHelp,
+        whatToIncludeTitle: "Help with proposing a community sentence",
+        errorMessage: {
+        text: "Enter the proposed sentence"
+        } if 'proposedSentence' in elementsWithError
+    }) }}
+
+    <h2 class="govuk-heading-m">Explain your rationale for the proposed sentence</h2>
+    <p class="govuk-body">Your rationale should be consistent with the information and analysis contained within the preceding sections of the PSR.</p>
+    {{ picRichTextEditor({
+      name: "proposedSentenceRationale",
+      id: "proposedSentenceRationale",
+      value: data.proposedSentenceRationale,
+      whatToInclude: proposedSentenceRationaleHelp,
+      whatToIncludeTitle: "Help with explaning your rationale",
+      errorMessage: {
+        text: "Explain your rationale for the proposed sentence"
+      } if 'proposedSentenceRationale' in elementsWithError
+    }) }}
+
+    <h2 class="govuk-heading-m">Outline alternative sentencing options</h2>
+    <p class="govuk-body">Explain what alternative options have been considered, their suitability and why they were not included in your sentencing proposal.</p>
+    {{ picRichTextEditor({
+      name: "alternativeSentencingOptions",
+      id: "alternativeSentencingOptions",
+      value: data.alternativeSentencingOptions,
+      errorMessage: {
+        text: "Outline alternative sentencing options"
+      } if 'alternativeSentencingOptions' in elementsWithError
+    }) }}
+
+    <h2 class="govuk-heading-m">Explain the impact of a custodial sentence</h2>
+    <p class="govuk-body">Alongside any relevant factors you may want to consider the impact on the defendant's family (including dependants) and managing risk. Consider any personal vulnerabilities or risks the defendant may present to themselves.</p>
+    <p class="govuk-body">If you have information that custody will not or cannot be imposed you should provide context such as the source of the information and any supporting detail.</p>
+    {{ picRichTextEditor({
+      name: "sentenceImpact",
+      id: "sentenceImpact",
+      value: data.sentenceImpact,
+      whatToInclude: sentenceImpactHelp,
+      whatToIncludeTitle: "Explain the impact of a custodial sentence",
+      errorMessage: {
+        text: "Explain the impact of a custodial sentence"
+      } if 'sentenceImpact' in elementsWithError
+    }) }}
+
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+  </form>
+
+{% endblock %}

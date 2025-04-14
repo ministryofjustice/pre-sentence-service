@@ -11,6 +11,7 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
 import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
+import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -41,6 +42,10 @@ export default function Index(
 
   post('/:reportId/defendant-behaviour', (req, res) => {
     return new DefendantBehaviourController(reportService, communityService).post(req, res)
+  })
+
+  get('/:reportId/sentencing-proposal', (req, res) => {
+    return new SentencingProposalController(reportService, communityService).get(req, res)
   })
 
   return router
