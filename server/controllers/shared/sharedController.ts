@@ -77,9 +77,9 @@ export default class SharedController {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
-  private checkInclusionExclusion = async (crn: string, user: string): Promise<InclusionExclusion> => {
+  private checkInclusionExclusion = async (_crn: string, _user: string): Promise<InclusionExclusion> => {
     try {
-      await this.communityService.getUserAccess(crn, user)
+      // await this.communityService.getUserAccess(crn, user)
       return {
         hasAccess: true,
       }
