@@ -1,0 +1,185 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+
+{% set currentPage = 'Offence Analysis' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+
+  <h2 class="govuk-heading-l">The 4 step process of risk assessment</h2>
+  <p class="govuk-body">This is a step-by-step process to help you make a decision about whether someone poses low, medium, high or very high risk of serious harm. Follow this process by:</p>
+  <ol class="govuk-list govuk-list--number">
+    <li>Assigning risk levels</li>
+    <li>Confirming risk predictors</li>
+    <li>Assessing immediacy and likelihood of reoffending</li>
+    <li>Analysing relevant risk and protective factors</li>
+  </ol>
+
+  <h2 class="govuk-heading-l">Steps 1 and 2: Assign risk levels and confirm risk predictors</h2>
+  <h2 class="govuk-heading-m">Have you completed an OASys Layer 1 Assessment?</h2>
+  <p class="govuk-body">You must complete an OASys Layer 1 Assessment to inform the risk predictors. Select 'Unable to access OASys' if you are unable to do this due to technical issues or because another assessment is in progress.</p>
+
+  {{ govukRadios({
+    classes: "govuk-radios--inline",
+    name: "oasysLayerAssessment",
+    fieldset: {
+      legend: {
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes"
+      },
+      {
+        value: "no",
+        text: "No"
+      },
+      {
+        value: "unableToAccess",
+        text: "Unable to access OASys"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-m">Enter the risk levels from OASys</h2>
+
+  <h2 class="govuk-heading-m">Risk to children</h2>
+  {{ govukSelect({
+    id: "sort",
+    name: "sort",
+    items: [
+      {
+        value: "choseAnOption",
+        text: "Chose an option"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-m">Risk to public</h2>
+  {{ govukSelect({
+    id: "sort",
+    name: "sort",
+    items: [
+      {
+        value: "choseAnOption",
+        text: "Chose an option"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-m">Risk to known adults</h2>
+  {{ govukSelect({
+    id: "sort",
+    name: "sort",
+    items: [
+      {
+        value: "choseAnOption",
+        text: "Chose an option"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-m">Risk to staff</h2>
+  {{ govukSelect({
+    id: "sort",
+    name: "sort",
+    items: [
+      {
+        value: "choseAnOption",
+        text: "Chose an option"
+      }
+    ]
+  }) }}
+
+
+  <h2 class="govuk-heading-m">Is there information indicating current or past domestic abuse?</h2>
+  {{ govukRadios({
+    name: "domesticAbuseAssessment",
+    fieldset: {
+      legend: {
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes"
+      },
+      {
+        value: "no",
+        text: "No"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-m">Is there evidence of current or past sexual offences?</h2>
+  {{ govukRadios({
+    name: "sexualOffenceAssessment",
+    fieldset: {
+      legend: {
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes"
+      },
+      {
+        value: "no",
+        text: "No"
+      }
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-l">Step 3: Assess the immediacy and likelihood of reoffending</h2>
+
+  <p class="govuk-body">Risk predictor tools are the starting point for all risk assessments. They provide an assessment of proven reoffending over a set time period. Focus your analysis on the risk predictor tools most relevant to the case.</p>
+  <p class="govuk-body">Explain the risk predictor outcome and comment on whether it matches your professional interpretation. You do not need to report percentage scores or re-explain the meaning of the tools.</p>
+
+  {{ govukTextarea({
+    name: "reOffendingImmediacyAndLikelihood",
+    id: "reoffending-immediacy-likelihood",
+    rows: "10",
+    label: {
+      text: ""
+    }
+  }) }}
+
+  <h2 class="govuk-heading-l">Step 4: Analyse relevant risks of harm and protective factors</h2>
+
+  <p class="govuk-body">Using the risk factors you've identified, create a risk analysis based on:</p>
+
+  <ul class="govuk-list govuk-list--bullet">
+    <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
+    <li>the defendant's circumstances (past and present) and how these may influence offending</li>
+    <li>the potential impact on victims</li>
+    <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
+    <li>a dangerousness assessment (if requested by the court)</li>
+  </ul>
+
+  {{ govukTextarea({
+    name: "riskAndHarmFactors",
+    id: "risk-and-harm-factors",
+    rows: "10",
+    label: {
+      text: ""
+    }
+  }) }}
+
+  <form method="post" novalidate>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+  </form>
+
+{% endblock %}
