@@ -46,6 +46,9 @@ export default function Index(
   get('/:reportId/risk-analysis', (req, res) => {
     return new RiskAnalysisController(reportService, communityService).get(req, res)
   })
+  post('/:reportId/risk-analysis', (req, res) => {
+    return new RiskAnalysisController(reportService, communityService).post(req, res)
+  })
 
   get('/:reportId/defendant-behaviour', (req, res) => {
     return new DefendantBehaviourController(reportService, communityService).get(req, res)
