@@ -5,5 +5,7 @@ export const pageFields: Array<string> = ['pnc']
 export default class OffenceAnalysisController extends BaseController {
   override templatePath = 'offence-analysis'
 
+  override redirectPath = 'risk-analysis'
+
   override pageFields = pageFields
 }
