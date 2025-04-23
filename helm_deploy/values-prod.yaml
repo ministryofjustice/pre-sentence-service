@@ -31,7 +31,7 @@ generic-service:
     delius-prod-3: "35.177.47.45/32"
     global-protect: "35.176.93.186/32"
 
-wproofreader:
+# wproofreader:
 
   ingress:
     host: pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk
