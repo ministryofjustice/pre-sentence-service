@@ -6,6 +6,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "components/text-editor/macro.njk" import picTextEditor %}
 
 
 {% set currentPage = 'Risk Analysis' %}
@@ -37,10 +38,10 @@
   <h2 class="govuk-heading-l">The 4 step process of risk assessment</h2>
   <p class="govuk-body">This is a step-by-step process to help you make a decision about whether someone poses low, medium, high or very high risk of serious harm. Follow this process by:</p>
   <ol class="govuk-list govuk-list--number">
-    <li>Assigning risk levels</li>
-    <li>Confirming risk predictors</li>
-    <li>Assessing immediacy and likelihood of reoffending</li>
-    <li>Analysing relevant risk and protective factors</li>
+    <li>Assign risk levels</li>
+    <li>Confirm risk predictors</li>
+    <li>Assess the likelihood of reoffending</li>
+    <li>Analyse relevant risk and protective factors</li>
   </ol>
 
   <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
@@ -108,8 +109,6 @@
   <p class="govuk-body">Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain
     the risk predictor outcome and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools.</p>
 
-  {% from "components/text-editor/macro.njk" import picTextEditor %}
-
   {{ picTextEditor({
     name: "riskPredictors",
     id: "risk-predictors",
@@ -120,20 +119,6 @@
     errorMessage: {
       text: "Confirm risk predictors and assess the likelihood of reoffending"
     } if 'riskPredictors' in elementsWithError
-  }) }}
-
-  <h2 class="govuk-heading-l">Step 3: Assess the immediacy and likelihood of reoffending</h2>
-
-  <p class="govuk-body">Risk predictor tools are the starting point for all risk assessments. They provide an assessment of proven reoffending over a set time period. Focus your analysis on the risk predictor tools most relevant to the case.</p>
-  <p class="govuk-body">Explain the risk predictor outcome and comment on whether it matches your professional interpretation. You do not need to report percentage scores or re-explain the meaning of the tools.</p>
-
-  {{ govukTextarea({
-    name: "reOffendingImmediacyAndLikelihood",
-    id: "reoffending-immediacy-likelihood",
-    rows: "10",
-    label: {
-      text: ""
-    }
   }) }}
 
   <h2 class="govuk-heading-l">Step 4: Analyse relevant risks of harm and protective factors</h2>
@@ -150,13 +135,14 @@
 
   <p class="govuk-body">Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>
 
-  {{ govukTextarea({
+  {{ picTextEditor({
     name: "riskAndHarmFactors",
-    id: "risk-and-harm-factors",
+    id: "risk-riskAndHarmFactors",
     rows: "10",
-    label: {
-      text: ""
-    }
+    value: data.riskAndHarmFactors,
+    errorMessage: {
+      text: "Analyse relevant risks of harm and protective factors"
+    } if 'riskAndHarmFactors' in elementsWithError
   }) }}
 
   <form method="post" novalidate>
