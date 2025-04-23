@@ -5,10 +5,30 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 
 {% set currentPage = 'Risk Analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% set riskPredictorsHelp %}
+  <p class="govuk-body">Each tool predicts something different. Those that predict harm should be prioritised when completing your assessment.</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>
+      <strong>Spousal Assault Risk Assessment (SARA)</strong> – this should be completed where there is information that may indicate current or past domestic abuse against a partner.
+    </li>
+    <li>
+      <strong>Risk of Serious Recidivism (RSR)</strong> – this should be completed in all cases. It estimates how likely someone is to be convicted for a new seriously harmful offence.
+    </li>
+    <li>
+      <strong>OASys Sexual Predictor (OSP)</strong> – this should be completed for all adult males who have been convicted of a current or previous sexual offence. This includes sexually motivated offences.
+    </li>
+    <li>
+      <strong>Offender Violence Predictor (OVP)</strong> – this will only be available in cases that have a completed Layer 3 OASys. The OVP score predicts the likelihood of violent type offences.
+    </li>
+  </ul>
+
+{% endset %}
 
 {% block reportForm %}
 
@@ -23,35 +43,17 @@
     <li>Analysing relevant risk and protective factors</li>
   </ol>
 
-  <h2 class="govuk-heading-l">Steps 1 and 2: Assign risk levels and confirm risk predictors</h2>
-  <h2 class="govuk-heading-m">Have you completed an OASys Layer 1 Assessment?</h2>
-  <p class="govuk-body">You must complete an OASys Layer 1 Assessment to inform the risk predictors. Select 'Unable to access OASys' if you are unable to do this due to technical issues or because another assessment is in progress.</p>
+  <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
 
-  {{ govukRadios({
-    classes: "govuk-radios--inline",
-    name: "oasysLayerAssessment",
-    fieldset: {
-      legend: {
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
-      {
-        value: "yes",
-        text: "Yes"
-      },
-      {
-        value: "no",
-        text: "No"
-      },
-      {
-        value: "unableToAccess",
-        text: "Unable to access OASys"
-      }
-    ]
+  {{ govukWarningText({
+    text: "You must complete an OASys Layer 1 Assessment to confirm the risk predictors and inform your wider risk analysis.",
+    iconFallbackText: "Warning"
   }) }}
 
-  <h2 class="govuk-heading-m">Enter the risk levels from OASys</h2>
+  <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH). </p>
+
+
+  <h2 class="govuk-heading-m">Confirm the risk levels from OASys</h2>
 
   <h2 class="govuk-heading-m">Risk to children</h2>
   {{ govukSelect({
@@ -101,45 +103,23 @@
     ]
   }) }}
 
+  <h2 class="govuk-heading-l">Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending</h2>
 
-  <h2 class="govuk-heading-m">Is there information indicating current or past domestic abuse?</h2>
-  {{ govukRadios({
-    name: "domesticAbuseAssessment",
-    fieldset: {
-      legend: {
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
-      {
-        value: "yes",
-        text: "Yes"
-      },
-      {
-        value: "no",
-        text: "No"
-      }
-    ]
-  }) }}
+  <p class="govuk-body">Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain
+    the risk predictor outcome and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools.</p>
 
-  <h2 class="govuk-heading-m">Is there evidence of current or past sexual offences?</h2>
-  {{ govukRadios({
-    name: "sexualOffenceAssessment",
-    fieldset: {
-      legend: {
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
-      {
-        value: "yes",
-        text: "Yes"
-      },
-      {
-        value: "no",
-        text: "No"
-      }
-    ]
+  {% from "components/text-editor/macro.njk" import picTextEditor %}
+
+  {{ picTextEditor({
+    name: "riskPredictors",
+    id: "risk-predictors",
+    rows: "10",
+    value: data.riskPredictors,
+    whatToInclude: riskPredictorsHelp,
+    whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
+    errorMessage: {
+      text: "Confirm risk predictors and assess the likelihood of reoffending"
+    } if 'riskPredictors' in elementsWithError
   }) }}
 
   <h2 class="govuk-heading-l">Step 3: Assess the immediacy and likelihood of reoffending</h2>
@@ -167,6 +147,8 @@
     <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
     <li>a dangerousness assessment (if requested by the court)</li>
   </ul>
+
+  <p class="govuk-body">Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>
 
   {{ govukTextarea({
     name: "riskAndHarmFactors",
