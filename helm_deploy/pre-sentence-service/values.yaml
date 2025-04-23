@@ -100,7 +100,7 @@ gotenberg:
     privileged: false
     runAsNonRoot: true
 
-wproofreader:
+# wproofreader:
   nameOverride: wproofreader
   replicaCount: 1
 
