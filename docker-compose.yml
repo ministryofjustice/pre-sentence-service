@@ -101,15 +101,15 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
 
   # wproofreader:
-    image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
-    networks:
-      - hmpps
-    container_name: wproofreader
-    ports:
-      - "8081:8081"
-      - "8443:8443"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
+    # image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
+    # networks:
+    #   - hmpps
+    # container_name: wproofreader
+    # ports:
+    #   - "8081:8081"
+    #   - "8443:8443"
+    # healthcheck:
+    #   test: [ "CMD", "curl", "-f", "http://localhost:8081/wscservice/api?cmd=ver" ]
 
   app:
     build: .
