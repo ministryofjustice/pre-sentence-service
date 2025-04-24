@@ -100,7 +100,7 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
-  wproofreader:
+  # wproofreader:
     image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
     networks:
       - hmpps
