@@ -77,31 +77,35 @@ export default class SharedController {
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
-  private checkInclusionExclusion = async (crn: string, user: string): Promise<InclusionExclusion> => {
-    try {
-      await this.communityService.getUserAccess(crn, user)
-      return {
-        hasAccess: true,
-      }
-    } catch (error) {
-      let disallowedMessage: string
-      let disallowedStack: string
-      if (error.data?.userExcluded) {
-        disallowedMessage = 'User Excluded'
-        disallowedStack = error.data.exclusionMessage
-      } else if (error.data?.userRestricted) {
-        disallowedMessage = 'User Restricted'
-        disallowedStack = error.data.restrictionMessage
-      } else {
-        disallowedMessage = 'Error'
-        disallowedStack = 'Unable to check restriction / exclusion'
-      }
-      return {
-        hasAccess: false,
-        disallowedMessage,
-        disallowedStack,
-        status: error?.status,
-      }
+  private checkInclusionExclusion = async (_crn: string, _user: string): Promise<InclusionExclusion> => {
+    // try {
+    //   await this.communityService.getUserAccess(crn, user)
+    //   return {
+    //     hasAccess: true,
+    //   }
+    // } catch (error) {
+    //   let disallowedMessage: string
+    //   let disallowedStack: string
+    //   if (error.data?.userExcluded) {
+    //     disallowedMessage = 'User Excluded'
+    //     disallowedStack = error.data.exclusionMessage
+    //   } else if (error.data?.userRestricted) {
+    //     disallowedMessage = 'User Restricted'
+    //     disallowedStack = error.data.restrictionMessage
+    //   } else {
+    //     disallowedMessage = 'Error'
+    //     disallowedStack = 'Unable to check restriction / exclusion'
+    //   }
+    //   return {
+    //     hasAccess: false,
+    //     disallowedMessage,
+    //     disallowedStack,
+    //     status: error?.status,
+    //   }
+    // }
+
+    return {
+      hasAccess: true,
     }
   }
 
