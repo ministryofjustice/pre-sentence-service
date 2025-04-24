@@ -10,6 +10,7 @@ import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
 import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
+import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
 
@@ -40,6 +41,13 @@ export default function Index(
   })
   post('/:reportId/offence-analysis', (req, res) => {
     return new OffenceAnalysisController(reportService, communityService).post(req, res)
+  })
+
+  get('/:reportId/risk-analysis', (req, res) => {
+    return new RiskAnalysisController(reportService, communityService).get(req, res)
+  })
+  post('/:reportId/risk-analysis', (req, res) => {
+    return new RiskAnalysisController(reportService, communityService).post(req, res)
   })
 
   get('/:reportId/defendant-behaviour', (req, res) => {
