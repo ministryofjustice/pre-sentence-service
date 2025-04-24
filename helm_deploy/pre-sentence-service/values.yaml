@@ -101,51 +101,51 @@ gotenberg:
     runAsNonRoot: true
 
 # wproofreader:
-  nameOverride: wproofreader
-  replicaCount: 1
+  # nameOverride: wproofreader
+  # replicaCount: 1
 
-  image:
-    repository: quay.io/hmpps/pre-sentence-service-wproofreader
-    tag: latest
-    port: 8081
+  # image:
+  #   repository: quay.io/hmpps/pre-sentence-service-wproofreader
+  #   tag: latest
+  #   port: 8081
 
-  ingress:
-    v1_2_enabled: true
-    v0_47_enabled: false
-    enabled: true
-    tlsSecretName: pre-sentence-service-cert
-    path: /
+  # ingress:
+  #   v1_2_enabled: true
+  #   v0_47_enabled: false
+  #   enabled: true
+  #   tlsSecretName: pre-sentence-service-cert
+  #   path: /
 
-  resources:
-    requests:
-      cpu: "1000m"
-      memory: "2Gi"
-    limits:
-      cpu: "2000m"
-      memory: "4Gi"
+  # resources:
+  #   requests:
+  #     cpu: "1000m"
+  #     memory: "2Gi"
+  #   limits:
+  #     cpu: "2000m"
+  #     memory: "4Gi"
 
-  livenessProbe:
-    httpGet:
-      path: /wscservice/api?cmd=ver
-    periodSeconds: 30
-    initialDelaySeconds: 60
-    timeoutSeconds: 20
-    failureThreshold: 10
+  # livenessProbe:
+  #   httpGet:
+  #     path: /wscservice/api?cmd=ver
+  #   periodSeconds: 30
+  #   initialDelaySeconds: 60
+  #   timeoutSeconds: 20
+  #   failureThreshold: 10
 
-  readinessProbe:
-    httpGet:
-      path: /wscservice/api?cmd=ver
-    periodSeconds: 20
-    initialDelaySeconds: 60
-    timeoutSeconds: 30
-    failureThreshold: 15
+  # readinessProbe:
+  #   httpGet:
+  #     path: /wscservice/api?cmd=ver
+  #   periodSeconds: 20
+  #   initialDelaySeconds: 60
+  #   timeoutSeconds: 30
+  #   failureThreshold: 15
 
-  podSecurityContext:
-    fsGroup: 2000
+  # podSecurityContext:
+  #   fsGroup: 2000
 
-  securityContext:
-    runAsUser: 2000
-    runAsNonRoot: true
+  # securityContext:
+  #   runAsUser: 2000
+  #   runAsNonRoot: true
 
 #generic-prometheus-alerts:
 #  targetApplication: pre-sentence-service
