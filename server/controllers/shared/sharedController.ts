@@ -221,10 +221,10 @@ export default class SharedController {
     if (validateUUID(req.params.reportId)) {
       this.report = await this.reportService.getReportById(req.params.reportId)
       if (this.report) {
-        if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
-          res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
-          return
-        }
+        // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
+        //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
+        //   return
+        // }
         this.getStoredData()
         const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
