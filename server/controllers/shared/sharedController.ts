@@ -11,7 +11,7 @@ import PreSentenceToDeliusService, { IContext } from '../../services/preSentence
 
 import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
-import logger from '../../../logger'
+// import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
 
 export interface TemplateValues {
