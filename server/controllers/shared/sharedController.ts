@@ -155,31 +155,31 @@ export default class SharedController {
     return undefined
   }
 
-  protected checkFieldValueVersions = (req: Request, report: Report): boolean => {
-    let validVersions = true
-    if (report && report.fieldValues && req.session.fieldValues) {
-      report.fieldValues.forEach(savedValue => {
-        const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
-        if ((compare ? compare.version : 1) !== savedValue.version) {
-          validVersions = false
-          logger.warn({
-            versionMismatch: true,
-            reportId: report.id,
-            sessionField: { ...compare, value: '***' },
-            dbField: { ...savedValue, value: '***' },
-            userName: req.session.userDetails.username,
-          })
-        } else {
-          logger.info({
-            versionMismatch: false,
-            reportId: report.id,
-            sessionField: { ...compare, value: '***' },
-            dbField: { ...savedValue, value: '***' },
-            userName: req.session.userDetails.username,
-          })
-        }
-      })
-    }
+  protected checkFieldValueVersions = (_req: Request, _report: Report): boolean => {
+    const validVersions = true
+    // if (report && report.fieldValues && req.session.fieldValues) {
+    //   report.fieldValues.forEach(savedValue => {
+    //     const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
+    //     if ((compare ? compare.version : 1) !== savedValue.version) {
+    //       validVersions = false
+    //       logger.warn({
+    //         versionMismatch: true,
+    //         reportId: report.id,
+    //         sessionField: { ...compare, value: '***' },
+    //         dbField: { ...savedValue, value: '***' },
+    //         userName: req.session.userDetails.username,
+    //       })
+    //     } else {
+    //       logger.info({
+    //         versionMismatch: false,
+    //         reportId: report.id,
+    //         sessionField: { ...compare, value: '***' },
+    //         dbField: { ...savedValue, value: '***' },
+    //         userName: req.session.userDetails.username,
+    //       })
+    //     }
+    //   })
+    // }
     return validVersions
   }
 
@@ -244,24 +244,24 @@ export default class SharedController {
           req.session.isAllowedAccess = true
         }
 
-        let formattedName
-        if (!persistentData.name) {
-          formattedName = await this.populateFieldValuesAndGetName()
-        }
-        if (this.updateReport) {
-          this.data = {
-            ...this.data,
-            ...persistentData,
-          }
-          await this.updateReport()
-        }
+        // let formattedName
+        // if (!persistentData.name) {
+        //   formattedName = await this.populateFieldValuesAndGetName()
+        // }
+        // if (this.updateReport) {
+        //   this.data = {
+        //     ...this.data,
+        //     ...persistentData,
+        //   }
+        //   await this.updateReport()
+        // }
         req.session.fieldValues = this.report.fieldValues
 
         this.renderTemplate(res, {
           ...this.templateValues,
           reportId: req.params.reportId,
           data: {
-            name: formattedName,
+            name: persistentData.name,
             ...this.defaultTemplateData,
             ...this.data,
             ...this.report,
