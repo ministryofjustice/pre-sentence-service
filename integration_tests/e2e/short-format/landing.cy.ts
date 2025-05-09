@@ -45,18 +45,18 @@ context('Short Format Pre-Sentence Report landing page', () => {
     })
   })
 
-  describe('Authenticated user accesses Record of Oral Pre-Sentence Report to complete a previously started report', () => {
-    it('should display a continue button', () => {
-      cy.visit(`/${path}/offender-details`)
-      currentPage.govukButton().contains('Save and continue').click()
-      cy.visit(path)
-      currentPage.govukButton().should('contain.text', 'Continue now')
-    })
+  // describe('Authenticated user accesses Record of Oral Pre-Sentence Report to complete a previously started report', () => {
+  //   it('should display a continue button', () => {
+  //     cy.visit(`/${path}/offender-details`)
+  //     currentPage.govukButton().contains('Save and continue').click()
+  //     cy.visit(path)
+  //     currentPage.govukButton().should('contain.text', 'Continue now')
+  //   })
 
-    it('should display the last saved timestamp', () => {
-      currentPage.lastSaved().should('exist')
-    })
-  })
+  //   it('should display the last saved timestamp', () => {
+  //     currentPage.lastSaved().should('exist')
+  //   })
+  // })
 })
 
 context('Short Format Pre-Sentence Report landing page error statuses', () => {

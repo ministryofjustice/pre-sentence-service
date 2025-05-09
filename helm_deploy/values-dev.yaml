@@ -19,6 +19,7 @@ generic-service:
     WPROOFREADER_PROTOCOL: 'https'
     WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
     WPROOFREADER_PORT: null
+    DB_RUN_MIGRATIONS: true
 
   allowlist: null
 
