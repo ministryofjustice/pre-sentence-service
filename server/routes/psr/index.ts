@@ -13,6 +13,7 @@ import OffenceAnalysisController from '../../controllers/psr/offence-analysis-co
 import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
+import PreviewReportController from '../../controllers/psr/preview-report-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -63,6 +64,13 @@ export default function Index(
   })
   post('/:reportId/sentencing-proposal', (req, res) => {
     return new SentencingProposalController(reportService, communityService).get(req, res)
+  })
+
+  get('/:reportId/preview-report', (req, res) => {
+    return new PreviewReportController(reportService, communityService).get(req, res)
+  })
+  post('/:reportId/preview-report', (req, res) => {
+    return new PreviewReportController(reportService, communityService).get(req, res)
   })
 
   return router

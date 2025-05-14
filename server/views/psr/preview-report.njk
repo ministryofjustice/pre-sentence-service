@@ -1,0 +1,271 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set currentPage = 'Preview report' %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+
+{% block reportForm %}
+
+    <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+    <h1 class="govuk-heading-l govuk-hint">You can edit any part of the report by navigating back to the relevant section. </h1>
+
+
+    <div id="header-contents" class="govuk-width-container">
+        <div id="site-header-block" class="govuk-!-margin-bottom-3">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Pre-sentence report</h2>
+{#            <img src="/assets/images/probation-service.png" alt="Probation Service logo">#}
+        </div>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    </div>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Defendant details</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+            <a href="/{{ reportPath }}/{{ reportId }}/defendant-details" class="govuk-link govuk-!-margin-top-2 govuk-!-display-inline-block">Change</a>
+        </div>
+    </div>
+
+    {{ govukSummaryList({
+        classes: "govuk-summary-list--no-border",
+        rows: [
+            {
+                key: {
+                text: "Full name"
+            },
+                value: {
+                text: data.name
+            }
+            },
+            {
+                key: {
+                text: "Date of birth"
+            },
+                value: {
+                text: data.dateOfBirth
+            }
+            },
+            {
+                key: {
+                text: "Current address"
+            },
+                value: {
+                html: data.address
+            }
+            }
+        ]
+    }) }}
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Offence analysis</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+            <a href="/{{ reportPath }}/{{ reportId }}/offence-analysis" class="govuk-link govuk-!-margin-top-2 govuk-!-display-inline-block">Change</a>
+        </div>
+    </div>
+
+    {{ govukTable({
+        head: [
+            {
+                text: "Offences under consideration"
+            },
+            {
+                text: "Date of offence"
+            }
+        ],
+        rows: [
+            [
+                {
+                    html: "<strong>Criminal damage</strong>"
+                },
+                {
+                    text: data.criminalDamageDate
+                }
+            ],
+            [
+                {
+                    text: "Wounding or grievous bodily harm with intent to cause grievous bodily harm"
+                },
+                {
+                    text: data.woundingDate
+                }
+            ],
+            [
+                {
+                    text: "Assault on emergency worker"
+                },
+                {
+                    text: data.assaultDate
+                }
+            ],
+            [
+                {
+                    text: "Possession of class A drugs"
+                },
+                {
+                    text: data.possessionOfClassADrugsDate
+                }
+            ]
+        ]
+    }) }}
+
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Analysis of offences under consideration</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.offenceUnderConsideration }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Pattern of offending and response to supervision</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.offencePattern }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Defendant behaviour and lifestyle assessment</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+            <a href="/{{ reportPath }}/{{ reportId }}/defendant-behaviour" class="govuk-link govuk-!-margin-top-2 govuk-!-display-inline-block">Change</a>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.behaviourAndLifestyleAssessment }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Risk analysis</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+            <a href="/{{ reportPath }}/{{ reportId }}/risk-analysis" class="govuk-link govuk-!-margin-top-2 govuk-!-display-inline-block">Change</a>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Risk of serious harm</h2>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-one-quarter">
+            <p class="govuk-body">
+                <strong>Children:</strong> {{ data.riskOfHarmForChildren }}
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <p class="govuk-body">
+                <strong>Public:</strong> {{ data.riskOfHarmForPublic }}
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <p class="govuk-body">
+                <strong>Known adults:</strong> {{ data.riskOfHarmForKnownAdults }}
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <p class="govuk-body">
+                <strong>Staff:</strong> {{ data.riskOfHarmForStaff }}
+            </p>
+        </div>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Confirm risk predictors and assess the likelihood of reoffending</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.riskPredictorsAndLikelihoodOfReoffending }}
+    </p>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Analyse relevant risks of harm and protective factors</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.relevantRisksAndProtectiveFactors }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Sentencing proposal</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter govuk-!-text-align-right">
+            <a href="/{{ reportPath }}/{{ reportId }}/sentencing-proposal" class="govuk-link govuk-!-margin-top-2 govuk-!-display-inline-block">Change</a>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">The proposed sentence</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.proposedSentence }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Rationale for the proposed sentence</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.rationaleForProposedSentence }}
+    </p>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Outline alternative sentencing options</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.alternativeSentencingOptions }}
+    </p>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-2">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">Impact of a custodial sentence</h2>
+        </div>
+    </div>
+    <p class="govuk-body">
+        {{ data.impactOfCustodialSentence }}
+    </p>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <form method="post" novalidate>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+    </form>
+
+{% endblock %}
