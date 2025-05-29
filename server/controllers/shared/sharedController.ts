@@ -29,6 +29,13 @@ interface InclusionExclusion {
   status?: number
 }
 
+export type SharedData = {
+  crn?: string
+  name?: string
+  age?: number
+  dateOfBirth?: string
+} & { [key: string]: unknown }
+
 export default class SharedController {
   private persistentData: Array<string> = ['crn', 'name']
 
@@ -38,12 +45,7 @@ export default class SharedController {
 
   redirectPath = ''
 
-  data: {
-    crn?: string
-    name?: string
-    age?: number
-    dateOfBirth?: string
-  } = {}
+  data: SharedData = {}
 
   defaultTemplateData = {}
 
@@ -121,7 +123,7 @@ export default class SharedController {
   }
 
   private getPersistentData = (): object => {
-    const data = {}
+    const data: { [key: string]: unknown } = {}
     if (this.report && this.report.fieldValues) {
       this.report.fieldValues.forEach(item => {
         if (this.persistentData.includes(item.field.name)) {
@@ -183,7 +185,8 @@ export default class SharedController {
     return validVersions
   }
 
-  protected updateFields = async (fieldData: unknown, overridePageFields = false) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected updateFields = async (fieldData: any, overridePageFields = false) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
@@ -191,7 +194,9 @@ export default class SharedController {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
           let tmpValue = null
           if (fieldData[item.name] && fieldData[item.name] !== '') {
-            tmpValue = Array.isArray(fieldData[item.name]) ? fieldData[item.name].join(',') : fieldData[item.name]
+            tmpValue = Array.isArray(fieldData[item.name])
+              ? (fieldData[item.name] as []).join(',')
+              : (fieldData[item.name] as string)
           }
           fieldValues.push({
             reportId: this.report.id,

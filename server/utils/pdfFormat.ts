@@ -35,7 +35,7 @@ export function getFooter(data: FooterData): string {
 }
 
 export function configureReportData(report: Report) {
-  const reportData = {
+  const reportData: { [key: string]: unknown } = {
     reportStatus: report.status,
     reportType: report.reportDefinition.type,
     reportVersion: report.reportDefinition.version,

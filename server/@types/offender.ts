@@ -107,11 +107,11 @@ export type Offender = {
               code: string
               description: string
             }
-          }
+          },
         ]
         lastUpdatedDateTime: string
         isActive: boolean
-      }
+      },
     ]
     genderIdentity: string
     selfDescribedGender: string

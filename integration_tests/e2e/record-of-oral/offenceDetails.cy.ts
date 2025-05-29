@@ -84,7 +84,7 @@ context('Oral - Offence details report page', () => {
     xit('should auto save inputted data in a CKEditor instance', () => {
       enterRichText('#otherOffences', 'Some other offence data should auto save')
       enterRichText('#mainOffence', 'Some main offence')
-      // eslint-disable-next-line
+
       cy.wait(500) // CKEditor autosave includes a wait
       cy.visit(path)
       cy.get('#otherOffences').should('have.value', '<p>Some other offence data should auto save</p>')

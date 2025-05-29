@@ -44,7 +44,7 @@ export type Sentence = {
       amount: number
       length: number
       notes: string
-    }
+    },
   ]
   failureToComplyLimit: number
   cja2003Order: boolean
@@ -141,6 +141,6 @@ export type OffenceInformation = {
       staffCode: string
       dateStartOfAllocation: string
       gradeCode: string
-    }
+    },
   ]
 }

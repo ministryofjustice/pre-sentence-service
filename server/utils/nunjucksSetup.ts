@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import nunjucks from 'nunjucks'
 import express from 'express'
 import * as pathModule from 'path'
