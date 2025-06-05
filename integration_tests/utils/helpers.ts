@@ -9,6 +9,7 @@ function clearRichText(id: string) {
 function enterRichText(id: string, text: string) {
   cy.get(id)
     .parent()
+    .first()
     .within(() => {
       cy.get('.ck-editor__editable_inline').clear().type(text)
     })

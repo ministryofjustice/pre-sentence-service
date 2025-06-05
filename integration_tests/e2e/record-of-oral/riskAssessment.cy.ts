@@ -31,6 +31,7 @@ context('Oral - Risk assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Risk assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -53,6 +54,7 @@ context('Oral - Risk assessment report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Tool name').should('exist')
         })
@@ -60,6 +62,7 @@ context('Oral - Risk assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Level').should('exist')
         })
@@ -69,6 +72,7 @@ context('Oral - Risk assessment report page', () => {
       currentPage
         .richTextArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Evidence for risk level').should('exist')
         })
@@ -78,6 +82,7 @@ context('Oral - Risk assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Response').should('exist')
         })
@@ -112,6 +117,7 @@ context('Oral - Risk assessment report page', () => {
         .eq(0)
         .contains('Level')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'High')
             .prev()
@@ -125,6 +131,7 @@ context('Oral - Risk assessment report page', () => {
         .eq(1)
         .contains('Level')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'High')
             .prev()
@@ -138,6 +145,7 @@ context('Oral - Risk assessment report page', () => {
         .eq(2)
         .contains('Level')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'High')
             .prev()
@@ -151,6 +159,7 @@ context('Oral - Risk assessment report page', () => {
         .eq(3)
         .contains('Level')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'High')
             .prev()
@@ -165,6 +174,7 @@ context('Oral - Risk assessment report page', () => {
       cy.get('legend')
         .contains('Response')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Good')
             .prev()
@@ -180,6 +190,7 @@ context('Oral - Risk assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Risk assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

@@ -31,6 +31,7 @@ context('Short Format - Offender assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offender assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,6 +52,7 @@ context('Short Format - Offender assessment report page', () => {
       currentPage
         .checkboxes()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend')
             .contains(
@@ -62,6 +64,7 @@ context('Short Format - Offender assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Is there evidence of the offender experiencing trauma?').should('exist')
         })
@@ -69,6 +72,7 @@ context('Short Format - Offender assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend')
             .contains(
@@ -105,6 +109,7 @@ context('Short Format - Offender assessment report page', () => {
       cy.get('legend')
         .contains('Is there evidence of the offender experiencing trauma?')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()

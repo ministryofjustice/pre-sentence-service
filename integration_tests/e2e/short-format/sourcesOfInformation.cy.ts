@@ -41,6 +41,7 @@ context('Short Format - Sources of information report page', () => {
       currentPage
         .checkboxes()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Select the relevant options').should('exist')
         })

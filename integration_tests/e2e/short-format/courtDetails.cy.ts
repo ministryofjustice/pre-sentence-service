@@ -31,6 +31,7 @@ context('Short Format - Sentencing court details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Sentencing court details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })
@@ -82,6 +83,7 @@ context('Short Format - Sentencing court details report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('#localJusticeArea').should('have.value', 'Some local justice area')
           cy.get('#dateOfHearing-day').should('have.value', '27')

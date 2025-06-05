@@ -31,6 +31,7 @@ context('Oral - Offender assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offender assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,6 +52,7 @@ context('Oral - Offender assessment report page', () => {
       currentPage
         .checkboxes()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend')
             .contains(
@@ -62,6 +64,7 @@ context('Oral - Offender assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Is there evidence of the offender experiencing trauma?').should('exist')
         })
@@ -69,6 +72,7 @@ context('Oral - Offender assessment report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend')
             .contains(
@@ -80,6 +84,7 @@ context('Oral - Offender assessment report page', () => {
       currentPage
         .richTextArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Evidence for assessment').should('exist')
         })
@@ -113,6 +118,7 @@ context('Oral - Offender assessment report page', () => {
       cy.get('legend')
         .contains('Is there evidence of the offender experiencing trauma?')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -126,6 +132,7 @@ context('Oral - Offender assessment report page', () => {
           'Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?'
         )
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -142,6 +149,7 @@ context('Oral - Offender assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offender assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

@@ -30,8 +30,8 @@ context('Oral - Offence analysis report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,24 +51,24 @@ context('Oral - Offence analysis report page', () => {
     it('should include the required form elements', () => {
       currentPage
         .richTextArea()
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Provide an analysis of the offence(s), including victim impact.').should('exist')
         })
 
       currentPage
         .radioButtons()
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Is current offending part of a pattern of offending behaviour?').should('exist')
         })
 
       currentPage
         .radioButtons()
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Does current offending represent an escalation in seriousness?').should('exist')
         })
@@ -98,8 +98,8 @@ context('Oral - Offence analysis report page', () => {
       cy.get('#offenceAnalysis').should('have.value', '<p>Some offence analysis</p>')
       cy.get('legend')
         .contains('Is current offending part of a pattern of offending behaviour?')
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -109,8 +109,8 @@ context('Oral - Offence analysis report page', () => {
         })
       cy.get('legend')
         .contains('Does current offending represent an escalation in seriousness?')
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -124,8 +124,8 @@ context('Oral - Offence analysis report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
-        .first()
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

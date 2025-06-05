@@ -32,6 +32,7 @@ context('Short Format - Offence details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -52,6 +53,7 @@ context('Short Format - Offence details report page', () => {
       currentPage
         .richTextArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Main offence and date').should('exist')
           cy.get('label').contains('Other offence(s) and dates (if applicable)').should('exist')
@@ -90,6 +92,7 @@ context('Short Format - Offence details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

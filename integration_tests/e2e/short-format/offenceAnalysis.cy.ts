@@ -31,6 +31,7 @@ context('Short Format - Offence analysis report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,6 +52,7 @@ context('Short Format - Offence analysis report page', () => {
       currentPage
         .richTextArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Offence analysis').should('exist')
           cy.get('label').contains('Patterns of offending behaviour').should('exist')

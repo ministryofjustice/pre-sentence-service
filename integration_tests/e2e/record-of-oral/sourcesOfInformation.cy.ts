@@ -31,6 +31,7 @@ context('Oral - Sources of information report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Not started')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,6 +52,7 @@ context('Oral - Sources of information report page', () => {
       currentPage
         .checkboxes()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend').contains('Select the relevant options').should('exist')
         })
@@ -86,6 +88,7 @@ context('Oral - Sources of information report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Sources of information')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

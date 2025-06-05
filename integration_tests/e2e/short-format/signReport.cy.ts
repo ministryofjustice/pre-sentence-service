@@ -23,6 +23,7 @@ context('Short Format - Sign report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')
         .contains('Sign your report')
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Cannot start yet').should('exist')
         })
@@ -32,6 +33,7 @@ context('Short Format - Sign report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Report author').should('exist')
         })
@@ -39,6 +41,7 @@ context('Short Format - Sign report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Office').should('exist')
         })
@@ -46,6 +49,7 @@ context('Short Format - Sign report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Court office phone number').should('exist')
         })
@@ -53,18 +57,21 @@ context('Short Format - Sign report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Day').should('exist')
         })
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Month').should('exist')
         })
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Year').should('exist')
         })
