@@ -30,6 +30,7 @@ context('Oral - Sentencing court details report page', () => {
       cy.visit(`${path.substring(0, path.lastIndexOf('/'))}/check-report`)
       cy.get('.moj-task-list__item')
         .contains('Sentencing court details')
+        .first()
         .parent()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
@@ -55,6 +56,7 @@ context('Oral - Sentencing court details report page', () => {
     it('should include the required form elements', () => {
       currentPage
         .inputText()
+        .first()
         .parent()
         .within(() => {
           cy.get('label').contains('Day').should('exist')
@@ -86,6 +88,7 @@ context('Oral - Sentencing court details report page', () => {
       cy.get('p').contains('Sheffield Magistrates Court').should('exist')
       currentPage
         .inputText()
+        .first()
         .parent()
         .within(() => {
           cy.get('#localJusticeArea').should('have.value', 'Some local justice area')

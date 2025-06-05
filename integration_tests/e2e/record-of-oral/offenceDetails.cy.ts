@@ -51,6 +51,7 @@ context('Oral - Offence details report page', () => {
     it('should include the required form elements', () => {
       currentPage
         .richTextArea()
+        .first()
         .parent()
         .within(() => {
           cy.get('label').contains('Main offence and date').should('exist')
