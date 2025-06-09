@@ -116,7 +116,7 @@ services:
     networks:
       - hmpps
     container_name: pre-sentence-service
-    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack, community-api, wproofreader ]
+    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack, community-api ]
     ports:
       - "3000:3000"
     environment:

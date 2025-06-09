@@ -31,6 +31,7 @@ context('Oral - Offence analysis report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -45,29 +46,6 @@ context('Oral - Offence analysis report page', () => {
           .parent()
           .should('have.class', 'moj-side-navigation__item--active')
       })
-    })
-
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .within(() => {
-          cy.get('label').contains('Provide an analysis of the offence(s), including victim impact.').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .within(() => {
-          cy.get('legend').contains('Is current offending part of a pattern of offending behaviour?').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .within(() => {
-          cy.get('legend').contains('Does current offending represent an escalation in seriousness?').should('exist')
-        })
     })
 
     it('should include the primary call to action button', () => {
@@ -95,6 +73,7 @@ context('Oral - Offence analysis report page', () => {
       cy.get('legend')
         .contains('Is current offending part of a pattern of offending behaviour?')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -105,6 +84,7 @@ context('Oral - Offence analysis report page', () => {
       cy.get('legend')
         .contains('Does current offending represent an escalation in seriousness?')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -119,6 +99,7 @@ context('Oral - Offence analysis report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

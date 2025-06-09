@@ -31,6 +31,7 @@ context('Oral - Proposal report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Proposal')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -51,6 +52,7 @@ context('Oral - Proposal report page', () => {
       currentPage
         .radioButtons()
         .parent()
+        .first()
         .within(() => {
           cy.get('legend')
             .contains(
@@ -62,6 +64,7 @@ context('Oral - Proposal report page', () => {
       currentPage
         .richTextArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label')
             .contains('Enter a proposed sentence (including length and any sentence components)')
@@ -94,6 +97,7 @@ context('Oral - Proposal report page', () => {
           'I confirm that equalities and diversity information has been considered as part of preparing the report and proposal'
         )
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()
@@ -110,6 +114,7 @@ context('Oral - Proposal report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Proposal')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

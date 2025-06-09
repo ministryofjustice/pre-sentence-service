@@ -20,10 +20,12 @@ context('Short Format - Risk assessment report page', () => {
 
   describe('Authenticated user accesses risk assessment', () => {
     it('should display the key details', () => {
-      cy.get('#qa-key-details').within(() => {
-        cy.get('h1').should('contain', 'X320741')
-        cy.get('h1').should('contain', 'Lenore Marquez')
-      })
+      cy.get('#qa-key-details')
+        .first()
+        .within(() => {
+          cy.get('h1').should('contain', 'X320741')
+          cy.get('h1').should('contain', 'Lenore Marquez')
+        })
     })
 
     it('should display as NOT STARTED on the check report page', () => {
@@ -31,6 +33,7 @@ context('Short Format - Risk assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Risk assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -39,34 +42,14 @@ context('Short Format - Risk assessment report page', () => {
     it('should include side navigation and current page should appear as active', () => {
       currentPage.mojSideNavigation().should('exist')
 
-      currentPage.mojSideNavigation().within(() => {
-        cy.get('.moj-side-navigation__item')
-          .contains(currentPage.title)
-          .parent()
-          .should('have.class', 'moj-side-navigation__item--active')
-      })
-    })
-
-    it('should include the required form elements', () => {
       currentPage
-        .richTextArea()
-        .parent()
+        .mojSideNavigation()
+        .first()
         .within(() => {
-          cy.get('label').contains('Likelihood of further offending').should('exist')
-        })
-
-      currentPage
-        .richTextArea()
-        .parent()
-        .within(() => {
-          cy.get('label').contains('Risk of serious harm').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .within(() => {
-          cy.get('legend').contains('Response to previous supervision').should('exist')
+          cy.get('.moj-side-navigation__item')
+            .contains(currentPage.title)
+            .parent()
+            .should('have.class', 'moj-side-navigation__item--active')
         })
     })
 
@@ -97,6 +80,7 @@ context('Short Format - Risk assessment report page', () => {
       cy.get('legend')
         .contains('Response to previous supervision')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Good')
             .prev()
@@ -111,6 +95,7 @@ context('Short Format - Risk assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Risk assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })

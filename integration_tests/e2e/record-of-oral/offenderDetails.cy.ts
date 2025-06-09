@@ -31,6 +31,7 @@ context('Oral - Offender details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offender details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })
@@ -62,6 +63,7 @@ context('Oral - Offender details report page', () => {
       currentPage
         .textArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Address').should('exist')
         })
@@ -69,6 +71,7 @@ context('Oral - Offender details report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('PNC ID').should('exist')
         })

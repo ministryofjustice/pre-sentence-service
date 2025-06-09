@@ -5,7 +5,10 @@ import config from '../../config'
 import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
 
 export default class ApiController {
-  constructor(protected readonly reportService: ReportService = null, protected readonly eventService: EventService) {}
+  constructor(
+    protected readonly reportService: ReportService = null,
+    protected readonly eventService: EventService
+  ) {}
 
   // Support legacy nDelius report types
   private correctReportType(reportType: string): string {
@@ -82,7 +85,7 @@ export default class ApiController {
       const report = await this.reportService.getReportById(id)
       const reportData = configureReportData(report)
       const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion })
+      const footerHtml = getFooter({ version: reportData.reportVersion as string })
       // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
       const { preSentenceUrl } = config.apis.gotenberg
       const filename = `${reportData.reportType}_${id}.pdf`

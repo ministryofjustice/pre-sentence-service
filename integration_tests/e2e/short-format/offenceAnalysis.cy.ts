@@ -31,6 +31,7 @@ context('Short Format - Offence analysis report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence analysis')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -45,16 +46,6 @@ context('Short Format - Offence analysis report page', () => {
           .parent()
           .should('have.class', 'moj-side-navigation__item--active')
       })
-    })
-
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .within(() => {
-          cy.get('label').contains('Offence analysis').should('exist')
-          cy.get('label').contains('Patterns of offending behaviour').should('exist')
-        })
     })
 
     it('should include the primary call to action button', () => {

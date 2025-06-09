@@ -25,7 +25,7 @@ export interface IDomainEvent {
       {
         type: string
         value: string
-      }
+      },
     ]
   }
 }

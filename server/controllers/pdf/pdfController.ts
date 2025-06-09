@@ -12,9 +12,9 @@ export default class PdfController {
     const { reportId } = req.params
     const report: Report = await this.reportService.getReportById(reportId)
     if (report) {
-      const reportData = { ...configureReportData(report), preview: true }
+      const reportData: { [key: string]: unknown } = { ...configureReportData(report), preview: true }
       const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion })
+      const footerHtml = getFooter({ version: reportData.reportVersion as string })
       logger.info(`Request to preview ${reportData.reportType} report ${reportId}`)
       res.render(`reports/${reportData.reportType}`, { data: reportData, headerHtml, footerHtml })
     } else {
@@ -30,7 +30,7 @@ export default class PdfController {
     if (report) {
       const reportData = configureReportData(report)
       const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion })
+      const footerHtml = getFooter({ version: reportData.reportVersion as string })
       // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
       const { preSentenceUrl } = config.apis.gotenberg
       const filename = `${reportData.reportType}_${reportId}.pdf`

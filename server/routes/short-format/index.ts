@@ -33,7 +33,7 @@ export default function Index(
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
 
-  router.get('/shortFormatPreSentenceReport/:reportId/:section?', (req, res) => {
+  router.get('/shortFormatPreSentenceReport/:reportId{/:section}', (req, res) => {
     const { reportId, section } = req.params
     res.redirect(301, `/short-format/${reportId}${section ? `/${section}` : ''}`)
   })

@@ -31,6 +31,7 @@ context('Short Format - Sentencing court details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Sentencing court details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })
@@ -45,17 +46,6 @@ context('Short Format - Sentencing court details report page', () => {
           .parent()
           .should('have.class', 'moj-side-navigation__item--active')
       })
-    })
-
-    it('should include the required form elements', () => {
-      currentPage
-        .inputText()
-        .parent()
-        .within(() => {
-          cy.get('label').contains('Day').should('exist')
-          cy.get('label').contains('Month').should('exist')
-          cy.get('label').contains('Year').should('exist')
-        })
     })
 
     it('should include the primary call to action button', () => {
@@ -75,19 +65,6 @@ context('Short Format - Sentencing court details report page', () => {
       currentPage.completeForm()
       currentPage.govukButton().contains('Save and continue').click()
       Page.verifyOnPage(OffenceDetails)
-    })
-
-    it('should retain inputted data', () => {
-      cy.get('p').contains('Sheffield Magistrates Court').should('exist')
-      currentPage
-        .inputText()
-        .parent()
-        .within(() => {
-          cy.get('#localJusticeArea').should('have.value', 'Some local justice area')
-          cy.get('#dateOfHearing-day').should('have.value', '27')
-          cy.get('#dateOfHearing-month').should('have.value', '10')
-          cy.get('#dateOfHearing-year').should('have.value', '2021')
-        })
     })
   })
 

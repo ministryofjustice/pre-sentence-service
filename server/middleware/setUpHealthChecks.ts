@@ -14,11 +14,11 @@ export default function setUpHealthChecks(): Router {
     })
   })
 
-  router.get('/ping', (req, res) =>
+  router.get('/ping', (_req, res, _next) => {
     res.send({
       status: 'UP',
     })
-  )
+  })
 
   return router
 }

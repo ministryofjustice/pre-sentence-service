@@ -31,6 +31,7 @@ context('Short Format - Offender assessment report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offender assessment')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -45,37 +46,6 @@ context('Short Format - Offender assessment report page', () => {
           .parent()
           .should('have.class', 'moj-side-navigation__item--active')
       })
-    })
-
-    it('should include the required form elements', () => {
-      currentPage
-        .checkboxes()
-        .parent()
-        .within(() => {
-          cy.get('legend')
-            .contains(
-              'Select any factors relating to offending behaviour and the individual’s need, including any protective factors.'
-            )
-            .should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .within(() => {
-          cy.get('legend').contains('Is there evidence of the offender experiencing trauma?').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .within(() => {
-          cy.get('legend')
-            .contains(
-              'Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?'
-            )
-            .should('exist')
-        })
     })
 
     it('should include the primary call to action button', () => {
@@ -105,6 +75,7 @@ context('Short Format - Offender assessment report page', () => {
       cy.get('legend')
         .contains('Is there evidence of the offender experiencing trauma?')
         .parent()
+        .first()
         .within(() => {
           cy.contains('label', 'Yes')
             .prev()

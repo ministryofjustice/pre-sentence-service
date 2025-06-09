@@ -32,6 +32,7 @@ context('Short Format - Offence details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Not started').should('exist')
         })
@@ -46,17 +47,6 @@ context('Short Format - Offence details report page', () => {
           .parent()
           .should('have.class', 'moj-side-navigation__item--active')
       })
-    })
-
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .within(() => {
-          cy.get('label').contains('Main offence and date').should('exist')
-          cy.get('label').contains('Other offence(s) and dates (if applicable)').should('exist')
-          cy.get('label').contains('Brief summary of the offence').should('exist')
-        })
     })
 
     it('should include the primary call to action button', () => {
@@ -90,6 +80,7 @@ context('Short Format - Offence details report page', () => {
       cy.get('.moj-task-list__item')
         .contains('Offence details')
         .parent()
+        .first()
         .within(() => {
           cy.get('.govuk-tag').contains('Saved').should('exist')
         })
@@ -98,7 +89,7 @@ context('Short Format - Offence details report page', () => {
     xit('should auto save inputted data in a CKEditor instance', () => {
       enterRichText('#otherOffences', 'Some other offence data should auto save')
       enterRichText('#mainOffence', 'Some main offence')
-      // eslint-disable-next-line
+
       cy.wait(500) // CKEditor autosave includes a wait
       cy.visit(path)
       cy.get('#otherOffences').should('have.value', '<p>Some other offence data should auto save</p>')

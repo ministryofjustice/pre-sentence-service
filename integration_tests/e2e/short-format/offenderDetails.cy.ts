@@ -62,6 +62,7 @@ context('Short Format - Offender details report page', () => {
       currentPage
         .textArea()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('Address').should('exist')
         })
@@ -69,6 +70,7 @@ context('Short Format - Offender details report page', () => {
       currentPage
         .inputText()
         .parent()
+        .first()
         .within(() => {
           cy.get('label').contains('PNC ID').should('exist')
         })
