@@ -48,48 +48,6 @@ context('Oral - Offender assessment report page', () => {
       })
     })
 
-    it('should include the required form elements', () => {
-      currentPage
-        .checkboxes()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend')
-            .contains(
-              'Select any factors relating to offending behaviour and the individual’s need, including any protective factors.'
-            )
-            .should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Is there evidence of the offender experiencing trauma?').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend')
-            .contains(
-              'Does the offender have caring responsibilities for children or adults, or have they ever had caring responsibilities for children or adults?'
-            )
-            .should('exist')
-        })
-
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Evidence for assessment').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })

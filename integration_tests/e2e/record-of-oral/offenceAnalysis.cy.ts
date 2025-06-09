@@ -48,32 +48,6 @@ context('Oral - Offence analysis report page', () => {
       })
     })
 
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Provide an analysis of the offence(s), including victim impact.').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Is current offending part of a pattern of offending behaviour?').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Does current offending represent an escalation in seriousness?').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })

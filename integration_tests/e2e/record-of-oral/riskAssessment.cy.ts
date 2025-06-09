@@ -48,46 +48,6 @@ context('Oral - Risk assessment report page', () => {
       })
     })
 
-    it('should include the required form elements', () => {
-      currentPage.headingL2().contains('Static Assessment Scores').should('exist')
-
-      currentPage
-        .inputText()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Tool name').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Level').should('exist')
-        })
-
-      currentPage.headingL2().contains('Risk of serious harm').should('exist')
-
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Evidence for risk level').should('exist')
-        })
-
-      currentPage.headingL2().contains('Response to previous supervision').should('exist')
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Response').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })

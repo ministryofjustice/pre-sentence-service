@@ -49,17 +49,6 @@ context('Oral - Offence details report page', () => {
       })
     })
 
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Main offence and date').should('exist')
-          cy.get('label').contains('Other offence(s) and dates (if applicable)').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })

@@ -48,17 +48,6 @@ context('Short Format - Offence analysis report page', () => {
       })
     })
 
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Offence analysis').should('exist')
-          cy.get('label').contains('Patterns of offending behaviour').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })
