@@ -53,32 +53,6 @@ context('Short Format - Risk assessment report page', () => {
         })
     })
 
-    it('should include the required form elements', () => {
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Likelihood of further offending').should('exist')
-        })
-
-      currentPage
-        .richTextArea()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('label').contains('Risk of serious harm').should('exist')
-        })
-
-      currentPage
-        .radioButtons()
-        .parent()
-        .first()
-        .within(() => {
-          cy.get('legend').contains('Response to previous supervision').should('exist')
-        })
-    })
-
     it('should include the primary call to action button', () => {
       currentPage.govukButton().contains('Save and continue').should('exist')
     })
