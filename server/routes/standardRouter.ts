@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import csurf from 'csurf'
+import { csrfSynchronisedProtection } from '../utils/csrf'
 
 import auth from '../authentication/auth'
 import config from '../config'
@@ -34,7 +34,7 @@ export default function standardRouter(
     router.use(setUpAuthentication())
     router.use(authorisationMiddleware())
     router.use(auth.authenticationMiddleware(tokenVerifier))
-    router.use(csurf())
+    router.use(csrfSynchronisedProtection)
   }
 
   router.use((req, res, next) => {
