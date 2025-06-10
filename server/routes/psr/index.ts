@@ -41,6 +41,7 @@ export default function Index(
     return new OffenceAnalysisController(reportService, communityService).get(req, res)
   })
   post('/:reportId/offence-analysis', (req, res) => {
+    console.log('🚀 ~ post ~ req:', req)
     return new OffenceAnalysisController(reportService, communityService).post(req, res)
   })
 
