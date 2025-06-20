@@ -187,24 +187,12 @@ export default class SharedController {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected updateFields = async (fieldData: any, overridePageFields = false) => {
-    console.log('🚀 ~ SharedController ~ updateFields= ~ fieldData:', fieldData)
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
-      console.log('🚀 ~ SharedController ~ updateFields= ~ this.report.reportDefinition:', this.report.reportDefinition)
       this.report.reportDefinition.fields.forEach(item => {
-        console.log(
-          '🚀 ~ SharedController ~ updateFields= ~ this.pageFields.includes(item.name):',
-          this.pageFields.includes(item.name)
-        )
-        console.log('🚀 ~ SharedController ~ updateFields= ~ this.pageFields:', this.pageFields)
-        console.log('🚀 ~ SharedController ~ updateFields= ~ item.name:', item.name)
-
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
           let tmpValue = fieldValue.value
-          console.log('🚀 ~ SharedController ~ updateFields= ~ tmpValue:', tmpValue)
-          console.log('🚀 ~ SharedController ~ updateFields= ~ fieldData[item.name]:', fieldData[item.name])
-
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -296,8 +284,6 @@ export default class SharedController {
   public post = async (req: Request, res: Response): Promise<void> => {
     this.report = await this.reportService.getReportById(req.params.reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
-    console.log('🚀 ~ SharedController ~ post= ~ validatedForm:', validatedForm)
-
     if (validatedForm.isValid || req.query?.redirectPath) {
       if (this.correctFormData) {
         req.body = {
@@ -305,7 +291,6 @@ export default class SharedController {
           ...this.correctFormData(req),
         }
       }
-      console.log('here 1')
       if (this.checkFieldValueVersions(req, this.report)) {
         if (this.report && this.report.status === 'NOT_STARTED') {
           await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
