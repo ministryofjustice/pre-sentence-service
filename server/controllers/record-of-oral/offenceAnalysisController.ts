@@ -1,7 +1,12 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
-export const pageFields = ['offenceAnalysis', 'patternOfOffendingBehaviour', 'escalationInSeriousness']
+export const pageFields = [
+  'offenceAnalysis',
+  'patternOfOffendingBehaviour',
+  'escalationInSeriousness',
+  'offencesUnderConsideration',
+]
 
 export default class OffenceAnalysisController extends BaseController {
   override templatePath = 'offence-analysis'

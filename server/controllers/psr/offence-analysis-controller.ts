@@ -1,6 +1,6 @@
 import BaseController from './baseController'
 
-export const pageFields: Array<string> = ['pnc']
+export const pageFields: Array<string> = ['pnc', 'offencesUnderConsideration', 'offencesPattern']
 
 export default class OffenceAnalysisController extends BaseController {
   override templatePath = 'offence-analysis'

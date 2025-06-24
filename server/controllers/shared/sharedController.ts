@@ -192,7 +192,7 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = null
+          let tmpValue = fieldValue.value
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -295,9 +295,12 @@ export default class SharedController {
         if (this.report && this.report.status === 'NOT_STARTED') {
           await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
           await this.setStartedDate()
+        } else {
+          await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
         }
-        await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
+
         await this.updateFields(req.body)
+
         if (this.additionalPostAction) {
           this.data = {
             ...this.data,

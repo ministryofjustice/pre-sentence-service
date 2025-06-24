@@ -9,6 +9,7 @@
 
 {% block reportForm %}
 
+<form method="post" novalidate>
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
   <h2 class="govuk-heading-l">Review offences from NDelius</h2>
@@ -60,6 +61,7 @@
   {{ govukTextarea({
     name: "offencesUnderConsideration",
     id: "offences-under-consideration",
+    value: data.offencesUnderConsideration,
     rows: "10",
     label: {
       text: ""
@@ -79,13 +81,14 @@
   {{ govukTextarea({
     name: "offencesPattern",
     id: "offences-pattern",
+    value: data.offencesPattern,
     rows: "10",
     label: {
       text: ""
     }
   }) }}
 
-  <form method="post" novalidate>
+  
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
   </form>

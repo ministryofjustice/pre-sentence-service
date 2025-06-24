@@ -26,6 +26,7 @@
 {% endset %}
 
 {% block reportForm %}
+<form method="post" novalidate>
 
     <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
@@ -80,7 +81,6 @@
       } if 'sentenceImpact' in elementsWithError
     }) }}
 
-  <form method="post" novalidate>
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
   </form>
