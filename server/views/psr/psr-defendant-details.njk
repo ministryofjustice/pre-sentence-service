@@ -6,9 +6,22 @@
 {% set currentPage = 'Defendant details' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
+{% set addressHtml %}
+  <div class='address-formatting'>
+    <p>{{ data['address-buildingName'] }}</p>
+    <p>{{ data['address-number'] }}</p>
+    <p>{{ data['address-streetName'] }}</p>
+    <p>{{ data['address-town'] }}</p>
+    <p>{{ data['address-district'] }}</p>
+    <p>{{ data['address-county'] }}</p>
+    <p>{{ data['address-postcode'] }}</p>
+  </div>
+{% endset %}
+
+
 {% block reportForm %}
 
-  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+  <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
   <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it.  Any changes you make to the defendant’s details in NDelius will be updated after you refresh a page in this PSR.</p>
 
@@ -28,7 +41,7 @@
           text: "Date of birth"
         },
         {
-          text: data.dateOfBirth
+          text: data.dateOfBirth + " (" + (data.dateOfBirth | calculateAge) + " years old)"
         }
       ],
       [
@@ -36,7 +49,7 @@
           text: "Current address"
         },
         {
-          text: data.address
+          html: addressHtml
         }
       ]
     ]
