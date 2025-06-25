@@ -1,5 +1,3 @@
-import { Response } from 'express'
-import { TemplateValues } from '../shared/sharedController'
 import BaseController from './baseController'
 
 export const pageFields: Array<string> = [
