@@ -11,14 +11,6 @@ export default class RiskAnalysisController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
-        id: 'riskPredictors',
-        errorMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
-      },
-      {
-        id: 'riskAndHarmFactors',
-        errorMessage: 'Analyse relevant risks of harm and protective factors',
-      },
-      {
         id: 'riskToChildren',
         errorMessage: 'Select the level of risk to children from OASys',
       },
@@ -33,6 +25,14 @@ export default class RiskAnalysisController extends BaseController {
       {
         id: 'riskToStaff',
         errorMessage: 'Select the level of risk to staff from OASys',
+      },
+      {
+        id: 'riskPredictors',
+        errorMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
+      },
+      {
+        id: 'riskAndHarmFactors',
+        errorMessage: 'Analyse relevant risks of harm and protective factors',
       },
     ],
   }
