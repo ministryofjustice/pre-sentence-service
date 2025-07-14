@@ -124,7 +124,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "globals": "^16.2.0",
-    "govuk-frontend": "^5.10.2",
+    "govuk-frontend": "^5.11.0",
     "helmet": "8.1.0",
     "http-errors": "2.0.0",
     "jquery": "3.7.1",
