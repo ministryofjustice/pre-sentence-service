@@ -1,19 +1,11 @@
 import BaseController from './baseController'
 
-export const pageFields: Array<string> = [
-  'pnc',
-  'name',
-  'crn',
-  'proposedSentence',
-  'proposedSentenceRationale',
-  'alternativeSentencingOptions',
-  'sentenceImpact',
-]
+export const pageFields: Array<string> = ['pnc', 'offencesUnderConsideration', 'offencesPattern']
 
 export default class SentencingProposalController extends BaseController {
   override templatePath = 'sentencing-proposal'
 
-  override redirectPath = 'preview-report'
+  override redirectPath = 'risk-analysis'
 
   override pageFields = pageFields
 }

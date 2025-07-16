@@ -63,14 +63,14 @@ export default function Index(
     return new SentencingProposalController(reportService, communityService).get(req, res)
   })
   post('/:reportId/sentencing-proposal', (req, res) => {
-    return new SentencingProposalController(reportService, communityService).get(req, res)
+    return new SentencingProposalController(reportService, communityService).post(req, res)
   })
 
   get('/:reportId/preview-report', (req, res) => {
     return new PreviewReportController(reportService, communityService).get(req, res)
   })
   post('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService, communityService).get(req, res)
+    return new PreviewReportController(reportService, communityService).post(req, res)
   })
 
   return router
