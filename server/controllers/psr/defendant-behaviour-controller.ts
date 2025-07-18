@@ -12,7 +12,7 @@ export default class DefendantBehaviourController extends BaseController {
     required: [
       {
         id: 'defendantBehaviour',
-        errorMessage: 'Assess the defendants behaviour and lifestyle',
+        errorMessage: "Assess the defendant's behaviour and lifestyle",
       },
     ],
   }
