@@ -9,7 +9,7 @@
 
 {% set defendantBehaviourHelp %}
   <p class="govuk-body">Use your professional judgement to identify relevant circumstances. You may wish to consider these areas when deciding what is relevant to include in your assessment:</p>
-  <ul>
+  <ul class='govuk-list govuk-list--bullet'>
     <li>Accommodation</li>
     <li>Caring responsibilities for children, dependants or vulnerable adults</li>
     <li>Employment, training and education</li>
@@ -19,46 +19,44 @@
     <li>Physical and mental health</li>
     <li>Thinking and behaviour</li>
     <li>Trauma</li>
-`</ul>
+  </ul>
 {% endset %}
 
 {% block reportForm %}
-
-  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
-
-  <p class="govuk-body">
-    A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending
-    behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.
-  </p>
-
-  <p class="govuk-body">
-    Consider the defendant's behaviour and lifestyle by:
-  </p>
-
-  <ul>
-    <li>analysing rehabilitative needs that require intervention focusing on circumstances relevant to a sentencing decision</li>
-    <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
-    <li>identifying protective factors that may reduce the likelihood of reoffending</li>
-  </ul>
-
   <form method="post" novalidate data-autosave="true">
 
-    {% from "components/rich-text-editor/macro.njk" import picRichTextEditor %}
-
-    {{ picRichTextEditor({
+    {% from "components/text-editor/macro.njk" import picTextEditor %}
+    
+    {{ picTextEditor({
       name: "defendantBehaviour",
       id: "defendantBehaviour",
+      rows: "10",
+      label: {
+        text: currentPage,
+        classes: "govuk-label--l",
+        isPageHeading: true
+      },
+      hint: {
+        html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
+          behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.</p>
+          <p class='govuk-body'>Consider the defendant's behaviour and lifestyle by:</p>
+          <ul class='govuk-list govuk-list--bullet'>
+            <li>analysing rehabilitative needs that require intervention, focusing on circumstances relevant to a sentencing decision</li>
+            <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
+            <li>identifying protective factors that may reduce the likelihood of reoffending</li>
+          </ul>"
+      },
       value: data.defendantBehaviour,
       whatToInclude: defendantBehaviourHelp,
       whatToIncludeTitle: "Help with defendant behaviour and lifestyle assessment",
       errorMessage: {
-        text: "Assess the defendants behaviour and lifestyle"
-      } if 'offenceAnalysis' in elementsWithError
+        text: "Assess the defendant's behaviour and lifestyle"
+      } if 'defendantBehaviour' in elementsWithError
     }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
 
-    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+    <button class="govuk-button">Save and continue</button>
   </form>
 
 {% endblock %}
