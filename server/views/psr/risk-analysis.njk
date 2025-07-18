@@ -9,7 +9,7 @@
 {% from "components/text-editor/macro.njk" import picTextEditor %}
 
 
-{% set currentPage = 'Risk Analysis' %}
+{% set currentPage = 'Risk analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% set riskPredictorsHelp %}
@@ -36,8 +36,7 @@
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
-  <h2 class="govuk-heading-l">The 4 step process of risk assessment</h2>
-  <p class="govuk-body">This is a step-by-step process to help you make a decision about whether someone poses low, medium, high or very high risk of serious harm. Follow this process by:</p>
+  <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH).</p>
   <ol class="govuk-list govuk-list--number">
     <li>Assign risk levels</li>
     <li>Confirm risk predictors</li>
@@ -52,65 +51,91 @@
     iconFallbackText: "Warning"
   }) }}
 
-  <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH). </p>
-
-
   <h2 class="govuk-heading-m">Confirm the risk levels from OASys</h2>
 
-  <h2 class="govuk-heading-m">Risk to children</h2>
   {{ govukSelect({
-    id: "sort",
-    name: "sort",
+    id: "risk-to-children",
+    name: "riskToChildren",
+    label: {
+      text: "Risk to children",
+      classes: "govuk-label--m"
+    },
+    errorMessage: {
+      text: "Select the level of risk to children from OASys"
+    } if 'riskToChildren' in elementsWithError,
     items: [
       {
-        value: "choseAnOption",
-        text: "Chose an option"
+        value: "",
+        text: "Choose an option"
       }
     ]
   }) }}
 
-  <h2 class="govuk-heading-m">Risk to public</h2>
   {{ govukSelect({
-    id: "sort",
-    name: "sort",
+    id: "risk-to-public",
+    name: "riskToPublic",
+    label: {
+      text: "Risk to public",
+      classes: "govuk-label--m"
+    },
+    errorMessage: {
+      text: "Select the level of risk to the public from OASys"
+    } if 'riskToPublic' in elementsWithError,
     items: [
       {
-        value: "choseAnOption",
-        text: "Chose an option"
+        value: "",
+        text: "Choose an option"
       }
     ]
   }) }}
 
-  <h2 class="govuk-heading-m">Risk to known adults</h2>
   {{ govukSelect({
-    id: "sort",
-    name: "sort",
+    id: "risk-to-known-adults",
+    name: "riskToKnownAdults",
+    label: {
+      text: "Risk to known adults",
+      classes: "govuk-label--m"
+    },
+    errorMessage: {
+      text: "Select the level of risk to known adults from OASys"
+    } if 'riskToKnownAdults' in elementsWithError,
     items: [
       {
-        value: "choseAnOption",
-        text: "Chose an option"
+        value: "",
+        text: "Choose an option"
       }
     ]
   }) }}
 
-  <h2 class="govuk-heading-m">Risk to staff</h2>
   {{ govukSelect({
-    id: "sort",
-    name: "sort",
+    id: "risk-to-staff",
+    name: "riskToStaff",
+    label: {
+      text: "Risk to staff",
+      classes: "govuk-label--m"
+    },
+    errorMessage: {
+      text: "Select the level of risk to staff from OASys"
+    } if 'riskToStaff' in elementsWithError,
     items: [
       {
-        value: "choseAnOption",
-        text: "Chose an option"
+        value: "",
+        text: "Choose an option"
       }
     ]
   }) }}
 
-  <h2 class="govuk-heading-l">Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending</h2>
-
-  <p class="govuk-body">Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain
-    the risk predictor outcome and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools.</p>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
   {{ picTextEditor({
+    label: {
+      text: "Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending",
+      classes: "govuk-label--l"
+    },
+    hint: {
+      text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
+      and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools."
+    },
     name: "riskPredictors",
     id: "risk-predictors",
     rows: "10",
@@ -122,21 +147,24 @@
     } if 'riskPredictors' in elementsWithError
   }) }}
 
-  <h2 class="govuk-heading-l">Step 4: Analyse relevant risks of harm and protective factors</h2>
-
-  <p class="govuk-body">Using the risk factors you've identified, create a risk analysis based on:</p>
-
-  <ul class="govuk-list govuk-list--bullet">
-    <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
-    <li>the defendant's circumstances (past and present) and how these may influence offending</li>
-    <li>the potential impact on victims</li>
-    <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
-    <li>a dangerousness assessment (if requested by the court)</li>
-  </ul>
-
-  <p class="govuk-body">Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
   {{ picTextEditor({
+    label: {
+      text: "Step 4: Analyse relevant risks of harm and protective factors",
+      classes: "govuk-label--l"
+    },
+    hint: {
+      html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
+        <ul class='govuk-list--bullet'>
+          <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
+          <li>the defendant's circumstances (past and present) and how these may influence offending</li>
+          <li>the potential impact on victims</li>
+          <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
+          <li>a dangerousness assessment (if requested by the court)</li>
+        </ul>
+        <p>Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>"
+    },
     name: "riskAndHarmFactors",
     id: "risk-riskAndHarmFactors",
     rows: "10",
