@@ -9,6 +9,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'Pre-sentence Service'
+  app.locals.headerTitle = 'Write a pre-sentence report'
 
   // Cachebusting version string
   if (production) {
