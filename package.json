@@ -140,7 +140,7 @@
     "prom-client": "15.1.3",
     "redis": "4.7.1",
     "reflect-metadata": "0.2.2",
-    "superagent": "8.0.5",
+    "superagent": "10.2.2",
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.24",
     "uuid": "11.1.0"
