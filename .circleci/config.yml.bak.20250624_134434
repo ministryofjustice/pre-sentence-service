@@ -1,7 +1,9 @@
 version: 2.1
+
 orbs:
   hmpps: ministryofjustice/hmpps@6.1.0
   slack: circleci/slack@4.10.1
+
 executors:
   integration-tests:
     docker:
@@ -18,16 +20,26 @@ executors:
           POSTGRES_USER: pre-sentence-service
           POSTGRES_DB: pre-sentence-service
       - image: bitnami/redis:7.0.5
-        environment: ALLOW_EMPTY_PASSWORD=yes
+        environment:
+          ALLOW_EMPTY_PASSWORD=yes
       - image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
     working_directory: ~/app
+
+
 parameters:
+  alerts-slack-channel:
+    type: string
+    default: probation_in_court_dev
+
   releases-slack-channel:
     type: string
     default: probation_in_court_dev
+
   node-version:
     type: string
     default: 20.17.0-browsers
+
+
 jobs:
   build:
     executor:
@@ -66,6 +78,7 @@ jobs:
             - build
             - dist
             - .cache/Cypress
+
   check_outdated:
     executor:
       name: hmpps/node
@@ -87,6 +100,7 @@ jobs:
           event: fail
           channel: << pipeline.parameters.alerts-slack-channel >>
           template: basic_fail_1
+
   unit_test:
     executor:
       name: hmpps/node
@@ -102,6 +116,7 @@ jobs:
           path: test_results
       - store_artifacts:
           path: test-results/unit-test-reports.html
+
   integration_test:
     executor: integration-tests
     steps:
@@ -150,5 +165,110 @@ jobs:
           path: integration-tests/videos
       - store_artifacts:
           path: integration-tests/screenshots
+
 workflows:
   version: 2
+  build-test-and-deploy:
+    jobs:
+      - build:
+        filters:
+          tags:
+            ignore: /.*/
+      - unit_test:
+          requires:
+            - build
+      - integration_test:
+          requires:
+            - build
+      - hmpps/helm_lint:
+          name: helm_lint
+      - hmpps/build_docker:
+          name: build_docker
+          filters:
+            branches:
+              only:
+                - main
+      - hmpps/deploy_env:
+          name: deploy_dev
+          env: "dev"
+          helm_additional_args: --values ./pre-sentence-service/values-live.yaml
+          context:
+            - hmpps-common-vars
+            - court-probation-live-dev
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - helm_lint
+            - unit_test
+            - integration_test
+            - build_docker
+      - request-preprod-approval:
+          type: approval
+          requires:
+            - deploy_dev
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          helm_additional_args: --values ./pre-sentence-service/values-live.yaml
+          context:
+            - hmpps-common-vars
+            - court-probation-live-preprod
+          requires:
+            - request-preprod-approval
+      - request-prod-approval:
+          type: approval
+          requires:
+            - deploy_preprod
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          helm_additional_args: --values ./pre-sentence-service/values-live.yaml
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - court-probation-live-prod
+          requires:
+            - request-prod-approval
+
+  security:
+    triggers:
+      - schedule:
+          cron: "30 5 * * 1-5"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - check_outdated:
+          context:
+            - hmpps-common-vars
+      - hmpps/npm_security_audit:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/trivy_latest_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+  security-weekly:
+    triggers:
+      - schedule:
+          cron: "0 5 * * 1"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/veracode_policy_scan:
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
