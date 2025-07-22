@@ -11,6 +11,22 @@ export default class RiskAnalysisController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
+        id: 'riskToChildren',
+        errorMessage: 'Select the level of risk to children from OASys',
+      },
+      {
+        id: 'riskToPublic',
+        errorMessage: 'Select the level of risk to the public from OASys',
+      },
+      {
+        id: 'riskToKnownAdults',
+        errorMessage: 'Select the level of risk to known adults from OASys',
+      },
+      {
+        id: 'riskToStaff',
+        errorMessage: 'Select the level of risk to staff from OASys',
+      },
+      {
         id: 'riskPredictors',
         errorMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
       },

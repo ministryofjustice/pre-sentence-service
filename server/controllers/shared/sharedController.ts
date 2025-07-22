@@ -291,36 +291,24 @@ export default class SharedController {
           ...this.correctFormData(req),
         }
       }
-      if (this.checkFieldValueVersions(req, this.report)) {
-        if (this.report && this.report.status === 'NOT_STARTED') {
-          await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
-          await this.setStartedDate()
-        } else {
-          await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
-        }
 
-        await this.updateFields(req.body)
-
-        if (this.additionalPostAction) {
-          this.data = {
-            ...this.data,
-            ...this.getPersistentData(),
-          }
-          await this.additionalPostAction()
-        }
-        res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
+      if (this.report && this.report.status === 'NOT_STARTED') {
+        await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
+        await this.setStartedDate()
       } else {
-        this.renderTemplate(res, {
-          ...this.templateValues,
-          reportId: req.params.reportId,
-          data: {
-            versionMismatch: true,
-            ...this.data,
-            ...req.body,
-            ...this.getPersistentData(),
-          },
-        })
+        await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
       }
+
+      await this.updateFields(req.body)
+
+      if (this.additionalPostAction) {
+        this.data = {
+          ...this.data,
+          ...this.getPersistentData(),
+        }
+        await this.additionalPostAction()
+      }
+      res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
       this.renderTemplate(res, {
         ...this.templateValues,

@@ -30,26 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
     ClassicEditor.create($el, {
-      autosave: {
-        save(editor) {
-          var xhr = new XMLHttpRequest()
-          xhr.open('POST', 'auto-save', true)
-          xhr.setRequestHeader('Content-Type', 'application/json')
-          xhr.setRequestHeader('x-csrf-token', window.csrfToken)
-          xhr.setRequestHeader('Accept', 'application/json')
-          xhr.onload = function () {
-            this.status >= 200 && this.status < 400 ? hideError() : showError()
-          }
-          xhr.send(
-            JSON.stringify([
-              {
-                id: $(editor.sourceElement).attr('id'),
-                value: editor.getData(),
-              },
-            ])
-          )
-        },
-      },
+      // autosave: {
+      //   save(editor) {
+      //     var xhr = new XMLHttpRequest()
+      //     xhr.open('POST', 'auto-save', true)
+      //     xhr.setRequestHeader('Content-Type', 'application/json')
+      //     xhr.setRequestHeader('x-csrf-token', window.csrfToken)
+      //     xhr.setRequestHeader('Accept', 'application/json')
+      //     xhr.onload = function () {
+      //       this.status >= 200 && this.status < 400 ? hideError() : showError()
+      //     }
+      //     xhr.send(
+      //       JSON.stringify([
+      //         {
+      //           id: $(editor.sourceElement).attr('id'),
+      //           value: editor.getData(),
+      //         },
+      //       ])
+      //     )
+      //   },
+      // },
     }).catch(err => {
       console.error(err)
     })

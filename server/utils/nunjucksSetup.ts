@@ -9,6 +9,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   app.locals.asset_path = '/assets/'
   app.locals.applicationName = 'Pre-sentence Service'
+  app.locals.headerTitle = 'Write a pre-sentence report'
 
   // Cachebusting version string
   if (production) {
@@ -25,8 +26,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   const njkEnv = nunjucks.configure(
     [
       path.join(__dirname, '../../server/views'),
-      'node_modules/govuk-frontend/',
-      'node_modules/govuk-frontend/components/',
+      'node_modules/govuk-frontend/dist',
+      'node_modules/govuk-frontend/dist/govuk/components/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
       'node_modules/nhsuk-frontend/packages/components',
