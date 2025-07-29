@@ -55,15 +55,6 @@
 
   <h2 class="govuk-heading-l">Analyse offences under consideration</h2>
 
-  <p class="govuk-body">Give a comprehensive analysis of the offences relevant to this report, considering:</p>
-  <ul class="govuk-list govuk-list--bullet">
-    <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
-    <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
-    <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
-    <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
-    <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
-  </ul>
-
   {{ govukTextarea({
     name: "offencesUnderConsideration",
     id: "offences-under-consideration",
@@ -71,19 +62,22 @@
     rows: "10",
     label: {
       text: ""
+    },
+    hint: {
+      html: "<p>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
+            <ul class='govuk-hint govuk-list govuk-list--bullet'>
+              <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
+              <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
+              <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
+              <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
+              <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
+            </ul>"
     }
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
   <h2 class="govuk-heading-l">Analyse previous offending behaviour and response to supervision</h2>
-
-  <p class="govuk-body">Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
-  <ul class="govuk-list govuk-list--bullet">
-    <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
-    <li>interventions that may reduce the chances of offending</li>
-    <li>circumstances that may increase the risk of further offending</li>
-  </ul>
 
   {{ govukTextarea({
     name: "offencesPattern",
@@ -92,6 +86,14 @@
     rows: "10",
     label: {
       text: ""
+    },
+    hint: {
+      html: "<p>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
+            <ul class='govuk-hint govuk-list govuk-list--bullet'>
+              <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
+              <li>interventions that may reduce the chances of offending</li>
+              <li>circumstances that may increase the risk of further offending</li>
+            </ul>"
     }
   }) }}
 
