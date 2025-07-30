@@ -5,12 +5,14 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
+
 {% set currentPage = 'Offence analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
 
 <form method="post" data-autosave="true" novalidate>
+
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-2">Review offences from NDelius</h2>
@@ -57,7 +59,7 @@
 
   {{ govukTextarea({
     name: "offencesUnderConsideration",
-    id: "offences-under-consideration",
+    id: "offencesUnderConsideration",
     value: data.offencesUnderConsideration,
     rows: "10",
     label: {
@@ -72,7 +74,10 @@
               <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
               <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
             </ul>"
-    }
+    },
+    errorMessage: {
+      text: "Enter analysis of the offences under consideration"
+    } if 'offencesUnderConsideration' in elementsWithError
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
@@ -81,7 +86,7 @@
 
   {{ govukTextarea({
     name: "offencesPattern",
-    id: "offences-pattern",
+    id: "offencesPattern",
     value: data.offencesPattern,
     rows: "10",
     label: {
@@ -94,17 +99,24 @@
               <li>interventions that may reduce the chances of offending</li>
               <li>circumstances that may increase the risk of further offending</li>
             </ul>"
-    }
+    },
+    errorMessage: {
+      text: "Enter analysis of the pattern of offending and response to supervision"
+    } if 'offencesPattern' in elementsWithError
   }) }}
 
   {{ govukCheckboxes({
-    name: "prerviousOffences",
+    id: "previousOffences",
+    name: "previousOffences",
     items: [
       {
         checked: data.noPreviousOffences === 'true',
         text: "The defendant has no previous offences or experience of supervision"
       }
-    ]
+    ],
+    errorMessage: {
+      text: "Select if the defendant has no previous offences or experience of supervision"
+    } if 'previousOffences' in elementsWithError
   }) }}
 
   
