@@ -21,21 +21,22 @@
 
   function persistForm() {
     console.log('Do some form saved logic here')
-    return Promise.resolve({ text: () => Promise.resolve('Some text') })
-    //   const form = getForm()
-    //   const formData = new URLSearchParams(new FormData(form))
-    //   const [formAction] = form?.getAttribute('action').split('#')
-    //   const endpoint = `${formAction}?jsonResponse=true`
+    const form = getForm()
 
-    //   document.dispatchEvent(new CustomEvent('autosave'))
+    const formData = new URLSearchParams(new FormData(form))
+    const reportId = formData.get('reportId')
 
-    //   return fetch(endpoint, {
-    //     method: 'POST',
-    //     body: formData,
-    //     headers: {
-    //       'x-csrf-token': document.getElementsByName('x-csrf-token')[0].value,
-    //     },
-    //   })
+    const endpoint = `/api/v1/report/${reportId}/save`
+
+    document.dispatchEvent(new CustomEvent('autosave'))
+
+    return fetch(endpoint, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'x-csrf-token': document.getElementsByName('CSRFToken')[0].value,
+      },
+    })
   }
 
   function addListenersToFormElements() {
@@ -61,7 +62,7 @@
             })
           )
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 5 * 1000)
+      }, 2 * 1000)
     }
 
     document.addEventListener('keyup', handleEvent)

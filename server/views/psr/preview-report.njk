@@ -263,8 +263,9 @@
     </p>
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-    <form method="post" novalidate>
+    <form method="post" data-autosave="true" novalidate>
         <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+        <input type="hidden" name="reportId" value="{{ reportId }}">
         <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
     </form>
 
