@@ -20,7 +20,6 @@
   }
 
   function persistForm() {
-    console.log('Do some form saved logic here')
     const form = getForm()
 
     const formData = new URLSearchParams(new FormData(form))
