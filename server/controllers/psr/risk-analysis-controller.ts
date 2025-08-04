@@ -6,7 +6,7 @@ export const pageFields: Array<string> = ['pnc', 'crn', 'name', 'riskPredictors'
 export default class RiskAnalysisController extends BaseController {
   override templatePath = 'risk-analysis'
 
-  override redirectPath = 'defendant-behaviour'
+  override redirectPath = 'sentencing-proposal'
 
   override formValidation: FormValidation = {
     required: [
