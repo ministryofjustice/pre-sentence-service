@@ -106,8 +106,8 @@
   }) }}
 
   {{ govukCheckboxes({
-    id: "previousOffences",
-    name: "previousOffences",
+    id: "noPreviousOffences",
+    name: "noPreviousOffences",
     items: [
       {
         checked: data.noPreviousOffences === 'true',
@@ -116,7 +116,7 @@
     ],
     errorMessage: {
       text: "Check the box if the defendant has no previous offences or experience of supervision"
-    } if 'previousOffences' in elementsWithError
+    } if 'noPreviousOffences' in elementsWithError
   }) }}
 
   

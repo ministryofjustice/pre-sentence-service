@@ -21,7 +21,7 @@ export default class OffenceAnalysisController extends BaseController {
         errorMessage: 'Analyse the pattern of offending and response to supervision',
       },
       {
-        id: 'previousOffences',
+        id: 'noPreviousOffences',
         errorMessage: 'Check the box if the defendant has no previous offences or experience of supervision',
       },
     ],
