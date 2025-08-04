@@ -61,7 +61,7 @@
             })
           )
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 2 * 1000)
+      }, 8 * 1000)
     }
 
     document.addEventListener('keyup', handleEvent)
