@@ -23,7 +23,7 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" novalidate data-autosave="true">
+  <form method="post" data-autosave="true" novalidate>
 
     {% from "components/text-editor/macro.njk" import picTextEditor %}
     
@@ -55,6 +55,7 @@
     }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+    <input type="hidden" name="reportId" value="{{ reportId }}">
 
     <button class="govuk-button">Save and continue</button>
   </form>
