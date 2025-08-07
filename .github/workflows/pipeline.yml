@@ -36,6 +36,35 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_integration_tests.yml@v2 # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
+    services:
+      node:
+        image: node:20.5.1-browsers
+      localstack:
+        image: localstack/localstack:1.2.0
+        env:
+          SERVICES: sns
+          DATA_DIR: /tmp/localstack/data
+          TMP_DIR: /private
+          DEFAULT_REGION: eu-west-2
+      postgres:
+        image: postgres:13.8
+        env:
+          POSTGRES_USER: pre-sentence-service
+          POSTGRES_PASSWORD: pre-sentence-service
+          POSTGRES_DB: pre-sentence-service
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: bitnami/redis:7.0.5
+        env: 
+          ALLOW_EMPTY_PASSWORD=yes
+      wproofreader:
+        image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
   helm_lint:
     strategy:
       matrix:
@@ -50,7 +79,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
-      # - node_integration_tests
+      - node_integration_tests
       - node_unit_tests
     with:
       docker_registry: 'ghcr.io'
