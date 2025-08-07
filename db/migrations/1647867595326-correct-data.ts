@@ -8,21 +8,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class CorrectData1647867595326 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        DELETE
-        FROM public.field_value
-        WHERE id = 10;
-    `)
-
-    await queryRunner.query(`
-        DELETE
-        FROM public.field_value
-        WHERE id = 11;
-    `)
-
-    await queryRunner.query(`
         INSERT INTO field (type, name, required)
         VALUES ('number', 'age', false);
-    `)
+    `) // TODOLM: is this needed?
 
     await queryRunner.query(`
         INSERT INTO report_definition_fields ("reportDefinitionId", "fieldId")
