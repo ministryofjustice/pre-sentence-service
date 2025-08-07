@@ -18,6 +18,9 @@ export default function Index(reportService: ReportService, eventService: EventS
   router.post('/v1/report/:reportType', (req, res) => {
     return new ApiController(reportService, eventService).createReport(req, res)
   })
+  router.post('/v1/report/:id/save', (req, res) => {
+    return new ApiController(reportService, eventService).save(req, res)
+  })
 
   return router
 }

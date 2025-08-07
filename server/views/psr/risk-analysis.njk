@@ -12,6 +12,14 @@
 {% set currentPage = 'Risk analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
+{% set riskOptions = [
+  { value: '', text: 'Choose an option' },
+  { value: 'Low risk', text: 'Low risk' },
+  { value: 'Medium risk', text: 'Medium risk' },
+  { value: 'High risk', text: 'High risk' },
+  { value: 'Very high risk', text: 'Very high risk' }
+] %}
+
 {% set riskPredictorsHelp %}
   <p class="govuk-body">Each tool predicts something different. Those that predict harm should be prioritised when completing your assessment.</p>
   <ul class="govuk-list govuk-list--bullet">
@@ -32,7 +40,7 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" novalidate>
+  <form method="post" data-autosave="true" novalidate>
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
@@ -63,12 +71,7 @@
     errorMessage: {
       text: "Select the level of risk to children from OASys"
     } if 'riskToChildren' in elementsWithError,
-    items: [
-      {
-        value: "",
-        text: "Choose an option"
-      }
-    ]
+    items: riskOptions
   }) }}
 
   {{ govukSelect({
@@ -81,12 +84,7 @@
     errorMessage: {
       text: "Select the level of risk to the public from OASys"
     } if 'riskToPublic' in elementsWithError,
-    items: [
-      {
-        value: "",
-        text: "Choose an option"
-      }
-    ]
+    items: riskOptions
   }) }}
 
   {{ govukSelect({
@@ -99,12 +97,7 @@
     errorMessage: {
       text: "Select the level of risk to known adults from OASys"
     } if 'riskToKnownAdults' in elementsWithError,
-    items: [
-      {
-        value: "",
-        text: "Choose an option"
-      }
-    ]
+    items: riskOptions
   }) }}
 
   {{ govukSelect({
@@ -117,12 +110,7 @@
     errorMessage: {
       text: "Select the level of risk to staff from OASys"
     } if 'riskToStaff' in elementsWithError,
-    items: [
-      {
-        value: "",
-        text: "Choose an option"
-      }
-    ]
+    items: riskOptions
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
@@ -175,6 +163,7 @@
   }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+    <input type="hidden" name="reportId" value="{{ reportId }}">
     <button class="govuk-button">Save and continue</button>
   </form>
 
