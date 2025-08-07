@@ -40,7 +40,7 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" novalidate>
+  <form method="post" data-autosave="true" novalidate>
 
   <h1 class="govuk-heading-l">{{ currentPage }}</h1>
 
@@ -163,6 +163,7 @@
   }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+    <input type="hidden" name="reportId" value="{{ reportId }}">
     <button class="govuk-button">Save and continue</button>
   </form>
 

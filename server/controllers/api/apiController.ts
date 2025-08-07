@@ -112,4 +112,47 @@ export default class ApiController {
       res.status(error.status || 500).send(error.message)
     }
   }
+
+  save = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const reportId = req.params.id
+      const report = await this.reportService.getReportById(reportId)
+
+      if (!report) {
+        res.status(404).json({ error: 'Report not found' })
+        return
+      }
+
+      if (report.status === 'NOT_STARTED') {
+        await this.reportService.updateReport({ ...report, status: 'STARTED' })
+      } else {
+        await this.reportService.updateReport({ ...report, lastUpdated: new Date().toISOString() })
+      }
+
+      const fieldValues = []
+      if (report.reportDefinition?.fields) {
+        for (const field of report.reportDefinition.fields) {
+          const existingValue = report.fieldValues?.find(fv => fv.field.name === field.name)
+          const newValue = req.body[field.name]
+
+          if (newValue !== undefined) {
+            fieldValues.push({
+              reportId: report.id,
+              fieldId: field.id,
+              value: Array.isArray(newValue) ? newValue.join(',') : String(newValue),
+              version: existingValue ? existingValue.version + 1 : 1,
+            })
+          }
+        }
+      }
+
+      if (fieldValues.length > 0) {
+        await this.reportService.updateFieldValues(fieldValues)
+      }
+
+      res.status(200).json({ success: true, message: 'Report saved successfully' })
+    } catch (error) {
+      res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
+    }
+  }
 }
