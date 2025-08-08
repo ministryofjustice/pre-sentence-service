@@ -281,25 +281,29 @@ export default class SharedController {
     }
   }
 
+  protected updateReportActions = async (req: Request) => {
+    if (this.correctFormData) {
+      req.body = {
+        ...req.body,
+        ...this.correctFormData(req),
+      }
+    }
+
+    if (this.report && this.report.status === 'NOT_STARTED') {
+      await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
+      await this.setStartedDate()
+    } else {
+      await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
+    }
+
+    await this.updateFields(req.body)
+  }
+
   public post = async (req: Request, res: Response): Promise<void> => {
     this.report = await this.reportService.getReportById(req.params.reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid || req.query?.redirectPath) {
-      if (this.correctFormData) {
-        req.body = {
-          ...req.body,
-          ...this.correctFormData(req),
-        }
-      }
-
-      if (this.report && this.report.status === 'NOT_STARTED') {
-        await this.reportService.updateReport({ ...this.report, status: 'STARTED' })
-        await this.setStartedDate()
-      } else {
-        await this.reportService.updateReport({ ...this.report, lastUpdated: new Date().toISOString() })
-      }
-
-      await this.updateFields(req.body)
+      await this.updateReportActions(req)
 
       if (this.additionalPostAction) {
         this.data = {

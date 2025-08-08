@@ -40,9 +40,9 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" novalidate>
+  <form method="post" data-autosave="true" novalidate>
 
-  <h1 class="govuk-heading-l">{{ currentPage }}</h1>
+  <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
   <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH).</p>
   <ol class="govuk-list govuk-list--number">
@@ -163,6 +163,7 @@
   }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+    <input type="hidden" name="reportId" value="{{ reportId }}">
     <button class="govuk-button">Save and continue</button>
   </form>
 
