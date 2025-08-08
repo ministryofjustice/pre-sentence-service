@@ -38,6 +38,8 @@ jobs:
         ports:
           - 6379:6379
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        env: 
+          ALLOW_EMPTY_PASSWORD=yes
       wproofreader:
         image: quay.io/hmpps/pre-sentence-service-wproofreader:latest
     steps:
