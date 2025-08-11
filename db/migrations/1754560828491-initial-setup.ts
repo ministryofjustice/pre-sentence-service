@@ -3,10 +3,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 export class InitialSetup1754560828491 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        DROP TABLE IF EXISTS report;
-    `)
-
-    await queryRunner.query(`
         CREATE TABLE IF NOT EXISTS report_definition
         (
             id      SERIAL PRIMARY KEY,
@@ -20,7 +16,6 @@ export class InitialSetup1754560828491 implements MigrationInterface {
         (
             id         SERIAL PRIMARY KEY,
             name       TEXT,
-            required   BOOLEAN NOT NULL DEFAULT false,
             validation TEXT
         );
     `)
@@ -42,8 +37,8 @@ export class InitialSetup1754560828491 implements MigrationInterface {
             id                   UUID             DEFAULT gen_random_uuid() PRIMARY KEY,
             "reportDefinitionId" INTEGER NOT NULL,
             status               TEXT    NOT NULL DEFAULT 'NOT_STARTED',
-            eventNumber          TEXT NULL DEFAULT NULL,
-            lastUpdated          TEXT,
+            "eventNumber"          TEXT NULL DEFAULT NULL,
+            "lastUpdated"          TEXT,
             FOREIGN KEY ("reportDefinitionId") REFERENCES report_definition (id)
         );
     `)
@@ -67,35 +62,32 @@ export class InitialSetup1754560828491 implements MigrationInterface {
     `)
 
     await queryRunner.query(`
-        INSERT INTO field (name, required)
-        VALUES ('name', true),
-               ('dateOfBirth', true),
-               ('crn', true),
-               ('pnc', false),
-               ('address', false),
-               ('offencesUnderConsideration', false),
-               ('offencesPattern', false),
-               ('riskToChildren', false),
-               ('riskToPublic', false),
-               ('riskToKnownAdults', false),
-               ('riskToStaff', false),
-               ('riskPredictors', false),
-               ('riskAndHarmFactors', false),
-               ('defendantBehaviour', false),
-               ('proposedSentence', false),
-               ('proposedSentenceRationale', false),
-               ('alternativeSentencingOptions', false),
-               ('sentenceImpact', false),
-               ('address-pos', false),
-               ('address-number', false),
-               ('address-streetName', false),
-               ('address-town', false),
-               ('address-district', false),
-               ('address-county', false),
-               ('address-postcode', false);
+        INSERT INTO field (name)
+        VALUES ('name'),
+               ('dateOfBirth'),
+               ('crn'),
+               ('pnc'),
+               ('offencesUnderConsideration'),
+               ('offencesPattern'),
+               ('riskToChildren'),
+               ('riskToPublic'),
+               ('riskToKnownAdults'),
+               ('riskToStaff'),
+               ('riskPredictors'),
+               ('riskAndHarmFactors'),
+               ('defendantBehaviour'),
+               ('proposedSentence'),
+               ('proposedSentenceRationale'),
+               ('alternativeSentencingOptions'),
+               ('sentenceImpact'),
+               ('address-pos'),
+               ('address-number'),
+               ('address-streetName'),
+               ('address-town'),
+               ('address-district'),
+               ('address-county'),
+               ('address-postcode');
     `)
-    // TODOLM: is address needed ?
-    // TODOLM: required ?
 
     await queryRunner.query(`
         INSERT INTO report_definition_fields ("reportDefinitionId", "fieldId")
@@ -122,8 +114,7 @@ export class InitialSetup1754560828491 implements MigrationInterface {
                (1, 21),
                (1, 22),
                (1, 23),
-               (1, 24),
-               (1, 25);
+               (1, 24);
         `)
   }
   public async down(queryRunner: QueryRunner): Promise<void> {}

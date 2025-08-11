@@ -8,9 +8,6 @@ export default class Field {
   @Column()
   name: string
 
-  @Column()
-  required: boolean
-
   @Column({ nullable: true })
   validation: string
 }

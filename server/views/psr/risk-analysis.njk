@@ -71,7 +71,8 @@
     errorMessage: {
       text: "Select the level of risk to children from OASys"
     } if 'riskToChildren' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToChildren
   }) }}
 
   {{ govukSelect({
@@ -84,7 +85,8 @@
     errorMessage: {
       text: "Select the level of risk to the public from OASys"
     } if 'riskToPublic' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToPublic
   }) }}
 
   {{ govukSelect({
@@ -97,7 +99,8 @@
     errorMessage: {
       text: "Select the level of risk to known adults from OASys"
     } if 'riskToKnownAdults' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToKnownAdults
   }) }}
 
   {{ govukSelect({
@@ -110,7 +113,8 @@
     errorMessage: {
       text: "Select the level of risk to staff from OASys"
     } if 'riskToStaff' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToStaff
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
