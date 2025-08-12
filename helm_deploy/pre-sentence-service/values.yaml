@@ -7,7 +7,7 @@ generic-service:
   serviceAccountName: "court-case-service"
 
   image:
-    repository: quay.io/hmpps/pre-sentence-service
+    repository: ghcr.io/ministryofjustice/pre-sentence-service
     tag: app_version    # override at deployment time
     port: 3000
 
@@ -105,7 +105,7 @@ gotenberg:
   # replicaCount: 1
 
   # image:
-  #   repository: quay.io/hmpps/pre-sentence-service-wproofreader
+  #   repository: ghcr.io/ministryofjustice/pre-sentence-service-wproofreader
   #   tag: latest
   #   port: 8081
 
