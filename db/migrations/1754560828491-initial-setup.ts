@@ -15,8 +15,7 @@ export class InitialSetup1754560828491 implements MigrationInterface {
         CREATE TABLE IF NOT EXISTS field
         (
             id         SERIAL PRIMARY KEY,
-            name       TEXT,
-            validation TEXT
+            name       TEXT
         );
     `)
 
@@ -69,6 +68,7 @@ export class InitialSetup1754560828491 implements MigrationInterface {
                ('pnc'),
                ('offencesUnderConsideration'),
                ('offencesPattern'),
+               ('noPreviousOffences'),
                ('riskToChildren'),
                ('riskToPublic'),
                ('riskToKnownAdults'),
@@ -114,7 +114,8 @@ export class InitialSetup1754560828491 implements MigrationInterface {
                (1, 21),
                (1, 22),
                (1, 23),
-               (1, 24);
+               (1, 24),
+               (1, 25);
         `)
   }
   public async down(queryRunner: QueryRunner): Promise<void> {}

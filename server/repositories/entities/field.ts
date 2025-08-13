@@ -7,7 +7,4 @@ export default class Field {
 
   @Column()
   name: string
-
-  @Column({ nullable: true })
-  validation: string
 }

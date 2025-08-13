@@ -12,14 +12,6 @@
 {% set currentPage = 'Risk analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
-{% set riskOptions = [
-  { value: '', text: 'Choose an option' },
-  { value: 'Low risk', text: 'Low risk' },
-  { value: 'Medium risk', text: 'Medium risk' },
-  { value: 'High risk', text: 'High risk' },
-  { value: 'Very high risk', text: 'Very high risk' }
-] %}
-
 {% set riskPredictorsHelp %}
   <p class="govuk-body">Each tool predicts something different. Those that predict harm should be prioritised when completing your assessment.</p>
   <ul class="govuk-list govuk-list--bullet">
