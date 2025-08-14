@@ -12,14 +12,6 @@
 {% set currentPage = 'Risk analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
-{% set riskOptions = [
-  { value: '', text: 'Choose an option' },
-  { value: 'Low risk', text: 'Low risk' },
-  { value: 'Medium risk', text: 'Medium risk' },
-  { value: 'High risk', text: 'High risk' },
-  { value: 'Very high risk', text: 'Very high risk' }
-] %}
-
 {% set riskPredictorsHelp %}
   <p class="govuk-body">Each tool predicts something different. Those that predict harm should be prioritised when completing your assessment.</p>
   <ul class="govuk-list govuk-list--bullet">
@@ -71,7 +63,8 @@
     errorMessage: {
       text: "Select the level of risk to children from OASys"
     } if 'riskToChildren' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToChildren
   }) }}
 
   {{ govukSelect({
@@ -84,7 +77,8 @@
     errorMessage: {
       text: "Select the level of risk to the public from OASys"
     } if 'riskToPublic' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToPublic
   }) }}
 
   {{ govukSelect({
@@ -97,7 +91,8 @@
     errorMessage: {
       text: "Select the level of risk to known adults from OASys"
     } if 'riskToKnownAdults' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToKnownAdults
   }) }}
 
   {{ govukSelect({
@@ -110,7 +105,8 @@
     errorMessage: {
       text: "Select the level of risk to staff from OASys"
     } if 'riskToStaff' in elementsWithError,
-    items: riskOptions
+    items: riskOptions,
+    value: data.riskToStaff
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">

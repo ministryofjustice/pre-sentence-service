@@ -14,12 +14,35 @@ import formatOffences from '../../utils/formatOffences'
 // import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
 
+enum RiskLevel {
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high',
+  VeryHigh = 'very_high',
+}
+
+const RiskLevelLabels: Record<RiskLevel, string> = {
+  [RiskLevel.Low]: 'Low risk',
+  [RiskLevel.Medium]: 'Medium risk',
+  [RiskLevel.High]: 'High risk',
+  [RiskLevel.VeryHigh]: 'Very high risk',
+}
+
+const riskOptions = [
+  { value: '', text: 'Choose an option' },
+  ...Object.entries(RiskLevelLabels).map(([value, text]) => ({
+    value,
+    text,
+  })),
+]
+
 export interface TemplateValues {
   preSentenceType: string
   reportPath: string
   reportId?: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
+  riskOptions?: { value: string; text: string }[]
 }
 
 interface InclusionExclusion {
@@ -55,6 +78,7 @@ export default class SharedController {
     reportId: '',
     reportPath: '',
     preSentenceType: '',
+    riskOptions,
   }
 
   formValidation: FormValidation = {
@@ -76,6 +100,9 @@ export default class SharedController {
   ) {}
 
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
+    if (this.templatePath === 'risk-analysis') {
+      templateValues.riskOptions = riskOptions
+    }
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
