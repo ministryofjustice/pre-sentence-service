@@ -69,7 +69,7 @@ jobs:
     with:
       environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
-      helm_additional_args: '--values ./pre-sentence-service/values-live.yaml'
+      helm_additional_args: '--values ./pre-sentence-service/values-dev.yaml'
   deploy_preprod:
     name: Deploy to the preprod environment
     needs:
