@@ -1,91 +1,58 @@
 /* eslint-disable node/no-missing-require */
-function createSimpleStore(initialState = {}) {
-  let state = { ...initialState }
-  const listeners = []
-
-  function getState() {
-    return state
+// Wait for zustand to load and use vanilla API
+function waitForZustand(callback) {
+  if (window.zustand || window.ZustandVanilla || window.createStore) {
+    callback()
+  } else {
+    setTimeout(() => waitForZustand(callback), 50)
   }
+}
 
-  function setState(updater) {
-    if (typeof updater === 'function') {
-      state = updater(state)
-    } else {
-      state = { ...state, ...updater }
-    }
+let zustandCreateStore
 
-    // Persist to sessionStorage
-    try {
-      const serialized = JSON.stringify(state)
-      sessionStorage.setItem('report-store', serialized)
-    } catch (e) {
-      console.warn('Could not persist to sessionStorage:', e)
-    }
+const persist = (config, options) => (set, get, api) => {
+  const { name, storage = sessionStorage } = options
 
-    listeners.forEach(listener => {
-      try {
-        listener(state)
-      } catch (e) {
-        console.error('Error in state listener:', e)
-      }
-    })
-  }
-
-  function subscribe(listener) {
-    listeners.push(listener)
-    return function unsubscribe() {
-      const index = listeners.indexOf(listener)
-      if (index > -1) {
-        listeners.splice(index, 1)
-      }
-    }
-  }
-
-  // Load from sessionStorage on initialization
+  // Load initial state from storage
+  let initialState = {}
   try {
-    const stored = sessionStorage.getItem('report-store')
+    const stored = storage.getItem(name)
     if (stored) {
-      const parsedState = JSON.parse(stored)
-      state = {
-        ...state,
-        ...parsedState,
-        questions: parsedState.questions || {},
-        pageSaveState: parsedState.pageSaveState || {},
-        errors: parsedState.errors || [],
-      }
+      initialState = JSON.parse(stored)
     }
   } catch (e) {
-    console.warn('Could not load from sessionStorage:', e)
+    console.warn('Could not load from storage:', e)
   }
 
-  return {
-    getState,
-    setState,
-    subscribe,
+  const configResult = config(
+    (...args) => {
+      set(...args)
+      // Persist after each state change
+      try {
+        const state = get()
+        storage.setItem(name, JSON.stringify(state))
+      } catch (e) {
+        console.warn('Could not persist to storage:', e)
+      }
+    },
+    get,
+    api
+  )
+
+  const mergedState = {
+    ...configResult,
+    ...initialState,
+    questions: { ...configResult.questions, ...initialState.questions },
+    pageSaveState: { ...configResult.pageSaveState, ...initialState.pageSaveState },
+    errors: [...(configResult.errors || []), ...(initialState.errors || [])],
   }
+
+  set(mergedState, true)
+
+  return mergedState
 }
 
-const createStore = () => storeConfig => {
-  const tempStore = createSimpleStore(defaultInitState)
-  const storeApi = storeConfig(tempStore.setState)
-
-  const initialState = {
-    ...defaultInitState,
-    ...storeApi,
-    questions: storeApi.questions || {},
-    pageSaveState: storeApi.pageSaveState || {},
-    errors: storeApi.errors || [],
-  }
-  const store = createSimpleStore(initialState)
-
-  return {
-    ...store,
-    ...storeApi,
-  }
-}
-
-const persist = storeConfig => storeConfig
-const createJSONStorage = () => ({})
+const createJSONStorage = () => sessionStorage
 
 const initReportStore = () => {
   return { questions: {}, pageSaveState: {}, errors: [] }
@@ -98,7 +65,11 @@ const defaultInitState = {
 }
 
 const createReportStore = (initState = defaultInitState) => {
-  return createStore()(
+  if (!zustandCreateStore) {
+    zustandCreateStore = window.createStore || window.zustand
+  }
+
+  const store = zustandCreateStore(
     persist(
       set => ({
         ...initState,
@@ -106,11 +77,9 @@ const createReportStore = (initState = defaultInitState) => {
         updateQuestion: (id, page, data) =>
           set(state => {
             const newState = { ...state }
-            // Ensure questions object exists
             if (!newState.questions) {
               newState.questions = {}
             }
-            // Ensure pageSaveState object exists
             if (!newState.pageSaveState) {
               newState.pageSaveState = {}
             }
@@ -121,7 +90,6 @@ const createReportStore = (initState = defaultInitState) => {
         updatePageSaveState: (page, saveState) =>
           set(state => {
             const newState = { ...state }
-            // Ensure pageSaveState object exists
             if (!newState.pageSaveState) {
               newState.pageSaveState = {}
             }
@@ -131,7 +99,6 @@ const createReportStore = (initState = defaultInitState) => {
         addError: (pageId, questionId, errorText) =>
           set(state => {
             const newState = { ...state }
-            // Ensure errors array exists
             if (!newState.errors) {
               newState.errors = []
             }
@@ -141,7 +108,6 @@ const createReportStore = (initState = defaultInitState) => {
         removeError: (pageId, questionId) =>
           set(state => {
             const newState = { ...state }
-            // Ensure errors array exists
             if (!newState.errors) {
               newState.errors = []
             }
@@ -157,10 +123,21 @@ const createReportStore = (initState = defaultInitState) => {
       }),
       {
         name: 'report-store',
-        storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+        storage: createJSONStorage(),
       }
     )
   )
+
+  // Create wrapper that exposes methods at top level for compatibility
+  return {
+    getState: store.getState,
+    setState: store.setState,
+    subscribe: store.subscribe,
+    updateQuestion: (id, page, data) => store.getState().updateQuestion(id, page, data),
+    updatePageSaveState: (page, saveState) => store.getState().updatePageSaveState(page, saveState),
+    addError: (pageId, questionId, errorText) => store.getState().addError(pageId, questionId, errorText),
+    removeError: (pageId, questionId) => store.getState().removeError(pageId, questionId),
+  }
 }
 
 // Generic auto-binding system for all form inputs
@@ -289,10 +266,7 @@ function initAutoBinding() {
     const elements = document.querySelectorAll(selectors.join(', '))
 
     elements.forEach(element => {
-      // First populate from store (store takes precedence)
       populateFromStore(element)
-
-      // Then bind for future changes
       bindInput(element)
     })
 
@@ -324,15 +298,17 @@ function getHasUnsavedChanges() {
 }
 
 if (typeof window !== 'undefined') {
-  window.ReportStore = {
-    createReportStore,
-    initReportStore,
-    defaultInitState,
-    initAutoBinding,
-    markUnsavedChanges,
-    markChangesSaved,
-    getHasUnsavedChanges,
-  }
+  waitForZustand(() => {
+    window.ReportStore = {
+      createReportStore,
+      initReportStore,
+      defaultInitState,
+      initAutoBinding,
+      markUnsavedChanges,
+      markChangesSaved,
+      getHasUnsavedChanges,
+    }
 
-  window.reportStoreInstance = initAutoBinding()
+    window.reportStoreInstance = initAutoBinding()
+  })
 }
