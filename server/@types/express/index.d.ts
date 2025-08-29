@@ -10,6 +10,8 @@ declare module 'express-session' {
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
     userDetails: UserDetails
+    addedSources?: Record<string, Array<{ id: string; value: string }>>
+    removedSources?: Record<string, Array<string>>
   }
 }
 

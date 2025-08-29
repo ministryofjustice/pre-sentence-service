@@ -21,6 +21,11 @@ enum RiskLevel {
   VeryHigh = 'very_high',
 }
 
+interface SourcesOfInformation {
+  value: string
+  customId?: string
+}
+
 const RiskLevelLabels: Record<RiskLevel, string> = {
   [RiskLevel.Low]: 'Low risk',
   [RiskLevel.Medium]: 'Medium risk',
@@ -36,6 +41,20 @@ const riskOptions = [
   })),
 ]
 
+const standardSourcesOfInformation: SourcesOfInformation[] = [
+  { value: 'CPS summary' },
+  { value: 'Domestic abuse callout information' },
+  { value: 'Diversity Information Form (DIF)' },
+  { value: 'Interview' },
+  { value: 'OASys assessments' },
+  { value: 'Previous convictions' },
+  { value: 'Safeguarding checks' },
+  { value: 'Sentencing guidelines' },
+  { value: 'Service records' },
+  { value: 'Substance misuse screening tool' },
+  { value: 'Victim statement' },
+]
+
 export interface TemplateValues {
   preSentenceType: string
   reportPath: string
@@ -43,6 +62,10 @@ export interface TemplateValues {
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
   riskOptions?: { value: string; text: string }[]
+  sourcesOfInformation?: SourcesOfInformation[]
+  isEditing?: boolean
+  removedSources?: string[]
+  tempSources?: { id: string; value: string }[]
 }
 
 interface InclusionExclusion {
@@ -79,6 +102,7 @@ export default class SharedController {
     reportPath: '',
     preSentenceType: '',
     riskOptions,
+    isEditing: false,
   }
 
   formValidation: FormValidation = {
@@ -102,6 +126,21 @@ export default class SharedController {
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
     if (this.templatePath === 'risk-analysis') {
       templateValues.riskOptions = riskOptions
+    }
+
+    if (this.templatePath === 'sources-of-information') {
+      // TODOxLM add custom sources saved in db, if any
+      const savedSources: SourcesOfInformation[] = []
+      const sourcesToDisplay: SourcesOfInformation[] = [
+        ...standardSourcesOfInformation,
+        ...(templateValues.tempSources ?? []).map(x => ({
+          customId: x.id,
+          value: x.value,
+        })),
+        ...savedSources.filter(x => !(templateValues.removedSources ?? []).includes(x.customId)),
+      ].sort((a, b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()))
+
+      templateValues.sourcesOfInformation = sourcesToDisplay
     }
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
@@ -250,8 +289,31 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if (validateUUID(req.params.reportId)) {
-      this.report = await this.reportService.getReportById(req.params.reportId)
+    const reportId = req.params.reportId
+    const isEditing = req.path.includes('/edit')
+    const removeId = req.query.remove as string | undefined
+
+    if (!isEditing) {
+      if (req.session.addedSources) delete req.session.addedSources[reportId]
+      if (req.session.removedSources) delete req.session.removedSources[reportId]
+    }
+
+    if (isEditing && removeId) {
+      const temp = req.session.addedSources[reportId]
+      if (temp) {
+        //either its temp so remove it from our added sources so we don't save it
+        req.session.addedSources[reportId] = temp.filter(x => x.id !== removeId)
+      } else {
+        //or its saved so added it to removed sources so we delete it from db on save
+        req.session.removedSources ||= {}
+        req.session.removedSources[reportId] ||= []
+        req.session.removedSources[reportId].push(removeId)
+      }
+    }
+    console.log(req.session.removedSources, req.session.addedSources)
+
+    if (validateUUID(reportId)) {
+      this.report = await this.reportService.getReportById(reportId)
       if (this.report) {
         // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
         //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
@@ -288,10 +350,17 @@ export default class SharedController {
         //   await this.updateReport()
         // }
         req.session.fieldValues = this.report.fieldValues
-
+        const isEditing = req.path.endsWith('/edit') //req.params.mode === 'edit'
+        req.session.addedSources ||= {}
+        req.session.addedSources[reportId] ||= []
+        req.session.removedSources ||= {}
+        req.session.removedSources[reportId] ||= []
         this.renderTemplate(res, {
+          isEditing,
+          removedSources: isEditing ? req.session.removedSources[reportId] : [],
+          tempSources: isEditing ? req.session.addedSources[reportId] : [],
           ...this.templateValues,
-          reportId: req.params.reportId,
+          reportId: reportId,
           data: {
             name: persistentData.name,
             ...this.defaultTemplateData,
@@ -301,10 +370,10 @@ export default class SharedController {
           },
         })
       } else {
-        res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
+        res.redirect(`/${this.path}/${reportId}/not-found`)
       }
     } else {
-      res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
+      res.redirect(`/${this.path}/${reportId}/not-found`)
     }
   }
 
@@ -327,7 +396,31 @@ export default class SharedController {
   }
 
   public post = async (req: Request, res: Response): Promise<void> => {
-    this.report = await this.reportService.getReportById(req.params.reportId)
+    const reportId = req.params.reportId
+    const isEditing = req.path.endsWith('/edit') //req.params.mode === 'edit'
+    const isSaving = req.query.save === 'true'
+
+    if (!isEditing) {
+      if (req.session.addedSources) delete req.session.addedSources[reportId]
+      if (req.session.removedSources) delete req.session.removedSources[reportId]
+    }
+
+    if (isEditing && !isSaving) {
+      const customSource = req.body.source
+
+      if (customSource) {
+        req.session.addedSources ||= {}
+        req.session.addedSources[reportId] ||= []
+        req.session.addedSources[reportId].push({
+          id: reportId + '-' + (req.session.addedSources[reportId].length + 1),
+          value: customSource.trim(),
+        })
+        return res.redirect(`/${this.path}/${reportId}/sources-of-information/edit`)
+      }
+      //what if there is no custom source, or if the custom source is a duplicate?
+    }
+
+    this.report = await this.reportService.getReportById(reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
@@ -339,11 +432,11 @@ export default class SharedController {
         }
         await this.additionalPostAction()
       }
-      res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
+      res.redirect(`/${this.path}/${reportId}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
       this.renderTemplate(res, {
         ...this.templateValues,
-        reportId: req.params.reportId,
+        reportId,
         data: {
           ...this.data,
           ...req.body,
