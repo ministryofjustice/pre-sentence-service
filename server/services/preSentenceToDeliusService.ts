@@ -68,7 +68,7 @@ export default class PreSentenceToDeliusService {
     const keepaliveAgent = this.apiUrl.startsWith('https') ? new HttpsAgent(agentOptions) : new Agent(agentOptions)
 
     return async ({
-      path = undefined,
+      path = '',
       query = '',
       headers = {},
       responseType = '',
@@ -99,7 +99,7 @@ export default class PreSentenceToDeliusService {
         )
 
         return raw ? result : result.body
-      } catch (error) {
+      } catch (error: any) {
         const sanitisedError = sanitise(error)
         logger.error(
           { ...sanitisedError, path, query },

@@ -22,55 +22,104 @@ export default function Index(
   preSentenceToDeliusService: PreSentenceToDeliusService
 ): Router {
   const router = Router()
-  const routePrefix = (path: string) => `/${new BaseController().path}${path}`
+  const routePrefix = (path: string) =>
+    `/${new BaseController(reportService, communityService, _eventService, preSentenceToDeliusService, null as any).path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
   const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
-    return new LandingPageController(reportService, communityService, null, preSentenceToDeliusService).get(req, res)
+    return new LandingPageController(
+      reportService,
+      communityService,
+      null as any,
+      preSentenceToDeliusService,
+      null as any
+    ).get(req, res)
   })
 
   get('/:reportId/defendant-details', (req, res) => {
-    return new DefendantDetailsController(reportService, communityService).get(req, res)
+    return new DefendantDetailsController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
   post('/:reportId/defendant-details', (req, res) => {
-    return new DefendantDetailsController(reportService, communityService).post(req, res)
+    return new DefendantDetailsController(reportService, communityService, null as any, null as any, null as any).post(
+      req,
+      res
+    )
   })
 
   get('/:reportId/offence-analysis', (req, res) => {
-    return new OffenceAnalysisController(reportService, communityService).get(req, res)
+    return new OffenceAnalysisController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
   post('/:reportId/offence-analysis', (req, res) => {
-    return new OffenceAnalysisController(reportService, communityService).post(req, res)
+    return new OffenceAnalysisController(reportService, communityService, null as any, null as any, null as any).post(
+      req,
+      res
+    )
   })
 
   get('/:reportId/risk-analysis', (req, res) => {
-    return new RiskAnalysisController(reportService, communityService).get(req, res)
+    return new RiskAnalysisController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
   post('/:reportId/risk-analysis', (req, res) => {
-    return new RiskAnalysisController(reportService, communityService).post(req, res)
+    return new RiskAnalysisController(reportService, communityService, null as any, null as any, null as any).post(
+      req,
+      res
+    )
   })
 
   get('/:reportId/defendant-behaviour', (req, res) => {
-    return new DefendantBehaviourController(reportService, communityService).get(req, res)
+    return new DefendantBehaviourController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
 
   post('/:reportId/defendant-behaviour', (req, res) => {
-    return new DefendantBehaviourController(reportService, communityService).post(req, res)
+    return new DefendantBehaviourController(
+      reportService,
+      communityService,
+      null as any,
+      null as any,
+      null as any
+    ).post(req, res)
   })
 
   get('/:reportId/sentencing-proposal', (req, res) => {
-    return new SentencingProposalController(reportService, communityService).get(req, res)
+    return new SentencingProposalController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
   post('/:reportId/sentencing-proposal', (req, res) => {
-    return new SentencingProposalController(reportService, communityService).post(req, res)
+    return new SentencingProposalController(
+      reportService,
+      communityService,
+      null as any,
+      null as any,
+      null as any
+    ).post(req, res)
   })
 
   get('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService, communityService).get(req, res)
+    return new PreviewReportController(reportService, communityService, null as any, null as any, null as any).get(
+      req,
+      res
+    )
   })
   post('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService, communityService).post(req, res)
+    return new PreviewReportController(reportService, communityService, null as any, null as any, null as any).post(
+      req,
+      res
+    )
   })
 
   return router

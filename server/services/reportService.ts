@@ -25,7 +25,7 @@ export default class ReportService {
     return reportRepository.save(result)
   }
 
-  public getReportById(id: string): Promise<Report> {
+  public getReportById(id: string): Promise<Report | null> {
     return getRepository(Report).findOne({
       where: {
         id,
@@ -74,7 +74,7 @@ export default class ReportService {
     )
   }
 
-  public getDefinitionByType(type: string): Promise<ReportDefinition> {
+  public getDefinitionByType(type: string): Promise<ReportDefinition | null> {
     return getRepository(ReportDefinition).findOne({
       select: ['id'],
       where: {

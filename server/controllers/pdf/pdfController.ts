@@ -6,11 +6,11 @@ import ReportService from '../../services/reportService'
 import Report from '../../repositories/entities/report'
 
 export default class PdfController {
-  constructor(protected readonly reportService: ReportService = null) {}
+  constructor(protected readonly reportService: ReportService) {}
 
   preview = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const report: Report = await this.reportService.getReportById(reportId)
+    const report: Report | null = await this.reportService.getReportById(reportId)
     if (report) {
       const reportData: { [key: string]: unknown } = { ...configureReportData(report), preview: true }
       const headerHtml = getHeader()
@@ -24,7 +24,7 @@ export default class PdfController {
 
   renderPdf = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const report: Report = await this.reportService.getReportById(reportId)
+    const report: Report | null = await this.reportService.getReportById(reportId)
     logger.info(`Request to print PDF for report ${reportId}`)
 
     if (report) {

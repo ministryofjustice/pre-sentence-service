@@ -134,6 +134,7 @@ export default defineConfig([
     },
 
     rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-use-before-define': 0,
       'class-methods-use-this': 0,
       'no-useless-constructor': 0,
