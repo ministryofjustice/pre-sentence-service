@@ -119,6 +119,7 @@
     "csrf-sync": "^4.2.1",
     "date-fns": "4.1.0",
     "dotenv": "16.5.0",
+    "encrypt-storage": "^2.14.7",
     "eslint": "9.27.0",
     "eslint-plugin-import": "2.31.0",
     "express": "^5.1.0",

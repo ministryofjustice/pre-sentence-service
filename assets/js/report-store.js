@@ -1,10 +1,10 @@
 /* eslint-disable node/no-missing-require */
-// Wait for zustand to load and use vanilla API
-function waitForZustand(callback) {
-  if (window.zustand || window.ZustandVanilla || window.createStore) {
+// Wait for zustand and encrypt-storage to load
+function waitForLibraries(callback) {
+  if ((window.zustand || window.ZustandVanilla || window.createStore) && window.EncryptStorage) {
     callback()
   } else {
-    setTimeout(() => waitForZustand(callback), 50)
+    setTimeout(() => waitForLibraries(callback), 50)
   }
 }
 
@@ -52,7 +52,43 @@ const persist = (config, options) => (set, get, api) => {
   return mergedState
 }
 
-const createJSONStorage = () => sessionStorage
+// Create encrypted storage instance
+const createEncryptedStorage = () => {
+  // Generate a key based on session/user context for encryption
+  const encryptionKey = 'report-store-' + (window.location.hostname || 'localhost')
+
+  // Create encrypted storage instance
+  const encryptStorage = new window.EncryptStorage(encryptionKey, {
+    storageType: 'sessionStorage',
+  })
+
+  return {
+    getItem: key => {
+      try {
+        return encryptStorage.getItem(key)
+      } catch (e) {
+        console.warn('Failed to decrypt item:', e)
+        return null
+      }
+    },
+    setItem: (key, value) => {
+      try {
+        encryptStorage.setItem(key, value)
+      } catch (e) {
+        console.warn('Failed to encrypt item:', e)
+      }
+    },
+    removeItem: key => {
+      try {
+        encryptStorage.removeItem(key)
+      } catch (e) {
+        console.warn('Failed to remove encrypted item:', e)
+      }
+    },
+  }
+}
+
+const createJSONStorage = () => createEncryptedStorage()
 
 const initReportStore = () => {
   return { questions: {}, pageSaveState: {}, errors: [] }
@@ -298,7 +334,7 @@ function getHasUnsavedChanges() {
 }
 
 if (typeof window !== 'undefined') {
-  waitForZustand(() => {
+  waitForLibraries(() => {
     window.ReportStore = {
       createReportStore,
       initReportStore,
