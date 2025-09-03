@@ -4,12 +4,13 @@ import { format } from 'date-fns'
 import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
-import ReportService, { IFieldValue } from '../../services/reportService'
+import ReportService, { IFieldValue, SourceOfInformation } from '../../services/reportService'
 import EventService from '../../services/eventService'
 import CommunityService from '../../services/communityService'
 import PreSentenceToDeliusService, { IContext } from '../../services/preSentenceToDeliusService'
 
 import formatAddress from '../../utils/formatAddress'
+import formatKey from '../../utils/formatKey'
 import formatOffences from '../../utils/formatOffences'
 // import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
@@ -19,11 +20,6 @@ enum RiskLevel {
   Medium = 'medium',
   High = 'high',
   VeryHigh = 'very_high',
-}
-
-interface SourcesOfInformation {
-  value: string
-  customId?: string
 }
 
 const RiskLevelLabels: Record<RiskLevel, string> = {
@@ -41,20 +37,6 @@ const riskOptions = [
   })),
 ]
 
-const standardSourcesOfInformation: SourcesOfInformation[] = [
-  { value: 'CPS summary' },
-  { value: 'Domestic abuse callout information' },
-  { value: 'Diversity Information Form (DIF)' },
-  { value: 'Interview' },
-  { value: 'OASys assessments' },
-  { value: 'Previous convictions' },
-  { value: 'Safeguarding checks' },
-  { value: 'Sentencing guidelines' },
-  { value: 'Service records' },
-  { value: 'Substance misuse screening tool' },
-  { value: 'Victim statement' },
-]
-
 export interface TemplateValues {
   preSentenceType: string
   reportPath: string
@@ -62,10 +44,10 @@ export interface TemplateValues {
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
   riskOptions?: { value: string; text: string }[]
-  sourcesOfInformation?: SourcesOfInformation[]
+  sourcesOfInformation?: SourceOfInformation[]
   isEditing?: boolean
   removedSources?: string[]
-  tempSources?: { id: string; value: string }[]
+  tempSources?: { key: string; value: string }[]
 }
 
 interface InclusionExclusion {
@@ -129,18 +111,18 @@ export default class SharedController {
     }
 
     if (this.templatePath === 'sources-of-information') {
-      // TODOxLM add custom sources saved in db, if any
-      const savedSources: SourcesOfInformation[] = []
-      const sourcesToDisplay: SourcesOfInformation[] = [
-        ...standardSourcesOfInformation,
+      const sourcesToDisplay: SourceOfInformation[] = [
+        ...templateValues.sourcesOfInformation.filter(x => !(templateValues.removedSources ?? []).includes(x.key)),
         ...(templateValues.tempSources ?? []).map(x => ({
-          customId: x.id,
-          value: x.value,
+          ...x,
+          isCustom: true,
         })),
-        ...savedSources.filter(x => !(templateValues.removedSources ?? []).includes(x.customId)),
       ].sort((a, b) => a.value.toLowerCase().localeCompare(b.value.toLowerCase()))
-
-      templateValues.sourcesOfInformation = sourcesToDisplay
+      const selectedSources = (this.data['sourcesOfInformation'] as string[]) ?? []
+      templateValues.sourcesOfInformation = sourcesToDisplay.map(x => ({
+        ...x,
+        checked: selectedSources.some(v => v === x.key),
+      }))
     }
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
@@ -182,7 +164,11 @@ export default class SharedController {
     if (this.report && this.report.fieldValues) {
       this.report.fieldValues.forEach(item => {
         if (this.pageFields.includes(item.field.name)) {
-          this.data[item.field.name] = item.value
+          if (item.field.name === 'sourcesOfInformation') {
+            this.data[item.field.name] = item.value.split(',')
+          } else {
+            this.data[item.field.name] = item.value
+          }
         }
       })
     }
@@ -258,7 +244,7 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue.value
+          let tmpValue = fieldValue?.value ?? null
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -291,26 +277,24 @@ export default class SharedController {
   public get = async (req: Request, res: Response): Promise<void> => {
     const reportId = req.params.reportId
     const isEditing = req.path.includes('/edit')
-    const removeId = req.query.remove as string | undefined
+    const removeKey = req.query.remove as string | undefined
 
     if (!isEditing) {
       if (req.session.addedSources) delete req.session.addedSources[reportId]
       if (req.session.removedSources) delete req.session.removedSources[reportId]
     }
 
-    if (isEditing && removeId) {
+    if (isEditing && removeKey) {
       const temp = req.session.addedSources[reportId]
-      if (temp) {
-        //either its temp so remove it from our added sources so we don't save it
-        req.session.addedSources[reportId] = temp.filter(x => x.id !== removeId)
+      if (temp && temp.some(x => x.key === removeKey)) {
+        req.session.addedSources[reportId] = temp.filter(x => x.key !== removeKey)
       } else {
-        //or its saved so added it to removed sources so we delete it from db on save
         req.session.removedSources ||= {}
         req.session.removedSources[reportId] ||= []
-        req.session.removedSources[reportId].push(removeId)
+        req.session.removedSources[reportId].push(removeKey)
       }
+      return res.redirect(`/psr/${reportId}/sources-of-information/edit`)
     }
-    console.log(req.session.removedSources, req.session.addedSources)
 
     if (validateUUID(reportId)) {
       this.report = await this.reportService.getReportById(reportId)
@@ -355,10 +339,12 @@ export default class SharedController {
         req.session.addedSources[reportId] ||= []
         req.session.removedSources ||= {}
         req.session.removedSources[reportId] ||= []
+        const sourcesOfInformation = await this.reportService.getSourcesOfInformation(this.report.id)
         this.renderTemplate(res, {
           isEditing,
           removedSources: isEditing ? req.session.removedSources[reportId] : [],
           tempSources: isEditing ? req.session.addedSources[reportId] : [],
+          sourcesOfInformation,
           ...this.templateValues,
           reportId: reportId,
           data: {
@@ -399,6 +385,18 @@ export default class SharedController {
     const reportId = req.params.reportId
     const isEditing = req.path.endsWith('/edit') //req.params.mode === 'edit'
     const isSaving = req.query.save === 'true'
+    const { action } = req.body
+
+    if (action === 'save-list') {
+      const addedSources = req.session.addedSources[reportId] ?? []
+      const removedSources = req.session.removedSources[reportId] ?? []
+      if (addedSources.length > 0 || removedSources.length > 0) {
+        await this.reportService.saveCustomSourcesOfInformation(reportId, addedSources, removedSources)
+        delete req.session.addedSources[reportId]
+        delete req.session.removedSources[reportId]
+      }
+      return res.redirect(`/${this.path}/${reportId}/sources-of-information`)
+    }
 
     if (!isEditing) {
       if (req.session.addedSources) delete req.session.addedSources[reportId]
@@ -406,14 +404,15 @@ export default class SharedController {
     }
 
     if (isEditing && !isSaving) {
-      const customSource = req.body.source
+      const customSource = req.body.source?.trim()
 
       if (customSource) {
+        const key = `custom_${formatKey(customSource)}`
         req.session.addedSources ||= {}
         req.session.addedSources[reportId] ||= []
         req.session.addedSources[reportId].push({
-          id: reportId + '-' + (req.session.addedSources[reportId].length + 1),
-          value: customSource.trim(),
+          key,
+          value: customSource,
         })
         return res.redirect(`/${this.path}/${reportId}/sources-of-information/edit`)
       }
@@ -434,8 +433,10 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportId}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
+      const sourcesOfInformation = await this.reportService.getSourcesOfInformation(this.report.id)
       this.renderTemplate(res, {
         ...this.templateValues,
+        sourcesOfInformation,
         reportId,
         data: {
           ...this.data,

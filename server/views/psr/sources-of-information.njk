@@ -6,15 +6,15 @@
 {% block reportForm %}
   <form method="post" data-autosave="true" novalidate>
 
-    <div class="govuk-form-group {% if 'sources' in elementsWithError %}govuk-form-group--error{% endif %}">
-      <fieldset class="govuk-fieldset" aria-describedby="sources-hint {% if 'sources' in elementsWithError %}sources-error{% endif %}">
+    <div class="govuk-form-group {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
+      <fieldset class="govuk-fieldset" aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
           <h1 class="govuk-fieldset__heading">
             {{ currentPage }}
           </h1>
         </legend>
 
-        <div id="sources-hint" class="govuk-hint">
+        <div id="sourcesOfInformation-hint" class="govuk-hint">
           {% if isEditing %}
             <p class="govuk-body">
               Add or remove sources of information from your list
@@ -25,14 +25,14 @@
                 Edit sources of information
               </a>
             </p>
-            <div id="sources-hint" class="govuk-hint">
+            <div id="sourcesOfInformation-hint" class="govuk-hint">
               Select all sources of information used to inform this report
             </div>
           {% endif %}
         </div>
 
-        {% if 'sources' in elementsWithError %}
-          <p id="sources-error" class="govuk-error-message">
+        {% if 'sourcesOfInformation' in elementsWithError %}
+          <p id="sourcesOfInformation-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span>
             You must select all sources used to inform this report
           </p>
@@ -41,12 +41,12 @@
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
           {% for source in sourcesOfInformation %}
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="{{ source.value }}" name="sources" type="checkbox" value="{{ source.value }}">
-              <label class="govuk-label govuk-checkboxes__label" for="{{ source.value }}">
+              <input class="govuk-checkboxes__input" id="{{ source.key }}" name="sourcesOfInformation" type="checkbox" value="{{ source.key }}" {% if source.checked %}checked{% endif %}>
+              <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
                 {{ source.value }}
               </label>
-              {% if isEditing and source.customId %}
-                <a href="?remove={{ source.customId }}" class="govuk-link govuk-link--no-visited-state checkbox-action">
+              {% if isEditing and source.isCustom %}
+                <a href="?remove={{ source.key }}" class="govuk-link govuk-link--no-visited-state checkbox-action">
                   Remove <span class="govuk-visually-hidden"> {{ source.value }}</span>
                 </a>
               {% endif %}
@@ -86,13 +86,15 @@
       <div class="govuk-button-group">
         {{ govukButton({
           text: "Save list and continue",
-          href: "?save=true"
+          attributes: { name: "action", value: "save-list" }
         }) }}
 
         <a class="govuk-link" href="/psr/{{ reportId }}/sources-of-information">Cancel</a>
       </div>
     {% else %}
-      <button class="govuk-button">Save and continue</button>
+      {{ govukButton({
+        text: "Save and continue"
+      }) }}
     {% endif %}
 
   </form>

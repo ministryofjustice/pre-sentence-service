@@ -1,7 +1,7 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
-export const pageFields: Array<string> = ['sources']
+export const pageFields: Array<string> = ['sourcesOfInformation']
 
 export default class SourcesOfInformationController extends BaseController {
   override templatePath = 'sources-of-information'
@@ -11,7 +11,7 @@ export default class SourcesOfInformationController extends BaseController {
   override formValidation: FormValidation = {
     required: [
       {
-        id: 'sources',
+        id: 'sourcesOfInformation',
         errorMessage: 'You must select all sources used to inform this report',
       },
     ],
