@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import ReportDefinition from './reportDefinition'
 import FieldValue from './fieldValue'
+import Source from './source'
 
 @Entity()
 export default class Report {
@@ -24,4 +25,7 @@ export default class Report {
 
   @OneToMany(() => FieldValue, entity => entity.report, { eager: true })
   fieldValues: Array<FieldValue>
+
+  @OneToMany(() => Source, entity => entity.report, { eager: true })
+  sources?: Array<Source>
 }

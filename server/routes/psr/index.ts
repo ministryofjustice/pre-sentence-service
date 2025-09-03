@@ -14,6 +14,7 @@ import RiskAnalysisController from '../../controllers/psr/risk-analysis-controll
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
 import PreviewReportController from '../../controllers/psr/preview-report-controller'
+import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -49,6 +50,20 @@ export default function Index(
   })
   post('/:reportId/risk-analysis', (req, res) => {
     return new RiskAnalysisController(reportService, communityService).post(req, res)
+  })
+
+  get('/:reportId/sources-of-information', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).get(req, res)
+  })
+  post('/:reportId/sources-of-information', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).post(req, res)
+  })
+
+  get('/:reportId/sources-of-information/edit', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).get(req, res)
+  })
+  post('/:reportId/sources-of-information/edit', (req, res) => {
+    return new SourcesOfInformationController(reportService, communityService).post(req, res)
   })
 
   get('/:reportId/defendant-behaviour', (req, res) => {

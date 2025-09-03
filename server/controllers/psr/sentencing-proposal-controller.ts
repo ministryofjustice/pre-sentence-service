@@ -13,7 +13,7 @@ export const pageFields: Array<string> = [
 export default class SentencingProposalController extends BaseController {
   override templatePath = 'sentencing-proposal'
 
-  override redirectPath = 'preview-report' // TODO: replace with correct page when it is created
+  override redirectPath = 'sources-of-information'
 
   override pageFields = pageFields
 }
