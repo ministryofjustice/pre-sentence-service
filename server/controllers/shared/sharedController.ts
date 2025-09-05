@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { format } from 'date-fns'
 
-import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
+import { ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
@@ -58,10 +58,6 @@ export default class SharedController {
     reportId: '',
     reportPath: '',
     preSentenceType: '',
-  }
-
-  formValidation: FormValidation = {
-    required: [],
   }
 
   updateReport!: () => void
@@ -307,7 +303,8 @@ export default class SharedController {
     if (rep) {
       this.report = rep
     }
-    const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
+
+    const validatedForm: ValidatedForm = validateForm(req.body, this.model)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
 

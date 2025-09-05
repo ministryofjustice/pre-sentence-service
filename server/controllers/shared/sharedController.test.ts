@@ -65,11 +65,6 @@ describe('Route Handlers - Shared Controller', () => {
       expect(typeof handler.redirectPath).toBe('string')
       expect(handler.redirectPath.length).toBe(0)
     })
-
-    it('should declare empty form validation object', async () => {
-      expect(typeof handler.formValidation).toBe('object')
-      expect(handler.formValidation.required.length).toBe(0)
-    })
   })
 
   describe('GET', () => {

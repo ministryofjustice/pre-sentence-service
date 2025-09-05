@@ -1,41 +1,23 @@
 import BaseController from './baseController'
-import { FormValidation } from '../../utils/formValidation'
+import * as z from 'zod'
 
 export const pageFields: Array<string> = ['pnc', 'crn', 'name', 'riskPredictors', 'riskAndHarmFactors']
+
+const riskAnalysisModel = z.object({
+  riskToChildren: z.string().min(1, 'Select the level of risk to children from OASys'),
+  riskToPublic: z.string().min(1, 'Select the level of risk to the public from OASys'),
+  riskToKnownAdults: z.string().min(1, 'Select the level of risk to known adults from OASys'),
+  riskToStaff: z.string().min(1, 'Select the level of risk to known adults from OASys'),
+  riskPredictors: z.string().min(1, 'Confirm risk predictors and assess the likelihood of reoffending'),
+  riskAndHarmFactors: z.string().min(1, 'Analyse relevant risks of harm and protective factors'),
+})
 
 export default class RiskAnalysisController extends BaseController {
   override templatePath = 'risk-analysis'
 
   override redirectPath = 'sentencing-proposal'
 
-  override formValidation: FormValidation = {
-    required: [
-      {
-        id: 'riskToChildren',
-        errorMessage: 'Select the level of risk to children from OASys',
-      },
-      {
-        id: 'riskToPublic',
-        errorMessage: 'Select the level of risk to the public from OASys',
-      },
-      {
-        id: 'riskToKnownAdults',
-        errorMessage: 'Select the level of risk to known adults from OASys',
-      },
-      {
-        id: 'riskToStaff',
-        errorMessage: 'Select the level of risk to staff from OASys',
-      },
-      {
-        id: 'riskPredictors',
-        errorMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
-      },
-      {
-        id: 'riskAndHarmFactors',
-        errorMessage: 'Analyse relevant risks of harm and protective factors',
-      },
-    ],
-  }
-
   override pageFields = pageFields
+
+  override model = riskAnalysisModel
 }
