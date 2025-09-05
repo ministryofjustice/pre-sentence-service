@@ -3,7 +3,7 @@ import mapping from '../../../mappings/get-user-access.json'
 
 export default class MockCommunityService extends CommunityService {
   constructor() {
-    super(undefined)
+    super(undefined as any)
   }
 
   async getUserAccess() {

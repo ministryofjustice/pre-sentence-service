@@ -18,9 +18,7 @@ export default function pdfRenderer(client: GotenbergClient) {
       // Define the pageData as - { url: string, report: report, otherData: type? }
       pageData: Record<string, unknown>,
       options: { filename: string; pdfOptions: PdfOptions } = { filename: 'document.pdf', pdfOptions: {} }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): any => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       res.render(view, pageData, (error: any, html: any) => {
         if (error) {
           throw error

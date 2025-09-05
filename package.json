@@ -145,7 +145,8 @@
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.24",
     "uuid": "11.1.0",
-    "zustand": "^4.5.4"
+    "zustand": "^4.5.4",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/bunyan": "1.8.11",

@@ -48,7 +48,7 @@ export default class EventService {
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 
-    let result: SendMessageResult
+    let result!: SendMessageResult
 
     try {
       result = await this.sns

@@ -10,7 +10,7 @@ const user = {
 
 export default class MockUserService extends UserService {
   constructor() {
-    super(undefined)
+    super(undefined as any)
   }
 
   async getUser(token: string) {

@@ -2,9 +2,9 @@
 
 {% set errorList = [] %}
 {% set elementsWithError = [] %}
-{% for item in formValidation.errors %}
-  {{ errorList.push({ text: item.errorMessage, href: "#" + item.id }) }}
-  {{ elementsWithError.push(item.id) }}
+{% for key, message in formValidation.errors %}
+  {{ errorList.push({ text: message, href: "#" + key }) }}
+  {{ elementsWithError.push(key) }}
 {% endfor %}
 
 {% block content %}

@@ -20,8 +20,8 @@ describe('Route Handlers - Shared Controller', () => {
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    mockedCommunityService = new CommunityService(null)
-    handler = new SharedController(mockedReportService, mockedCommunityService)
+    mockedCommunityService = new CommunityService(null as any)
+    handler = new SharedController(mockedReportService, mockedCommunityService, null as any, null as any, null as any)
   })
 
   afterAll(() => {
@@ -64,11 +64,6 @@ describe('Route Handlers - Shared Controller', () => {
     it('should declare empty redirect path', async () => {
       expect(typeof handler.redirectPath).toBe('string')
       expect(handler.redirectPath.length).toBe(0)
-    })
-
-    it('should declare empty form validation object', async () => {
-      expect(typeof handler.formValidation).toBe('object')
-      expect(handler.formValidation.required.length).toBe(0)
     })
   })
 

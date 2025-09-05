@@ -14,9 +14,9 @@ describe('Route Handlers - API Controller', () => {
   let handler: APIController
   let req: Request
   let res: Response
-  let getDefinitionByTypeSpy: jest.SpyInstance<Promise<reportDefinition>, [type: string]>
+  let getDefinitionByTypeSpy: jest.SpyInstance<Promise<reportDefinition | null>, [type: string]>
   let createReportSpy: jest.SpyInstance<Promise<report>, [report: IReport]>
-  let getReportByIdSpy: jest.SpyInstance<Promise<report>, [id: string]>
+  let getReportByIdSpy: jest.SpyInstance<Promise<report | null>, [id: string]>
   let updateFieldValuesSpy: jest.SpyInstance<Promise<void[]>, [fieldValues: IFieldValue[]]>
   let sendReportEventSpy: jest.SpyInstance<Promise<SendMessageResult>, [reportEventData: IReportEventData]>
   let deleteReportSpy: jest.SpyInstance<Promise<report>, [report: report]>

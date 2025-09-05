@@ -3,7 +3,7 @@ import mapping from '../../../mappings/get-context.json'
 
 export default class MockPreSentenceToDeliusService extends PreSentenceToDeliusService {
   constructor() {
-    super(undefined)
+    super(undefined as any)
   }
 
   async getContext(reportId: string) {

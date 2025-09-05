@@ -1,37 +1,32 @@
-interface FormElement {
-  id: string
-  minLength?: number
-  errorMessage: string
-}
-
-export interface FormValidation {
-  required: Array<FormElement>
-}
+import { ZodType } from 'zod'
 
 export interface ValidatedForm {
   isValid: boolean
-  errors: Array<FormElement>
+  errors?: Record<string, string>
+  data?: any
 }
 
-export const validateForm = (formData: FormData, formValidation: FormValidation): ValidatedForm => {
-  const invalidElements: Array<FormElement> = []
+export const validateForm = (formData: FormData, schema: ZodType<any>): ValidatedForm => {
+  const validationResult = schema.safeParse(formData)
 
-  formValidation.required.forEach(item => {
-    let found = false
-    Object.entries(formData).forEach(([key, value]) => {
-      if (item.id === key) {
-        found = true
-        if (!value || value.length < (item.minLength || 1)) {
-          invalidElements.push(item)
-        }
-      }
-    })
-    if (!found) {
-      invalidElements.push(item)
+  if (validationResult.success) {
+    return {
+      isValid: true,
+      data: validationResult.data,
     }
-  })
-  return {
-    isValid: !invalidElements.length,
-    errors: invalidElements,
+  } else {
+    const formattedErrors: Record<string, string> = {}
+
+    for (const e of validationResult.error.issues) {
+      const field = e.path[0]
+      if (typeof field === 'string' && !formattedErrors[field]) {
+        formattedErrors[field] = e.message
+      }
+    }
+
+    return {
+      isValid: false,
+      errors: formattedErrors,
+    }
   }
 }

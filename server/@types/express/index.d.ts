@@ -28,7 +28,11 @@ export declare global {
 
     interface Response {
       internalRedirect(url: string): void
-      renderPDF(view: string, pageData: Record<string, unknown>, options: Record<string, unknown>): void
+      renderPDF(
+        view: string,
+        pageData: Record<string, unknown>,
+        options?: { filename: string; pdfOptions: PdfOptions }
+      ): void
     }
   }
 }

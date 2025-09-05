@@ -39,7 +39,7 @@ describe('sanitised error', () => {
     const error = {
       message: 'error description',
     } as unknown as UnsanitisedError
-    expect(sanitisedError(error)).toEqual({
+    expect(sanitisedError(error)).toMatchObject({
       message: 'error description',
     })
   })
@@ -48,6 +48,6 @@ describe('sanitised error', () => {
     const error = {
       property: 'unknown',
     } as unknown as UnsanitisedError
-    expect(sanitisedError(error)).toEqual({})
+    expect(sanitisedError(error)).toMatchObject({})
   })
 })

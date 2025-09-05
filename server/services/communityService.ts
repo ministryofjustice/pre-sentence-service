@@ -31,7 +31,7 @@ export default class CommunityService {
     const keepaliveAgent = this.apiUrl.startsWith('https') ? new HttpsAgent(agentOptions) : new Agent(agentOptions)
 
     return async ({
-      path = undefined,
+      path = '',
       query = '',
       headers = {},
       responseType = '',
@@ -58,7 +58,7 @@ export default class CommunityService {
         logger.debug({ path, query, durationMillis }, 'CommunityService: Client GET using clientId credentials')
 
         return raw ? result : result.body
-      } catch (error) {
+      } catch (error: any) {
         const sanitisedError = sanitise(error)
         logger.error(
           { ...sanitisedError, path, query },

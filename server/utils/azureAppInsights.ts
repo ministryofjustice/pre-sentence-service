@@ -30,5 +30,5 @@ export function buildAppInsightsClient(name = defaultName()): TelemetryClient {
     defaultClient.context.tags['ai.application.ver'] = version()
     return defaultClient
   }
-  return null
+  return null as any
 }

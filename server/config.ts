@@ -16,11 +16,11 @@ function get<T>(name: string, fallback: T, options = { requireInProduction: fals
 const requiredInProduction = { requireInProduction: true }
 
 export class AgentConfig {
-  maxSockets: 100
+  maxSockets: number = 100
 
-  maxFreeSockets: 10
+  maxFreeSockets: number = 10
 
-  freeSocketTimeout: 30000
+  freeSocketTimeout: number = 30000
 }
 
 export interface ApiConfig {
@@ -38,7 +38,7 @@ export default {
   staticResourceCacheDuration: 20,
   redis: {
     host: get('REDIS_HOST', 'localhost', requiredInProduction),
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    port: parseInt(process.env.REDIS_PORT ?? '', 10) || 6379,
     password: process.env.REDIS_AUTH_TOKEN,
     tls_enabled: get('REDIS_TLS_ENABLED', 'false'),
   },
@@ -118,7 +118,7 @@ export default {
   },
   aws: {
     sns: {
-      endpoint: get('AWS_ENDPOINT', null), // Only set locally in order to use with localstack
+      endpoint: get('AWS_ENDPOINT', ''), // Only set locally in order to use with localstack
       region: get('AWS_REGION', 'eu-west-2'),
       topicArn: get(
         'TOPIC_ARN',

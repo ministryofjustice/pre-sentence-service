@@ -15,6 +15,6 @@ export default class LandingPageController extends BaseController {
   }
 
   override post = async (): Promise<void> => {
-    return null
+    return
   }
 }
