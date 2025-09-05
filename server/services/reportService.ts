@@ -4,6 +4,8 @@ import Report from '../repositories/entities/report'
 import ReportDefinition from '../repositories/entities/reportDefinition'
 import FieldValue from '../repositories/entities/fieldValue'
 import Source from '../repositories/entities/source'
+import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
+import Field from '../repositories/entities/field'
 
 export interface IReport {
   id?: string
@@ -17,13 +19,6 @@ export interface IFieldValue {
   fieldId: number
   value: string
   version: number
-}
-
-export interface SourceOfInformation {
-  key: string
-  value: string
-  isCustom: boolean
-  checked?: boolean
 }
 
 export default class ReportService {
@@ -56,44 +51,47 @@ export default class ReportService {
 
   public async saveCustomSourcesOfInformation(
     reportId: string,
-    addedSources: Partial<SourceOfInformation>[],
-    removedSources: string[]
+    addedSources: CustomSource[],
+    removedSources: SourceKey[]
   ): Promise<void> {
-    const repo = await getRepository(Source)
+    const sourceRepo = await getRepository(Source)
 
     if (removedSources.length > 0) {
-      await repo.delete({
+      await sourceRepo.delete({
         reportId,
         key: In(removedSources),
       })
 
       // Manually remove custom field from field_value.value if present (made necessary by current DB structure)
-      const fieldId = 26 // Magic number for sources of information field ID
-      const foundFieldValue = await getRepository(FieldValue).findOne({ where: { reportId, fieldId } })
-      if (foundFieldValue && foundFieldValue.value) {
-        const valueArr = foundFieldValue.value.split(',')
-        const updatedFieldValue = valueArr.filter(x => removedSources.some(y => y !== x)).join(',')
+      const fieldId = (await getRepository(Field).findOne({ where: { name: 'sourcesOfInformation' } })).id
+      const fvRepo = await getRepository(FieldValue)
+      const fv = await fvRepo.findOne({ where: { reportId, fieldId } })
+      if (fv && fv.value) {
+        const updatedFieldValue = fv.value
+          .split(',')
+          .filter(s => !removedSources.includes(s))
+          .join(',')
         if (updatedFieldValue.length > 0) {
-          await getRepository(FieldValue).update(foundFieldValue.id, {
-            ...foundFieldValue,
+          await fvRepo.update(fv.id, {
+            ...fv,
             value: updatedFieldValue,
-            version: foundFieldValue.version + 1,
+            version: fv.version + 1,
           })
         } else {
-          await getRepository(FieldValue).delete(foundFieldValue.id)
+          await fvRepo.delete(fv.id)
         }
       }
     }
 
     if (addedSources.length > 0) {
       const toInsert = addedSources.map(x =>
-        repo.create({
+        sourceRepo.create({
           key: x.key,
           label: x.value,
           reportId,
         })
       )
-      await repo.save(toInsert)
+      await sourceRepo.save(toInsert)
     }
   }
 

@@ -1,17 +1,16 @@
-import { IFieldValue } from '../../services/reportService'
+import { IFieldValue, PendingChanges, ReportId } from '../../services/reportService'
 
 export default {}
 
 declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
-  interface SessionData {
+  export interface SessionData {
     returnTo: string
     nowInMinutes: number
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
     userDetails: UserDetails
-    addedSources?: Record<string, Partial<SourcesOfInformation>[]>
-    removedSources?: Record<string, Array<string>>
+    pendingChanges?: Record<ReportId, PendingChanges>
   }
 }
 

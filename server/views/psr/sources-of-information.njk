@@ -1,35 +1,37 @@
 {% extends "../partials/psrPageLayout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 
 {% set currentPage = 'Sources of information' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
   <form method="post" data-autosave="true" novalidate>
-
     <div class="govuk-form-group {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
-      <fieldset class="govuk-fieldset" aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
+      <fieldset class="govuk-fieldset"
+        aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
+        
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
           <h1 class="govuk-fieldset__heading">
             {{ currentPage }}
           </h1>
         </legend>
 
-        <div id="sourcesOfInformation-hint" class="govuk-hint">
-          {% if isEditing %}
-            <p class="govuk-body">
-              Add or remove sources of information from your list
-            </p>
-          {% else %}
-            <p class="govuk-body">
-              <a href="/psr/{{ reportId }}/sources-of-information/edit" class="govuk-link govuk-link--no-visited-state">
-                Edit sources of information
-              </a>
-            </p>
-            <div id="sourcesOfInformation-hint" class="govuk-hint">
-              Select all sources of information used to inform this report
-            </div>
-          {% endif %}
-        </div>
+        {% if isEditing %}
+          <p class="govuk-body">
+            Add or remove sources of information from your list
+          </p>
+        {% else %}
+          <p class="govuk-body">
+            <a href="/psr/{{ reportId }}/sources-of-information/edit"
+               class="govuk-link govuk-link--no-visited-state">
+              Edit sources of information
+            </a>
+          </p>
+          <div id="sourcesOfInformation-hint" class="govuk-hint">
+            Select all sources of information used to inform this report
+          </div>
+        {% endif %}
 
         {% if 'sourcesOfInformation' in elementsWithError %}
           <p id="sourcesOfInformation-error" class="govuk-error-message">
@@ -41,13 +43,19 @@
         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
           {% for source in sourcesOfInformation %}
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="{{ source.key }}" name="sourcesOfInformation" type="checkbox" value="{{ source.key }}" {% if source.checked %}checked{% endif %}>
+              <input class="govuk-checkboxes__input"
+                     id="{{ source.key }}"
+                     name="sourcesOfInformation"
+                     type="checkbox"
+                     value="{{ source.key }}"
+                     {% if source.checked %}checked{% endif %}>
               <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
                 {{ source.value }}
               </label>
               {% if isEditing and source.isCustom %}
-                <a href="?remove={{ source.key }}" class="govuk-link govuk-link--no-visited-state checkbox-action">
-                  Remove <span class="govuk-visually-hidden"> {{ source.value }}</span>
+                <a href="?remove={{ source.key }}"
+                   class="govuk-link govuk-link--no-visited-state checkbox-action">
+                  Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
                 </a>
               {% endif %}
             </div>
@@ -57,30 +65,21 @@
     </div>
 
     {% if isEditing %}
-      {% from "govuk/components/input/macro.njk" import govukInput %}
-
       {{ govukInput({
-        label: {
-          text: "Add source of information"
-        },
-        hint: {
-          text: "Enter the name of the additional source of information"
-        },
+        label: { text: "Add source of information" },
+        hint: { text: "Enter the name of the additional source of information" },
         name: "source"
       }) }}
 
-      {% from "govuk/components/button/macro.njk" import govukButton %}
-
       {{ govukButton({
         text: "Add",
-        classes: "govuk-button--secondary"
+        classes: "govuk-button--secondary",
+        attributes: { name: "action", value: "add-source" }
       }) }}
     {% endif %}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
-
-    {% from "govuk/components/button/macro.njk" import govukButton %}
 
     {% if isEditing %}
       <div class="govuk-button-group">
@@ -92,10 +91,7 @@
         <a class="govuk-link" href="/psr/{{ reportId }}/sources-of-information">Cancel</a>
       </div>
     {% else %}
-      {{ govukButton({
-        text: "Save and continue"
-      }) }}
+      {{ govukButton({ text: "Save and continue" }) }}
     {% endif %}
-
   </form>
 {% endblock %}

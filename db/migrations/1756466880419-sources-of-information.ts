@@ -34,7 +34,7 @@ export class SourcesOfInformation1756466880419 implements MigrationInterface {
         ('domestic_abuse_callout_information', 'Domestic abuse callout information', NULL),
         ('diversity_inclusion_form', 'Diversity Information Form (DIF)', NULL),
         ('interview', 'Interview', NULL),
-        ('OASys_assessments', 'OASys assessments', NULL),
+        ('oasys_assessments', 'OASys assessments', NULL),
         ('previous_convictions', 'Previous convictions', NULL),
         ('safeguarding_checks', 'Safeguarding checks', NULL),
         ('sentencing_guidelines', 'Sentencing guidelines', NULL),
