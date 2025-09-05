@@ -1,7 +1,17 @@
 import BaseController from './baseController'
 import * as z from 'zod'
 
-export const pageFields: Array<string> = ['pnc', 'crn', 'name', 'riskPredictors', 'riskAndHarmFactors']
+export const pageFields: Array<string> = [
+  'pnc',
+  'crn',
+  'name',
+  'riskPredictors',
+  'riskAndHarmFactors',
+  'riskToChildren',
+  'riskToPublic',
+  'riskToKnownAdults',
+  'riskToStaff',
+]
 
 const riskAnalysisModel = z.object({
   riskToChildren: z.string().min(1, 'Select the level of risk to children from OASys'),

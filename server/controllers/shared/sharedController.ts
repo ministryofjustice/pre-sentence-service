@@ -15,12 +15,35 @@ import formatOffences from '../../utils/formatOffences'
 import validateUUID from '../../utils/reportValidation'
 import * as z from 'zod'
 
+enum RiskLevel {
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high',
+  VeryHigh = 'very_high',
+}
+
+const RiskLevelLabels: Record<RiskLevel, string> = {
+  [RiskLevel.Low]: 'Low risk',
+  [RiskLevel.Medium]: 'Medium risk',
+  [RiskLevel.High]: 'High risk',
+  [RiskLevel.VeryHigh]: 'Very high risk',
+}
+
+const riskOptions = [
+  { value: '', text: 'Choose an option' },
+  ...Object.entries(RiskLevelLabels).map(([value, text]) => ({
+    value,
+    text,
+  })),
+]
+
 export interface TemplateValues {
   preSentenceType: string
   reportPath: string
   reportId?: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
+  riskOptions?: { value: string; text: string }[]
 }
 
 interface InclusionExclusion {
@@ -58,6 +81,7 @@ export default class SharedController {
     reportId: '',
     reportPath: '',
     preSentenceType: '',
+    riskOptions,
   }
 
   updateReport!: () => void
@@ -75,6 +99,9 @@ export default class SharedController {
   ) {}
 
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
+    if (this.templatePath === 'risk-analysis') {
+      templateValues.riskOptions = riskOptions
+    }
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
 
@@ -248,17 +275,6 @@ export default class SharedController {
           req.session.isAllowedAccess = true
         }
 
-        // let formattedName
-        // if (!persistentData.name) {
-        //   formattedName = await this.populateFieldValuesAndGetName()
-        // }
-        // if (this.updateReport) {
-        //   this.data = {
-        //     ...this.data,
-        //     ...persistentData,
-        //   }
-        //   await this.updateReport()
-        // }
         req.session.fieldValues = this.report.fieldValues
 
         this.renderTemplate(res, {

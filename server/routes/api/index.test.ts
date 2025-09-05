@@ -3,7 +3,7 @@ import request from 'supertest'
 import { appWithApiRoutes } from '../testutils/appSetup'
 
 const mockShortFormatData = {
-  id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  id: 'd97277dd-1b0a-4853-b13b-8afed046bb8a',
   status: 'NOT_STARTED',
   reportDefinitionId: 1,
   eventNumber: '10',
@@ -19,12 +19,12 @@ const mockShortFormatData = {
     type: 'some_report_type',
     version: 1,
   },
-  urn: 'uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
-  url: 'http://localhost:3000/short-format/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  urn: 'uk:gov:hmpps:pre-sentence-service:report:d97277dd-1b0a-4853-b13b-8afed046bb8a',
+  url: 'http://localhost:3000/short-format/d97277dd-1b0a-4853-b13b-8afed046bb8a',
 }
 
 const mockOralReportData = {
-  id: '0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  id: 'd97277dd-1b0a-4853-b13b-8afed046bb8a',
   status: 'NOT_STARTED',
   reportDefinitionId: 1,
   eventNumber: '10',
@@ -40,8 +40,8 @@ const mockOralReportData = {
     type: 'some_report_type',
     version: 1,
   },
-  urn: 'uk:gov:hmpps:pre-sentence-service:report:0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
-  url: 'http://localhost:3000/record-of-oral/0a15ce57-c46e-4b71-84f0-49dbed4bb81e',
+  urn: 'uk:gov:hmpps:pre-sentence-service:report:d97277dd-1b0a-4853-b13b-8afed046bb8a',
+  url: 'http://localhost:3000/record-of-oral/d97277dd-1b0a-4853-b13b-8afed046bb8a',
 }
 
 const mockReportsData = [
@@ -146,7 +146,7 @@ describe('Route Handlers - API', () => {
 
   it('should get a report by ID', () => {
     return request(app)
-      .get('/api/v1/report/0a15ce57-c46e-4b71-84f0-49dbed4bb81e')
+      .get('/api/v1/report/d97277dd-1b0a-4853-b13b-8afed046bb8a')
       .expect('Content-Type', /json/)
       .expect(res => {
         expect(res.text).toEqual(JSON.stringify(mockShortFormatData))
