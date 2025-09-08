@@ -24,20 +24,16 @@ export type ReportId = string
 
 export const buildSourcesOfInformation = (
   sourcesOfInformation: SourceOfInformation[],
-  pendingChanges: PendingChanges | null,
-  selectedSources: string | undefined
+  pendingChanges?: PendingChanges,
+  selectedSources?: string
 ): SourceOfInformation[] => {
-  const selectedSourcesArr = selectedSources ? selectedSources.split(',') : ([] as SourceKey[])
-
   const removed = new Set(pendingChanges?.sourcesToRemove ?? [])
   const base = sourcesOfInformation.filter(s => !removed.has(s.key))
-  const adds = (pendingChanges?.sourcesToAdd ?? [])
-    .filter(s => !removed.has(s.key) && !base.some(b => b.key === s.key))
-    .map(s => ({ ...s, isCustom: true }))
+  const adds = (pendingChanges?.sourcesToAdd ?? []).map(s => ({ ...s, isCustom: true }))
   const sourcesToDisplay = [...base, ...adds].sort((a, b) =>
     a.value.localeCompare(b.value, undefined, { sensitivity: 'base' })
   )
-  const selected = new Set<SourceKey>(selectedSourcesArr)
+  const selected = new Set<SourceKey>(selectedSources ? selectedSources.split(',') : [])
   return sourcesToDisplay.map(s => ({
     ...s,
     checked: selected.has(s.key),
@@ -45,11 +41,10 @@ export const buildSourcesOfInformation = (
 }
 
 export const clearPendingSourcesForReportId = (pendingChanges: Record<ReportId, PendingChanges>, reportId: string) => {
-  if (!pendingChanges[reportId]) return
-
-  const changes = pendingChanges[reportId]
-  changes.sourcesToAdd = []
-  changes.sourcesToRemove = []
+  const bucket = pendingChanges[reportId]
+  if (!bucket) return
+  bucket.sourcesToAdd = []
+  bucket.sourcesToRemove = []
 }
 
 export const getPendingChangesForReport = (
@@ -68,24 +63,27 @@ export const updatePendingChanges = (
   pendingChanges: PendingChanges,
   opts: { customSource?: string; removeKey?: SourceKey }
 ) => {
-  if (opts.customSource) {
-    const value = opts.customSource.trim()
+  const { customSource, removeKey } = opts
+
+  if (customSource && customSource.trim()) {
+    const value = customSource.trim()
     const key = `custom_${formatKey(value)}`
     pendingChanges.sourcesToAdd.push({
       key,
       value,
     })
+    pendingChanges.sourcesToRemove = pendingChanges.sourcesToRemove.filter(k => k !== key)
   }
 
-  if (!opts.removeKey) return
+  if (!removeKey) return
 
-  const key = opts.removeKey
-  if (pendingChanges.sourcesToAdd?.some(s => s.key === key)) {
-    pendingChanges.sourcesToAdd = pendingChanges.sourcesToAdd.filter(s => s.key !== key)
-  } else {
-    pendingChanges.sourcesToRemove ??= []
-    if (!pendingChanges.sourcesToRemove.includes(key)) {
-      pendingChanges.sourcesToRemove.push(key)
-    }
+  if (pendingChanges.sourcesToAdd?.some(s => s.key === removeKey)) {
+    pendingChanges.sourcesToAdd = pendingChanges.sourcesToAdd.filter(s => s.key !== removeKey)
+  } else if (!pendingChanges.sourcesToRemove.includes(removeKey)) {
+    pendingChanges.sourcesToRemove.push(removeKey)
   }
 }
+
+export type SourceOfInformationActions = 'add-source' | 'save-list'
+
+export const isSourceAction = (v: unknown): v is SourceOfInformationActions => v === 'add-source' || v === 'save-list'
