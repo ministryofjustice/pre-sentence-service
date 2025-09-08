@@ -19,11 +19,11 @@ export default function sanitise(error: UnsanitisedError): SanitisedError {
       headers: error.response.headers,
       data: error.response.body,
       message: error.message,
-      stack: error.stack,
+      stack: error.stack ?? '',
     }
   }
   return {
     message: error.message,
-    stack: error.stack,
+    stack: error.stack ?? '',
   }
 }

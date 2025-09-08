@@ -5,23 +5,23 @@ import Field from './field'
 @Entity()
 export default class FieldValue {
   @PrimaryGeneratedColumn()
-  id: number
+  id!: number
 
   @Column()
-  fieldId: number
+  fieldId!: number
 
   @Column({ nullable: true })
-  value: string
+  value!: string
 
   @Column()
-  version: number
+  version!: number
 
   @Column()
-  reportId: string
+  reportId!: string
 
   @ManyToOne(() => Field, entity => entity.id, { eager: true })
-  field: Field
+  field!: Field
 
   @ManyToOne(() => Report, entity => entity.id)
-  report: Report
+  report!: Report
 }

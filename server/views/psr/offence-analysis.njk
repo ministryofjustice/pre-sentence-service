@@ -66,12 +66,15 @@
 
   {{ govukTextarea({
     name: "offencesUnderConsideration",
-    id: "offences-under-consideration",
+    id: "offencesUnderConsideration",
     value: data.offencesUnderConsideration,
     rows: "10",
     label: {
       text: ""
-    }
+    },
+    errorMessage: {
+      text: "Analyse the offences under consideration"
+    } if 'offencesUnderConsideration' in elementsWithError
   }) }}
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
@@ -88,22 +91,30 @@
 
   {{ govukTextarea({
     name: "offencesPattern",
-    id: "offences-pattern",
+    id: "offencesPattern",
     value: data.offencesPattern,
     rows: "10",
     label: {
       text: ""
-    }
+    },
+    errorMessage: {
+      text: "Analyse the pattern of offending and response to supervision"
+    } if 'offencesPattern' in elementsWithError
   }) }}
 
   {{ govukCheckboxes({
+    id: "noPreviousOffences",
     name: "noPreviousOffences",
     items: [
       {
         checked: data.noPreviousOffences === 'true',
+        value: "true",
         text: "The defendant has no previous offences or experience of supervision"
       }
-    ]
+    ],
+    errorMessage: {
+      text: "Check the box if the defendant has no previous offences or experience of supervision"
+    } if 'noPreviousOffences' in elementsWithError
   }) }}
 
   

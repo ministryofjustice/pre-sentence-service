@@ -7,8 +7,6 @@ describe('Report validation validateUUID', () => {
   })
 
   it('should return false for invalid UUIDs', () => {
-    expect(validateUUID(null)).toBe(false)
-    expect(validateUUID(undefined)).toBe(false)
     expect(validateUUID('')).toBe(false)
     expect(validateUUID('foo')).toBe(false)
     expect(validateUUID('75a11367-7b74-4a43-b659-43c2ad2faf8')).toBe(false)
