@@ -13,6 +13,17 @@ import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
 // import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
+import {
+  buildSourcesOfInformation,
+  clearPendingSourcesForReportId,
+  getPendingChangesForReport,
+  isSourceAction,
+  PendingChanges,
+  SourceOfInformation,
+  SourceOfInformationActions,
+  updatePendingChanges,
+} from '../../utils/sourcesOfInformationHelpers'
+import { Session, SessionData } from 'express-session'
 
 enum RiskLevel {
   Low = 'low',
@@ -43,6 +54,9 @@ export interface TemplateValues {
   data?: Record<string, unknown>
   formValidation?: ValidatedForm
   riskOptions?: { value: string; text: string }[]
+  sourcesOfInformation?: SourceOfInformation[]
+  isEditing?: boolean
+  pendingChanges?: PendingChanges
 }
 
 interface InclusionExclusion {
@@ -102,6 +116,14 @@ export default class SharedController {
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
     if (this.templatePath === 'risk-analysis') {
       templateValues.riskOptions = riskOptions
+    }
+
+    if (this.templatePath === 'sources-of-information') {
+      templateValues.sourcesOfInformation = buildSourcesOfInformation(
+        templateValues.sourcesOfInformation,
+        templateValues.pendingChanges,
+        this.data['sourcesOfInformation'] as string | undefined
+      )
     }
     res.render(`${this.path}/${this.templatePath}`, templateValues)
   }
@@ -250,8 +272,25 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    if (validateUUID(req.params.reportId)) {
-      this.report = await this.reportService.getReportById(req.params.reportId)
+    const reportId = req.params.reportId
+    const isEditing = req.path.endsWith('/edit')
+    const removeKey = (req.query.remove as string | undefined)?.trim()
+
+    let pendingChanges: PendingChanges | undefined
+
+    if (isEditing) {
+      pendingChanges = getPendingChangesForReport(req.session, reportId)
+
+      if (removeKey) {
+        updatePendingChanges(pendingChanges, { removeKey })
+        return res.redirect(`/${this.path}/${reportId}/sources-of-information/edit`)
+      }
+    } else if (req.session.pendingChanges) {
+      clearPendingSourcesForReportId(req.session.pendingChanges, reportId)
+    }
+
+    if (validateUUID(reportId)) {
+      this.report = await this.reportService.getReportById(reportId)
       if (this.report) {
         // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
         //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
@@ -277,10 +316,13 @@ export default class SharedController {
         }
 
         req.session.fieldValues = this.report.fieldValues
-
+        const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
         this.renderTemplate(res, {
           ...this.templateValues,
-          reportId: req.params.reportId,
+          reportId,
+          isEditing,
+          pendingChanges,
+          sourcesOfInformation,
           data: {
             name: persistentData.name,
             ...this.defaultTemplateData,
@@ -290,10 +332,10 @@ export default class SharedController {
           },
         })
       } else {
-        res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
+        res.redirect(`/${this.path}/${reportId}/not-found`)
       }
     } else {
-      res.redirect(`/${this.path}/${req.params.reportId}/not-found`)
+      res.redirect(`/${this.path}/${reportId}/not-found`)
     }
   }
 
@@ -316,7 +358,20 @@ export default class SharedController {
   }
 
   public post = async (req: Request, res: Response): Promise<void> => {
-    this.report = await this.reportService.getReportById(req.params.reportId)
+    const reportId = req.params.reportId
+    const isEditing = req.path.endsWith('/edit')
+    const { action, source } = req.body
+
+    if (isSourceAction(action)) {
+      const redirectUrl = await this.handleSourceActions(action, reportId, req.session, source)
+      return res.redirect(redirectUrl)
+    }
+
+    if (!isEditing && req.session.pendingChanges) {
+      clearPendingSourcesForReportId(req.session.pendingChanges, reportId)
+    }
+
+    this.report = await this.reportService.getReportById(reportId)
     const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
@@ -328,11 +383,13 @@ export default class SharedController {
         }
         await this.additionalPostAction()
       }
-      res.redirect(`/${this.path}/${req.params.reportId}/${req.query?.redirectPath || this.redirectPath}`)
+      res.redirect(`/${this.path}/${reportId}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
+      const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
       this.renderTemplate(res, {
         ...this.templateValues,
-        reportId: req.params.reportId,
+        reportId,
+        sourcesOfInformation,
         data: {
           ...this.data,
           ...req.body,
@@ -340,6 +397,41 @@ export default class SharedController {
         },
         formValidation: validatedForm,
       })
+    }
+  }
+
+  private async handleSourceActions(
+    action: SourceOfInformationActions | undefined,
+    reportId: string,
+    session: Session & Partial<SessionData>,
+    customSource?: string
+  ): Promise<string> {
+    const pendingChanges = getPendingChangesForReport(session, reportId)
+    const path = `/${this.path}/${reportId}/sources-of-information`
+
+    switch (action) {
+      case 'add-source': {
+        updatePendingChanges(pendingChanges, { customSource })
+        return `${path}/edit`
+      }
+
+      case 'save-list': {
+        const { sourcesToAdd = [], sourcesToRemove = [] } = pendingChanges
+
+        if (sourcesToAdd.length > 0 || sourcesToRemove.length > 0) {
+          try {
+            await this.reportService.saveCustomSourcesOfInformation(reportId, sourcesToAdd, sourcesToRemove)
+            clearPendingSourcesForReportId(session.pendingChanges, reportId)
+          } catch (err) {
+            console.error('Failed to save custom sources', { reportId, err })
+            return `${path}/edit`
+          }
+        }
+        return path
+      }
+
+      default:
+        return `${path}/edit`
     }
   }
 }
