@@ -1,6 +1,4 @@
 ;(function initialiseAutosave() {
-  let formHasChangesToBePersisted = false
-
   const isTypeOf = elementType => element => element.type === elementType
 
   const isRadio = isTypeOf('radio')
@@ -20,22 +18,70 @@
   }
 
   function persistForm() {
-    console.log('Do some form saved logic here')
-    return Promise.resolve({ text: () => Promise.resolve('Some text') })
-    //   const form = getForm()
-    //   const formData = new URLSearchParams(new FormData(form))
-    //   const [formAction] = form?.getAttribute('action').split('#')
-    //   const endpoint = `${formAction}?jsonResponse=true`
+    if (!window.reportStoreInstance) {
+      console.warn('Report store not available, falling back to form data')
+      const form = getForm()
+      const formData = new URLSearchParams(new FormData(form))
+      const reportId = formData.get('reportId')
+      const endpoint = `/api/v1/report/${reportId}/save`
 
-    //   document.dispatchEvent(new CustomEvent('autosave'))
+      document.dispatchEvent(new CustomEvent('autosave'))
 
-    //   return fetch(endpoint, {
-    //     method: 'POST',
-    //     body: formData,
-    //     headers: {
-    //       'x-csrf-token': document.getElementsByName('x-csrf-token')[0].value,
-    //     },
-    //   })
+      return fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'x-csrf-token': document.getElementsByName('CSRFToken')[0].value,
+        },
+      })
+    }
+
+    const storeState = window.reportStoreInstance.getState()
+    const questions = storeState.questions || {}
+
+    const form = getForm()
+    const formData = new URLSearchParams(new FormData(form))
+    const reportId = formData.get('reportId')
+
+    const storeFormData = new URLSearchParams()
+
+    for (const [questionId, value] of Object.entries(questions)) {
+      if (value !== undefined && value !== null) {
+        storeFormData.append(questionId, value)
+      }
+    }
+
+    // Add essential form fields that might not be in the store
+    // These are typically hidden fields or system fields
+    const systemFields = ['reportId', 'CSRFToken', 'crn', 'pnc', 'name', 'dateOfBirth', 'age', 'address']
+    systemFields.forEach(fieldName => {
+      const fieldValue = formData.get(fieldName)
+      if (fieldValue && !storeFormData.has(fieldName)) {
+        storeFormData.append(fieldName, fieldValue)
+      }
+    })
+
+    if (!storeFormData.has('CSRFToken')) {
+      storeFormData.append('CSRFToken', document.getElementsByName('CSRFToken')[0].value)
+    }
+
+    const endpoint = `/api/v1/report/${reportId}/save`
+
+    document.dispatchEvent(new CustomEvent('autosave'))
+
+    return fetch(endpoint, {
+      method: 'POST',
+      body: storeFormData,
+      headers: {
+        'x-csrf-token': document.getElementsByName('CSRFToken')[0].value,
+      },
+    }).then(response => {
+      // Mark changes as saved when successful
+      if (response.ok && window.ReportStore) {
+        window.ReportStore.markChangesSaved()
+      }
+      return response
+    })
   }
 
   function addListenersToFormElements() {
@@ -44,24 +90,25 @@
     let timeoutHandle = null
 
     const handleEvent = () => {
-      formHasChangesToBePersisted = true
-
       if (timeoutHandle) {
         clearTimeout(timeoutHandle)
       }
-
-      console.log('Detected change - setting timeout')
 
       timeoutHandle = setTimeout(() => {
         persistForm()
           .then(response =>
             response.text().then(text => {
               console.log(`Form persisted: ${text}`)
-              formHasChangesToBePersisted = false
             })
           )
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 5 * 1000)
+      }, 30 * 1000)
+    }
+
+    if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
+      window.reportStoreInstance.subscribe(() => {
+        handleEvent()
+      })
     }
 
     document.addEventListener('keyup', handleEvent)
@@ -85,7 +132,9 @@
     for (const link of links) {
       link.addEventListener('click', event => {
         event.preventDefault()
-        if (formHasChangesToBePersisted) {
+        const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+
+        if (hasUnsavedChanges) {
           return persistForm()
             .then(response =>
               response.text().then(text => {
@@ -101,16 +150,57 @@
     }
 
     getForm().addEventListener('submit', () => {
-      console.log('User submitting - clearing timeout')
       clearTimeout(timeoutHandle)
+      if (window.ReportStore) {
+        window.ReportStore.markChangesSaved()
+      }
+    })
+
+    // Track internal navigation to avoid showing alert for page-to-page navigation
+    let isInternalNavigation = false
+
+    document.addEventListener('click', event => {
+      const link = event.target.closest('a')
+      if (link && link.href) {
+        const linkUrl = new URL(link.href, window.location.origin)
+        const currentUrl = new URL(window.location.href)
+
+        if (linkUrl.origin === currentUrl.origin) {
+          isInternalNavigation = true
+          // Reset after a short delay to catch the beforeunload
+          setTimeout(() => {
+            isInternalNavigation = false
+          }, 100)
+        }
+      }
+    })
+
+    // Warn user only when closing tab or navigating to external site
+    window.addEventListener('beforeunload', event => {
+      const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+
+      if (hasUnsavedChanges && !isInternalNavigation) {
+        const message = 'You have unsaved changes that will be lost. Are you sure you want to leave?'
+        event.preventDefault()
+        event.returnValue = message
+        return message
+      }
     })
   }
 
   window.addEventListener('load', () => {
     if (hasFormOnPage()) {
-      console.log(`Form detected, initialising autosave`)
-      addListenersToFormElements()
-      getForm().setAttribute('data-autosave-enabled', true)
+      function initializeAutosave() {
+        if (!window.reportStoreInstance) {
+          setTimeout(initializeAutosave, 100)
+          return
+        }
+
+        addListenersToFormElements()
+        getForm().setAttribute('data-autosave-enabled', true)
+      }
+
+      initializeAutosave()
     }
   })
 })()

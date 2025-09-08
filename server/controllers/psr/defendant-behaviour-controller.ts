@@ -6,7 +6,7 @@ export const pageFields: Array<string> = ['name', 'dateOfBirth', 'age', 'crn', '
 export default class DefendantBehaviourController extends BaseController {
   override templatePath = 'psr-defendant-behaviour'
 
-  override redirectPath = 'sentencing-proposal'
+  override redirectPath = 'risk-analysis'
 
   override formValidation: FormValidation = {
     required: [

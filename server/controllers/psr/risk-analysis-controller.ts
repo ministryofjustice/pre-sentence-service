@@ -1,12 +1,22 @@
 import BaseController from './baseController'
 import { FormValidation } from '../../utils/formValidation'
 
-export const pageFields: Array<string> = ['pnc', 'crn', 'name', 'riskPredictors', 'riskAndHarmFactors']
+export const pageFields: Array<string> = [
+  'pnc',
+  'crn',
+  'name',
+  'riskPredictors',
+  'riskAndHarmFactors',
+  'riskToChildren',
+  'riskToPublic',
+  'riskToKnownAdults',
+  'riskToStaff',
+]
 
 export default class RiskAnalysisController extends BaseController {
   override templatePath = 'risk-analysis'
 
-  override redirectPath = 'defendant-behaviour'
+  override redirectPath = 'sentencing-proposal'
 
   override formValidation: FormValidation = {
     required: [
