@@ -241,7 +241,7 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue?.value ?? null
+          let tmpValue = fieldValue ? fieldValue.value : ''
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -315,17 +315,6 @@ export default class SharedController {
           req.session.isAllowedAccess = true
         }
 
-        // let formattedName
-        // if (!persistentData.name) {
-        //   formattedName = await this.populateFieldValuesAndGetName()
-        // }
-        // if (this.updateReport) {
-        //   this.data = {
-        //     ...this.data,
-        //     ...persistentData,
-        //   }
-        //   await this.updateReport()
-        // }
         req.session.fieldValues = this.report.fieldValues
         const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
         this.renderTemplate(res, {
