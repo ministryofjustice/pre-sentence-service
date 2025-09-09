@@ -111,8 +111,13 @@
     items: [
       {
         checked: data.noPreviousOffences === 'true',
+        value: "true",
         text: "The defendant has no previous offences or experience of supervision"
       }
+    ],
+    errorMessage: {
+      text: "Check the box if the defendant has no previous offences or experience of supervision"
+    } if 'noPreviousOffences' in elementsWithError
     ],
     errorMessage: {
       text: "Check the box if the defendant has no previous offences or experience of supervision"

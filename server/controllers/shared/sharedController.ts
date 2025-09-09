@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { format } from 'date-fns'
 
-import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
+import { ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
@@ -13,6 +13,7 @@ import formatAddress from '../../utils/formatAddress'
 import formatOffences from '../../utils/formatOffences'
 // import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
+import * as z from 'zod'
 
 enum RiskLevel {
   Low = 'low',
@@ -62,6 +63,8 @@ export type SharedData = {
 export default class SharedController {
   private persistentData: Array<string> = ['crn', 'name']
 
+  model = z.object()
+
   path = ''
 
   templatePath = ''
@@ -81,22 +84,18 @@ export default class SharedController {
     riskOptions,
   }
 
-  formValidation: FormValidation = {
-    required: [],
-  }
+  updateReport!: () => void
 
-  updateReport: () => void
+  additionalPostAction!: () => void
 
-  additionalPostAction: () => void
-
-  correctFormData: (req: Request) => object
+  correctFormData!: (req: Request) => object
 
   constructor(
-    protected readonly reportService: ReportService = null,
-    protected readonly communityService: CommunityService = null,
-    protected readonly eventService: EventService = null,
-    protected readonly preSentenceToDeliusService: PreSentenceToDeliusService = null,
-    protected report: Report = null
+    protected readonly reportService: ReportService,
+    protected readonly communityService: CommunityService,
+    protected readonly eventService: EventService,
+    protected readonly preSentenceToDeliusService: PreSentenceToDeliusService,
+    protected report: Report
   ) {}
 
   protected renderTemplate(res: Response, templateValues: TemplateValues) {
@@ -181,7 +180,7 @@ export default class SharedController {
       )
       return formattedName
     }
-    return undefined
+    return ''
   }
 
   protected checkFieldValueVersions = (_req: Request, _report: Report): boolean => {
@@ -212,14 +211,13 @@ export default class SharedController {
     return validVersions
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected updateFields = async (fieldData: any, overridePageFields = false) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue ? fieldValue.value : ''
+          let tmpValue = fieldValue?.value ?? ''
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -251,8 +249,9 @@ export default class SharedController {
 
   public get = async (req: Request, res: Response): Promise<void> => {
     if (validateUUID(req.params.reportId)) {
-      this.report = await this.reportService.getReportById(req.params.reportId)
-      if (this.report) {
+      const rep = await this.reportService.getReportById(req.params.reportId)
+      if (rep) {
+        this.report = rep
         // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
         //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
         //   return
@@ -262,7 +261,7 @@ export default class SharedController {
 
         if (!req.session?.isAllowedAccess) {
           const inclusionExclusionCheck = await this.checkInclusionExclusion(
-            persistentData.crn,
+            persistentData.crn ?? '',
             res.locals?.user?.username
           )
           if (!inclusionExclusionCheck.hasAccess) {
@@ -316,8 +315,12 @@ export default class SharedController {
   }
 
   public post = async (req: Request, res: Response): Promise<void> => {
-    this.report = await this.reportService.getReportById(req.params.reportId)
-    const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
+    const rep = await this.reportService.getReportById(req.params.reportId)
+    if (rep) {
+      this.report = rep
+    }
+
+    const validatedForm: ValidatedForm = validateForm(req.body, this.model)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
 

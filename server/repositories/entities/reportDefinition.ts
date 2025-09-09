@@ -4,15 +4,15 @@ import Field from './field'
 @Entity()
 export default class ReportDefinition {
   @PrimaryGeneratedColumn()
-  id: number
+  id!: number
 
   @Column()
-  type: string
+  type!: string
 
   @Column()
-  version: number
+  version!: number
 
   @ManyToMany(() => Field, { eager: true })
   @JoinTable({ name: 'report_definition_fields' })
-  fields: Array<Field>
+  fields!: Array<Field>
 }

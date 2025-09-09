@@ -34,8 +34,8 @@ const connectionOptions: ConnectionOptions = {
 export default async function getDatabaseConnection(): Promise<ConnectionResult> {
   try {
     const connection = await createConnection(connectionOptions)
-    return [null, connection]
-  } catch (error) {
+    return [undefined, connection]
+  } catch (error: any) {
     logger.error(`Failed to get database connection: ${error.message}`)
     return [error]
   }

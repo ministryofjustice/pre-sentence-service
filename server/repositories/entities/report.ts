@@ -5,23 +5,23 @@ import FieldValue from './fieldValue'
 @Entity()
 export default class Report {
   @PrimaryGeneratedColumn('uuid')
-  id: string
+  id!: string
 
   @Column({ default: 'NOT_STARTED' })
-  status: string
+  status!: string
 
   @Column()
-  lastUpdated: string
+  lastUpdated!: string
 
   @Column()
-  reportDefinitionId: number
+  reportDefinitionId!: number
 
   @Column()
-  eventNumber: string
+  eventNumber!: string
 
   @ManyToOne(() => ReportDefinition, entity => entity.id, { eager: true })
-  reportDefinition: ReportDefinition
+  reportDefinition!: ReportDefinition
 
   @OneToMany(() => FieldValue, entity => entity.report, { eager: true })
-  fieldValues: Array<FieldValue>
+  fieldValues!: Array<FieldValue>
 }

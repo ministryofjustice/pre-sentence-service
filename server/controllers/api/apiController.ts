@@ -6,7 +6,7 @@ import { configureReportData, getFooter, getHeader, pdfOptions } from '../../uti
 
 export default class ApiController {
   constructor(
-    protected readonly reportService: ReportService = null,
+    protected readonly reportService: ReportService,
     protected readonly eventService: EventService
   ) {}
 
@@ -46,7 +46,7 @@ export default class ApiController {
       await this.reportService.updateFieldValues([
         {
           reportId: report.id,
-          fieldId: definitionField.id,
+          fieldId: definitionField?.id ?? 0,
           value: req.body.crn.toUpperCase(),
           version: 1,
         },
@@ -62,7 +62,7 @@ export default class ApiController {
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
         url: `${config.domain}/${reportType}/${report.id}`,
       })
-    } catch (error) {
+    } catch (error: any) {
       if (report) {
         await this.reportService.deleteReport(report)
       }
@@ -74,7 +74,7 @@ export default class ApiController {
     try {
       const report = await this.reportService.getReportById(req.params.id)
       res.json(report)
-    } catch (error) {
+    } catch (error: any) {
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -83,7 +83,7 @@ export default class ApiController {
     try {
       const { id } = req.params
       const report = await this.reportService.getReportById(id)
-      const reportData = configureReportData(report)
+      const reportData = configureReportData(report!)
       const headerHtml = getHeader()
       const footerHtml = getFooter({ version: reportData.reportVersion as string })
       // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
@@ -94,7 +94,7 @@ export default class ApiController {
         { preSentenceUrl, data: reportData },
         { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
       )
-    } catch (error) {
+    } catch (error: any) {
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -108,7 +108,7 @@ export default class ApiController {
         found: results && results.length,
         results,
       })
-    } catch (error) {
+    } catch (error: any) {
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -151,7 +151,7 @@ export default class ApiController {
       }
 
       res.status(200).json({ success: true, message: 'Report saved successfully' })
-    } catch (error) {
+    } catch (error: any) {
       res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
     }
   }

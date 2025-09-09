@@ -44,7 +44,7 @@ export default class GotenbergClient {
       return response.body
     } catch (err) {
       logger.error(`Error POST to gotenberg:/forms/chromium/convert/html - {}`, err)
-      return undefined
+      return undefined as any
     }
   }
 }

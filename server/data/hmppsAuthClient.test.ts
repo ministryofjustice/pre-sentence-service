@@ -6,7 +6,7 @@ import TokenStore from './tokenStore'
 
 jest.mock('./tokenStore')
 
-const tokenStore = new TokenStore(null) as jest.Mocked<TokenStore>
+const tokenStore = new TokenStore(null as any) as jest.Mocked<TokenStore>
 
 const username = 'Bob'
 const token = { access_token: 'token-1', expires_in: 300 }
@@ -64,7 +64,7 @@ describe('hmppsAuthClient', () => {
     })
 
     it('should return token from HMPPS Auth with username', async () => {
-      tokenStore.getToken.mockResolvedValue(null)
+      tokenStore.getToken.mockResolvedValue(null as any)
 
       fakeHmppsAuthApi
         .post(`/oauth/token`, 'grant_type=client_credentials&username=Bob')
@@ -79,7 +79,7 @@ describe('hmppsAuthClient', () => {
     })
 
     it('should return system token from HMPPS Auth when requested without username', async () => {
-      tokenStore.getToken.mockResolvedValue(null)
+      tokenStore.getToken.mockResolvedValue(null as any)
 
       fakeHmppsAuthApi
         .post(`/oauth/token`, 'grant_type=client_credentials')
