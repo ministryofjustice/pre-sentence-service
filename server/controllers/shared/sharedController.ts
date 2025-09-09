@@ -316,7 +316,10 @@ export default class SharedController {
         }
 
         req.session.fieldValues = this.report.fieldValues
-        const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+        let sourcesOfInformation: SourceOfInformation[] | undefined
+        if (this.templatePath === 'sources-of-information') {
+          sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+        }
         this.renderTemplate(res, {
           ...this.templateValues,
           reportId,
@@ -385,7 +388,10 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportId}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
-      const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+      let sourcesOfInformation: SourceOfInformation[] | undefined
+      if (this.templatePath === 'sources-of-information') {
+        sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+      }
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId,
@@ -411,7 +417,8 @@ export default class SharedController {
 
     switch (action) {
       case 'add-source': {
-        updatePendingChanges(pendingChanges, { customSource })
+        const savedSources = await this.reportService.getSourcesOfInformation(reportId)
+        updatePendingChanges(pendingChanges, { customSource, savedSources })
         return `${path}/edit`
       }
 

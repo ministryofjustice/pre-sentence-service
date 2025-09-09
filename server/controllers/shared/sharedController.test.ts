@@ -96,7 +96,7 @@ describe('Route Handlers - Shared Controller', () => {
         isEditing: false,
         pendingChanges: undefined,
         reportId,
-        sourcesOfInformation,
+        sourcesOfInformation: undefined,
         data: {
           ...mockedReportData,
           ...handler.data,

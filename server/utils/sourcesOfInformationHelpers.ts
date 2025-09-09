@@ -61,18 +61,24 @@ export const getPendingChangesForReport = (
 
 export const updatePendingChanges = (
   pendingChanges: PendingChanges,
-  opts: { customSource?: string; removeKey?: SourceKey }
+  opts: { customSource?: string; removeKey?: SourceKey; savedSources?: SourceOfInformation[] }
 ) => {
-  const { customSource, removeKey } = opts
+  const { customSource, removeKey, savedSources } = opts
 
   if (customSource && customSource.trim()) {
     const value = customSource.trim()
     const key = `custom_${formatKey(value)}`
-    pendingChanges.sourcesToAdd.push({
-      key,
-      value,
-    })
-    pendingChanges.sourcesToRemove = pendingChanges.sourcesToRemove.filter(k => k !== key)
+    const isDuplicate = savedSources?.some(s => s.key === key) || pendingChanges.sourcesToAdd.some(s => s.key === key)
+
+    if (!isDuplicate) {
+      pendingChanges.sourcesToAdd.push({
+        key,
+        value,
+      })
+      pendingChanges.sourcesToRemove = pendingChanges.sourcesToRemove.filter(k => k !== key)
+    } else {
+      console.warn(`Duplicate source ignored: ${customSource}`)
+    }
   }
 
   if (!removeKey) return
