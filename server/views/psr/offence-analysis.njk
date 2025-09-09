@@ -5,17 +5,19 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
+
 {% set currentPage = 'Offence analysis' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
 
 <form method="post" data-autosave="true" novalidate>
+
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
-  <h2 class="govuk-heading-l">Review offences from NDelius</h2>
+  <h2 class="govuk-heading-l govuk-!-margin-bottom-2">Review offences from NDelius</h2>
   <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it. 
-  Any changes you make in NDelius will be updated adter you refresh a page in this PSR.</p>
+  Any changes you make in NDelius will be updated after you refresh a page in this PSR.</p>
 
   {{ govukTable({
     head: [
@@ -29,7 +31,7 @@
           html: "<strong class='govuk-!-font-weight-bold'>Criminal damage</strong><br>" +
           govukTag({
             text: "Main offence",
-            classes: "govuk-tag--blue"
+            classes: "govuk-tag--blue govuk-!-margin-left-2"
           }),
             classes: "designer-row"
         },
@@ -55,15 +57,6 @@
 
   <h2 class="govuk-heading-l">Analyse offences under consideration</h2>
 
-  <p class="govuk-body">Give a comprehensive analysis of the offences relevant to this report, considering:</p>
-  <ul class="govuk-list govuk-list--bullet">
-    <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
-    <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
-    <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
-    <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
-    <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
-  </ul>
-
   {{ govukTextarea({
     name: "offencesUnderConsideration",
     id: "offencesUnderConsideration",
@@ -71,6 +64,16 @@
     rows: "10",
     label: {
       text: ""
+    },
+    hint: {
+      html: "<p>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
+            <ul class='govuk-hint govuk-list govuk-list--bullet'>
+              <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
+              <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
+              <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
+              <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
+              <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
+            </ul>"
     },
     errorMessage: {
       text: "Analyse the offences under consideration"
@@ -81,14 +84,6 @@
 
   <h2 class="govuk-heading-l">Analyse previous offending behaviour and response to supervision</h2>
 
-  <p class="govuk-body">Analyse previous offending by taking into consideration the type of offences, any patterns in offending and factors linked to this behaviour.
-    You should also highlight:</p>
-  <ul class="govuk-list govuk-list--bullet">
-    <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
-    <li>interventions that may reduce the chances of offending</li>
-    <li>circumstances that may increase the risk of further offending</li>
-  </ul>
-
   {{ govukTextarea({
     name: "offencesPattern",
     id: "offencesPattern",
@@ -96,6 +91,14 @@
     rows: "10",
     label: {
       text: ""
+    },
+    hint: {
+      html: "<p>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
+            <ul class='govuk-hint govuk-list govuk-list--bullet'>
+              <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
+              <li>interventions that may reduce the chances of offending</li>
+              <li>circumstances that may increase the risk of further offending</li>
+            </ul>"
     },
     errorMessage: {
       text: "Analyse the pattern of offending and response to supervision"
@@ -120,7 +123,7 @@
   
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
-    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
+    <button class="govuk-button">Save and continue</button>
   </form>
 
 {% endblock %}
