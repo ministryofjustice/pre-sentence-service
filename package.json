@@ -77,7 +77,6 @@
   },
   "nodemonConfig": {
     "ignore": [
-      ".circleci/*",
       "migrations/*",
       "node_modules/*",
       "test/*",

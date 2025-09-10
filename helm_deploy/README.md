@@ -43,8 +43,6 @@ Note: replace _revision number_ with one from listed in the `history` command)
 
 __Example deploy command:__
 
-The following example is `--dry-run` mode - which will allow for testing. CircleCI normally runs this command with actual secret values (from AWS secret manager), and also updated the chart's application version to match the release version:
-
 ```sh
 helm upgrade [release name] [path to chart]. \
   --install --wait --force --reset-values --timeout 5m --history-max 10 \
