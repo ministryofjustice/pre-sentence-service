@@ -1,17 +1,10 @@
 import { Request, Response } from 'express'
-import { format } from 'date-fns'
 
 import { ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
-import EventService from '../../services/eventService'
-import CommunityService from '../../services/communityService'
-import PreSentenceToDeliusService, { IContext } from '../../services/preSentenceToDeliusService'
 
-import formatAddress from '../../utils/formatAddress'
-import formatOffences from '../../utils/formatOffences'
-// import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
 import * as z from 'zod'
 
@@ -92,9 +85,6 @@ export default class SharedController {
 
   constructor(
     protected readonly reportService: ReportService,
-    protected readonly communityService: CommunityService,
-    protected readonly eventService: EventService,
-    protected readonly preSentenceToDeliusService: PreSentenceToDeliusService,
     protected report: Report
   ) {}
 
@@ -106,32 +96,6 @@ export default class SharedController {
   }
 
   private checkInclusionExclusion = async (_crn: string, _user: string): Promise<InclusionExclusion> => {
-    // try {
-    //   await this.communityService.getUserAccess(crn, user)
-    //   return {
-    //     hasAccess: true,
-    //   }
-    // } catch (error) {
-    //   let disallowedMessage: string
-    //   let disallowedStack: string
-    //   if (error.data?.userExcluded) {
-    //     disallowedMessage = 'User Excluded'
-    //     disallowedStack = error.data.exclusionMessage
-    //   } else if (error.data?.userRestricted) {
-    //     disallowedMessage = 'User Restricted'
-    //     disallowedStack = error.data.restrictionMessage
-    //   } else {
-    //     disallowedMessage = 'Error'
-    //     disallowedStack = 'Unable to check restriction / exclusion'
-    //   }
-    //   return {
-    //     hasAccess: false,
-    //     disallowedMessage,
-    //     disallowedStack,
-    //     status: error?.status,
-    //   }
-    // }
-
     return {
       hasAccess: true,
     }
@@ -158,57 +122,6 @@ export default class SharedController {
       })
     }
     return data
-  }
-
-  private populateFieldValuesAndGetName = async (): Promise<string> => {
-    if (this.preSentenceToDeliusService) {
-      const context: IContext = await this.preSentenceToDeliusService.getContext(this.report.id)
-      const formattedName = `${context.name.forename} ${context.name.middleName ? context.name.middleName : ''} ${
-        context.name.surname
-      }`
-      await this.updateFields(
-        {
-          name: formattedName,
-          dateOfBirth: format(new Date(context.dateOfBirth), 'dd/MM/yyyy'),
-          pnc: context.pnc,
-          address: formatAddress(context.address),
-          court: context.court.name,
-          mainOffence: context.mainOffence.description,
-          otherOffences: formatOffences(context.otherOffences),
-        },
-        true
-      )
-      return formattedName
-    }
-    return ''
-  }
-
-  protected checkFieldValueVersions = (_req: Request, _report: Report): boolean => {
-    const validVersions = true
-    // if (report && report.fieldValues && req.session.fieldValues) {
-    //   report.fieldValues.forEach(savedValue => {
-    //     const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
-    //     if ((compare ? compare.version : 1) !== savedValue.version) {
-    //       validVersions = false
-    //       logger.warn({
-    //         versionMismatch: true,
-    //         reportId: report.id,
-    //         sessionField: { ...compare, value: '***' },
-    //         dbField: { ...savedValue, value: '***' },
-    //         userName: req.session.userDetails.username,
-    //       })
-    //     } else {
-    //       logger.info({
-    //         versionMismatch: false,
-    //         reportId: report.id,
-    //         sessionField: { ...compare, value: '***' },
-    //         dbField: { ...savedValue, value: '***' },
-    //         userName: req.session.userDetails.username,
-    //       })
-    //     }
-    //   })
-    // }
-    return validVersions
   }
 
   protected updateFields = async (fieldData: any, overridePageFields = false) => {
@@ -252,10 +165,6 @@ export default class SharedController {
       const rep = await this.reportService.getReportById(req.params.reportId)
       if (rep) {
         this.report = rep
-        // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
-        //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
-        //   return
-        // }
         this.getStoredData()
         const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
