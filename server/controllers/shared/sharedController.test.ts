@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
-import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 import validateUUID from '../../utils/reportValidation'
 
@@ -13,15 +12,13 @@ jest.mock('../../utils/reportValidation')
 describe('Route Handlers - Shared Controller', () => {
   const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
   let mockedReportService: ReportService
-  let mockedCommunityService: CommunityService
   let handler: SharedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    mockedCommunityService = new CommunityService(null as any)
-    handler = new SharedController(mockedReportService, mockedCommunityService, null as any, null as any, null as any)
+    handler = new SharedController(mockedReportService, null as any)
   })
 
   afterAll(() => {
