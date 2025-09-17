@@ -4,13 +4,16 @@ import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 import validateUUID from '../../utils/reportValidation'
+import Report from '../../repositories/entities/report'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/communityService')
 jest.mock('../../utils/reportValidation')
+jest.mock('../../repositories/entities/report')
 
 describe('Route Handlers - Shared Controller', () => {
   const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
+  const mockReport = jest.mocked(new Report())
   let mockedReportService: ReportService
   let handler: SharedController
   let req: Request
@@ -18,7 +21,7 @@ describe('Route Handlers - Shared Controller', () => {
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new SharedController(mockedReportService, null as any)
+    handler = new SharedController(mockedReportService, mockReport)
   })
 
   afterAll(() => {
