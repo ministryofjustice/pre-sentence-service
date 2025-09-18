@@ -1,12 +1,12 @@
 import { ZodType } from 'zod'
 
-export interface ValidatedForm {
+export interface ValidatedForm<T> {
   isValid: boolean
   errors?: Record<string, string>
-  data?: any
+  data?: T
 }
 
-export const validateForm = (formData: FormData, schema: ZodType<any>): ValidatedForm => {
+export const validateForm = <T>(formData: FormData, schema: ZodType<T>): ValidatedForm<T> => {
   const validationResult = schema.safeParse(formData)
 
   if (validationResult.success) {
