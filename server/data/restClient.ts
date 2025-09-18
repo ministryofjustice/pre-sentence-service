@@ -6,6 +6,7 @@ import logger from '../../logger'
 import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
+import { HttpError } from 'http-errors'
 
 interface GetRequest {
   path?: string
@@ -65,7 +66,8 @@ export default class RestClient {
         .timeout(this.timeoutConfig())
 
       return raw ? result : result.body
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
       throw sanitisedError
@@ -95,7 +97,8 @@ export default class RestClient {
         .timeout(this.timeoutConfig())
 
       return raw ? result : result.body
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'POST'`)
       throw sanitisedError

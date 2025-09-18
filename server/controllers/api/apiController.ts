@@ -3,6 +3,7 @@ import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
 import config from '../../config'
 import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
+import { HttpError } from '../../@types/httpError'
 
 export default class ApiController {
   constructor(
@@ -62,7 +63,8 @@ export default class ApiController {
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
         url: `${config.domain}/${reportType}/${report.id}`,
       })
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       if (report) {
         await this.reportService.deleteReport(report)
       }
@@ -74,7 +76,8 @@ export default class ApiController {
     try {
       const report = await this.reportService.getReportById(req.params.id)
       res.json(report)
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -94,7 +97,8 @@ export default class ApiController {
         { preSentenceUrl, data: reportData },
         { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
       )
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -108,7 +112,8 @@ export default class ApiController {
         found: results && results.length,
         results,
       })
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       res.status(error.status || 500).send(error.message)
     }
   }
@@ -151,7 +156,8 @@ export default class ApiController {
       }
 
       res.status(200).json({ success: true, message: 'Report saved successfully' })
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as HttpError
       res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
     }
   }

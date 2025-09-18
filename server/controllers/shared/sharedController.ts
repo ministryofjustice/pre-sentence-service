@@ -30,12 +30,12 @@ const riskOptions = [
   })),
 ]
 
-export interface TemplateValues {
+export interface TemplateValues<T> {
   preSentenceType: string
   reportPath: string
   reportId?: string
   data?: Record<string, unknown>
-  formValidation?: ValidatedForm
+  formValidation?: ValidatedForm<T>
   riskOptions?: { value: string; text: string }[]
 }
 
@@ -55,6 +55,7 @@ export type SharedData = {
 
 export default class SharedController {
   private persistentData: Array<string> = ['crn', 'name']
+  protected report!: Report
 
   model = z.object()
 
@@ -70,7 +71,7 @@ export default class SharedController {
 
   pageFields: Array<string> = []
 
-  templateValues: TemplateValues = {
+  templateValues: TemplateValues<z.infer<typeof this.model>> = {
     reportId: '',
     reportPath: '',
     preSentenceType: '',
@@ -83,12 +84,9 @@ export default class SharedController {
 
   correctFormData!: (req: Request) => object
 
-  constructor(
-    protected readonly reportService: ReportService,
-    protected report: Report
-  ) {}
+  constructor(protected readonly reportService: ReportService) {}
 
-  protected renderTemplate(res: Response, templateValues: TemplateValues) {
+  protected renderTemplate(res: Response, templateValues: TemplateValues<z.infer<typeof this.model>>) {
     if (this.templatePath === 'risk-analysis') {
       templateValues.riskOptions = riskOptions
     }
@@ -124,7 +122,10 @@ export default class SharedController {
     return data
   }
 
-  protected updateFields = async (fieldData: any, overridePageFields = false) => {
+  protected updateFields = async (
+    fieldData: Record<string, string | string[] | number | undefined>,
+    overridePageFields = false
+  ) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
@@ -229,7 +230,7 @@ export default class SharedController {
       this.report = rep
     }
 
-    const validatedForm: ValidatedForm = validateForm(req.body, this.model)
+    const validatedForm: ValidatedForm<z.infer<typeof this.model>> = validateForm(req.body, this.model)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
 
