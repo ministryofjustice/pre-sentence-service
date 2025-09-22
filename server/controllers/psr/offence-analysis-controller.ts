@@ -1,4 +1,5 @@
 import BaseController from './baseController'
+import { Request, Response } from 'express'
 import * as z from 'zod'
 
 const offenceAnalysisModel = z
@@ -46,4 +47,14 @@ export default class OffenceAnalysisController extends BaseController {
   override pageFields = pageFields
 
   override model = offenceAnalysisModel
+
+  public async post(req: Request, res: Response): Promise<void> {
+    const body = req.body as Record<string, any>
+
+    if (!('noPreviousOffences' in body)) {
+      body.noPreviousOffences = 'false'
+    }
+
+    await super.post(req, res)
+  }
 }

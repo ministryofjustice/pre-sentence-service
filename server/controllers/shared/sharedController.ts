@@ -223,7 +223,7 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
-  public post = async (req: Request, res: Response): Promise<void> => {
+  public async post(req: Request, res: Response): Promise<void> {
     const rep = await this.reportService.getReportById(req.params.reportId)
     if (rep) {
       this.report = rep
