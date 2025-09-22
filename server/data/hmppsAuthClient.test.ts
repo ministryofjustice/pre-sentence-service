@@ -3,10 +3,15 @@ import nock from 'nock'
 import config from '../config'
 import HmppsAuthClient from './hmppsAuthClient'
 import TokenStore from './tokenStore'
+import { RedisClient } from './redisClient'
 
 jest.mock('./tokenStore')
 
-const tokenStore = new TokenStore(null as any) as jest.Mocked<TokenStore>
+const mockRedisClient = {
+  on: jest.fn(),
+} as unknown as RedisClient
+
+const mockedTokenStore = jest.mocked(new TokenStore(mockRedisClient))
 
 const username = 'Bob'
 const token = { access_token: 'token-1', expires_in: 300 }
@@ -17,7 +22,7 @@ describe('hmppsAuthClient', () => {
 
   beforeEach(() => {
     fakeHmppsAuthApi = nock(config.apis.hmppsAuth.url)
-    hmppsAuthClient = new HmppsAuthClient(tokenStore)
+    hmppsAuthClient = new HmppsAuthClient(mockedTokenStore)
   })
 
   afterEach(() => {
@@ -53,18 +58,18 @@ describe('hmppsAuthClient', () => {
 
   describe('getApiClientToken', () => {
     it('should instantiate the redis client', async () => {
-      tokenStore.getToken.mockResolvedValue(token.access_token)
+      mockedTokenStore.getToken.mockResolvedValue(token.access_token)
       await hmppsAuthClient.getApiClientToken(username)
     })
 
     it('should return token from redis if one exists', async () => {
-      tokenStore.getToken.mockResolvedValue(token.access_token)
+      mockedTokenStore.getToken.mockResolvedValue(token.access_token)
       const output = await hmppsAuthClient.getApiClientToken(username)
       expect(output).toEqual(token.access_token)
     })
 
     it('should return token from HMPPS Auth with username', async () => {
-      tokenStore.getToken.mockResolvedValue(null as any)
+      mockedTokenStore.getToken.mockResolvedValue('')
 
       fakeHmppsAuthApi
         .post(`/oauth/token`, 'grant_type=client_credentials&username=Bob')
@@ -75,11 +80,11 @@ describe('hmppsAuthClient', () => {
       const output = await hmppsAuthClient.getApiClientToken(username)
 
       expect(output).toEqual(token.access_token)
-      expect(tokenStore.setToken).toBeCalledWith('Bob', token.access_token, 240)
+      expect(mockedTokenStore.setToken).toBeCalledWith('Bob', token.access_token, 240)
     })
 
     it('should return system token from HMPPS Auth when requested without username', async () => {
-      tokenStore.getToken.mockResolvedValue(null as any)
+      mockedTokenStore.getToken.mockResolvedValue('')
 
       fakeHmppsAuthApi
         .post(`/oauth/token`, 'grant_type=client_credentials')
@@ -90,7 +95,7 @@ describe('hmppsAuthClient', () => {
       const output = await hmppsAuthClient.getApiClientToken()
 
       expect(output).toEqual(token.access_token)
-      expect(tokenStore.setToken).toBeCalledWith('%SYSTEM%', token.access_token, 240)
+      expect(mockedTokenStore.setToken).toBeCalledWith('%SYSTEM%', token.access_token, 240)
     })
   })
 })

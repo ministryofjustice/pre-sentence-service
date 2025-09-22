@@ -18,7 +18,7 @@ describe('Route Handlers - Shared Controller', () => {
 
   beforeAll(() => {
     mockedReportService = new ReportService()
-    handler = new SharedController(mockedReportService, null as any)
+    handler = new SharedController(mockedReportService)
   })
 
   afterAll(() => {
