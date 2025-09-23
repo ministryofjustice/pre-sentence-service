@@ -12,7 +12,7 @@ const offenceAnalysisModel = z
   .superRefine((data, ctx) => {
     const offencesPatternEmpty = data.offencesPattern.trim() === ''
     const noPreviousOffences = data.noPreviousOffences ?? ''
-    const noPreviousOffencesEmpty = noPreviousOffences.trim() === ''
+    const noPreviousOffencesEmpty = noPreviousOffences.trim() === '' || noPreviousOffences.trim() === 'false'
 
     if (data.offencesUnderConsideration.trim() === '') {
       ctx.addIssue({
@@ -49,7 +49,7 @@ export default class OffenceAnalysisController extends BaseController {
   override model = offenceAnalysisModel
 
   public async post(req: Request, res: Response): Promise<void> {
-    const body = req.body as Record<string, any>
+    const body = req.body as Record<string, string>
 
     if (!('noPreviousOffences' in body)) {
       body.noPreviousOffences = 'false'

@@ -131,12 +131,9 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue?.value ?? ''
-          if (fieldData[item.name] && fieldData[item.name] !== '') {
-            tmpValue = Array.isArray(fieldData[item.name])
-              ? (fieldData[item.name] as []).join(',')
-              : (fieldData[item.name] as string)
-          }
+          const tmpValue = Array.isArray(fieldData[item.name])
+            ? (fieldData[item.name] as []).join(',')
+            : (fieldData[item.name] as string)
           fieldValues.push({
             reportId: this.report.id,
             fieldId: item.id,
