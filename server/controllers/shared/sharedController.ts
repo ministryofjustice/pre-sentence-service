@@ -131,12 +131,9 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue?.value ?? ''
-          if (fieldData[item.name] && fieldData[item.name] !== '') {
-            tmpValue = Array.isArray(fieldData[item.name])
-              ? (fieldData[item.name] as []).join(',')
-              : (fieldData[item.name] as string)
-          }
+          const tmpValue = Array.isArray(fieldData[item.name])
+            ? (fieldData[item.name] as []).join(',')
+            : (fieldData[item.name] as string)
           fieldValues.push({
             reportId: this.report.id,
             fieldId: item.id,
@@ -224,7 +221,7 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
-  public post = async (req: Request, res: Response): Promise<void> => {
+  public async post(req: Request, res: Response): Promise<void> {
     const rep = await this.reportService.getReportById(req.params.reportId)
     if (rep) {
       this.report = rep
