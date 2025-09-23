@@ -8,6 +8,7 @@ import FieldValue from './entities/fieldValue'
 import Report from './entities/report'
 import ReportDefinition from './entities/reportDefinition'
 import Source from './entities/source'
+import { HttpError } from 'http-errors'
 
 type ConnectionResult = [Error?, Connection?]
 
@@ -35,8 +36,9 @@ const connectionOptions: ConnectionOptions = {
 export default async function getDatabaseConnection(): Promise<ConnectionResult> {
   try {
     const connection = await createConnection(connectionOptions)
-    return [null, connection]
-  } catch (error) {
+    return [undefined, connection]
+  } catch (e) {
+    const error = e as HttpError
     logger.error(`Failed to get database connection: ${error.message}`)
     return [error]
   }

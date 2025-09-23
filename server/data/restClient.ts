@@ -6,6 +6,7 @@ import logger from '../../logger'
 import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
+import { HttpError } from 'http-errors'
 
 interface GetRequest {
   path?: string
@@ -48,7 +49,7 @@ export default class RestClient {
     return this.config.timeout
   }
 
-  async get({ path = null, query = '', headers = {}, responseType = '', raw = false }: GetRequest): Promise<unknown> {
+  async get({ path, query = '', headers = {}, responseType = '', raw = false }: GetRequest): Promise<unknown> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path} ${query}`)
     try {
       const result = await superagent
@@ -65,7 +66,8 @@ export default class RestClient {
         .timeout(this.timeoutConfig())
 
       return raw ? result : result.body
-    } catch (error) {
+    } catch (e) {
+      const error = e as HttpError
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
       throw sanitisedError
@@ -73,7 +75,7 @@ export default class RestClient {
   }
 
   async post({
-    path = null,
+    path = '',
     headers = {},
     responseType = '',
     data = {},
@@ -95,14 +97,15 @@ export default class RestClient {
         .timeout(this.timeoutConfig())
 
       return raw ? result : result.body
-    } catch (error) {
+    } catch (e) {
+      const error = e as HttpError
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'POST'`)
       throw sanitisedError
     }
   }
 
-  async stream({ path = null, headers = {} }: StreamRequest = {}): Promise<unknown> {
+  async stream({ path, headers = {} }: StreamRequest = {}): Promise<unknown> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
     return new Promise((resolve, reject) => {
       superagent

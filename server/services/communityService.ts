@@ -6,6 +6,7 @@ import type HmppsAuthClient from '../data/hmppsAuthClient'
 import config from '../config'
 import logger from '../../logger'
 import sanitise from '../sanitisedError'
+import { HttpError } from 'http-errors'
 
 export default class CommunityService {
   constructor(private readonly hmppsAuthClient: HmppsAuthClient) {}
@@ -31,7 +32,7 @@ export default class CommunityService {
     const keepaliveAgent = this.apiUrl.startsWith('https') ? new HttpsAgent(agentOptions) : new Agent(agentOptions)
 
     return async ({
-      path = undefined,
+      path = '',
       query = '',
       headers = {},
       responseType = '',
@@ -58,7 +59,8 @@ export default class CommunityService {
         logger.debug({ path, query, durationMillis }, 'CommunityService: Client GET using clientId credentials')
 
         return raw ? result : result.body
-      } catch (error) {
+      } catch (e) {
+        const error = e as HttpError
         const sanitisedError = sanitise(error)
         logger.error(
           { ...sanitisedError, path, query },

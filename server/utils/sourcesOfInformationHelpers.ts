@@ -68,14 +68,14 @@ export const updatePendingChanges = (
   if (customSource && customSource.trim()) {
     const value = customSource.trim()
     const key = `custom_${formatKey(value)}`
-    const isDuplicate = savedSources?.some(s => s.key === key) || pendingChanges.sourcesToAdd.some(s => s.key === key)
+    const isDuplicate = savedSources?.some(s => s.key === key) || pendingChanges.sourcesToAdd!.some(s => s.key === key)
 
     if (!isDuplicate) {
-      pendingChanges.sourcesToAdd.push({
+      pendingChanges.sourcesToAdd!.push({
         key,
         value,
       })
-      pendingChanges.sourcesToRemove = pendingChanges.sourcesToRemove.filter(k => k !== key)
+      pendingChanges.sourcesToRemove = pendingChanges.sourcesToRemove!.filter(k => k !== key)
     } else {
       console.warn(`Duplicate source ignored: ${customSource}`)
     }
@@ -85,8 +85,8 @@ export const updatePendingChanges = (
 
   if (pendingChanges.sourcesToAdd?.some(s => s.key === removeKey)) {
     pendingChanges.sourcesToAdd = pendingChanges.sourcesToAdd.filter(s => s.key !== removeKey)
-  } else if (!pendingChanges.sourcesToRemove.includes(removeKey)) {
-    pendingChanges.sourcesToRemove.push(removeKey)
+  } else if (!pendingChanges.sourcesToRemove!.includes(removeKey)) {
+    pendingChanges.sourcesToRemove!.push(removeKey)
   }
 }
 

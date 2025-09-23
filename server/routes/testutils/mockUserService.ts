@@ -1,4 +1,17 @@
 import UserService from '../../services/userService'
+import HmppsAuthClient from '../../data/hmppsAuthClient'
+import TokenStore from '../../data/tokenStore'
+import { RedisClient } from '../../data/redisClient'
+
+jest.mock('../../data/tokenStore')
+jest.mock('../../data/hmppsAuthClient')
+
+const mockRedisClient = {
+  on: jest.fn(),
+} as unknown as RedisClient
+
+const mockedTokenStore = jest.mocked(new TokenStore(mockRedisClient))
+const mockedAuth = jest.mocked(new HmppsAuthClient(mockedTokenStore))
 
 const user = {
   name: 'john smith',
@@ -10,7 +23,7 @@ const user = {
 
 export default class MockUserService extends UserService {
   constructor() {
-    super(undefined)
+    super(mockedAuth)
   }
 
   async getUser(token: string) {

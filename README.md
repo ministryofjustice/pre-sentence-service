@@ -2,7 +2,6 @@
 
 Pre-Sentence Service is a service that allows probation staff to capture and store pre-sentence data. 
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/pre-sentence-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/pre-sentence-service)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://pre-sentence-service-dev.hmpps.service.justice.gov.uk/api/docs)
 
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fpre-sentence-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#pre-sentence-service "Link to report")
@@ -82,11 +81,6 @@ In order to clean the database you can use:
 `npm run clean-db`
 
 This will remove all database tables, you must then restart the service in order to run the migrations and reset the database. 
-
-### Dependency Checks
-
-The template project has implemented some scheduled checks to ensure that key dependencies are kept up to date.
-If these are not desired in the cloned project, remove references to `check_outdated` job from `.circleci/config.yml`
 
 ## API Documentation
 

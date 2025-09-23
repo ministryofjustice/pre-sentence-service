@@ -28,7 +28,7 @@ export default class ReportService {
     return reportRepository.save(result)
   }
 
-  public getReportById(id: string): Promise<Report> {
+  public getReportById(id: string): Promise<Report | null> {
     return getRepository(Report).findOne({
       where: {
         id,
@@ -55,6 +55,7 @@ export default class ReportService {
     removedSources: SourceKey[]
   ): Promise<void> {
     const sourceRepo = await getRepository(Source)
+    const fieldRepo = await getRepository(Field)
 
     if (removedSources.length > 0) {
       await sourceRepo.delete({
@@ -63,7 +64,8 @@ export default class ReportService {
       })
 
       // Manually remove custom field from field_value.value if present (made necessary by current DB structure)
-      const fieldId = (await getRepository(Field).findOne({ where: { name: 'sourcesOfInformation' } })).id
+      const field = await fieldRepo.findOne({ where: { name: 'sourcesOfInformation' } })
+      const fieldId = field?.id
       const fvRepo = await getRepository(FieldValue)
       const fv = await fvRepo.findOne({ where: { reportId, fieldId } })
       if (fv && fv.value) {
@@ -135,7 +137,7 @@ export default class ReportService {
     )
   }
 
-  public getDefinitionByType(type: string): Promise<ReportDefinition> {
+  public getDefinitionByType(type: string): Promise<ReportDefinition | null> {
     return getRepository(ReportDefinition).findOne({
       select: ['id'],
       where: {

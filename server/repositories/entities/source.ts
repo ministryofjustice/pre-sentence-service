@@ -4,16 +4,16 @@ import Report from './report'
 @Entity({ name: 'sources' })
 export default class Source {
   @PrimaryGeneratedColumn()
-  id: number
+  id!: number
 
   @Column({ type: 'text' })
-  key: string
+  key!: string
 
   @Column({ type: 'text' })
-  label: string
+  label!: string
 
   @Column({ type: 'uuid', name: 'reportId', nullable: true })
-  reportId: string | null
+  reportId!: string | null
 
   @ManyToOne(() => Report, r => r.sources, {
     nullable: true,

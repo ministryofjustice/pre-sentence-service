@@ -1,17 +1,10 @@
 import { Request, Response } from 'express'
-import { format } from 'date-fns'
 
-import { FormValidation, ValidatedForm, validateForm } from '../../utils/formValidation'
+import { ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import Report from '../../repositories/entities/report'
 import ReportService, { IFieldValue } from '../../services/reportService'
-import EventService from '../../services/eventService'
-import CommunityService from '../../services/communityService'
-import PreSentenceToDeliusService, { IContext } from '../../services/preSentenceToDeliusService'
 
-import formatAddress from '../../utils/formatAddress'
-import formatOffences from '../../utils/formatOffences'
-// import logger from '../../../logger'
 import validateUUID from '../../utils/reportValidation'
 import {
   buildSourcesOfInformation,
@@ -24,6 +17,7 @@ import {
   updatePendingChanges,
 } from '../../utils/sourcesOfInformationHelpers'
 import { Session, SessionData } from 'express-session'
+import * as z from 'zod'
 
 enum RiskLevel {
   Low = 'low',
@@ -47,12 +41,12 @@ const riskOptions = [
   })),
 ]
 
-export interface TemplateValues {
+export interface TemplateValues<T> {
   preSentenceType: string
   reportPath: string
   reportId?: string
   data?: Record<string, unknown>
-  formValidation?: ValidatedForm
+  formValidation?: ValidatedForm<T>
   riskOptions?: { value: string; text: string }[]
   sourcesOfInformation?: SourceOfInformation[]
   isEditing?: boolean
@@ -75,6 +69,9 @@ export type SharedData = {
 
 export default class SharedController {
   private persistentData: Array<string> = ['crn', 'name']
+  protected report!: Report
+
+  model = z.object()
 
   path = ''
 
@@ -88,39 +85,29 @@ export default class SharedController {
 
   pageFields: Array<string> = []
 
-  templateValues: TemplateValues = {
+  templateValues: TemplateValues<z.infer<typeof this.model>> = {
     reportId: '',
     reportPath: '',
     preSentenceType: '',
     riskOptions,
   }
 
-  formValidation: FormValidation = {
-    required: [],
-  }
+  updateReport!: () => void
 
-  updateReport: () => void
+  additionalPostAction!: () => void
 
-  additionalPostAction: () => void
+  correctFormData!: (req: Request) => object
 
-  correctFormData: (req: Request) => object
+  constructor(protected readonly reportService: ReportService) {}
 
-  constructor(
-    protected readonly reportService: ReportService = null,
-    protected readonly communityService: CommunityService = null,
-    protected readonly eventService: EventService = null,
-    protected readonly preSentenceToDeliusService: PreSentenceToDeliusService = null,
-    protected report: Report = null
-  ) {}
-
-  protected renderTemplate(res: Response, templateValues: TemplateValues) {
+  protected renderTemplate(res: Response, templateValues: TemplateValues<z.infer<typeof this.model>>) {
     if (this.templatePath === 'risk-analysis') {
       templateValues.riskOptions = riskOptions
     }
 
     if (this.templatePath === 'sources-of-information') {
       templateValues.sourcesOfInformation = buildSourcesOfInformation(
-        templateValues.sourcesOfInformation,
+        templateValues.sourcesOfInformation!,
         templateValues.pendingChanges,
         this.data['sourcesOfInformation'] as string | undefined
       )
@@ -129,32 +116,6 @@ export default class SharedController {
   }
 
   private checkInclusionExclusion = async (_crn: string, _user: string): Promise<InclusionExclusion> => {
-    // try {
-    //   await this.communityService.getUserAccess(crn, user)
-    //   return {
-    //     hasAccess: true,
-    //   }
-    // } catch (error) {
-    //   let disallowedMessage: string
-    //   let disallowedStack: string
-    //   if (error.data?.userExcluded) {
-    //     disallowedMessage = 'User Excluded'
-    //     disallowedStack = error.data.exclusionMessage
-    //   } else if (error.data?.userRestricted) {
-    //     disallowedMessage = 'User Restricted'
-    //     disallowedStack = error.data.restrictionMessage
-    //   } else {
-    //     disallowedMessage = 'Error'
-    //     disallowedStack = 'Unable to check restriction / exclusion'
-    //   }
-    //   return {
-    //     hasAccess: false,
-    //     disallowedMessage,
-    //     disallowedStack,
-    //     status: error?.status,
-    //   }
-    // }
-
     return {
       hasAccess: true,
     }
@@ -183,65 +144,16 @@ export default class SharedController {
     return data
   }
 
-  private populateFieldValuesAndGetName = async (): Promise<string> => {
-    if (this.preSentenceToDeliusService) {
-      const context: IContext = await this.preSentenceToDeliusService.getContext(this.report.id)
-      const formattedName = `${context.name.forename} ${context.name.middleName ? context.name.middleName : ''} ${
-        context.name.surname
-      }`
-      await this.updateFields(
-        {
-          name: formattedName,
-          dateOfBirth: format(new Date(context.dateOfBirth), 'dd/MM/yyyy'),
-          pnc: context.pnc,
-          address: formatAddress(context.address),
-          court: context.court.name,
-          mainOffence: context.mainOffence.description,
-          otherOffences: formatOffences(context.otherOffences),
-        },
-        true
-      )
-      return formattedName
-    }
-    return undefined
-  }
-
-  protected checkFieldValueVersions = (_req: Request, _report: Report): boolean => {
-    const validVersions = true
-    // if (report && report.fieldValues && req.session.fieldValues) {
-    //   report.fieldValues.forEach(savedValue => {
-    //     const compare = req.session.fieldValues.find(currentValue => currentValue.fieldId === savedValue.fieldId)
-    //     if ((compare ? compare.version : 1) !== savedValue.version) {
-    //       validVersions = false
-    //       logger.warn({
-    //         versionMismatch: true,
-    //         reportId: report.id,
-    //         sessionField: { ...compare, value: '***' },
-    //         dbField: { ...savedValue, value: '***' },
-    //         userName: req.session.userDetails.username,
-    //       })
-    //     } else {
-    //       logger.info({
-    //         versionMismatch: false,
-    //         reportId: report.id,
-    //         sessionField: { ...compare, value: '***' },
-    //         dbField: { ...savedValue, value: '***' },
-    //         userName: req.session.userDetails.username,
-    //       })
-    //     }
-    //   })
-    // }
-    return validVersions
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected updateFields = async (fieldData: any, overridePageFields = false) => {
+  protected updateFields = async (
+    fieldData: Record<string, string | string[] | number | undefined>,
+    overridePageFields = false
+  ) => {
     const fieldValues: Array<IFieldValue> = []
     if (this.report && this.report.reportDefinition && this.report.reportDefinition.fields) {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue ? fieldValue.value : ''
+          let tmpValue = fieldValue?.value ?? ''
           if (fieldData[item.name] && fieldData[item.name] !== '') {
             tmpValue = Array.isArray(fieldData[item.name])
               ? (fieldData[item.name] as []).join(',')
@@ -290,18 +202,15 @@ export default class SharedController {
     }
 
     if (validateUUID(reportId)) {
-      this.report = await this.reportService.getReportById(reportId)
-      if (this.report) {
-        // if (this.report.status === 'COMPLETED' && !req.url.includes('report-completed')) {
-        //   res.redirect(`/${this.path}/${req.params.reportId}/report-completed`)
-        //   return
-        // }
+      const rep = await this.reportService.getReportById(req.params.reportId)
+      if (rep) {
+        this.report = rep
         this.getStoredData()
         const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
         if (!req.session?.isAllowedAccess) {
           const inclusionExclusionCheck = await this.checkInclusionExclusion(
-            persistentData.crn,
+            persistentData.crn ?? '',
             res.locals?.user?.username
           )
           if (!inclusionExclusionCheck.hasAccess) {
@@ -374,8 +283,12 @@ export default class SharedController {
       clearPendingSourcesForReportId(req.session.pendingChanges, reportId)
     }
 
-    this.report = await this.reportService.getReportById(reportId)
-    const validatedForm: ValidatedForm = validateForm(req.body, this.formValidation)
+    const rep = await this.reportService.getReportById(req.params.reportId)
+    if (rep) {
+      this.report = rep
+    }
+
+    const validatedForm: ValidatedForm<z.infer<typeof this.model>> = validateForm(req.body, this.model)
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
 
@@ -428,7 +341,7 @@ export default class SharedController {
         if (sourcesToAdd.length > 0 || sourcesToRemove.length > 0) {
           try {
             await this.reportService.saveCustomSourcesOfInformation(reportId, sourcesToAdd, sourcesToRemove)
-            clearPendingSourcesForReportId(session.pendingChanges, reportId)
+            clearPendingSourcesForReportId(session.pendingChanges!, reportId)
           } catch (err) {
             console.error('Failed to save custom sources', { reportId, err })
             return `${path}/edit`

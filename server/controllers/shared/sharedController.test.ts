@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
-import CommunityService from '../../services/communityService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 import validateUUID from '../../utils/reportValidation'
 
@@ -25,14 +24,12 @@ describe('Route Handlers - Shared Controller', () => {
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(undefined),
   } as unknown as ReportService
-  let mockedCommunityService: CommunityService
   let handler: SharedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
-    mockedCommunityService = new CommunityService(null)
-    handler = new SharedController(mockedReportService, mockedCommunityService)
+    handler = new SharedController(mockedReportService)
   })
 
   afterAll(() => {
@@ -77,11 +74,6 @@ describe('Route Handlers - Shared Controller', () => {
     it('should declare empty redirect path', async () => {
       expect(typeof handler.redirectPath).toBe('string')
       expect(handler.redirectPath.length).toBe(0)
-    })
-
-    it('should declare empty form validation object', async () => {
-      expect(typeof handler.formValidation).toBe('object')
-      expect(handler.formValidation.required.length).toBe(0)
     })
   })
 

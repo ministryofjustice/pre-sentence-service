@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import GotenbergClient, { PdfOptions } from '../data/gotenbergClient'
 import logger from '../../logger'
+import { HttpError } from 'http-errors'
 
 /*
  * This function accepts a Gotenberg client as its only argument.
@@ -18,10 +19,9 @@ export default function pdfRenderer(client: GotenbergClient) {
       // Define the pageData as - { url: string, report: report, otherData: type? }
       pageData: Record<string, unknown>,
       options: { filename: string; pdfOptions: PdfOptions } = { filename: 'document.pdf', pdfOptions: {} }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ): any => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      res.render(view, pageData, (error: any, html: any) => {
+    ) => {
+      res.render(view, pageData, (e, html: string) => {
+        const error = e as HttpError
         if (error) {
           throw error
         }
