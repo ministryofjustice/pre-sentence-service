@@ -1,5 +1,6 @@
 import BaseController from './baseController'
 import * as z from 'zod'
+import { Request } from 'express'
 
 const offenceAnalysisModel = z
   .object({
@@ -46,4 +47,13 @@ export default class OffenceAnalysisController extends BaseController {
   override pageFields = pageFields
 
   override model = offenceAnalysisModel
+
+  override correctFormData = (req: Request) => {
+    // If noPreviousOffences checkbox is not in the form data, it means it's unchecked
+    // Set it to empty string to clear the database value
+    if (!req.body.noPreviousOffences) {
+      return { noPreviousOffences: '' }
+    }
+    return {}
+  }
 }

@@ -153,12 +153,22 @@ export default class SharedController {
       this.report.reportDefinition.fields.forEach(item => {
         if (this.pageFields.includes(item.name) || (overridePageFields && Object.keys(fieldData).includes(item.name))) {
           const fieldValue = this.report.fieldValues.find(value => item.name === value.field.name)
-          let tmpValue = fieldValue?.value ?? ''
-          if (fieldData[item.name] && fieldData[item.name] !== '') {
-            tmpValue = Array.isArray(fieldData[item.name])
-              ? (fieldData[item.name] as []).join(',')
-              : (fieldData[item.name] as string)
+          let tmpValue = ''
+
+          // Check if field exists in fieldData (including empty values)
+          if (fieldData[item.name] !== undefined) {
+            if (Array.isArray(fieldData[item.name])) {
+              // Join array values with comma, or empty string for empty array
+              tmpValue = (fieldData[item.name] as string[]).join(',')
+            } else if (fieldData[item.name] !== null) {
+              // Use the value as-is, including empty strings
+              tmpValue = String(fieldData[item.name])
+            }
+          } else {
+            // Field not in form data - keep existing value or empty
+            tmpValue = fieldValue?.value ?? ''
           }
+
           fieldValues.push({
             reportId: this.report.id,
             fieldId: item.id,
@@ -206,6 +216,7 @@ export default class SharedController {
       if (rep) {
         this.report = rep
         this.getStoredData()
+
         const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
         if (!req.session?.isAllowedAccess) {

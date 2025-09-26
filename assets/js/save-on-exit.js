@@ -47,7 +47,20 @@
 
     for (const [questionId, value] of Object.entries(questions)) {
       if (value !== undefined && value !== null) {
-        storeFormData.append(questionId, value)
+        // Handle arrays (checkbox groups) specially
+        if (Array.isArray(value)) {
+          // For checkbox groups, if empty array, still send it to clear the field
+          if (value.length === 0) {
+            storeFormData.append(questionId, '')
+          } else {
+            value.forEach(v => {
+              storeFormData.append(questionId, v)
+            })
+          }
+        } else {
+          // For single values, including empty strings for unchecked checkboxes
+          storeFormData.append(questionId, value)
+        }
       }
     }
 
