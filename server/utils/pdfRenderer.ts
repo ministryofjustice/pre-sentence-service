@@ -11,7 +11,6 @@ import { HttpError } from 'http-errors'
  * to produce and return a PDF document.
  */
 
-// TODO: Revisit to fully define these types for the "any" placeholders
 export default function pdfRenderer(client: GotenbergClient) {
   return (req: Request, res: Response, next: NextFunction) => {
     res.renderPDF = (
