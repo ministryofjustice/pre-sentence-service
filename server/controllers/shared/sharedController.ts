@@ -280,7 +280,7 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
-  public post = async (req: Request, res: Response): Promise<void> => {
+  public async post(req: Request, res: Response): Promise<void> {
     const reportId = req.params.reportId
     const isEditing = req.path.endsWith('/edit')
     const { action, source } = req.body

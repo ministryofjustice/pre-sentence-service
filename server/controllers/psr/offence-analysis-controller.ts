@@ -1,6 +1,6 @@
 import BaseController from './baseController'
+import { Request, Response } from 'express'
 import * as z from 'zod'
-import { Request } from 'express'
 
 const offenceAnalysisModel = z
   .object({
@@ -12,7 +12,7 @@ const offenceAnalysisModel = z
   .superRefine((data, ctx) => {
     const offencesPatternEmpty = data.offencesPattern.trim() === ''
     const noPreviousOffences = data.noPreviousOffences ?? ''
-    const noPreviousOffencesEmpty = noPreviousOffences.trim() === ''
+    const noPreviousOffencesEmpty = noPreviousOffences.trim() === '' || noPreviousOffences.trim() === 'false'
 
     if (data.offencesUnderConsideration.trim() === '') {
       ctx.addIssue({
@@ -47,6 +47,16 @@ export default class OffenceAnalysisController extends BaseController {
   override pageFields = pageFields
 
   override model = offenceAnalysisModel
+
+  public async post(req: Request, res: Response): Promise<void> {
+    const body = req.body as Record<string, string>
+
+    if (!('noPreviousOffences' in body)) {
+      body.noPreviousOffences = 'false'
+    }
+
+    await super.post(req, res)
+  }
 
   override correctFormData = (req: Request) => {
     // If noPreviousOffences checkbox is not in the form data, it means it's unchecked
