@@ -57,13 +57,4 @@ export default class OffenceAnalysisController extends BaseController {
 
     await super.post(req, res)
   }
-
-  override correctFormData = (req: Request) => {
-    // If noPreviousOffences checkbox is not in the form data, it means it's unchecked
-    // Set it to empty string to clear the database value
-    if (!req.body.noPreviousOffences) {
-      return { noPreviousOffences: '' }
-    }
-    return {}
-  }
 }
