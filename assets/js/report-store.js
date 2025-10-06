@@ -274,9 +274,6 @@ function initAutoBinding() {
       const value = getValue()
       updateStore(element, value)
     })
-
-    // Don't initialize values here - this will be handled in bindAllInputs
-    // after we check for stored values
   }
 
   // Function to populate form fields from store (store takes precedence)
