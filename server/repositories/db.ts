@@ -7,6 +7,7 @@ import Field from './entities/field'
 import FieldValue from './entities/fieldValue'
 import Report from './entities/report'
 import ReportDefinition from './entities/reportDefinition'
+import Source from './entities/source'
 import { HttpError } from 'http-errors'
 
 type ConnectionResult = [Error?, Connection?]
@@ -26,7 +27,7 @@ const connectionOptions: ConnectionOptions = {
           ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
         }
       : false,
-  entities: [Field, FieldValue, Report, ReportDefinition],
+  entities: [Field, FieldValue, Report, ReportDefinition, Source],
   migrationsRun: config.db.migrations === 'true',
   migrations: ['dist/db/migrations/*.js'],
   logging: false,

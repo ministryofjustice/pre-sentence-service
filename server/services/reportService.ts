@@ -1,8 +1,11 @@
-import { getRepository, InsertResult } from 'typeorm'
+import { getRepository, In, InsertResult, IsNull } from 'typeorm'
 
 import Report from '../repositories/entities/report'
 import ReportDefinition from '../repositories/entities/reportDefinition'
 import FieldValue from '../repositories/entities/fieldValue'
+import Source from '../repositories/entities/source'
+import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
+import Field from '../repositories/entities/field'
 
 export interface IReport {
   id?: string
@@ -32,6 +35,66 @@ export default class ReportService {
       },
       relations: ['reportDefinition', 'reportDefinition.fields'],
     })
+  }
+
+  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
+    const sources = await getRepository(Source).find({
+      where: [{ reportId: IsNull() }, { reportId }],
+    })
+
+    return sources.map<SourceOfInformation>(s => ({
+      key: s.key,
+      value: s.label,
+      isCustom: s.reportId !== null,
+    }))
+  }
+
+  public async saveCustomSourcesOfInformation(
+    reportId: string,
+    addedSources: CustomSource[],
+    removedSources: SourceKey[]
+  ): Promise<void> {
+    const sourceRepo = await getRepository(Source)
+    const fieldRepo = await getRepository(Field)
+
+    if (removedSources.length > 0) {
+      await sourceRepo.delete({
+        reportId,
+        key: In(removedSources),
+      })
+
+      // Manually remove custom field from field_value.value if present (made necessary by current DB structure)
+      const field = await fieldRepo.findOne({ where: { name: 'sourcesOfInformation' } })
+      const fieldId = field?.id
+      const fvRepo = await getRepository(FieldValue)
+      const fv = await fvRepo.findOne({ where: { reportId, fieldId } })
+      if (fv && fv.value) {
+        const updatedFieldValue = fv.value
+          .split(',')
+          .filter(s => !removedSources.includes(s))
+          .join(',')
+        if (updatedFieldValue.length > 0) {
+          await fvRepo.update(fv.id, {
+            ...fv,
+            value: updatedFieldValue,
+            version: fv.version + 1,
+          })
+        } else {
+          await fvRepo.delete(fv.id)
+        }
+      }
+    }
+
+    if (addedSources.length > 0) {
+      const toInsert = addedSources.map(x =>
+        sourceRepo.create({
+          key: x.key,
+          label: x.value,
+          reportId,
+        })
+      )
+      await sourceRepo.save(toInsert)
+    }
   }
 
   public getAllReportsByType(type: string): Promise<Report[]> {

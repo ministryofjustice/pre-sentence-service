@@ -11,13 +11,24 @@ jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Shared Controller', () => {
   const validateUUIDMock = validateUUID as jest.MockedFunction<(uuid: string) => boolean>
-  let mockedReportService: ReportService
+  const sourcesOfInformation = [
+    {
+      isCustom: false,
+      key: 'cps_summary',
+      value: 'CPS summary',
+    },
+  ]
+  const mockedReportService = {
+    getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
+    saveCustomSourcesOfInformation: jest.fn().mockResolvedValue(undefined),
+    getReportById: jest.fn().mockResolvedValue(mockedReportData),
+    updateReport: jest.fn().mockResolvedValue(undefined),
+  } as unknown as ReportService
   let handler: SharedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
-    mockedReportService = new ReportService()
     handler = new SharedController(mockedReportService)
   })
 
@@ -32,6 +43,8 @@ describe('Route Handlers - Shared Controller', () => {
       },
       body: {},
       session: {},
+      path: '',
+      query: {},
     } as unknown as Request
     res = {
       render: jest.fn(),
@@ -71,7 +84,11 @@ describe('Route Handlers - Shared Controller', () => {
       const { reportId } = req.params
       expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
         ...handler.templateValues,
+        name: undefined,
+        isEditing: false,
+        pendingChanges: undefined,
         reportId,
+        sourcesOfInformation: undefined,
         data: {
           ...mockedReportData,
           ...handler.data,

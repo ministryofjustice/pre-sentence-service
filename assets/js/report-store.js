@@ -190,6 +190,7 @@ function initAutoBinding() {
     if (segments.includes('offence-analysis')) return 'offence-analysis'
     if (segments.includes('risk-analysis')) return 'risk-analysis'
     if (segments.includes('defendant-behaviour')) return 'defendant-behaviour'
+    if (segments.includes('sources-of-information')) return 'sources-of-information'
 
     // Fallback to last meaningful segment
     return segments[segments.length - 1] || 'unknown-page'
@@ -199,6 +200,24 @@ function initAutoBinding() {
 
   function updateStore(inputElement, value) {
     const questionId = inputElement.name || inputElement.id || 'unnamed-input'
+
+    // Check if this is part of a checkbox group
+    if (inputElement.type === 'checkbox' && inputElement.name) {
+      const checkboxGroup = document.querySelectorAll(`input[type="checkbox"][name="${inputElement.name}"]`)
+      if (checkboxGroup.length > 1) {
+        // This is a checkbox group - collect all checked values
+        const checkedValues = []
+        checkboxGroup.forEach(checkbox => {
+          if (checkbox.checked) {
+            checkedValues.push(checkbox.value)
+          }
+        })
+        reportStore.updateQuestion(questionId, currentPageId, checkedValues)
+        reportStore.updatePageSaveState(currentPageId, 'visited')
+        markUnsavedChanges()
+        return
+      }
+    }
 
     reportStore.updateQuestion(questionId, currentPageId, value)
     reportStore.updatePageSaveState(currentPageId, 'visited')
@@ -216,9 +235,18 @@ function initAutoBinding() {
     let getValue = () => element.value
 
     if (tagName === 'input') {
-      if (inputType === 'checkbox' || inputType === 'radio') {
+      if (inputType === 'checkbox') {
         eventType = 'change'
-        getValue = () => element.checked
+        // For single checkboxes with a value, return the value when checked, null when unchecked
+        getValue = () => {
+          if (element.value && element.value !== 'on') {
+            return element.checked ? element.value : ''
+          }
+          return element.checked
+        }
+      } else if (inputType === 'radio') {
+        eventType = 'change'
+        getValue = () => (element.checked ? element.value : null)
       }
     } else if (tagName === 'select') {
       eventType = 'change'
@@ -246,12 +274,6 @@ function initAutoBinding() {
       const value = getValue()
       updateStore(element, value)
     })
-
-    // Initialize with current value if it exists
-    const currentValue = getValue()
-    if (currentValue !== '' && currentValue !== false) {
-      updateStore(element, currentValue)
-    }
   }
 
   // Function to populate form fields from store (store takes precedence)
@@ -262,13 +284,40 @@ function initAutoBinding() {
     const storeState = reportStore.getState()
     const storeValue = storeState.questions[questionId]
 
-    if (storeValue !== undefined && storeValue !== null) {
+    // Check for valid stored values (including empty arrays)
+    // For arrays, we want to process even if empty
+    if (storeValue !== undefined) {
       const tagName = element.tagName.toLowerCase()
       const inputType = element.type ? element.type.toLowerCase() : ''
 
       if (tagName === 'input') {
-        if (inputType === 'checkbox' || inputType === 'radio') {
-          element.checked = Boolean(storeValue)
+        if (inputType === 'checkbox') {
+          // Check if this is part of a checkbox group
+          if (element.name) {
+            const checkboxGroup = document.querySelectorAll(`input[type="checkbox"][name="${element.name}"]`)
+            if (checkboxGroup.length > 1) {
+              // This is a checkbox group - check if value is in array
+              if (Array.isArray(storeValue)) {
+                const shouldBeChecked = storeValue.includes(element.value)
+                element.checked = shouldBeChecked
+              } else {
+                // Handle case where store has wrong type - treat as empty array
+                element.checked = false
+              }
+              return // Important: return early for checkbox groups
+            }
+          }
+          // Single checkbox - could be boolean or string value
+          if (element.value && element.value !== 'on') {
+            // Checkbox with a specific value - check if stored value matches
+            element.checked = storeValue === element.value
+          } else {
+            // Standard checkbox - boolean value
+            element.checked = Boolean(storeValue)
+          }
+        } else if (inputType === 'radio') {
+          // Radio buttons store the selected value as a string
+          element.checked = element.value === String(storeValue)
         } else {
           element.value = String(storeValue)
         }
@@ -300,9 +349,84 @@ function initAutoBinding() {
     ]
 
     const elements = document.querySelectorAll(selectors.join(', '))
+    const storeState = reportStore.getState()
 
+    // Process checkbox groups first to capture their initial DOM state if no stored value
+    const checkboxGroups = new Map()
     elements.forEach(element => {
-      populateFromStore(element)
+      if (element.type === 'checkbox' && element.name) {
+        if (!checkboxGroups.has(element.name)) {
+          checkboxGroups.set(element.name, [])
+        }
+        checkboxGroups.get(element.name).push(element)
+      }
+    })
+
+    // For each checkbox group, check if we have stored values
+    checkboxGroups.forEach((checkboxes, name) => {
+      if (checkboxes.length > 1) {
+        const storedValue = storeState.questions[name]
+
+        if (storedValue !== undefined) {
+          // We have stored values - populate from store
+          checkboxes.forEach(checkbox => {
+            if (Array.isArray(storedValue)) {
+              checkbox.checked = storedValue.includes(checkbox.value)
+            }
+          })
+        } else {
+          // No stored values - capture initial DOM state
+          const checkedValues = []
+          checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+              checkedValues.push(checkbox.value)
+            }
+          })
+          reportStore.updateQuestion(name, currentPageId, checkedValues)
+        }
+      }
+    })
+
+    // Process all other elements
+    elements.forEach(element => {
+      const inputType = element.type ? element.type.toLowerCase() : ''
+      const questionId = element.name || element.id
+
+      // Skip checkbox groups (already handled above)
+      if (inputType === 'checkbox' && element.name && checkboxGroups.get(element.name)?.length > 1) {
+        // Just bind the event handler
+        bindInput(element)
+        return
+      }
+
+      // For other inputs, check for stored values
+      const storedValue = storeState.questions[questionId]
+
+      if (storedValue !== undefined) {
+        // Populate from store
+        populateFromStore(element)
+      } else if (questionId) {
+        // No stored value - capture initial DOM state
+        let value = null
+        if (inputType === 'checkbox') {
+          // For checkboxes with a value attribute, store the value when checked
+          if (element.value && element.value !== 'on') {
+            value = element.checked ? element.value : ''
+          } else {
+            value = element.checked
+          }
+        } else if (inputType === 'radio') {
+          value = element.checked ? element.value : null
+        } else {
+          value = element.value
+        }
+
+        if (value !== null && value !== '' && value !== false) {
+          reportStore.updateQuestion(questionId, currentPageId, value)
+        }
+      }
+
+      // Bind event handlers
       bindInput(element)
     })
 
