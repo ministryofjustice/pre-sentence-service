@@ -121,7 +121,7 @@
     "encrypt-storage": "^2.14.7",
     "eslint": "9.27.0",
     "eslint-plugin-import": "2.31.0",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "express-session": "^1.18.1",
     "globals": "^16.2.0",
     "govuk-frontend": "^5.11.1",
