@@ -3,11 +3,12 @@ import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 
 import logger from '../../logger'
 import config from '../config'
-import Field from './entities/field'
-import FieldValue from './entities/fieldValue'
 import Report from './entities/report'
-import ReportDefinition from './entities/reportDefinition'
-import Source from './entities/source'
+import LocalAuthorities from './entities/localAuthorities'
+import PersonDetails from './entities/personDetails'
+import ReportDetails from './entities/reportDetails'
+import SourcesOfInformation from './entities/sourcesOfInformation'
+import ReportAndSourcesOfInformation from './entities/reportSourcesOfInformation'
 import { HttpError } from 'http-errors'
 
 type ConnectionResult = [Error?, Connection?]
@@ -27,7 +28,14 @@ const connectionOptions: ConnectionOptions = {
           ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
         }
       : false,
-  entities: [Field, FieldValue, Report, ReportDefinition, Source],
+  entities: [
+    Report,
+    LocalAuthorities,
+    PersonDetails,
+    ReportDetails,
+    SourcesOfInformation,
+    ReportAndSourcesOfInformation,
+  ],
   migrationsRun: config.db.migrations === 'true',
   migrations: ['dist/db/migrations/*.js'],
   logging: false,

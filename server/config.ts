@@ -113,7 +113,7 @@ export default {
     database: get('DB_NAME', 'pre-sentence-service'),
     port: get('DB_PORT', 5432),
     sslEnabled: get('DB_SSL_ENABLED', 'false'),
-    schema: get('DB_SCHEMA', 'public'),
+    schema: get('DB_SCHEMA', 'presentenceservice'),
     migrations: get('DB_RUN_MIGRATIONS', 'true'),
   },
   aws: {
