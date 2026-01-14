@@ -38,7 +38,7 @@ export default class PersonDetails {
   @Column({ type: 'jsonb' })
   names!: Names
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   dateOfBirth!: Date
 
   @Column()
@@ -56,13 +56,13 @@ export default class PersonDetails {
   @Column({ type: 'jsonb' })
   court!: Court
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date
 
   @Column()
   createdBy!: string
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   lastUpdatedBy!: Date
 
   @Column()

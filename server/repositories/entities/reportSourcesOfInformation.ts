@@ -13,17 +13,17 @@ export default class ReportSourcesOfInformation {
   @Column()
   sourcesOfInformationId!: number
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date
 
   @Column()
   createdBy!: string
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   lastUpdatedAt!: Date
 
-  @Column({ type: 'datetime' })
-  lastUpdatedBy!: Date
+  @Column()
+  lastUpdatedBy!: string
 
   @Column()
   isDeleted!: boolean

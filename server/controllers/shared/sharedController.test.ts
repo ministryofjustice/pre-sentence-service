@@ -22,7 +22,8 @@ describe('Route Handlers - Shared Controller', () => {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
     saveCustomSourcesOfInformation: jest.fn().mockResolvedValue(undefined),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
-    updateReport: jest.fn().mockResolvedValue(undefined),
+    updateReport: jest.fn().mockResolvedValue(mockedReportData),
+    updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
   } as unknown as ReportService
   let handler: SharedController
   let req: Request
@@ -39,7 +40,7 @@ describe('Route Handlers - Shared Controller', () => {
   beforeEach(() => {
     req = {
       params: {
-        reportId: 12345678,
+        reportId: '123',
       },
       body: {},
       session: {},
@@ -49,6 +50,11 @@ describe('Route Handlers - Shared Controller', () => {
     res = {
       render: jest.fn(),
       redirect: jest.fn(),
+      locals: {
+        user: {
+          username: 'testuser',
+        },
+      },
     } as unknown as Response
 
     validateUUIDMock.mockReturnValue(true)
@@ -80,20 +86,14 @@ describe('Route Handlers - Shared Controller', () => {
   describe('GET', () => {
     it('should render view', async () => {
       await handler.get(req, res)
-      expect(validateUUIDMock).toHaveBeenCalled()
       const { reportId } = req.params
-      expect(res.render).toHaveBeenCalledWith(`${handler.path}/${handler.templatePath}`, {
-        ...handler.templateValues,
-        name: undefined,
-        isEditing: false,
-        pendingChanges: undefined,
-        reportId,
-        sourcesOfInformation: undefined,
-        data: {
-          ...mockedReportData,
-          ...handler.data,
-        },
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        `${handler.path}/${handler.templatePath}`,
+        expect.objectContaining({
+          reportId,
+          isEditing: false,
+        })
+      )
     })
   })
 

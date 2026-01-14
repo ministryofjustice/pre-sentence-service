@@ -41,13 +41,13 @@ export default class ReportDetails {
   @Column()
   reportType!: string
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date
 
   @Column()
   createdBy!: string
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   lastUpdatedBy!: Date
 
   @Column()

@@ -3,14 +3,15 @@ import { configureReportData, getFooter, getHeader, pdfOptions } from '../../uti
 import logger from '../../../logger'
 import config from '../../config'
 import ReportService from '../../services/reportService'
-import Report from '../../repositories/entities/report'
+import ReportDetails from '../../repositories/entities/reportDetails'
 
 export default class PdfController {
   constructor(protected readonly reportService: ReportService) {}
 
   preview = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const report: Report | null = await this.reportService.getReportById(reportId)
+    const reportIdNumber = parseInt(reportId, 10)
+    const report: ReportDetails | null = await this.reportService.getReportById(reportIdNumber)
     if (report) {
       const reportData: { [key: string]: unknown } = { ...configureReportData(report), preview: true }
       const headerHtml = getHeader()
@@ -24,7 +25,8 @@ export default class PdfController {
 
   renderPdf = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const report: Report | null = await this.reportService.getReportById(reportId)
+    const reportIdNumber = parseInt(reportId, 10)
+    const report: ReportDetails | null = await this.reportService.getReportById(reportIdNumber)
     logger.info(`Request to print PDF for report ${reportId}`)
 
     if (report) {
