@@ -4,32 +4,32 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Seed local authorities
     await queryRunner.query(`
-      INSERT INTO presentenceservice.local_authorities (name, code, "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version)
+      INSERT INTO presentenceservice.local_authorities (name, "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version)
       VALUES
-        ('Sheffield', 'SHF', NOW(), 'system', NOW(), false, 1),
-        ('Manchester', 'MAN', NOW(), 'system', NOW(), false, 1),
-        ('Birmingham', 'BHM', NOW(), 'system', NOW(), false, 1),
-        ('Leeds', 'LDS', NOW(), 'system', NOW(), false, 1),
-        ('London', 'LDN', NOW(), 'system', NOW(), false, 1)
+        ('Sheffield', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('Manchester', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('Birmingham', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('Leeds', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('London', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1)
       ON CONFLICT DO NOTHING;
     `)
 
     // Seed default sources of information
     await queryRunner.query(`
-      INSERT INTO presentenceservice.sources_of_information (key, value, "isCustom", "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version)
+      INSERT INTO presentenceservice.sources_of_information (name, value, "isDefault", source, "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version)
       VALUES
-        ('cps_summary', 'CPS summary', false, NOW(), 'system', NOW(), false, 1),
-        ('domestic_abuse_callout_information', 'Domestic abuse callout information', false, NOW(), 'system', NOW(), false, 1),
-        ('diversity_inclusion_form', 'Diversity Information Form (DIF)', false, NOW(), 'system', NOW(), false, 1),
-        ('interview', 'Interview', false, NOW(), 'system', NOW(), false, 1),
-        ('oasys_assessments', 'OASys assessments', false, NOW(), 'system', NOW(), false, 1),
-        ('previous_convictions', 'Previous convictions', false, NOW(), 'system', NOW(), false, 1),
-        ('safeguarding_checks', 'Safeguarding checks', false, NOW(), 'system', NOW(), false, 1),
-        ('sentencing_guidelines', 'Sentencing guidelines', false, NOW(), 'system', NOW(), false, 1),
-        ('service_records', 'Service records', false, NOW(), 'system', NOW(), false, 1),
-        ('substance_misuse_screening_tool', 'Substance misuse screening tool', false, NOW(), 'system', NOW(), false, 1),
-        ('victim_statement', 'Victim statement', false, NOW(), 'system', NOW(), false, 1)
-      ON CONFLICT (key) WHERE "reportId" IS NULL DO NOTHING;
+        ('cps_summary', 'CPS summary', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('domestic_abuse_callout_information', 'Domestic abuse callout information', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('diversity_inclusion_form', 'Diversity Information Form (DIF)', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('interview', 'Interview', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('oasys_assessments', 'OASys assessments', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('previous_convictions', 'Previous convictions', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('safeguarding_checks', 'Safeguarding checks', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('sentencing_guidelines', 'Sentencing guidelines', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('service_records', 'Service records', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('substance_misuse_screening_tool', 'Substance misuse screening tool', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
+        ('victim_statement', 'Victim statement', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1)
+      ON CONFLICT DO NOTHING;
     `)
 
     // Seed person details
@@ -178,35 +178,35 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         -- Link sources of information to reports
         -- For report 2 (Jane Smith's record-of-oral)
         INSERT INTO presentenceservice.report_sources_of_information (
-          "reportId", "sourceKey", "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
+          "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
         )
         SELECT
           (SELECT id FROM presentenceservice.report_details WHERE "personId" = person2_id LIMIT 1),
-          key,
+          id,
           NOW(),
           'system',
+          NOW(),
           NOW(),
           false,
           1
         FROM presentenceservice.sources_of_information
-        WHERE key IN ('interview', 'previous_convictions', 'cps_summary')
-        AND "reportId" IS NULL;
+        WHERE name IN ('interview', 'previous_convictions', 'cps_summary');
 
         -- For report 3 (Robert Johnson's short-format)
         INSERT INTO presentenceservice.report_sources_of_information (
-          "reportId", "sourceKey", "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
+          "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
         )
         SELECT
           (SELECT id FROM presentenceservice.report_details WHERE "personId" = person3_id LIMIT 1),
-          key,
+          id,
           NOW(),
           'system',
+          NOW(),
           NOW(),
           false,
           1
         FROM presentenceservice.sources_of_information
-        WHERE key IN ('interview', 'previous_convictions', 'cps_summary', 'oasys_assessments', 'substance_misuse_screening_tool')
-        AND "reportId" IS NULL;
+        WHERE name IN ('interview', 'previous_convictions', 'cps_summary', 'oasys_assessments', 'substance_misuse_screening_tool');
 
       END $$;
     `)
@@ -240,7 +240,7 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
 
     await queryRunner.query(`
       DELETE FROM presentenceservice.sources_of_information
-      WHERE key IN (
+      WHERE name IN (
         'cps_summary',
         'domestic_abuse_callout_information',
         'diversity_inclusion_form',
@@ -252,13 +252,12 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         'service_records',
         'substance_misuse_screening_tool',
         'victim_statement'
-      )
-      AND "reportId" IS NULL;
+      );
     `)
 
     await queryRunner.query(`
       DELETE FROM presentenceservice.local_authorities
-      WHERE code IN ('SHF', 'MAN', 'BHM', 'LDS', 'LDN');
+      WHERE name IN ('Sheffield', 'Manchester', 'Birmingham', 'Leeds', 'London');
     `)
   }
 }
