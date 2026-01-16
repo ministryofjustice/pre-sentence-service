@@ -91,7 +91,6 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         person1_id INTEGER;
         person2_id INTEGER;
         person3_id INTEGER;
-        report1_id INTEGER;
         report2_id INTEGER;
         report3_id INTEGER;
       BEGIN
@@ -100,85 +99,97 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         SELECT id INTO person2_id FROM presentenceservice.person_details WHERE crn = 'X456789';
         SELECT id INTO person3_id FROM presentenceservice.person_details WHERE crn = 'X789012';
 
-        -- Create reports for each person
+        -- Create report 1 (John Doe - empty PSR)
         INSERT INTO presentenceservice.report_details (
           "personId", status, origin, "reportType", pages,
           "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
         )
-        VALUES
-          (
-            person1_id,
-            'NOT_STARTED',
-            '1',
-            'short-format',
-            '[]'::jsonb,
-            NOW(),
-            'system',
-            NOW(),
-            false,
-            1
-          ),
-          (
-            person2_id,
-            'STARTED',
-            '2',
-            'record-of-oral',
-            '[
-              {
-                "name": "defendant_details",
-                "questions": [
-                  {"id": 1, "value": "name", "answer": "Jane Smith"},
-                  {"id": 2, "value": "dateOfBirth", "answer": "15/03/1985"},
-                  {"id": 3, "value": "crn", "answer": "X456789"},
-                  {"id": 4, "value": "pnc", "answer": "2010/0003456A"}
-                ]
-              }
-            ]'::jsonb,
-            NOW(),
-            'system',
-            NOW(),
-            false,
-            1
-          ),
-          (
-            person3_id,
-            'STARTED',
-            '3',
-            'short-format',
-            '[
-              {
-                "name": "offence_analysis",
-                "questions": [
-                  {"id": 1, "value": "mainOffence", "answer": "Possession with intent to supply Class B drugs"},
-                  {"id": 2, "value": "offenceDetails", "answer": "The defendant was found in possession of 500g of cannabis with intent to supply. Evidence includes scales, multiple bags, and large amounts of cash."},
-                  {"id": 3, "value": "offencePattern", "answer": "First offence of this nature, though has previous conviction for possession of Class A drugs"}
-                ]
-              },
-              {
-                "name": "risk_assessment",
-                "questions": [
-                  {"id": 1, "value": "riskToPublic", "answer": "medium"},
-                  {"id": 2, "value": "riskToChildren", "answer": "low"},
-                  {"id": 3, "value": "riskToKnownAdults", "answer": "low"},
-                  {"id": 4, "value": "riskFactors", "answer": "Drug use and association with known drug dealers"}
-                ]
-              }
-            ]'::jsonb,
-            NOW(),
-            'system',
-            NOW(),
-            false,
-            1
-          )
-        RETURNING id INTO report1_id, report2_id, report3_id;
+        VALUES (
+          person1_id,
+          'NOT_STARTED',
+          '1',
+          'psr',
+          '[]'::jsonb,
+          NOW(),
+          'system',
+          NOW(),
+          false,
+          1
+        );
+
+        -- Create report 2 (Jane Smith - PSR with defendant details)
+        INSERT INTO presentenceservice.report_details (
+          "personId", status, origin, "reportType", pages,
+          "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
+        )
+        VALUES (
+          person2_id,
+          'STARTED',
+          '2',
+          'psr',
+          '[
+            {
+              "name": "defendant_details",
+              "questions": [
+                {"id": 1, "value": "name", "answer": "Jane Smith"},
+                {"id": 2, "value": "dateOfBirth", "answer": "15/03/1985"},
+                {"id": 3, "value": "crn", "answer": "X456789"},
+                {"id": 4, "value": "pnc", "answer": "2010/0003456A"}
+              ]
+            }
+          ]'::jsonb,
+          NOW(),
+          'system',
+          NOW(),
+          false,
+          1
+        )
+        RETURNING id INTO report2_id;
+
+        -- Create report 3 (Robert Johnson - PSR with offence analysis and risk)
+        INSERT INTO presentenceservice.report_details (
+          "personId", status, origin, "reportType", pages,
+          "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
+        )
+        VALUES (
+          person3_id,
+          'STARTED',
+          '3',
+          'psr',
+          '[
+            {
+              "name": "offence_analysis",
+              "questions": [
+                {"id": 1, "value": "mainOffence", "answer": "Possession with intent to supply Class B drugs"},
+                {"id": 2, "value": "offenceDetails", "answer": "The defendant was found in possession of 500g of cannabis with intent to supply. Evidence includes scales, multiple bags, and large amounts of cash."},
+                {"id": 3, "value": "offencePattern", "answer": "First offence of this nature, though has previous conviction for possession of Class A drugs"}
+              ]
+            },
+            {
+              "name": "risk_assessment",
+              "questions": [
+                {"id": 1, "value": "riskToPublic", "answer": "medium"},
+                {"id": 2, "value": "riskToChildren", "answer": "low"},
+                {"id": 3, "value": "riskToKnownAdults", "answer": "low"},
+                {"id": 4, "value": "riskFactors", "answer": "Drug use and association with known drug dealers"}
+              ]
+            }
+          ]'::jsonb,
+          NOW(),
+          'system',
+          NOW(),
+          false,
+          1
+        )
+        RETURNING id INTO report3_id;
 
         -- Link sources of information to reports
-        -- For report 2 (Jane Smith's record-of-oral)
+        -- For report 2 (Jane Smith's PSR)
         INSERT INTO presentenceservice.report_sources_of_information (
           "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
         )
         SELECT
-          (SELECT id FROM presentenceservice.report_details WHERE "personId" = person2_id LIMIT 1),
+          report2_id,
           id,
           NOW(),
           'system',
@@ -189,12 +200,12 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         FROM presentenceservice.sources_of_information
         WHERE name IN ('interview', 'previous_convictions', 'cps_summary');
 
-        -- For report 3 (Robert Johnson's short-format)
+        -- For report 3 (Robert Johnson's PSR)
         INSERT INTO presentenceservice.report_sources_of_information (
           "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
         )
         SELECT
-          (SELECT id FROM presentenceservice.report_details WHERE "personId" = person3_id LIMIT 1),
+          report3_id,
           id,
           NOW(),
           'system',
