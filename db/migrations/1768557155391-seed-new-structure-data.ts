@@ -10,8 +10,7 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         ('Manchester', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
         ('Birmingham', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
         ('Leeds', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
-        ('London', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1)
-      ON CONFLICT DO NOTHING;
+        ('London', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1);
     `)
 
     // Seed default sources of information
@@ -28,8 +27,7 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         ('sentencing_guidelines', 'Sentencing guidelines', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
         ('service_records', 'Service records', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
         ('substance_misuse_screening_tool', 'Substance misuse screening tool', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
-        ('victim_statement', 'Victim statement', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1)
-      ON CONFLICT DO NOTHING;
+        ('victim_statement', 'Victim statement', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1);
     `)
 
     // Seed person details
@@ -83,8 +81,7 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
           NOW(),
           false,
           1
-        )
-      ON CONFLICT (crn) DO NOTHING;
+        );
     `)
 
     // Seed report details with sample data
