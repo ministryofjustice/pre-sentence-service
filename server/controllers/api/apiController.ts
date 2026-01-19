@@ -187,14 +187,12 @@ export default class ApiController {
         await this.reportService.updateReport(reportId, {})
       }
 
-      // For the new structure, we need to convert the body data to page format
-      // This is a simplified version - you may need to adapt based on your page structure
       const fieldValues = []
       for (const [key, value] of Object.entries(req.body)) {
         if (value !== undefined && key !== 'action') {
           fieldValues.push({
-            pageName: 'default', // You may need to determine the page name from context
-            questionId: 0, // You may need to generate or lookup question IDs
+            pageName: 'default',
+            questionId: 0,
             questionValue: key,
             answer: Array.isArray(value) ? value.join(',') : String(value),
           })
