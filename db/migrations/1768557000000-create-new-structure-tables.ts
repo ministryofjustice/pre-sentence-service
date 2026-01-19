@@ -2,6 +2,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CreateNewStructureTables1768557000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Create schema if it doesn't exist
+    await queryRunner.query(`
+      CREATE SCHEMA IF NOT EXISTS presentenceservice;
+    `)
+
     // Create local_authorities table
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS presentenceservice.local_authorities (
