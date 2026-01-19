@@ -52,14 +52,23 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return `0${n}`.slice(-2)
   })
 
-  njkEnv.addFilter('calculateAge', dobStr => {
-    if (!dobStr) return ''
+  njkEnv.addFilter('calculateAge', dob => {
+    if (!dob) return ''
 
-    // Parse DD/MM/YYYY format
-    const [day, month, year] = dobStr.split('/').map(Number)
-    const birthDate = new Date(year, month - 1, day)
+    let birthDate: Date
+
+    // Handle both Date objects and DD/MM/YYYY strings
+    if (dob instanceof Date) {
+      birthDate = dob
+    } else if (typeof dob === 'string') {
+      // Parse DD/MM/YYYY format
+      const [day, month, year] = dob.split('/').map(Number)
+      birthDate = new Date(year, month - 1, day)
+    } else {
+      return ''
+    }
+
     const today = new Date()
-
     let age = today.getFullYear() - birthDate.getFullYear()
     const m = today.getMonth() - birthDate.getMonth()
 

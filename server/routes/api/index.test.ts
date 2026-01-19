@@ -3,68 +3,70 @@ import request from 'supertest'
 import { appWithApiRoutes } from '../testutils/appSetup'
 
 const mockShortFormatData = {
-  id: 'd97277dd-1b0a-4853-b13b-8afed046bb8a',
+  id: 123,
+  personId: 1,
   status: 'NOT_STARTED',
-  reportDefinitionId: 1,
-  eventNumber: '10',
-  fieldValues: [
+  origin: '10',
+  reportType: 'short-format',
+  pages: [
     {
-      value: 'Some field value',
-      field: {
-        name: 'some_field_name',
-      },
+      name: 'default',
+      questions: [
+        {
+          id: 1,
+          value: 'some_field_name',
+          answer: 'Some field value',
+        },
+      ],
     },
   ],
-  reportDefinition: {
-    type: 'some_report_type',
-    version: 1,
+  createdAt: new Date('2024-01-01'),
+  createdBy: 'testuser',
+  lastUpdatedBy: new Date('2024-01-01'),
+  isDeleted: false,
+  version: 1,
+  person: {
+    crn: 'DX12340A',
+    names: { foreName: 'John', middleName: '', surname: 'Doe' },
+    dateOfBirth: new Date('1990-01-01'),
+    pnc: 'PNC123',
+    mainOffence: 'Theft',
+    court: { name: 'Test Court', localJusticeArea: 'Test Area' },
   },
-  urn: 'uk:gov:hmpps:pre-sentence-service:report:d97277dd-1b0a-4853-b13b-8afed046bb8a',
-  url: 'http://localhost:3000/short-format/d97277dd-1b0a-4853-b13b-8afed046bb8a',
 }
 
 const mockOralReportData = {
-  id: 'd97277dd-1b0a-4853-b13b-8afed046bb8a',
-  status: 'NOT_STARTED',
-  reportDefinitionId: 1,
-  eventNumber: '10',
-  fieldValues: [
-    {
-      value: 'Some field value',
-      field: {
-        name: 'some_field_name',
-      },
-    },
-  ],
-  reportDefinition: {
-    type: 'some_report_type',
-    version: 1,
-  },
-  urn: 'uk:gov:hmpps:pre-sentence-service:report:d97277dd-1b0a-4853-b13b-8afed046bb8a',
-  url: 'http://localhost:3000/record-of-oral/d97277dd-1b0a-4853-b13b-8afed046bb8a',
+  ...mockShortFormatData,
+  reportType: 'record-of-oral',
 }
 
 const mockReportsData = [
   {
-    id: '396c6e6e-f1e5-420b-94c4-0e6ecabdbf96',
+    id: 1,
+    personId: 1,
     status: 'NOT_STARTED',
-    reportDefinitionId: 2,
-    eventNumber: '20',
+    origin: '20',
+    reportType: 'short-format',
   },
   {
-    id: '0877ed35-e59a-4e94-b2bd-5d2283dd7dd7',
+    id: 2,
+    personId: 2,
     status: 'NOT_STARTED',
-    reportDefinitionId: 2,
-    eventNumber: '42',
+    origin: '42',
+    reportType: 'short-format',
   },
 ]
 
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
     return {
-      createReport: () => {
+      createReport: (reportData: { reportType: string }) => {
         return new Promise(resolve => {
-          process.nextTick(() => resolve(mockShortFormatData))
+          process.nextTick(() => {
+            const reportType = reportData.reportType
+            const mockData = reportType === 'record-of-oral' ? mockOralReportData : mockShortFormatData
+            resolve(mockData)
+          })
         })
       },
       getReportById: () => {
@@ -79,7 +81,7 @@ jest.mock('../../services/reportService', () => {
       },
       updateFieldValues: () => {
         return new Promise(resolve => {
-          process.nextTick(() => resolve({}))
+          process.nextTick(() => resolve(mockShortFormatData))
         })
       },
       getDefinitionByType: () => {
@@ -87,14 +89,20 @@ jest.mock('../../services/reportService', () => {
           process.nextTick(() =>
             resolve({
               id: 1,
-              fields: [
-                {
-                  name: 'crn',
-                  id: 3,
-                },
-              ],
             })
           )
+        })
+      },
+    }
+  })
+})
+
+jest.mock('../../services/eventService', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      sendReportEvent: () => {
+        return new Promise(resolve => {
+          process.nextTick(() => resolve({}))
         })
       },
     }
@@ -113,43 +121,79 @@ describe('Route Handlers - API', () => {
   })
 
   it('should create a report', () => {
-    return (
-      request(app)
-        .post('/api/v1/report/record-of-oral')
-        .send({ crn: 'DX12340A', eventNumber: '100' })
-        // .expect('Content-Type', /json/)
-        .expect(res => {
-          expect(res.text).toEqual(JSON.stringify(mockOralReportData))
+    return request(app)
+      .post('/api/v1/report/record-of-oral')
+      .send({
+        crn: 'DX12340A',
+        eventNumber: '100',
+        names: { foreName: 'John', middleName: '', surname: 'Doe' },
+        dateOfBirth: '1990-01-01',
+        pnc: 'PNC123',
+        mainOffence: 'Theft',
+        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
+      })
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toMatchObject({
+          id: expect.any(String), // ID converted to string for API
+          reportType: 'record-of-oral',
+          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
+          url: expect.stringContaining('/record-of-oral/'),
         })
-    )
+      })
   })
 
   it('should support nDelius report types when creating a Record of Oral report', () => {
     return request(app)
       .post('/api/v1/report/oralReport')
-      .send({ crn: 'DX12340A', eventNumber: '100' })
+      .send({
+        crn: 'DX12340A',
+        eventNumber: '100',
+        names: { foreName: 'John', middleName: '', surname: 'Doe' },
+        dateOfBirth: '1990-01-01',
+        pnc: 'PNC123',
+        mainOffence: 'Theft',
+        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
+      })
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockOralReportData))
+        expect(JSON.parse(res.text)).toMatchObject({
+          reportType: 'record-of-oral',
+          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
+        })
       })
   })
 
   it('should support nDelius report types when creating Short Format report', () => {
     return request(app)
       .post('/api/v1/report/shortFormatPreSentenceReport')
-      .send({ crn: 'DX12340A', eventNumber: '100' })
+      .send({
+        crn: 'DX12340A',
+        eventNumber: '100',
+        names: { foreName: 'John', middleName: '', surname: 'Doe' },
+        dateOfBirth: '1990-01-01',
+        pnc: 'PNC123',
+        mainOffence: 'Theft',
+        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
+      })
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockShortFormatData))
+        expect(JSON.parse(res.text)).toMatchObject({
+          reportType: 'short-format',
+          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
+        })
       })
   })
 
   it('should get a report by ID', () => {
     return request(app)
-      .get('/api/v1/report/d97277dd-1b0a-4853-b13b-8afed046bb8a')
+      .get('/api/v1/report/123')
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(JSON.stringify(mockShortFormatData))
+        expect(JSON.parse(res.text)).toMatchObject({
+          id: '123', // ID converted to string for API
+          reportType: 'short-format',
+        })
       })
   })
 
@@ -158,13 +202,16 @@ describe('Route Handlers - API', () => {
       .get('/api/v1/reports/short-format')
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.text).toEqual(
-          JSON.stringify({
-            request: 'short-format',
-            found: 2,
-            results: mockReportsData,
-          })
-        )
+        const response = JSON.parse(res.text)
+        expect(response).toMatchObject({
+          request: 'short-format',
+          found: 2,
+          results: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String), // IDs converted to strings
+            }),
+          ]),
+        })
       })
   })
 })

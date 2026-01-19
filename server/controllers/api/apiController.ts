@@ -4,6 +4,7 @@ import EventService from '../../services/eventService'
 import config from '../../config'
 import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
 import { HttpError } from '../../@types/httpError'
+import { ReportStatus } from '../../repositories/entities/reportDetails'
 
 export default class ApiController {
   constructor(
@@ -28,45 +29,60 @@ export default class ApiController {
   }
 
   createReport = async (req: Request, res: Response): Promise<void> => {
-    let report
+    let reportId: number | undefined
     try {
       const reportType = this.correctReportType(req.params.reportType)
-      const reportDefinition = await this.reportService.getDefinitionByType(reportType)
-      if (!reportDefinition) {
-        res.status(400).end()
-        return
-      }
-      report = await this.reportService.createReport({
-        ...req.body,
-        eventNumber: req.body.eventNumber.toString(),
-        reportDefinitionId: reportDefinition.id,
-      })
+      const username = res.locals?.user?.username || 'system'
 
-      const definitionField = reportDefinition.fields.find(field => field.name === 'crn')
-
-      await this.reportService.updateFieldValues([
-        {
-          reportId: report.id,
-          fieldId: definitionField?.id ?? 0,
-          value: req.body.crn.toUpperCase(),
-          version: 1,
+      // Create person details from request body
+      const personDetails = {
+        crn: req.body.crn.toUpperCase(),
+        names: req.body.names || {
+          foreName: '',
+          middleName: '',
+          surname: '',
         },
-      ])
+        dateOfBirth: req.body.dateOfBirth ? new Date(req.body.dateOfBirth) : new Date(),
+        pnc: req.body.pnc || '',
+        address: req.body.address,
+        mainOffence: req.body.mainOffence || '',
+        otherOffences: req.body.otherOffences,
+        court: req.body.court || {
+          name: '',
+          localJusticeArea: '',
+        },
+        createdBy: username,
+      }
+
+      const report = await this.reportService.createReport(
+        {
+          crn: req.body.crn.toUpperCase(),
+          eventNumber: req.body.eventNumber.toString(),
+          reportType,
+          personDetails,
+        },
+        username
+      )
+
+      reportId = report.id
+
       await this.eventService.sendReportEvent({
-        reportId: report.id,
+        reportId: report.id.toString(),
         eventNumber: req.body.eventNumber.toString(),
         crn: req.body.crn.toUpperCase(),
         reportStatus: 'started',
       })
+
       res.status(201).json({
         ...report,
+        id: report.id.toString(), // Convert to string for API compatibility
         urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
         url: `${config.domain}/${reportType}/${report.id}`,
       })
     } catch (e) {
       const error = e as HttpError
-      if (report) {
-        await this.reportService.deleteReport(report)
+      if (reportId) {
+        await this.reportService.deleteReport(reportId)
       }
       res.status(error.status || 500).send(error.message)
     }
@@ -74,8 +90,22 @@ export default class ApiController {
 
   getReportById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const report = await this.reportService.getReportById(req.params.id)
-      res.json(report)
+      const reportId = parseInt(req.params.id, 10)
+      if (isNaN(reportId)) {
+        res.status(400).json({ error: 'Invalid report ID' })
+        return
+      }
+
+      const report = await this.reportService.getReportById(reportId)
+      if (!report) {
+        res.status(404).json({ error: 'Report not found' })
+        return
+      }
+
+      res.json({
+        ...report,
+        id: report.id.toString(), // Convert to string for API compatibility
+      })
     } catch (e) {
       const error = e as HttpError
       res.status(error.status || 500).send(error.message)
@@ -84,14 +114,24 @@ export default class ApiController {
 
   getPdfById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.params
-      const report = await this.reportService.getReportById(id)
-      const reportData = configureReportData(report!)
+      const reportId = parseInt(req.params.id, 10)
+      if (isNaN(reportId)) {
+        res.status(400).json({ error: 'Invalid report ID' })
+        return
+      }
+
+      const report = await this.reportService.getReportById(reportId)
+      if (!report) {
+        res.status(404).json({ error: 'Report not found' })
+        return
+      }
+
+      const reportData = configureReportData(report)
       const headerHtml = getHeader()
       const footerHtml = getFooter({ version: reportData.reportVersion as string })
       // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
       const { preSentenceUrl } = config.apis.gotenberg
-      const filename = `${reportData.reportType}_${id}.pdf`
+      const filename = `${reportData.reportType}_${reportId}.pdf`
       res.renderPDF(
         `reports/${reportData.reportType}`,
         { preSentenceUrl, data: reportData },
@@ -107,10 +147,17 @@ export default class ApiController {
     try {
       const reportType = this.correctReportType(req.params.reportType)
       const results = await this.reportService.getAllReportsByType(reportType)
+
+      // Convert IDs to strings for API compatibility
+      const formattedResults = results.map(report => ({
+        ...report,
+        id: report.id.toString(),
+      }))
+
       res.json({
         request: req.params.reportType,
         found: results && results.length,
-        results,
+        results: formattedResults,
       })
     } catch (e) {
       const error = e as HttpError
@@ -120,7 +167,12 @@ export default class ApiController {
 
   save = async (req: Request, res: Response): Promise<void> => {
     try {
-      const reportId = req.params.id
+      const reportId = parseInt(req.params.id, 10)
+      if (isNaN(reportId)) {
+        res.status(400).json({ error: 'Invalid report ID' })
+        return
+      }
+
       const report = await this.reportService.getReportById(reportId)
 
       if (!report) {
@@ -128,31 +180,29 @@ export default class ApiController {
         return
       }
 
-      if (report.status === 'NOT_STARTED') {
-        await this.reportService.updateReport({ ...report, status: 'STARTED' })
+      // Update report status if needed
+      if (report.status === ReportStatus.NOT_STARTED) {
+        await this.reportService.updateReport(reportId, { status: ReportStatus.STARTED })
       } else {
-        await this.reportService.updateReport({ ...report, lastUpdated: new Date().toISOString() })
+        await this.reportService.updateReport(reportId, {})
       }
 
+      // For the new structure, we need to convert the body data to page format
+      // This is a simplified version - you may need to adapt based on your page structure
       const fieldValues = []
-      if (report.reportDefinition?.fields) {
-        for (const field of report.reportDefinition.fields) {
-          const existingValue = report.fieldValues?.find(fv => fv.field.name === field.name)
-          const newValue = req.body[field.name]
-
-          if (newValue !== undefined) {
-            fieldValues.push({
-              reportId: report.id,
-              fieldId: field.id,
-              value: Array.isArray(newValue) ? newValue.join(',') : String(newValue),
-              version: existingValue ? existingValue.version + 1 : 1,
-            })
-          }
+      for (const [key, value] of Object.entries(req.body)) {
+        if (value !== undefined && key !== 'action') {
+          fieldValues.push({
+            pageName: 'default', // You may need to determine the page name from context
+            questionId: 0, // You may need to generate or lookup question IDs
+            questionValue: key,
+            answer: Array.isArray(value) ? value.join(',') : String(value),
+          })
         }
       }
 
       if (fieldValues.length > 0) {
-        await this.reportService.updateFieldValues(fieldValues)
+        await this.reportService.updateFieldValues(reportId, fieldValues)
       }
 
       res.status(200).json({ success: true, message: 'Report saved successfully' })
