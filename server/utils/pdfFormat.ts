@@ -1,4 +1,4 @@
-import Report from '../repositories/entities/report'
+import ReportDetails from '../repositories/entities/reportDetails'
 
 export const pdfOptions = {
   marginTop: '0.8',
@@ -34,14 +34,28 @@ export function getFooter(data: FooterData): string {
   `
 }
 
-export function configureReportData(report: Report) {
+export function configureReportData(report: ReportDetails) {
   const reportData: { [key: string]: unknown } = {
     reportStatus: report.status,
-    reportType: report.reportDefinition.type,
-    reportVersion: report.reportDefinition.version,
+    reportType: report.reportType,
+    reportVersion: report.version || 1,
   }
-  report.fieldValues.forEach(value => {
-    reportData[value.field.name] = value.value
-  })
+
+  // Extract data from pages structure
+  if (report.pages) {
+    report.pages.forEach(page => {
+      page.questions.forEach(question => {
+        reportData[question.value] = question.answer
+      })
+    })
+  }
+
+  // Add person details if available
+  if (report.person) {
+    reportData.crn = report.person.crn
+    reportData.name = `${report.person.names.foreName} ${report.person.names.surname}`
+    reportData.dateOfBirth = report.person.dateOfBirth
+  }
+
   return reportData
 }
