@@ -41,7 +41,7 @@
           text: "Date of birth"
         },
         {
-          text: data.dateOfBirth + " (" + (data.dateOfBirth | calculateAge) + " years old)"
+          text: (data.dateOfBirth | formatDate) + " (" + (data.dateOfBirth | calculateAge) + " years old)"
         }
       ],
       [

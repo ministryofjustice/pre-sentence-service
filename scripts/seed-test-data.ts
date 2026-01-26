@@ -1,9 +1,77 @@
-import { MigrationInterface, QueryRunner } from 'typeorm'
+import { createConnection } from 'typeorm'
+import config from '../server/config'
+import fs from 'fs'
+import LocalAuthorities from '../server/repositories/entities/localAuthorities'
+import PersonDetails from '../server/repositories/entities/personDetails'
+import ReportDetails from '../server/repositories/entities/reportDetails'
+import SourcesOfInformation from '../server/repositories/entities/sourcesOfInformation'
+import ReportAndSourcesOfInformation from '../server/repositories/entities/reportSourcesOfInformation'
 
-export class SeedNewStructureData1768557155391 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+async function seedTestData() {
+  console.log('Connecting to database...')
+
+  const connection = await createConnection({
+    type: 'postgres',
+    host: String(config.db.server),
+    schema: String(config.db.schema),
+    port: Number(config.db.port || 5432),
+    username: String(config.db.username),
+    password: String(config.db.password),
+    database: String(config.db.database),
+    ssl:
+      config.db.sslEnabled === 'true'
+        ? {
+            rejectUnauthorized: true,
+            ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
+          }
+        : false,
+    entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
+    synchronize: false,
+    logging: false,
+  })
+
+  try {
+    console.log('Clearing existing test data...')
+
+    // Delete in reverse order to respect foreign key constraints
+    await connection.query(`
+      DELETE FROM presentenceservice.report_sources_of_information
+      WHERE "reportId" IN (
+        SELECT id FROM presentenceservice.report_details
+        WHERE "personId" IN (
+          SELECT id FROM presentenceservice.person_details
+          WHERE crn IN ('X320741', 'X456789', 'X789012')
+        )
+      );
+    `)
+
+    await connection.query(`
+      DELETE FROM presentenceservice.report_details
+      WHERE "personId" IN (
+        SELECT id FROM presentenceservice.person_details
+        WHERE crn IN ('X320741', 'X456789', 'X789012')
+      );
+    `)
+
+    await connection.query(`
+      DELETE FROM presentenceservice.person_details
+      WHERE crn IN ('X320741', 'X456789', 'X789012');
+    `)
+
+    await connection.query(`
+      DELETE FROM presentenceservice.sources_of_information
+      WHERE source = 'default';
+    `)
+
+    await connection.query(`
+      DELETE FROM presentenceservice.local_authorities
+      WHERE name IN ('Sheffield', 'Manchester', 'Birmingham', 'Leeds', 'London');
+    `)
+
+    console.log('Seeding local authorities...')
+
     // Seed local authorities
-    await queryRunner.query(`
+    await connection.query(`
       INSERT INTO presentenceservice.local_authorities (name, "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version)
       VALUES
         ('Sheffield', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
@@ -13,8 +81,10 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         ('London', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1);
     `)
 
+    console.log('Seeding sources of information...')
+
     // Seed default sources of information
-    await queryRunner.query(`
+    await connection.query(`
       INSERT INTO presentenceservice.sources_of_information (name, value, "isDefault", source, "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version)
       VALUES
         ('cps_summary', 'CPS summary', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1),
@@ -30,8 +100,10 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         ('victim_statement', 'Victim statement', true, 'default', CURRENT_TIMESTAMP::TEXT, 'system', CURRENT_TIMESTAMP::TEXT, 'system', false, 1);
     `)
 
+    console.log('Seeding person details...')
+
     // Seed person details
-    await queryRunner.query(`
+    await connection.query(`
       INSERT INTO presentenceservice.person_details (
         crn, names, "dateOfBirth", pnc, address, "mainOffence", "otherOffences", court,
         "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
@@ -84,8 +156,10 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         );
     `)
 
+    console.log('Seeding report details...')
+
     // Seed report details with sample data
-    await queryRunner.query(`
+    await connection.query(`
       DO $$
       DECLARE
         person1_id INTEGER;
@@ -218,54 +292,29 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
 
       END $$;
     `)
-  }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    // Delete in reverse order to respect foreign key constraints
-    await queryRunner.query(`
-      DELETE FROM presentenceservice.report_sources_of_information
-      WHERE "reportId" IN (
-        SELECT id FROM presentenceservice.report_details
-        WHERE "personId" IN (
-          SELECT id FROM presentenceservice.person_details
-          WHERE crn IN ('X320741', 'X456789', 'X789012')
-        )
-      );
-    `)
-
-    await queryRunner.query(`
-      DELETE FROM presentenceservice.report_details
-      WHERE "personId" IN (
-        SELECT id FROM presentenceservice.person_details
-        WHERE crn IN ('X320741', 'X456789', 'X789012')
-      );
-    `)
-
-    await queryRunner.query(`
-      DELETE FROM presentenceservice.person_details
-      WHERE crn IN ('X320741', 'X456789', 'X789012');
-    `)
-
-    await queryRunner.query(`
-      DELETE FROM presentenceservice.sources_of_information
-      WHERE name IN (
-        'cps_summary',
-        'domestic_abuse_callout_information',
-        'diversity_inclusion_form',
-        'interview',
-        'oasys_assessments',
-        'previous_convictions',
-        'safeguarding_checks',
-        'sentencing_guidelines',
-        'service_records',
-        'substance_misuse_screening_tool',
-        'victim_statement'
-      );
-    `)
-
-    await queryRunner.query(`
-      DELETE FROM presentenceservice.local_authorities
-      WHERE name IN ('Sheffield', 'Manchester', 'Birmingham', 'Leeds', 'London');
-    `)
+    console.log('Test data seeded successfully!')
+    console.log('\nSeeded data:')
+    console.log('  - 5 local authorities')
+    console.log('  - 11 default sources of information')
+    console.log('  - 3 person details (CRNs: X320741, X456789, X789012)')
+    console.log('  - 3 PSR reports with varying levels of completion')
+  } catch (error) {
+    console.error('Error seeding test data:', error)
+    throw error
+  } finally {
+    await connection.close()
+    console.log('\nDatabase connection closed.')
   }
 }
+
+// Run the seeding script
+seedTestData()
+  .then(() => {
+    console.log('\nScript completed successfully')
+    process.exit(0)
+  })
+  .catch(error => {
+    console.error('\nScript failed:', error)
+    process.exit(1)
+  })

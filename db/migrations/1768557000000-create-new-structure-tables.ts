@@ -61,7 +61,7 @@ export class CreateNewStructureTables1768557000000 implements MigrationInterface
     // Create report_details table
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS presentenceservice.report_details (
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         "personId" INTEGER NOT NULL,
         status TEXT NOT NULL DEFAULT 'NOT_STARTED',
         origin TEXT NOT NULL,
@@ -80,7 +80,7 @@ export class CreateNewStructureTables1768557000000 implements MigrationInterface
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS presentenceservice.report_sources_of_information (
         id SERIAL PRIMARY KEY,
-        "reportId" INTEGER NOT NULL,
+        "reportId" UUID NOT NULL,
         "sourcesOfInformationId" INTEGER NOT NULL,
         "createdAt" TIMESTAMP NOT NULL,
         "createdBy" TEXT NOT NULL,

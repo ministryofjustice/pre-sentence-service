@@ -29,6 +29,8 @@
     "int-test": "DB_NAME=pre-sentence-service-int DB_PORT=5432 cypress run --config video=false",
     "int-test-ui": "DB_NAME=pre-sentence-service-int DB_PORT=5432 cypress open",
     "clean-db": "node ./bin/clean-db",
+    "reset-database": "npm run build && node dist/scripts/reset-database.js",
+    "seed-test-data": "npm run build && node dist/scripts/seed-test-data.js",
     "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots"
   },
   "engines": {

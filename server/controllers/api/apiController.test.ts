@@ -10,7 +10,7 @@ jest.mock('../../services/reportService')
 jest.mock('../../services/eventService')
 
 const mockReportDetails: ReportDetails = {
-  id: 123,
+  id: '123e4567-e89b-12d3-a456-426614174000',
   personId: 1,
   status: ReportStatus.NOT_STARTED,
   origin: '1',
@@ -134,14 +134,14 @@ describe('Route Handlers - API Controller', () => {
   describe('Get report by ID', () => {
     it('should return the report', async () => {
       await handler.getReportById(req, res)
-      expect(mockedReportService.getReportById).toHaveBeenCalledWith(123)
+      expect(mockedReportService.getReportById).toHaveBeenCalledWith('123')
     })
   })
 
   describe('Get report PDF', () => {
     it('should return the report as a PDF', async () => {
       await handler.getPdfById(req, res)
-      expect(mockedReportService.getReportById).toHaveBeenCalledWith(123)
+      expect(mockedReportService.getReportById).toHaveBeenCalledWith('123')
       expect(res.renderPDF).toHaveBeenCalled()
     })
   })

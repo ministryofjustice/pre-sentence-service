@@ -29,7 +29,7 @@ export default class ApiController {
   }
 
   createReport = async (req: Request, res: Response): Promise<void> => {
-    let reportId: number | undefined
+    let reportId: string | undefined
     try {
       const reportType = this.correctReportType(req.params.reportType)
       const username = res.locals?.user?.username || 'system'
@@ -90,11 +90,7 @@ export default class ApiController {
 
   getReportById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const reportId = parseInt(req.params.id, 10)
-      if (isNaN(reportId)) {
-        res.status(400).json({ error: 'Invalid report ID' })
-        return
-      }
+      const reportId = req.params.id
 
       const report = await this.reportService.getReportById(reportId)
       if (!report) {
@@ -114,11 +110,7 @@ export default class ApiController {
 
   getPdfById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const reportId = parseInt(req.params.id, 10)
-      if (isNaN(reportId)) {
-        res.status(400).json({ error: 'Invalid report ID' })
-        return
-      }
+      const reportId = req.params.id
 
       const report = await this.reportService.getReportById(reportId)
       if (!report) {
@@ -167,11 +159,7 @@ export default class ApiController {
 
   save = async (req: Request, res: Response): Promise<void> => {
     try {
-      const reportId = parseInt(req.params.id, 10)
-      if (isNaN(reportId)) {
-        res.status(400).json({ error: 'Invalid report ID' })
-        return
-      }
+      const reportId = req.params.id
 
       const report = await this.reportService.getReportById(reportId)
 
@@ -187,12 +175,43 @@ export default class ApiController {
         await this.reportService.updateReport(reportId, {})
       }
 
+      // Get page name from request body or query param, fallback to extracting from referer
+      let pageName = req.body.pageName || req.query.pageName
+
+      if (!pageName && req.headers.referer) {
+        // Extract page name from referer URL and match it to template naming
+        // E.g., /psr/123/defendant-details -> psr-defendant-details (matches template)
+        // E.g., /psr/123/risk-analysis -> risk-analysis (matches template)
+        const urlMatch = req.headers.referer.match(/\/psr\/\d+\/([^/?]+)/)
+        if (urlMatch) {
+          const urlPageName = urlMatch[1]
+          // defendant-details and defendant-behaviour pages use psr- prefix in templates
+          if (urlPageName === 'defendant-details' || urlPageName === 'defendant-behaviour') {
+            pageName = `psr-${urlPageName}`
+          } else {
+            pageName = urlPageName
+          }
+        }
+      }
+
+      // If still no page name, use 'default' as fallback
+      if (!pageName) {
+        pageName = 'default'
+      }
+
       const fieldValues = []
+      let questionId = 0
       for (const [key, value] of Object.entries(req.body)) {
-        if (value !== undefined && key !== 'action') {
+        if (
+          value !== undefined &&
+          key !== 'action' &&
+          key !== 'pageName' &&
+          key !== 'CSRFToken' &&
+          key !== 'reportId'
+        ) {
           fieldValues.push({
-            pageName: 'default',
-            questionId: 0,
+            pageName,
+            questionId: questionId++,
             questionValue: key,
             answer: Array.isArray(value) ? value.join(',') : String(value),
           })
