@@ -91,8 +91,13 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
         person1_id INTEGER;
         person2_id INTEGER;
         person3_id INTEGER;
+<<<<<<< HEAD
         report2_id UUID;
         report3_id UUID;
+=======
+        report2_id INTEGER;
+        report3_id INTEGER;
+>>>>>>> ad513cfb5bf920f58806b9121c5b93a79ea8afc3
       BEGIN
         -- Get person IDs
         SELECT id INTO person1_id FROM presentenceservice.person_details WHERE crn = 'X320741';
@@ -194,7 +199,11 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
           NOW(),
           'system',
           NOW(),
+<<<<<<< HEAD
           'system',
+=======
+          NOW(),
+>>>>>>> ad513cfb5bf920f58806b9121c5b93a79ea8afc3
           false,
           1
         FROM presentenceservice.sources_of_information
@@ -210,7 +219,11 @@ export class SeedNewStructureData1768557155391 implements MigrationInterface {
           NOW(),
           'system',
           NOW(),
+<<<<<<< HEAD
           'system',
+=======
+          NOW(),
+>>>>>>> ad513cfb5bf920f58806b9121c5b93a79ea8afc3
           false,
           1
         FROM presentenceservice.sources_of_information

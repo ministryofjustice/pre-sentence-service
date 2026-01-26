@@ -182,7 +182,7 @@ export default class ApiController {
         // Extract page name from referer URL and match it to template naming
         // E.g., /psr/123/defendant-details -> psr-defendant-details (matches template)
         // E.g., /psr/123/risk-analysis -> risk-analysis (matches template)
-        const urlMatch = req.headers.referer.match(/\/psr\/\d+\/([^/?]+)/)
+        const urlMatch = req.headers.referer.match(/\/psr\/[^/]+\/([^/?]+)/)
         if (urlMatch) {
           const urlPageName = urlMatch[1]
           // defendant-details and defendant-behaviour pages use psr- prefix in templates
