@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Generated } from 'typeorm'
 import PersonDetails from './personDetails'
 
 export enum ReportStatus {
@@ -19,8 +19,9 @@ interface Page {
 
 @Entity({ schema: 'presentenceservice' })
 export default class ReportDetails {
-  @PrimaryGeneratedColumn()
-  id!: number
+  @PrimaryGeneratedColumn('uuid')
+  @Generated('uuid')
+  id!: string
 
   @Column()
   personId!: number

@@ -7,8 +7,8 @@ export default class ReportSourcesOfInformation {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column()
-  reportId!: number
+  @Column('uuid')
+  reportId!: string
 
   @Column()
   sourcesOfInformationId!: number

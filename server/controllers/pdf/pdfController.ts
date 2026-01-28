@@ -10,8 +10,7 @@ export default class PdfController {
 
   preview = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const reportIdNumber = parseInt(reportId, 10)
-    const report: ReportDetails | null = await this.reportService.getReportById(reportIdNumber)
+    const report: ReportDetails | null = await this.reportService.getReportById(reportId)
     if (report) {
       const reportData: { [key: string]: unknown } = { ...configureReportData(report), preview: true }
       const headerHtml = getHeader()
@@ -25,8 +24,7 @@ export default class PdfController {
 
   renderPdf = async (req: Request, res: Response): Promise<void> => {
     const { reportId } = req.params
-    const reportIdNumber = parseInt(reportId, 10)
-    const report: ReportDetails | null = await this.reportService.getReportById(reportIdNumber)
+    const report: ReportDetails | null = await this.reportService.getReportById(reportId)
     logger.info(`Request to print PDF for report ${reportId}`)
 
     if (report) {

@@ -1,4 +1,4 @@
-import { getRepository } from 'typeorm'
+import { getConnection } from 'typeorm'
 import PersonDetails from '../repositories/entities/personDetails'
 
 export interface IPersonDetails {
@@ -37,7 +37,7 @@ export interface IPersonDetails {
 
 export default class PersonDetailsService {
   public async createPersonDetails(personData: IPersonDetails): Promise<PersonDetails> {
-    const personRepository = getRepository(PersonDetails)
+    const personRepository = getConnection().getRepository(PersonDetails)
     const person = personRepository.create({
       ...personData,
       createdAt: new Date(),
@@ -49,25 +49,29 @@ export default class PersonDetailsService {
   }
 
   public async getPersonDetailsByCrn(crn: string): Promise<PersonDetails | null> {
-    return getRepository(PersonDetails).findOne({
-      where: {
-        crn: crn.toUpperCase(),
-        isDeleted: false,
-      },
-    })
+    return getConnection()
+      .getRepository(PersonDetails)
+      .findOne({
+        where: {
+          crn: crn.toUpperCase(),
+          isDeleted: false,
+        },
+      })
   }
 
   public async getPersonDetailsById(id: number): Promise<PersonDetails | null> {
-    return getRepository(PersonDetails).findOne({
-      where: {
-        id,
-        isDeleted: false,
-      },
-    })
+    return getConnection()
+      .getRepository(PersonDetails)
+      .findOne({
+        where: {
+          id,
+          isDeleted: false,
+        },
+      })
   }
 
   public async updatePersonDetails(id: number, personData: Partial<IPersonDetails>): Promise<PersonDetails | null> {
-    const personRepository = getRepository(PersonDetails)
+    const personRepository = getConnection().getRepository(PersonDetails)
     const person = await personRepository.findOne({
       where: { id, isDeleted: false },
     })
@@ -86,7 +90,7 @@ export default class PersonDetailsService {
   }
 
   public async deletePersonDetails(id: number): Promise<boolean> {
-    const personRepository = getRepository(PersonDetails)
+    const personRepository = getConnection().getRepository(PersonDetails)
     const person = await personRepository.findOne({ where: { id } })
 
     if (!person) {

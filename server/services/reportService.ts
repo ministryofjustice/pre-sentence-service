@@ -5,7 +5,7 @@ import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOf
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 
 export interface IReport {
-  id?: number
+  id?: string
   crn: string
   eventNumber: string
   reportType: string
@@ -58,16 +58,16 @@ export default class ReportService {
     return report
   }
 
-  public async getReportById(id: number): Promise<ReportDetails | null> {
+  public async getReportById(id: string): Promise<ReportDetails | null> {
     return this.reportDetailsService.getReportDetailsById(id)
   }
 
-  public async getSourcesOfInformation(reportId: number): Promise<SourceOfInformation[]> {
+  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
     return this.sourcesOfInformationService.getSourcesOfInformation(reportId)
   }
 
   public async saveCustomSourcesOfInformation(
-    reportId: number,
+    reportId: string,
     addedSources: CustomSource[],
     removedSources: SourceKey[],
     createdBy: string
@@ -84,15 +84,15 @@ export default class ReportService {
     return this.reportDetailsService.getReportDetailsByType(type)
   }
 
-  public async updateReport(id: number, updates: Partial<IReportDetails>): Promise<ReportDetails | null> {
+  public async updateReport(id: string, updates: Partial<IReportDetails>): Promise<ReportDetails | null> {
     return this.reportDetailsService.updateReportDetails(id, updates)
   }
 
-  public async deleteReport(id: number): Promise<boolean> {
+  public async deleteReport(id: string): Promise<boolean> {
     return this.reportDetailsService.deleteReportDetails(id)
   }
 
-  public async updateFieldValues(reportId: number, fieldValues: IFieldValue[]): Promise<ReportDetails | null> {
+  public async updateFieldValues(reportId: string, fieldValues: IFieldValue[]): Promise<ReportDetails | null> {
     const report = await this.reportDetailsService.getReportDetailsById(reportId)
     if (!report) {
       return null
@@ -110,7 +110,7 @@ export default class ReportService {
       }
 
       const page = pageMap.get(fieldValue.pageName)!
-      const existingQuestionIndex = page.questions.findIndex(q => q.id === fieldValue.questionId)
+      const existingQuestionIndex = page.questions.findIndex(q => q.value === fieldValue.questionValue)
 
       if (existingQuestionIndex >= 0) {
         page.questions[existingQuestionIndex].answer = fieldValue.answer
@@ -143,7 +143,7 @@ export default class ReportService {
     return { id: 1 }
   }
 
-  public async updateReportStatus(reportId: number, status: ReportStatus): Promise<ReportDetails | null> {
+  public async updateReportStatus(reportId: string, status: ReportStatus): Promise<ReportDetails | null> {
     return this.reportDetailsService.updateReportStatus(reportId, status)
   }
 }

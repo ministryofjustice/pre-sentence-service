@@ -1,4 +1,4 @@
-import { getRepository, In } from 'typeorm'
+import { getConnection, In } from 'typeorm'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
 import { SourceOfInformation, CustomSource, SourceKey } from '../utils/sourcesOfInformationHelpers'
@@ -15,23 +15,27 @@ export interface ISourcesOfInformation {
 }
 
 export default class SourcesOfInformationService {
-  public async getSourcesOfInformation(reportId: number): Promise<SourceOfInformation[]> {
+  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
     // Get default sources
-    const defaultSources = await getRepository(SourcesOfInformation).find({
-      where: {
-        isDefault: true,
-        isDeleted: false,
-      },
-    })
+    const defaultSources = await getConnection()
+      .getRepository(SourcesOfInformation)
+      .find({
+        where: {
+          isDefault: true,
+          isDeleted: false,
+        },
+      })
 
     // Get custom sources linked to this report
-    const reportSources = await getRepository(ReportSourcesOfInformation).find({
-      where: {
-        reportId,
-        isDeleted: false,
-      },
-      relations: ['sourcesOfInformation'],
-    })
+    const reportSources = await getConnection()
+      .getRepository(ReportSourcesOfInformation)
+      .find({
+        where: {
+          reportId,
+          isDeleted: false,
+        },
+        relations: ['sourcesOfInformation'],
+      })
 
     // Combine and map to SourceOfInformation format
     const allSources: SourceOfInformation[] = [
@@ -51,13 +55,13 @@ export default class SourcesOfInformationService {
   }
 
   public async saveCustomSourcesOfInformation(
-    reportId: number,
+    reportId: string,
     addedSources: CustomSource[],
     removedSources: SourceKey[],
     createdBy: string
   ): Promise<void> {
-    const sourceRepo = getRepository(SourcesOfInformation)
-    const reportSourceRepo = getRepository(ReportSourcesOfInformation)
+    const sourceRepo = getConnection().getRepository(SourcesOfInformation)
+    const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
 
     // Handle removed sources
     if (removedSources.length > 0) {
@@ -130,7 +134,7 @@ export default class SourcesOfInformationService {
   }
 
   public async createDefaultSource(sourceData: ISourcesOfInformation): Promise<SourcesOfInformation> {
-    const sourceRepository = getRepository(SourcesOfInformation)
+    const sourceRepository = getConnection().getRepository(SourcesOfInformation)
     const source = sourceRepository.create({
       ...sourceData,
       isDefault: true,
@@ -141,11 +145,13 @@ export default class SourcesOfInformationService {
   }
 
   public async getAllDefaultSources(): Promise<SourcesOfInformation[]> {
-    return getRepository(SourcesOfInformation).find({
-      where: {
-        isDefault: true,
-        isDeleted: false,
-      },
-    })
+    return getConnection()
+      .getRepository(SourcesOfInformation)
+      .find({
+        where: {
+          isDefault: true,
+          isDeleted: false,
+        },
+      })
   }
 }

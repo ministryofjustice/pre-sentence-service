@@ -142,6 +142,17 @@ export default class SharedController {
       data.crn = this.report.person.crn
       data.name = `${this.report.person.names.foreName} ${this.report.person.names.surname}`
       data.dateOfBirth = this.report.person.dateOfBirth
+
+      // Flatten address object if it exists
+      if (this.report.person.address) {
+        data['address-buildingName'] = this.report.person.address.buildingNumber || ''
+        data['address-number'] = this.report.person.address.addressNumber || ''
+        data['address-streetName'] = this.report.person.address.streetName || ''
+        data['address-town'] = this.report.person.address.town || ''
+        data['address-district'] = this.report.person.address.district || ''
+        data['address-county'] = this.report.person.address.county || ''
+        data['address-postcode'] = this.report.person.address.postcode || ''
+      }
     }
     return data
   }
@@ -191,14 +202,9 @@ export default class SharedController {
 
   public get = async (req: Request, res: Response): Promise<void> => {
     const reportIdParam = req.params.reportId
-    const reportId = parseInt(reportIdParam, 10)
+    const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const removeKey = (req.query.remove as string | undefined)?.trim()
-
-    if (isNaN(reportId)) {
-      res.redirect(`/${this.path}/${reportIdParam}/not-found`)
-      return
-    }
 
     let pendingChanges: PendingChanges | undefined
 
@@ -279,15 +285,10 @@ export default class SharedController {
 
   public async post(req: Request, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
-    const reportId = parseInt(reportIdParam, 10)
+    const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const { action, source } = req.body
     const username = res.locals?.user?.username || 'system'
-
-    if (isNaN(reportId)) {
-      res.redirect(`/${this.path}/${reportIdParam}/not-found`)
-      return
-    }
 
     if (isSourceAction(action)) {
       const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, req.session, source, username)
@@ -337,7 +338,7 @@ export default class SharedController {
   private async handleSourceActions(
     action: SourceOfInformationActions | undefined,
     reportIdParam: string,
-    reportId: number,
+    reportId: string,
     session: Session & Partial<SessionData>,
     customSource?: string,
     username = 'system'
