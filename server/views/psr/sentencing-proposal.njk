@@ -2,6 +2,7 @@
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "components/text-editor/macro.njk" import picTextEditor %}
 
 
@@ -13,7 +14,7 @@
   <ul>
     <li>include the duration, number and length of any requirements</li>
     <li>ensure that the requirements are commensurate with the seriousness of the offence</li>
-`</ul>
+  </ul>
 {% endset %}
 
 {% set proposedSentenceRationaleHelp %}
@@ -22,7 +23,7 @@
     <li>explaining how the proposal addresses identified risks and needs</li>
     <li>considering how the proposal may reduce the person's risk of reconviction</li>
     <li>stating how the proposed sentence will manage identified risks of harm and any risks to identified victims</li>
-`</ul>
+  </ul>
 {% endset %}
 
 {% block reportForm %}
@@ -35,7 +36,7 @@
             classes: "govuk-label--l"
         },
         hint: {
-            text: "Consult the relevant sentencing guidelines and any indication the court has given regarding the sentence. You should use the Effective Proposal Framework (EPF) tool to inform your proposal."
+            html: "Consult the relevant sentencing guidelines and any indication the court has given regarding the sentence. You should use the <strong>Effective Proposal Framework (EPF)</strong> tool to inform your proposal."
         },
         name: "proposedSentence",
         id: "proposedSentence",
@@ -90,22 +91,56 @@
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-    {{ picTextEditor({
-        label: {
-            text: "Explain the impact of a custodial sentence",
-            classes: "govuk-label--l"
-        },
-        hint: {
-            text: "Alongside any relevant factors you may want to consider the impact on the defendant's family (including dependants) and managing risk. Consider any personal vulnerabilities or risks the defendant may present to themselves. If you have information that custody will not or cannot be imposed you should provide context such as the source of the information and any supporting detail."
-        },
-        name: "sentenceImpact",
-        id: "sentenceImpact",
-        rows: "10",
-        value: data.sentenceImpact,
-        errorMessage: {
-            text: "Explain the impact of a custodial sentence"
-        } if 'sentenceImpact' in elementsWithError
-    }) }}
+    <div class="govuk-form-group{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                Explain the impact of a custodial sentence
+            </legend>
+            {% if 'custodialSentenceConsideration' in elementsWithError %}
+                <p class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select the button that best describes the possibility of a custodial sentence if relevant
+                </p>
+            {% endif %}
+            <div class="govuk-radios">
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="custodial-sentence-possible" name="custodialSentenceConsideration" type="radio" value="possible"{% if data.custodialSentenceConsideration == "possible" %} checked{% endif %}>
+                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-possible">
+                        A custodial sentence is possible or expected
+                    </label>
+                </div>
+                <div id="custodial-conditional-content" class="govuk-!-margin-left-4{% if data.custodialSentenceConsideration != 'possible' %} govuk-!-display-none{% endif %}">
+                    {{ picTextEditor({
+                        label: {
+                            text: "",
+                            classes: "govuk-visually-hidden"
+                        },
+                        hint: {
+                            text: "Alongside any relevant factors you may want to consider the impact on the defendant's family (including dependants) and managing risk. Consider any personal vulnerabilities or risks the defendant may present to themselves."
+                        },
+                        name: "custodialSentenceImpact",
+                        id: "custodialSentenceImpact",
+                        rows: "10",
+                        value: data.custodialSentenceImpact,
+                        errorMessage: {
+                            text: "Explain the impact of a custodial sentence if relevant"
+                        } if 'custodialSentenceImpact' in elementsWithError
+                    }) }}
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="custodial-sentence-not-threshold" name="custodialSentenceConsideration" type="radio" value="not-threshold"{% if data.custodialSentenceConsideration == "not-threshold" %} checked{% endif %}>
+                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-not-threshold">
+                        A custodial sentence is not being considered as the offence does not meet the custodial threshold
+                    </label>
+                </div>
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="custodial-sentence-court-indicated" name="custodialSentenceConsideration" type="radio" value="court-indicated"{% if data.custodialSentenceConsideration == "court-indicated" %} checked{% endif %}>
+                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-court-indicated">
+                        The court has indicated a custodial sentence is not being considered
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
@@ -113,4 +148,9 @@
 
 </form>
 
+{% endblock %}
+
+{% block additionalScripts %}
+  {{ super() }}
+  <script src="/assets/js/custodial-sentence-conditional.js" nonce="{{ nonce }}"></script>
 {% endblock %}

@@ -52,6 +52,10 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
+  <script src="/node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js"></script>
+  <script nonce="{{ nonce }}">
+    window.GOVUKFrontend.initAll()
+  </script>
 
   {% block additionalScripts %}
   {% endblock %}
