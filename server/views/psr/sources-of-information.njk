@@ -22,12 +22,6 @@
             Add or remove sources of information from your list
           </p>
         {% else %}
-          <p class="govuk-body">
-            <a href="/psr/{{ reportId }}/sources-of-information/edit"
-               class="govuk-link govuk-link--no-visited-state">
-              Edit sources of information
-            </a>
-          </p>
           <div id="sourcesOfInformation-hint" class="govuk-hint">
             Select all sources of information used to inform this report
           </div>
@@ -91,6 +85,14 @@
         <a class="govuk-link govuk-link--no-visited-state" href="/psr/{{ reportId }}/sources-of-information">Cancel</a>
       </div>
     {% else %}
+      <div class="govuk-!-margin-bottom-3">
+        {{ govukButton({
+          text: "Add other",
+          classes: "govuk-button--secondary",
+          href: "/psr/" + reportId + "/sources-of-information/edit"
+        }) }}
+      </div>
+
       {{ govukButton({ text: "Save and continue" }) }}
     {% endif %}
   </form>
