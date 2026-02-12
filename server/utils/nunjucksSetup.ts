@@ -52,14 +52,50 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return `0${n}`.slice(-2)
   })
 
-  njkEnv.addFilter('calculateAge', dobStr => {
-    if (!dobStr) return ''
+  njkEnv.addFilter('formatDate', date => {
+    if (!date) return ''
 
-    // Parse DD/MM/YYYY format
-    const [day, month, year] = dobStr.split('/').map(Number)
-    const birthDate = new Date(year, month - 1, day)
+    let dateObj: Date
+
+    // Handle Date objects, ISO strings, and DD/MM/YYYY strings
+    if (date instanceof Date) {
+      dateObj = date
+    } else if (typeof date === 'string') {
+      // Check if it's already in DD/MM/YYYY format
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+        return date
+      }
+      // Otherwise parse as ISO or other format
+      dateObj = new Date(date)
+    } else {
+      return ''
+    }
+
+    // Format as DD/MM/YYYY
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const year = dateObj.getFullYear()
+
+    return `${day}/${month}/${year}`
+  })
+
+  njkEnv.addFilter('calculateAge', dob => {
+    if (!dob) return ''
+
+    let birthDate: Date
+
+    // Handle both Date objects and DD/MM/YYYY strings
+    if (dob instanceof Date) {
+      birthDate = dob
+    } else if (typeof dob === 'string') {
+      // Parse DD/MM/YYYY format
+      const [day, month, year] = dob.split('/').map(Number)
+      birthDate = new Date(year, month - 1, day)
+    } else {
+      return ''
+    }
+
     const today = new Date()
-
     let age = today.getFullYear() - birthDate.getFullYear()
     const m = today.getMonth() - birthDate.getMonth()
 

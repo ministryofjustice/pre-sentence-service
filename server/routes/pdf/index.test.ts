@@ -4,18 +4,35 @@ import PdfController from '../../controllers/pdf/pdfController'
 import ReportService from '../../services/reportService'
 
 const mockReportData = {
+  id: 123,
+  personId: 1,
   status: 'NOT_STARTED',
-  fieldValues: [
+  origin: '10',
+  reportType: 'some_report_type',
+  pages: [
     {
-      value: 'Some field value',
-      field: {
-        name: 'some_field_name',
-      },
+      name: 'default',
+      questions: [
+        {
+          id: 1,
+          value: 'some_field_name',
+          answer: 'Some field value',
+        },
+      ],
     },
   ],
-  reportDefinition: {
-    type: 'some_report_type',
-    version: 1,
+  createdAt: new Date('2024-01-01'),
+  createdBy: 'testuser',
+  lastUpdatedBy: new Date('2024-01-01'),
+  isDeleted: false,
+  version: 1,
+  person: {
+    crn: 'X123456',
+    names: { foreName: 'John', middleName: '', surname: 'Doe' },
+    dateOfBirth: new Date('1990-01-01'),
+    pnc: 'PNC123',
+    mainOffence: 'Theft',
+    court: { name: 'Test Court', localJusticeArea: 'Test Area' },
   },
 }
 
@@ -44,13 +61,14 @@ describe('Route Handlers - View Report - PDF', () => {
   beforeEach(() => {
     req = {
       params: {
-        reportId: 'some_id',
+        reportId: '123',
       },
     } as unknown as Request
 
     res = {
       render: jest.fn(),
       renderPDF: jest.fn(),
+      redirect: jest.fn(),
     } as unknown as Response
   })
 
@@ -64,13 +82,13 @@ describe('Route Handlers - View Report - PDF', () => {
       expect(res.render).toHaveBeenCalledWith(
         'reports/some_report_type',
         expect.objectContaining({
-          data: {
+          data: expect.objectContaining({
             preview: true,
             reportStatus: 'NOT_STARTED',
             reportType: 'some_report_type',
             reportVersion: 1,
             some_field_name: 'Some field value',
-          },
+          }),
           footerHtml: expect.any(String),
         })
       )
@@ -83,12 +101,12 @@ describe('Route Handlers - View Report - PDF', () => {
       expect(res.renderPDF).toHaveBeenCalledWith(
         'reports/some_report_type',
         expect.objectContaining({
-          data: {
+          data: expect.objectContaining({
             reportStatus: 'NOT_STARTED',
             reportType: 'some_report_type',
             reportVersion: 1,
             some_field_name: 'Some field value',
-          },
+          }),
         }),
         expect.any(Object)
       )
@@ -100,7 +118,7 @@ describe('Route Handlers - View Report - PDF', () => {
         'reports/some_report_type',
         expect.any(Object),
         expect.objectContaining({
-          filename: 'some_report_type_some_id.pdf',
+          filename: 'some_report_type_123.pdf',
         })
       )
     })
