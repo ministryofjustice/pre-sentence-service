@@ -21,7 +21,7 @@ const sourcesOfInformationModel = z.object({
 export default class SourcesOfInformationController extends BaseController {
   override templatePath = 'sources-of-information'
 
-  override redirectPath = 'preview-report'
+  override redirectPath = ''
 
   override model = sourcesOfInformationModel
 
