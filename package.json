@@ -126,7 +126,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "globals": "^16.2.0",
-    "govuk-frontend": "^5.11.1",
+    "govuk-frontend": "^5.14.0",
     "helmet": "8.1.0",
     "http-errors": "2.0.0",
     "jquery": "3.7.1",
@@ -146,8 +146,8 @@
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.24",
     "uuid": "11.1.0",
-    "zustand": "^4.5.4",
-    "zod": "^4.0.17"
+    "zod": "^4.0.17",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/bunyan": "1.8.11",

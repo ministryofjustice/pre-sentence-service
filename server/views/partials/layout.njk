@@ -12,6 +12,16 @@
   <![endif]-->
 
   <script src="/assets/js/jquery.min.js"></script>
+  <script type="module" src="/assets/js/application.js"></script>
+  <script type="module" src="/assets/js/govuk-frontend.min.js"></script>
+  {# <script type="importmap" nonce="{{ nonce }}">
+    {
+      "imports": {
+        "govuk-frontend": "https://unpkg.com/govuk-frontend@5.14.0/dist/govuk/govuk-frontend.min.js"
+      }
+    }
+  </script> #}
+
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
           integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
           crossorigin="anonymous"></script>
@@ -52,8 +62,12 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
-
   {% block additionalScripts %}
+
+  {# <script src="/assets/js/application.js" ></script>
+  <script>
+    window.GOVUKFrontend.initAll()
+  </script> #}
   {% endblock %}
 
 {% endblock %}
