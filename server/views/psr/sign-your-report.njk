@@ -1,12 +1,8 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "components/text-editor/macro.njk" import picTextEditor %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 
 
@@ -39,21 +35,21 @@
         } if 'signReportName' in elementsWithError
     }) }}
 
-    {% set nameHtml %}
-    {{ govukInput({
-      id: "spoName",
-      name: "spoName",
-      type: "text",
-      value: data.spoName,
-      autocomplete: "name",
-      classes: "govuk-!-width-one-third",
-      label: {
-        text: "Please enter the name of the SPO who has reviewed the report"
-      },
-      errorMessage: {
-        text: "Enter the name of the SPO who reviewed the report"
-      } if 'spoName' in elementsWithError
-    }) }}
+    {% set spoNameHtml %}
+      {{ govukInput({
+        id: "spoName",
+        name: "spoName",
+        type: "text",
+        value: data.spoName,
+        autocomplete: "name",
+        classes: "govuk-!-width-one-third",
+        label: {
+          text: "Please enter the name of the SPO who has reviewed the report"
+        },
+        errorMessage: {
+          text: "Enter the name of the SPO who reviewed the report"
+        } if 'spoName' in elementsWithError
+      }) }}
     {% endset -%}
 
     {{ govukRadios({
@@ -76,15 +72,15 @@
           {
             value: "yes",
             text: "Yes",
-            checked:data.isDangerousReport === "yes",
             conditional: {
-              html: nameHtml
-            }
+              html: spoNameHtml
+            },
+            checked: data.isDangerousReport == "yes"
           },
           {
             value: "no",
             text: "No",
-            checked:data.isDangerousReport === "no"
+            checked: data.isDangerousReport == "no"
           }
         ]
     }) }}
