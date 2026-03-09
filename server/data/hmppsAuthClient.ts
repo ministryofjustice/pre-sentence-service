@@ -1,5 +1,4 @@
 import superagent from 'superagent'
-import querystring from 'querystring'
 import type TokenStore from './tokenStore'
 
 import logger from '../../logger'
@@ -16,8 +15,8 @@ function getApiClientTokenFromHmppsAuth(username?: string): Promise<superagent.R
   const clientToken = generateOauthClientToken(clientId, clientSecret)
 
   const authRequest = username
-    ? querystring.stringify({ grant_type: 'client_credentials', username })
-    : querystring.stringify({ grant_type: 'client_credentials' })
+    ? new URLSearchParams({ grant_type: 'client_credentials', username }).toString()
+    : new URLSearchParams({ grant_type: 'client_credentials' }).toString()
 
   logger.info(`HMPPS Auth request '${authRequest}'`)
   logger.info(`For client id '${clientId}'${username ? ` and user '${username}'` : ''}`)

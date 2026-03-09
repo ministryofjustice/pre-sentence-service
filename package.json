@@ -34,7 +34,7 @@
     "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots"
   },
   "engines": {
-    "node": "^18.17.1 || >=20.5.0",
+    "node": "^18.17.1 || >=20.5.0 || ^24.0.0",
     "npm": ">=9.6.7"
   },
   "jest": {
@@ -97,6 +97,7 @@
     ]
   },
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.817.0",
     "@aws-sdk/client-sts": "^3.817.0",
     "@aws-sdk/credential-provider-web-identity": "^3.817.0",
     "@eslint/compat": "^1.2.9",
@@ -108,7 +109,6 @@
     "@typescript-eslint/parser": "8.33.0",
     "agentkeepalive": "4.6.0",
     "applicationinsights": "3.7.0",
-    "aws-sdk": "2.1692.0",
     "body-parser": "2.2.0",
     "bunyan": "1.8.15",
     "bunyan-format": "0.2.1",
@@ -159,7 +159,7 @@
     "@types/govuk-frontend": "^5.9.0",
     "@types/http-errors": "2.0.4",
     "@types/jest": "29.5.14",
-    "@types/node": "22.15.24",
+    "@types/node": "^24.0.0",
     "@types/nunjucks": "3.2.6",
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
@@ -171,7 +171,7 @@
     "@types/swagger-ui-express": "4.1.8",
     "@types/uuid": "10.0.0",
     "concurrently": "9.1.2",
-    "cypress": "14.4.0",
+    "cypress": "^15.0.0",
     "cypress-multi-reporters": "2.0.5",
     "eslint-config-prettier": "10.1.5",
     "eslint-import-resolver-typescript": "4.4.1",
