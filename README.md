@@ -16,13 +16,12 @@ The easiest way to run the app is to use docker compose to create the service an
 `docker-compose up`
 
 ### Dependencies
-The app requires: 
+The app requires:
 * hmpps-auth - for authentication
 * redis - session store and token caching
 * postgres - database
 * gotenberg - PDF generator
 * localstack - Cloud service emulator
-* wproofreader - Spellchecking for rich text editor (CKEditor 5)
 
 ### Runing the app for development
 
@@ -36,11 +35,11 @@ To start the main services excluding the typescript app:
 
 Now in a separate terminal window or tab, at the project root.
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v18.12.0` (Hydrogen) LTS
+Install dependencies using `npm install`, ensuring you are using >= `Node v24.0.0` LTS
 
 And then, to build the assets and start the app with nodemon:
 
-`AWS_ENDPOINT=http://localhost:4566 WPROOFREADER_PORT=8081 npm run start:dev`
+`AWS_ENDPOINT=http://localhost:4566 npm run start:dev`
 
 Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
 
@@ -62,7 +61,7 @@ For local running, start a test db, redis, and wiremock instance by:
 
 Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
 
-`AWS_ENDPOINT=http://localhost:4566 WPROOFREADER_PORT=8081 npm run start-feature` (or `AWS_ENDPOINT=http://localhost:4566 npm run start-feature:dev` to run with nodemon)
+`AWS_ENDPOINT=http://localhost:4566 npm run start-feature` (or `AWS_ENDPOINT=http://localhost:4566 npm run start-feature:dev` to run with nodemon)
 
 Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
 

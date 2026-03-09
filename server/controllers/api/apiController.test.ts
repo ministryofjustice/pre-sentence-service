@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { SendMessageResult } from 'aws-sdk/clients/sqs'
+import { PublishCommandOutput } from '@aws-sdk/client-sns'
 import APIController from './apiController'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
@@ -56,7 +56,7 @@ describe('Route Handlers - API Controller', () => {
     jest.spyOn(mockedReportService, 'getReportById').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'updateFieldValues').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'deleteReport').mockResolvedValue(true)
-    jest.spyOn(mockedEventService, 'sendReportEvent').mockResolvedValue({} as SendMessageResult)
+    jest.spyOn(mockedEventService, 'sendReportEvent').mockResolvedValue({} as PublishCommandOutput)
 
     handler = new APIController(mockedReportService, mockedEventService)
 
