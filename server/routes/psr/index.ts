@@ -24,7 +24,7 @@ export default function Index(
   const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
-    return new LandingPageController(reportService).get(req, res)
+    return new LandingPageController(reportService, preSentenceToDeliusService).get(req, res)
   })
 
   get('/:reportId/defendant-details', (req, res) => {
@@ -42,46 +42,46 @@ export default function Index(
   })
 
   get('/:reportId/risk-analysis', (req, res) => {
-    return new RiskAnalysisController(reportService).get(req, res)
+    return new RiskAnalysisController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/risk-analysis', (req, res) => {
-    return new RiskAnalysisController(reportService).post(req, res)
+    return new RiskAnalysisController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/sources-of-information', (req, res) => {
-    return new SourcesOfInformationController(reportService).get(req, res)
+    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/sources-of-information', (req, res) => {
-    return new SourcesOfInformationController(reportService).post(req, res)
+    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/sources-of-information/edit', (req, res) => {
-    return new SourcesOfInformationController(reportService).get(req, res)
+    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/sources-of-information/edit', (req, res) => {
-    return new SourcesOfInformationController(reportService).post(req, res)
+    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/defendant-behaviour', (req, res) => {
-    return new DefendantBehaviourController(reportService).get(req, res)
+    return new DefendantBehaviourController(reportService, preSentenceToDeliusService).get(req, res)
   })
 
   post('/:reportId/defendant-behaviour', (req, res) => {
-    return new DefendantBehaviourController(reportService).post(req, res)
+    return new DefendantBehaviourController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/sentencing-proposal', (req, res) => {
-    return new SentencingProposalController(reportService).get(req, res)
+    return new SentencingProposalController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/sentencing-proposal', (req, res) => {
-    return new SentencingProposalController(reportService).post(req, res)
+    return new SentencingProposalController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService).get(req, res)
+    return new PreviewReportController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService).post(req, res)
+    return new PreviewReportController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   return router

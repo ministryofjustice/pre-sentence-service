@@ -51,11 +51,8 @@ export default class OffenceAnalysisController extends BaseController {
 
   override model = offenceAnalysisModel
 
-  private preSentenceToDeliusService?: PreSentenceToDeliusService
-
   constructor(reportService: import('../../services/reportService').default, preSentenceToDeliusService?: PreSentenceToDeliusService) {
-    super(reportService)
-    this.preSentenceToDeliusService = preSentenceToDeliusService
+    super(reportService, preSentenceToDeliusService)
   }
 
   protected override async beforeRender(req: Request, _res: Response): Promise<void> {
