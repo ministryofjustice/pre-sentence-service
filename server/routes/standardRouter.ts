@@ -13,12 +13,20 @@ import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
+import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
+import HmppsAuthClient from '../data/hmppsAuthClient'
+import { createRedisClient } from '../data/redisClient'
+import TokenStore from '../data/tokenStore'
 
 const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
   const reportService = new ReportService()
+
+  // Initialize PreSentenceToDeliusService
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+  const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
   if (!testMode) {
     router.use(setUpAuthentication())
@@ -36,7 +44,7 @@ export default function standardRouter(userService: UserService): Router {
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(psrRoutes(reportService))
+  router.use(psrRoutes(reportService, preSentenceToDeliusService))
   router.use(pdfRoutes(reportService))
 
   return router

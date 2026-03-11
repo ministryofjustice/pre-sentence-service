@@ -5,6 +5,7 @@ import BaseController from '../../controllers/psr/baseController'
 import LandingPageController from '../../controllers/psr/landingPageController'
 
 import ReportService from '../../services/reportService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
 import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
 import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
@@ -13,7 +14,10 @@ import SentencingProposalController from '../../controllers/psr/sentencing-propo
 import PreviewReportController from '../../controllers/psr/preview-report-controller'
 import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
 
-export default function Index(reportService: ReportService): Router {
+export default function Index(
+  reportService: ReportService,
+  preSentenceToDeliusService?: PreSentenceToDeliusService
+): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
   const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
@@ -24,17 +28,17 @@ export default function Index(reportService: ReportService): Router {
   })
 
   get('/:reportId/defendant-details', (req, res) => {
-    return new DefendantDetailsController(reportService).get(req, res)
+    return new DefendantDetailsController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/defendant-details', (req, res) => {
-    return new DefendantDetailsController(reportService).post(req, res)
+    return new DefendantDetailsController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/offence-analysis', (req, res) => {
-    return new OffenceAnalysisController(reportService).get(req, res)
+    return new OffenceAnalysisController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/offence-analysis', (req, res) => {
-    return new OffenceAnalysisController(reportService).post(req, res)
+    return new OffenceAnalysisController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/risk-analysis', (req, res) => {

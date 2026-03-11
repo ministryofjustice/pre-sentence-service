@@ -200,6 +200,11 @@ export default class SharedController {
     await this.updateFields(startDateFields, true)
   }
 
+  protected async beforeRender(req: Request, res: Response): Promise<void> {
+    // Hook for subclasses to override
+    // Called after report is loaded but before rendering
+  }
+
   public get = async (req: Request, res: Response): Promise<void> => {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
@@ -223,6 +228,9 @@ export default class SharedController {
     if (rep) {
       this.report = rep
       this.getStoredData()
+
+      // Call the hook for subclasses to add their data
+      await this.beforeRender(req, res)
 
       const persistentData: { name?: string; crn?: string } = this.getPersistentData()
 
@@ -255,9 +263,9 @@ export default class SharedController {
         data: {
           name: persistentData.name,
           ...this.defaultTemplateData,
-          ...this.data,
-          ...this.report,
           ...persistentData,
+          ...this.report,
+          ...this.data, // API data from beforeRender hook takes precedence
         },
       })
     } else {
