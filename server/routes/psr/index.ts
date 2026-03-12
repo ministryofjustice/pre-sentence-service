@@ -87,6 +87,6 @@ export default function Index(reportService: ReportService): Router {
   post('/:reportId/sign-your-report', (req, res) => {
     console.log('Radio value:', req.body.isDangerousReport)
     return new SignYourReportController(reportService).post(req, res)
-   })
+  })
   return router
 }

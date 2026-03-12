@@ -2,7 +2,6 @@ import BaseController from './baseController'
 import * as z from 'zod'
 import { Request } from 'express'
 
-
 // Helper to normalize checkbox input to always be an array
 // const normalizeToArray = (val: unknown): string[] => {
 //   if (Array.isArray(val)) return val
@@ -12,13 +11,9 @@ import { Request } from 'express'
 
 export const signYourReportModel = z
   .object({
-    signReportName: z
-      .string()
-      .min(1, 'You must sign your report before you submit'),
+    signReportName: z.string().min(1, 'You must sign your report before you submit'),
 
-    isDangerousReport: z
-      .string()
-      .min(1, 'Specify whether this is a dangerousness report'),
+    isDangerousReport: z.string().min(1, 'Specify whether this is a dangerousness report'),
 
     spoName: z.string().optional(),
   })
@@ -28,15 +23,10 @@ export const signYourReportModel = z
         code: 'custom',
         path: ['spoName'],
         message: 'Enter the name of the SPO who reviewed the report',
-      });
+      })
     }
-  });
-export const pageFields: Array<string> = [
-  'signReportName',
-  'isDangerousReport',
-  'spoName',
-]
-
+  })
+export const pageFields: Array<string> = ['signReportName', 'isDangerousReport', 'spoName']
 
 export default class SignYourReportController extends BaseController {
   override templatePath = 'sign-your-report'
@@ -52,12 +42,11 @@ export default class SignYourReportController extends BaseController {
     // then show error
     console.log('Radio value:', req.body.isDangerousReport)
     if (!req.body.isDangerousReport) {
-        elementsWithError.push("isDangerousReport")
+      elementsWithError.push('isDangerousReport')
     }
-    if (req.body.isDangerousReport === "yes" && !req.body.spoName) {
-      elementsWithError.push("spoName")
+    if (req.body.isDangerousReport === 'yes' && !req.body.spoName) {
+      elementsWithError.push('spoName')
     }
     return { elementsWithError }
   }
-
 }
