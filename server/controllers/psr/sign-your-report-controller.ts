@@ -10,12 +10,27 @@ import { Request } from 'express'
 //   return []
 // }
 
-const signYourReportModel = z.object({
-  signReportName: z.string().min(1, 'You must sign your report before you submit'),
-  isDangerousReport: z.string().min(1, 'Specify whether this is a dangerousness report'),
-  spoName: z.string().min(1, 'Enter the name of the SPO who reviewed the report'),
-})
+export const signYourReportModel = z
+  .object({
+    signReportName: z
+      .string()
+      .min(1, 'You must sign your report before you submit'),
 
+    isDangerousReport: z
+      .string()
+      .min(1, 'Specify whether this is a dangerousness report'),
+
+    spoName: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isDangerousReport === 'yes' && !data.spoName?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['spoName'],
+        message: 'Enter the name of the SPO who reviewed the report',
+      });
+    }
+  });
 export const pageFields: Array<string> = [
   'signReportName',
   'isDangerousReport',
@@ -26,9 +41,23 @@ export const pageFields: Array<string> = [
 export default class SignYourReportController extends BaseController {
   override templatePath = 'sign-your-report'
 
-  override redirectPath = 'preview-report'
+  // override redirectPath = 'sign-your-report'
 
   override model = signYourReportModel
 
   override pageFields = pageFields
+  override correctFormData = (req: Request) => {
+    const elementsWithError: string[] = []
+    // If isDangerouseReport is not selected
+    // then show error
+    console.log('Radio value:', req.body.isDangerousReport)
+    if (!req.body.isDangerousReport) {
+        elementsWithError.push("isDangerousReport")
+    }
+    if (req.body.isDangerousReport === "yes" && !req.body.spoName) {
+      elementsWithError.push("spoName")
+    }
+    return { elementsWithError }
+  }
+
 }

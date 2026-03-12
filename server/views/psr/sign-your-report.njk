@@ -11,7 +11,7 @@
 
 
 {% block reportForm %}
-<form method="post" data-autosave="true" novalidate>
+<form method="post" data-autosave="true" data-confirm-submit="true" novalidate>
 
     <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
@@ -53,44 +53,75 @@
     {% endset -%}
 
     {{ govukRadios({
-        id: "isDangerousReport",
-        name: "isDangerousReport",
-        fieldset: {
-          legend: {
-            text: "Is this a dangerous report?",
-            isPageHeading: false,
-            classes: "govuk-fieldset__legend--m"
+      idPrefix: "isDangerousReport",
+      name: "isDangerousReport",
+      fieldset: {
+        legend: {
+          text: "Is this a dangerous report?",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: "Select one option"
+      },
+      errorMessage: {
+        text: "Specify whether this is a dangerousness report"
+      } if 'isDangerousReport' in elementsWithError,
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          checked: data.isDangerousReport == "yes",
+          conditional: {
+            html: spoNameHtml
           }
         },
-        hint: {
-          text: "Select one option"
-        },
-        errorMessage: {
-            text: "Specify whether this is a dangerousness report"
-        } if 'isDangerousReport' in elementsWithError,
-        items: [
-          {
-            value: "yes",
-            text: "Yes",
-            conditional: {
-              html: spoNameHtml
-            },
-            checked: data.isDangerousReport == "yes"
-          },
-          {
-            value: "no",
-            text: "No",
-            checked: data.isDangerousReport == "no"
-          }
-        ]
+        {
+          value: "no",
+          text: "No",
+          checked: data.isDangerousReport == "no"
+        }
+      ]
     }) }}
 
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
-    <button class="govuk-button">Save and continue</button>
+    <button class="govuk-button govuk-!-margin-top-6">Sign and lock</button>
 
 
 </form>
+<div class="govuk-modal" id="confirm-modal" hidden>
+  <div class="govuk-modal__overlay"></div>
 
+  <div
+    class="govuk-modal__content govuk-width-container"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-title"
+    aria-describedby="confirm-message"
+  >
+
+    <h2 id="confirm-title" class="govuk-heading-m">
+      Are you ready to sign and lock your report?
+    </h2>
+
+    <p id="confirm-message" class="govuk-body">
+      You will not be able to edit your report after submitting.
+    </p>
+
+    <div class="govuk-button-group">
+
+      <button class="govuk-button" id="confirm-submit">
+        Continue
+      </button>
+
+      <button class="govuk-button govuk-button--secondary" id="cancel-submit">
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+</div>
 {% endblock %}
