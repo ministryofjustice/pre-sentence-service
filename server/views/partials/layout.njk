@@ -12,6 +12,8 @@
   <![endif]-->
 
   <script src="/assets/js/jquery.min.js"></script>
+  <script type="module" src="/assets/js/application.js"></script>
+
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
           integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
           crossorigin="anonymous"></script>
@@ -47,13 +49,60 @@
 
 
 {% block bodyStart %}
+  <script nonce="{{ nonce }}">document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
 {% endblock %}
 
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
-
   {% block additionalScripts %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector('form[data-confirm-submit="true"]')
+    const modal = document.getElementById("confirm-modal")
+
+    if (!form || !modal) return
+
+    const confirmBtn = document.getElementById("confirm-submit")
+    const cancelBtn = document.getElementById("cancel-submit")
+
+    let allowSubmit = false
+
+    form.addEventListener("submit", function (e) {
+
+      if (allowSubmit) {
+        return
+        }
+
+      e.preventDefault()
+
+      modal.hidden = false
+      confirmBtn.focus()
+
+    })
+
+    confirmBtn.addEventListener("click", function () {
+
+    allowSubmit = true
+    modal.hidden = true
+    form.submit()
+
+   })
+
+    cancelBtn.addEventListener("click", function () {
+
+      modal.hidden = true
+    })
+
+  })
+</script>
+
+  {# <script src="/assets/js/application.js" ></script>
+  <script>
+    window.GOVUKFrontend.initAll()
+  </script> #}
   {% endblock %}
 
 {% endblock %}
