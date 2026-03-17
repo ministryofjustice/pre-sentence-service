@@ -79,6 +79,30 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return `${day}/${month}/${year}`
   })
 
+  njkEnv.addFilter('formatDateTime', date => {
+    if (!date) return ''
+
+    let dateObj: Date
+
+    // Handle Date objects and ISO strings
+    if (date instanceof Date) {
+      dateObj = date
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date)
+    } else {
+      return ''
+    }
+
+    // Format as DD/MM/YYYY HH:mm
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const year = dateObj.getFullYear()
+    const hours = String(dateObj.getHours()).padStart(2, '0')
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0')
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`
+  })
+
   njkEnv.addFilter('calculateAge', dob => {
     if (!dob) return ''
 

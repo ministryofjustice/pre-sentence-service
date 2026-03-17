@@ -146,4 +146,12 @@ export default class ReportService {
   public async updateReportStatus(reportId: string, status: ReportStatus): Promise<ReportDetails | null> {
     return this.reportDetailsService.updateReportStatus(reportId, status)
   }
+
+  public async getAllReportsPaginated(page: number = 1, limit: number = 20): Promise<{ reports: ReportDetails[], total: number, totalPages: number, currentPage: number }> {
+    const result = await this.reportDetailsService.getAllReportsPaginated(page, limit)
+    return {
+      ...result,
+      currentPage: page,
+    }
+  }
 }
