@@ -36,6 +36,7 @@
       })
     }
 
+    let skipBeforeUnload = false
     const storeState = window.reportStoreInstance.getState()
     const questions = storeState.questions || {}
 
@@ -136,13 +137,20 @@
     const confirmBtn = document.getElementById('confirm-submit')
     const cancelBtn = document.getElementById('cancel-submit')
 
+    const handleLink = link => {
+      if (!link.target || link.target === '_self') {
+        window.location = link.href
+      } else {
+        window.open(link.href, link.target)
+      }
+    }
+
     let allowSubmit = false
 
     getForm().addEventListener('submit', event => {
       const form = getForm()
 
       if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
-
         event.preventDefault()
 
         if (modal) {
@@ -162,6 +170,7 @@
 
     if (confirmBtn) {
       confirmBtn.addEventListener('click', () => {
+        skipBeforeUnload = true
         allowSubmit = true
         modal.hidden = true
         getForm().submit()
@@ -187,13 +196,14 @@
           // Reset after a short delay to catch the beforeunload
           setTimeout(() => {
             isInternalNavigation = false
-          }, 100)
+          }, 500)
         }
       }
     })
 
     // Warn user only when closing tab or navigating to external site
     window.addEventListener('beforeunload', event => {
+      if (skipBeforeUnload) return
       const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
       if (hasUnsavedChanges && !isInternalNavigation) {

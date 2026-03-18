@@ -13,6 +13,7 @@ import SentencingProposalController from '../../controllers/psr/sentencing-propo
 import PreviewReportController from '../../controllers/psr/preview-report-controller'
 import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
 import SignYourReportController from '../../controllers/psr/sign-your-report-controller'
+import SubmitCompletedController from '../../controllers/psr/submit-completed-controller'
 
 export default function Index(reportService: ReportService): Router {
   const router = Router()
@@ -85,8 +86,14 @@ export default function Index(reportService: ReportService): Router {
     return new SignYourReportController(reportService).get(req, res)
   })
   post('/:reportId/sign-your-report', (req, res) => {
-    console.log('Radio value:', req.body.isDangerousReport)
     return new SignYourReportController(reportService).post(req, res)
   })
+  get('/:reportId/submit-completed', (req, res) => {
+    return new SubmitCompletedController(reportService).get(req, res)
+  })
+  post('/:reportId/submit-completed', (req, res) => {
+    return new SubmitCompletedController(reportService).post(req, res)
+  })
+
   return router
 }

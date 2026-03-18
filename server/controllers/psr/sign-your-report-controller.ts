@@ -31,7 +31,7 @@ export const pageFields: Array<string> = ['signReportName', 'isDangerousReport',
 export default class SignYourReportController extends BaseController {
   override templatePath = 'sign-your-report'
 
-  // override redirectPath = 'sign-your-report'
+  override redirectPath = 'submit-completed'
 
   override model = signYourReportModel
 
