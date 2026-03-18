@@ -137,13 +137,20 @@
     const confirmBtn = document.getElementById('confirm-submit')
     const cancelBtn = document.getElementById('cancel-submit')
 
+    const handleLink = link => {
+      if (!link.target || link.target === '_self') {
+        window.location = link.href
+      } else {
+        window.open(link.href, link.target)
+      }
+    }
+
     let allowSubmit = false
 
     getForm().addEventListener('submit', event => {
       const form = getForm()
 
       if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
-
         event.preventDefault()
 
         if (modal) {

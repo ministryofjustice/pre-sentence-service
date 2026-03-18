@@ -99,7 +99,6 @@ export default function Index(
     return new SignYourReportController(reportService).get(req, res)
   })
   post('/:reportId/sign-your-report', (req, res) => {
-    console.log('Radio value:', req.body.isDangerousReport)
     return new SignYourReportController(reportService).post(req, res)
   })
   get('/:reportId/submit-completed', (req, res) => {
