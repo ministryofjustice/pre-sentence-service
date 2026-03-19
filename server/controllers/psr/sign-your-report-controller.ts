@@ -2,13 +2,6 @@ import BaseController from './baseController'
 import * as z from 'zod'
 import { Request } from 'express'
 
-// Helper to normalize checkbox input to always be an array
-// const normalizeToArray = (val: unknown): string[] => {
-//   if (Array.isArray(val)) return val
-//   if (typeof val === 'string') return [val]
-//   return []
-// }
-
 export const signYourReportModel = z
   .object({
     signReportName: z.string().min(1, 'You must sign your report before you submit'),
@@ -38,8 +31,7 @@ export default class SignYourReportController extends BaseController {
   override pageFields = pageFields
   override correctFormData = (req: Request) => {
     const elementsWithError: string[] = []
-    // If isDangerouseReport is not selected
-    // then show error
+
     console.log('Radio value:', req.body.isDangerousReport)
     if (!req.body.isDangerousReport) {
       elementsWithError.push('isDangerousReport')
