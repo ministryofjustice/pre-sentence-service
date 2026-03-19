@@ -89,6 +89,7 @@ describe('DefendantDetailsController', () => {
 
     mockRequest = {
       params: { reportId: 'report-123' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       session: {} as any,
       path: '/psr/report-123/defendant-details',
       query: {},

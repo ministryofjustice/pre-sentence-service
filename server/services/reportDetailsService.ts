@@ -72,7 +72,10 @@ export default class ReportDetailsService {
       })
   }
 
-  public async getAllReportsPaginated(page: number = 1, limit: number = 20): Promise<{ reports: ReportDetails[], total: number, totalPages: number }> {
+  public async getAllReportsPaginated(
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{ reports: ReportDetails[]; total: number; totalPages: number }> {
     const reportRepository = getConnection().getRepository(ReportDetails)
     const skip = (page - 1) * limit
 

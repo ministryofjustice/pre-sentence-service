@@ -92,9 +92,7 @@ export default {
       },
     }),
 
-  stubDefendantDetailsNoFixedAbode: (
-    psrUuid = 'b7b8b7b8-b7b8-b7b8-b7b8-b7b8b7b8b7b8'
-  ): SuperAgentRequest =>
+  stubDefendantDetailsNoFixedAbode: (psrUuid = 'b7b8b7b8-b7b8-b7b8-b7b8-b7b8b7b8b7b8'): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',

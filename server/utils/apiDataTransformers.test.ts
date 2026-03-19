@@ -6,13 +6,7 @@ import {
   transformOffence,
   transformOffenceDetails,
 } from './apiDataTransformers'
-import type {
-  Name,
-  Address,
-  DefendantDetails,
-  Offence,
-  OffenceDetails,
-} from '../@types/preSentenceToDelius'
+import type { Name, Address, DefendantDetails, Offence, OffenceDetails } from '../@types/preSentenceToDelius'
 
 describe('apiDataTransformers', () => {
   describe('transformName', () => {

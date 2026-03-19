@@ -1,7 +1,7 @@
 import fs from 'fs'
 import axios from 'axios'
 import * as readline from 'readline'
-import { createConnection } from 'typeorm'
+import { createConnection, Connection } from 'typeorm'
 import config from '../server/config'
 import PersonDetails from '../server/repositories/entities/personDetails'
 import ReportDetails from '../server/repositories/entities/reportDetails'
@@ -139,7 +139,7 @@ async function createReport(
   guid: string,
   defendantDetails: DeliusDefendantDetails,
   offenceDetails: DeliusOffenceDetails | null,
-  connection: any,
+  connection: Connection,
   verbose = false
 ) {
   const reportType = 'short-format' // Assuming all are short-format reports
@@ -199,10 +199,9 @@ async function createReport(
     if (verbose) console.log(`  🔍 Upserting person with CRN: ${defendantDetails.crn}`)
 
     // Check if person exists
-    const existingPerson = await connection.query(
-      `SELECT id FROM presentenceservice.person_details WHERE crn = $1`,
-      [defendantDetails.crn]
-    )
+    const existingPerson = await connection.query(`SELECT id FROM presentenceservice.person_details WHERE crn = $1`, [
+      defendantDetails.crn,
+    ])
 
     let personId: number
 
@@ -272,10 +271,9 @@ async function createReport(
     if (verbose) console.log(`  ✓ Upserted person record with ID: ${personId}`)
 
     // Check if report exists
-    const existingReport = await connection.query(
-      `SELECT id FROM presentenceservice.report_details WHERE id = $1`,
-      [guid]
-    )
+    const existingReport = await connection.query(`SELECT id FROM presentenceservice.report_details WHERE id = $1`, [
+      guid,
+    ])
 
     if (existingReport.length > 0) {
       // Update existing report
@@ -346,7 +344,12 @@ async function createReport(
 }
 
 // Function to process a single GUID
-async function processGUID(guid: string, connection: any, stats: MigrationStats, verbose = false): Promise<void> {
+async function processGUID(
+  guid: string,
+  connection: Connection,
+  stats: MigrationStats,
+  verbose = false
+): Promise<void> {
   try {
     if (verbose) console.log(`\n📋 Processing GUID: ${guid}`)
 
@@ -401,11 +404,15 @@ async function processGUID(guid: string, connection: any, stats: MigrationStats,
 }
 
 // Function to process GUIDs in batches
-async function processBatch(guids: string[], connection: any, stats: MigrationStats, verbose = false): Promise<void> {
+async function processBatch(
+  guids: string[],
+  connection: Connection,
+  stats: MigrationStats,
+  verbose = false
+): Promise<void> {
   const promises = guids.map(guid => processGUID(guid, connection, stats, verbose))
   await Promise.all(promises)
 }
-
 
 // Main migration function
 async function migrateDeliusReports(limit?: number) {
@@ -420,9 +427,7 @@ async function migrateDeliusReports(limit?: number) {
   const allGuids = readGUIDs(CSV_FILE_PATH)
   const guids = limit ? allGuids.slice(0, limit) : allGuids
 
-  console.log(
-    `📁 Loaded ${allGuids.length} GUIDs from CSV${limit ? ` (processing ${guids.length} records)` : ''}\n`
-  )
+  console.log(`📁 Loaded ${allGuids.length} GUIDs from CSV${limit ? ` (processing ${guids.length} records)` : ''}\n`)
 
   if (guids.length === 0) {
     console.log('❌ No GUIDs found in CSV file')

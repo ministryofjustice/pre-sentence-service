@@ -51,7 +51,10 @@ export default class OffenceAnalysisController extends BaseController {
 
   override model = offenceAnalysisModel
 
-  constructor(reportService: import('../../services/reportService').default, preSentenceToDeliusService?: PreSentenceToDeliusService) {
+  constructor(
+    reportService: import('../../services/reportService').default,
+    preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {
     super(reportService, preSentenceToDeliusService)
   }
 

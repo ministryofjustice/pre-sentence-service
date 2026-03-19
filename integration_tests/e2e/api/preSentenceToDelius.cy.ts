@@ -11,10 +11,6 @@ context('Pre-sentence to Delius API', () => {
 
     it('should successfully fetch defendant details', () => {
       cy.task('stubDefendantDetails', psrUuid)
-
-      // This is a placeholder test - you would need to create a route/endpoint
-      // in your application that calls the PreSentenceToDeliusService.getDefendantDetails()
-      // For now, we're just verifying the mock is set up correctly
     })
 
     it('should handle defendant details not found', () => {
@@ -42,9 +38,6 @@ context('Pre-sentence to Delius API', () => {
 
     it('should successfully fetch offences', () => {
       cy.task('stubOffences', crn)
-
-      // This is a placeholder test - you would need to create a route/endpoint
-      // in your application that calls the PreSentenceToDeliusService.getOffences()
     })
 
     it('should handle offences not found', () => {

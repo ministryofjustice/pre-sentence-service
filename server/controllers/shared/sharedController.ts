@@ -103,7 +103,10 @@ export default class SharedController {
 
   protected preSentenceToDeliusService?: PreSentenceToDeliusService
 
-  constructor(protected readonly reportService: ReportService, preSentenceToDeliusService?: PreSentenceToDeliusService) {
+  constructor(
+    protected readonly reportService: ReportService,
+    preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {
     this.preSentenceToDeliusService = preSentenceToDeliusService
   }
 
