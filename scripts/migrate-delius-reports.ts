@@ -451,7 +451,9 @@ async function migrateDeliusReports(limit?: number) {
             rejectUnauthorized: true,
             ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
           }
-        : false,
+        : {
+            rejectUnauthorized: false, // Allow SSL without certificate verification for local development
+          },
     entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
     synchronize: false,
     logging: false,
