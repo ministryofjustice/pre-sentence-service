@@ -231,7 +231,7 @@ export default class SharedController {
     await this.updateFields(startDateFields, true)
   }
 
-  protected async beforeRender(req: Request, res: Response): Promise<void> {
+  protected async beforeRender(_req: Request, _res: Response): Promise<void> {
     // Hook for subclasses to override
     // Called after report is loaded but before rendering
   }

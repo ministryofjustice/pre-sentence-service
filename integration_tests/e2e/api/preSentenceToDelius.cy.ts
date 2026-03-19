@@ -34,7 +34,6 @@ context('Pre-sentence to Delius API', () => {
 
   describe('Offences Endpoint', () => {
     const crn = 'X320741'
-    const eventNumber = 1
 
     it('should successfully fetch offences', () => {
       cy.task('stubOffences', crn)
