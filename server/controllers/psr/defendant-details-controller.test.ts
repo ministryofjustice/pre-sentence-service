@@ -127,7 +127,6 @@ describe('DefendantDetailsController', () => {
             'address-district': 'Camden',
             'address-county': 'Greater London',
             'address-postcode': 'NW1 2AB',
-            apiDataAvailable: true,
           }),
         })
       )
@@ -145,7 +144,6 @@ describe('DefendantDetailsController', () => {
           data: expect.objectContaining({
             name: 'John Doe',
             crn: 'X123456',
-            apiDataAvailable: false,
           }),
         })
       )
