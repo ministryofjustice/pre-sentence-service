@@ -1,6 +1,9 @@
 import BaseController from './baseController'
 import { Request, Response } from 'express'
 import * as z from 'zod'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import { transformOffenceDetails } from '../../utils/apiDataTransformers'
+import logger from '../../../logger'
 
 const offenceAnalysisModel = z
   .object({
@@ -47,6 +50,51 @@ export default class OffenceAnalysisController extends BaseController {
   override pageFields = pageFields
 
   override model = offenceAnalysisModel
+
+  constructor(
+    reportService: import('../../services/reportService').default,
+    preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {
+    super(reportService, preSentenceToDeliusService)
+  }
+
+  protected override async beforeRender(req: Request, _res: Response): Promise<void> {
+    const reportId = req.params.reportId
+
+    // Try to fetch offence details from the API if service is available
+    if (this.preSentenceToDeliusService && reportId && this.report) {
+      try {
+        const crn = this.report.person?.crn
+        const eventNumber = this.report.origin ? parseInt(this.report.origin, 10) : undefined
+
+        if (crn && eventNumber) {
+          logger.info({ reportId, crn, eventNumber }, 'Fetching offence details from Pre-Sentence to Delius API')
+          const apiData = await this.preSentenceToDeliusService.getOffences(crn, eventNumber)
+
+          // Transform API data to application format
+          const transformedOffences = transformOffenceDetails(apiData)
+
+          // Store the offence data for template rendering
+          this.data = {
+            ...this.data,
+            offencesData: transformedOffences,
+            apiOffencesAvailable: true,
+          }
+
+          logger.info({ reportId, crn, eventNumber }, 'Successfully fetched offence details from API')
+        } else {
+          logger.warn({ reportId, crn, eventNumber }, 'Missing CRN or event number for fetching offences')
+        }
+      } catch (error) {
+        logger.warn({ reportId, error }, 'Failed to fetch offence details from API, using database data')
+        // Continue without API offence data - error is logged but not thrown
+        this.data = {
+          ...this.data,
+          apiOffencesAvailable: false,
+        }
+      }
+    }
+  }
 
   public async post(req: Request, res: Response): Promise<void> {
     const body = req.body as Record<string, string>
