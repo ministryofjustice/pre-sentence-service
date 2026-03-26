@@ -12,6 +12,7 @@ import DefendantBehaviourController from '../../controllers/psr/defendant-behavi
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
 import PreviewReportController from '../../controllers/psr/preview-report-controller'
 import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
+import PdfController from '../../controllers/pdf/pdfController'
 
 export default function Index(reportService: ReportService): Router {
   const router = Router()
@@ -78,6 +79,14 @@ export default function Index(reportService: ReportService): Router {
   })
   post('/:reportId/preview-report', (req, res) => {
     return new PreviewReportController(reportService).post(req, res)
+  })
+
+  get('/:reportId/draft-pdf', (req, res) => {
+    return new PdfController(reportService).renderPdf(req, res, true)
+  })
+
+  get('/:reportId/pdf', (req, res) => {
+    return new PdfController(reportService).renderPdf(req, res, false)
   })
 
   return router
