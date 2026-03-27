@@ -33,6 +33,7 @@
     "clean-db": "node ./bin/clean-db",
     "reset-database": "npm run build && node dist/scripts/reset-database.js",
     "seed-test-data": "npm run build && node dist/scripts/seed-test-data.js",
+    "migrate-delius-reports": "npm run build && node dist/scripts/migrate-delius-reports.js",
     "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots"
   },
   "engines": {
@@ -111,6 +112,7 @@
     "@typescript-eslint/parser": "8.33.0",
     "agentkeepalive": "4.6.0",
     "applicationinsights": "3.7.0",
+    "axios": "^1.13.6",
     "body-parser": "2.2.0",
     "bunyan": "1.8.15",
     "bunyan-format": "0.2.1",
@@ -134,7 +136,7 @@
     "jquery": "3.7.1",
     "jwks-rsa": "3.2.0",
     "jwt-decode": "4.0.0",
-    "nhsapp-frontend": "^3.1.0",
+    "nhsapp-frontend": "^5.0.3",
     "nocache": "4.0.0",
     "nunjucks": "3.2.4",
     "passport": "0.7.0",
@@ -148,8 +150,8 @@
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.24",
     "uuid": "11.1.0",
-    "zustand": "^4.5.4",
-    "zod": "^4.0.17"
+    "zod": "^4.0.17",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/bunyan": "1.8.11",
@@ -161,7 +163,7 @@
     "@types/govuk-frontend": "^5.9.0",
     "@types/http-errors": "2.0.4",
     "@types/jest": "29.5.14",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.12.0",
     "@types/nunjucks": "3.2.6",
     "@types/passport": "1.0.17",
     "@types/passport-jwt": "4.0.1",
@@ -184,7 +186,7 @@
     "jest-html-reporter": "4.1.0",
     "jest-junit": "16.0.0",
     "jsonwebtoken": "9.0.2",
-    "lint-staged": "16.1.0",
+    "lint-staged": "16.4.0",
     "mocha-junit-reporter": "2.2.1",
     "nock": "14.0.4",
     "nodemon": "3.1.10",

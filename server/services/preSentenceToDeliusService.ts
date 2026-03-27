@@ -2,6 +2,7 @@ import Agent, { HttpsAgent } from 'agentkeepalive'
 import superagent from 'superagent'
 
 import type HmppsAuthClient from '../data/hmppsAuthClient'
+import type { DefendantDetails, OffenceDetails } from '../@types/preSentenceToDelius'
 
 import config from '../config'
 import logger from '../../logger'
@@ -117,5 +118,15 @@ export default class PreSentenceToDeliusService {
   async getContext(reportId: string) {
     const path = `${this.apiUrl}/context/${reportId}`
     return this.client({ path })
+  }
+
+  async getDefendantDetails(psrUuid: string): Promise<DefendantDetails> {
+    const path = `${this.apiUrl}/report/${psrUuid}/defendant-details`
+    return this.client({ path }) as Promise<DefendantDetails>
+  }
+
+  async getOffences(crn: string, eventNumber: number): Promise<OffenceDetails> {
+    const path = `${this.apiUrl}/case/${crn}/event/${eventNumber}/offences`
+    return this.client({ path }) as Promise<OffenceDetails>
   }
 }

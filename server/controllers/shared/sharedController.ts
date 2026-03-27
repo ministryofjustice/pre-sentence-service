@@ -4,6 +4,9 @@ import { ValidatedForm, validateForm } from '../../utils/formValidation'
 
 import ReportDetails from '../../repositories/entities/reportDetails'
 import ReportService, { IFieldValue } from '../../services/reportService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import { transformDefendantDetails } from '../../utils/apiDataTransformers'
+import logger from '../../../logger'
 
 import {
   buildSourcesOfInformation,
@@ -98,7 +101,14 @@ export default class SharedController {
 
   correctFormData!: (req: Request) => object
 
-  constructor(protected readonly reportService: ReportService) {}
+  protected preSentenceToDeliusService?: PreSentenceToDeliusService
+
+  constructor(
+    protected readonly reportService: ReportService,
+    preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {
+    this.preSentenceToDeliusService = preSentenceToDeliusService
+  }
 
   protected renderTemplate(res: Response, templateValues: TemplateValues<z.infer<typeof this.model>>) {
     if (this.templatePath === 'risk-analysis') {
@@ -135,8 +145,29 @@ export default class SharedController {
     }
   }
 
-  private getPersistentData = (): object => {
+  private getPersistentData = async (reportId?: string): Promise<object> => {
     const data: { [key: string]: unknown } = {}
+
+    // Try to fetch from API first if service is available
+    if (this.preSentenceToDeliusService && reportId) {
+      try {
+        logger.info({ reportId }, 'Fetching defendant details from Pre-Sentence to Delius API for persistent data')
+        const apiData = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
+        const transformedData = transformDefendantDetails(apiData)
+
+        // Return API data
+        logger.info({ reportId }, 'Successfully fetched defendant details from API for persistent data')
+        return transformedData
+      } catch (error) {
+        logger.warn(
+          { reportId, error },
+          'Failed to fetch defendant details from API for persistent data, falling back to database'
+        )
+        // Fall through to database fallback
+      }
+    }
+
+    // Fallback to database data
     if (this.report && this.report.person) {
       // Extract persistent data from person details
       data.crn = this.report.person.crn
@@ -200,6 +231,11 @@ export default class SharedController {
     await this.updateFields(startDateFields, true)
   }
 
+  protected async beforeRender(_req: Request, _res: Response): Promise<void> {
+    // Hook for subclasses to override
+    // Called after report is loaded but before rendering
+  }
+
   public get = async (req: Request, res: Response): Promise<void> => {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
@@ -224,7 +260,10 @@ export default class SharedController {
       this.report = rep
       this.getStoredData()
 
-      const persistentData: { name?: string; crn?: string } = this.getPersistentData()
+      // Call the hook for subclasses to add their data
+      await this.beforeRender(req, res)
+
+      const persistentData: { name?: string; crn?: string } = await this.getPersistentData(reportId)
 
       if (!req.session?.isAllowedAccess) {
         const inclusionExclusionCheck = await this.checkInclusionExclusion(
@@ -255,9 +294,9 @@ export default class SharedController {
         data: {
           name: persistentData.name,
           ...this.defaultTemplateData,
-          ...this.data,
-          ...this.report,
           ...persistentData,
+          ...this.report,
+          ...this.data, // API data from beforeRender hook takes precedence
         },
       })
     } else {
@@ -311,7 +350,7 @@ export default class SharedController {
       if (this.additionalPostAction) {
         this.data = {
           ...this.data,
-          ...this.getPersistentData(),
+          ...(await this.getPersistentData(reportIdParam)),
         }
         await this.additionalPostAction()
       }
@@ -328,7 +367,7 @@ export default class SharedController {
         data: {
           ...this.data,
           ...req.body,
-          ...this.getPersistentData(),
+          ...(await this.getPersistentData(reportIdParam)),
         },
         formValidation: validatedForm,
       })
