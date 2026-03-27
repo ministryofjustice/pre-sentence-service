@@ -43,7 +43,7 @@ export default function standardRouter(userService: UserService): Router {
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(psrRoutes(reportService))
+  router.use(psrRoutes(reportService, preSentenceToDeliusService))
 
   return router
 }
