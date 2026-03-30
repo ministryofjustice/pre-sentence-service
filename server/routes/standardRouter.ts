@@ -9,7 +9,6 @@ import setUpAuthentication from '../middleware/setUpAuthentication'
 import authorisationMiddleware from '../middleware/authorisationMiddleware'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import psrRoutes from './psr'
-import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
@@ -45,7 +44,6 @@ export default function standardRouter(userService: UserService): Router {
 
   router.use(populateCurrentUser(userService))
   router.use(psrRoutes(reportService, preSentenceToDeliusService))
-  router.use(pdfRoutes(reportService))
 
   return router
 }
