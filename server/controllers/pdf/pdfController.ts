@@ -1,43 +1,77 @@
 import { Request, Response } from 'express'
-import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
+import {
+  configureReportData,
+  getDraftHeader,
+  getDraftFooter,
+  getFooter,
+  getHeader,
+  pdfOptions,
+} from '../../utils/pdfFormat'
 import logger from '../../../logger'
 import config from '../../config'
 import ReportService from '../../services/reportService'
 import ReportDetails from '../../repositories/entities/reportDetails'
+import path from 'path'
+import fs from 'fs'
 
 export default class PdfController {
   constructor(protected readonly reportService: ReportService) {}
 
-  preview = async (req: Request, res: Response): Promise<void> => {
+  renderPdf = async (req: Request, res: Response, draft: boolean): Promise<void> => {
     const { reportId } = req.params
-    const report: ReportDetails | null = await this.reportService.getReportById(reportId)
-    if (report) {
-      const reportData: { [key: string]: unknown } = { ...configureReportData(report), preview: true }
-      const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion as string })
-      logger.info(`Request to preview ${reportData.reportType} report ${reportId}`)
-      res.render(`reports/${reportData.reportType}`, { data: reportData, headerHtml, footerHtml })
-    } else {
-      res.redirect(`/${req.params.reportId}/not-found`)
-    }
-  }
 
-  renderPdf = async (req: Request, res: Response): Promise<void> => {
-    const { reportId } = req.params
     const report: ReportDetails | null = await this.reportService.getReportById(reportId)
     logger.info(`Request to print PDF for report ${reportId}`)
 
     if (report) {
       const reportData = configureReportData(report)
-      const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion as string })
+      const now = new Date()
+      const dob = new Date(reportData.dateOfBirth as string)
+      const birthdayThisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate())
+      const ageOffset = now < birthdayThisYear ? 1 : 0
+      const ageInYears = now.getFullYear() - dob.getFullYear() - ageOffset
+      const riskToPublic: string = reportData.riskToPublic as string
+      const riskToChildren: string = reportData.riskToChildren as string
+      const riskToKnownAdults: string = reportData.riskToKnownAdults as string
+      const riskToStaff: string = reportData.riskToStaff as string
+
+      const pdfData = {
+        ...reportData,
+        riskToPublic: riskToPublic.replace('_', ' '),
+        riskToChildren: riskToChildren.replace('_', ' '),
+        riskToKnownAdults: riskToKnownAdults.replace('_', ' '),
+        riskToStaff: riskToStaff.replace('_', ' '),
+        ageInYears: ageInYears,
+      }
+
+      const headerHtml = draft ? getDraftHeader() : getHeader()
+      const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })
+
       // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
       const { preSentenceUrl } = config.apis.gotenberg
       const filename = `${reportData.reportType}_${reportId}.pdf`
+
+      const armsPath = path.join(__dirname, '../../views/assets/images/HMPPS_Lesser_Arms_Stacked_HEX.png')
+      const purplePath = path.join(__dirname, '../../views/assets/images/ProbationPurple.png')
+      const armsB64 = fs.readFileSync(armsPath).toString('base64')
+      const purpleB64 = fs.readFileSync(purplePath).toString('base64')
+
       res.renderPDF(
         `reports/${reportData.reportType}`,
-        { preSentenceUrl, data: reportData },
-        { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
+        { preSentenceUrl, data: pdfData, images: { armsB64, purpleB64 } },
+        {
+          filename,
+          pdfOptions: {
+            ...pdfOptions,
+            printBackground: true,
+            headerHtml,
+            footerHtml,
+            embeddedFiles: [
+              { path: armsPath, as: 'arms.png' },
+              { path: purplePath, as: 'purple.png' },
+            ],
+          },
+        }
       )
     } else {
       res.redirect(`/${req.params.reportId}/not-found`)

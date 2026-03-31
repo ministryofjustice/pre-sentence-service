@@ -56,8 +56,6 @@ generic-service:
       DB_USER: "database_username"
       DB_PASS: "database_password"
       DB_SERVER: "rds_instance_address"
-    pre-sentence-service-wproofreader:
-      WP_LICENSE_KEY: "WP_LICENSE_KEY"
     hmpps-domain-events-topic:
       TOPIC_ARN: "topic_arn"
 
@@ -99,53 +97,6 @@ gotenberg:
     runAsUser: 1001
     privileged: false
     runAsNonRoot: true
-
-# wproofreader:
-  # nameOverride: wproofreader
-  # replicaCount: 1
-
-  # image:
-  #   repository: ghcr.io/ministryofjustice/pre-sentence-service-wproofreader
-  #   tag: latest
-  #   port: 8081
-
-  # ingress:
-  #   v1_2_enabled: true
-  #   v0_47_enabled: false
-  #   enabled: true
-  #   tlsSecretName: pre-sentence-service-cert
-  #   path: /
-
-  # resources:
-  #   requests:
-  #     cpu: "1000m"
-  #     memory: "2Gi"
-  #   limits:
-  #     cpu: "2000m"
-  #     memory: "4Gi"
-
-  # livenessProbe:
-  #   httpGet:
-  #     path: /wscservice/api?cmd=ver
-  #   periodSeconds: 30
-  #   initialDelaySeconds: 60
-  #   timeoutSeconds: 20
-  #   failureThreshold: 10
-
-  # readinessProbe:
-  #   httpGet:
-  #     path: /wscservice/api?cmd=ver
-  #   periodSeconds: 20
-  #   initialDelaySeconds: 60
-  #   timeoutSeconds: 30
-  #   failureThreshold: 15
-
-  # podSecurityContext:
-  #   fsGroup: 2000
-
-  # securityContext:
-  #   runAsUser: 2000
-  #   runAsNonRoot: true
 
 #generic-prometheus-alerts:
 #  targetApplication: pre-sentence-service

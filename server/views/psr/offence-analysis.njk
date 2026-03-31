@@ -16,42 +16,55 @@
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-2">Review offences from NDelius</h2>
-  <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it. 
+  <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it.
   Any changes you make in NDelius will be updated after you refresh a page in this PSR.</p>
 
-  {{ govukTable({
-    head: [
-      { text: "Offence",
-      classes: "govuk-!-width-one-half" },
-      { text: "Date of offence" }
-    ],
-    rows: [
-      [
-        {
-          html: "<strong class='govuk-!-font-weight-bold'>Criminal damage</strong><br>" +
-          govukTag({
-            text: "Main offence",
-            classes: "govuk-tag--blue govuk-!-margin-left-2"
-          }),
-            classes: "designer-row"
-        },
-        { text: "12/04/2024",
-            classes: "designer-row"}
+  {% if data.apiOffencesAvailable and data.offencesData %}
+    {% set offenceRows = [] %}
+
+    {# Add main offence #}
+    {% set mainOffenceHtml %}
+      <strong class='govuk-!-font-weight-bold'>{{ data.offencesData.mainOffence.description }}</strong>
+      <br><span class='govuk-hint govuk-!-font-size-16'>{{ data.offencesData.mainOffence.code }}</span>
+      {{ govukTag({
+        text: "Main offence",
+        classes: "govuk-tag--blue govuk-!-margin-left-2"
+      }) }}
+    {% endset %}
+    {% set offenceRows = (offenceRows.push([
+      { html: mainOffenceHtml },
+      { text: data.offencesData.mainOffence.date }
+    ]), offenceRows) %}
+
+    {# Add additional offences #}
+    {% for offence in data.offencesData.additionalOffences %}
+      {% set offenceHtml %}
+        <strong class='govuk-!-font-weight-bold'>{{ offence.description }}</strong>
+        <br><span class='govuk-hint govuk-!-font-size-16'>{{ offence.code }}</span>
+      {% endset %}
+      {% set offenceRows = (offenceRows.push([
+        { html: offenceHtml },
+        { text: offence.date }
+      ]), offenceRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+      head: [
+        { text: "Offence", classes: "govuk-!-width-one-half" },
+        { text: "Date of offence" }
       ],
-      [
-        { text: "Wounding or grievous bodily harm with intent to cause grievous bodily harm" },
-        { text: "12/04/2024" }
-      ],
-      [
-        { text: "Assault on emergency worker" },
-        { text: "12/04/2024" }
-      ],
-      [
-        { text: "Possession of class A drugs" },
-        { text: "12/04/2024" }
-      ]
-    ]
-  }) }}
+      rows: offenceRows
+    }) }}
+  {% else %}
+    {# Fallback to database/hardcoded data if API data not available #}
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-visually-hidden">Warning</span>
+        Unable to fetch offence details from NDelius. Please refresh the page or check NDelius directly.
+      </strong>
+    </div>
+  {% endif %}
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
