@@ -15,6 +15,7 @@ import PreviewReportController from '../../controllers/psr/preview-report-contro
 import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
 import SignYourReportController from '../../controllers/psr/sign-your-report-controller'
 import PdfController from '../../controllers/pdf/pdfController'
+import SubmitCompletedController from '../../controllers/psr/submit-completed-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -100,7 +101,12 @@ export default function Index(
   post('/:reportId/sign-your-report', (req, res) => {
     return new SignYourReportController(reportService).post(req, res)
   })
-
+  get('/:reportId/submit-completed', (req, res) => {
+    return new SubmitCompletedController(reportService).get(req, res)
+  })
+  post('/:reportId/submit-completed', (req, res) => {
+    return new SubmitCompletedController(reportService).post(req, res)
+  })
 
   return router
 }
