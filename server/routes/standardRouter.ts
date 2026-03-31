@@ -9,16 +9,23 @@ import setUpAuthentication from '../middleware/setUpAuthentication'
 import authorisationMiddleware from '../middleware/authorisationMiddleware'
 import populateCurrentUser from '../middleware/populateCurrentUser'
 import psrRoutes from './psr'
-import pdfRoutes from './pdf'
 
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
+import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
+import HmppsAuthClient from '../data/hmppsAuthClient'
+import { createRedisClient } from '../data/redisClient'
+import TokenStore from '../data/tokenStore'
 
 const testMode = process.env.NODE_ENV === 'test'
 
 export default function standardRouter(userService: UserService): Router {
   const router = Router({ mergeParams: true })
   const reportService = new ReportService()
+
+  // Initialize PreSentenceToDeliusService
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+  const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
   if (!testMode) {
     router.use(setUpAuthentication())
@@ -29,9 +36,6 @@ export default function standardRouter(userService: UserService): Router {
 
   router.use((req, res, next) => {
     res.locals.nonce = config.nonce
-    res.locals.wproofreader_protocol = config.apis.wproofreader.serviceProtocol
-    res.locals.wproofreader_host = config.apis.wproofreader.serviceHost
-    res.locals.wproofreader_port = config.apis.wproofreader.servicePort
     if (typeof req.csrfToken === 'function') {
       res.locals.csrfToken = req.csrfToken()
     }
@@ -39,8 +43,7 @@ export default function standardRouter(userService: UserService): Router {
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(psrRoutes(reportService))
-  router.use(pdfRoutes(reportService))
+  router.use(psrRoutes(reportService, preSentenceToDeliusService))
 
   return router
 }

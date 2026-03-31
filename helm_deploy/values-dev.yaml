@@ -16,18 +16,9 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
-    WPROOFREADER_PROTOCOL: 'https'
-    WPROOFREADER_HOST: 'pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk'
-    WPROOFREADER_PORT: null
     DB_RUN_MIGRATIONS: true
 
   allowlist: null
 
 gotenberg:
   replicaCount: 1
-
-# wproofreader:
-
-  # ingress:
-  #   host: pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk
-  #   tlsSecretName: court-probation-dev-cert-secret

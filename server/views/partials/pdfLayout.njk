@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title or "PDF" }}</title>
+
+  {% block stylesheets %}{% endblock %}
+
+
+  <style>
+    {% include "assets/stylesheets/pdf.css" %}
+    {% include "assets/stylesheets/local.css" %}
+  </style>
+
+</head>
+
+<body class="govuk-template__body">
+  {% block header %}{% endblock %}
+  {% block content %}{% endblock %}
+</body>
+</html>

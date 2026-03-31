@@ -1,5 +1,5 @@
-import { SNS, TokenFileWebIdentityCredentials } from 'aws-sdk'
-import { SendMessageResult } from 'aws-sdk/clients/sqs'
+import { SNSClient, PublishCommand, PublishCommandOutput } from '@aws-sdk/client-sns'
+import { fromTokenFile } from '@aws-sdk/credential-provider-web-identity'
 import logger from '../../logger'
 import config from '../config'
 
@@ -31,13 +31,19 @@ export interface IDomainEvent {
 }
 
 export default class EventService {
-  private sns = new SNS({
-    endpoint: config.aws.sns.endpoint,
+  private snsClient = new SNSClient({
+    endpoint: config.aws.sns.endpoint || undefined,
     region: config.aws.sns.region,
-    credentials: new TokenFileWebIdentityCredentials(),
+    credentials:
+      process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE
+        ? fromTokenFile({
+            roleArn: process.env.AWS_ROLE_ARN,
+            webIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE,
+          })
+        : undefined,
   })
 
-  public sendReportEvent = async (reportEventData: IReportEventData): Promise<SendMessageResult> => {
+  public sendReportEvent = async (reportEventData: IReportEventData): Promise<PublishCommandOutput> => {
     const domainEvent: IDomainEvent = {
       eventType: `pre-sentence.report.${reportEventData.reportStatus}`,
       version: config.aws.sns.eventVersion,
@@ -48,21 +54,21 @@ export default class EventService {
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 
-    let result!: SendMessageResult
+    let result!: PublishCommandOutput
 
     try {
-      result = await this.sns
-        .publish({
-          Message: JSON.stringify(domainEvent),
-          MessageAttributes: {
-            eventType: {
-              DataType: 'String',
-              StringValue: domainEvent.eventType,
-            },
+      const command = new PublishCommand({
+        Message: JSON.stringify(domainEvent),
+        MessageAttributes: {
+          eventType: {
+            DataType: 'String',
+            StringValue: domainEvent.eventType,
           },
-          TopicArn: config.aws.sns.topicArn,
-        })
-        .promise()
+        },
+        TopicArn: config.aws.sns.topicArn,
+      })
+
+      result = await this.snsClient.send(command)
 
       logger.info(`Message ${result.MessageId} sent to the topic.`)
     } catch (e) {

@@ -1,11 +1,13 @@
-$govuk-global-styles: true
 $path: "/assets/images/"
 $moj-page-width: 1170px
-$govuk-page-width: $moj-page-width
 
-@import '../../node_modules/govuk-frontend/dist/govuk/index'
+@use "node_modules/govuk-frontend/dist/govuk/index" with (
+  $govuk-global-styles: true,
+  $govuk-page-width: $moj-page-width
+)
+
 @import '../../node_modules/@ministryofjustice/frontend/moj/all'
-@import '../../node_modules/nhsuk-frontend/packages/nhsuk'
+@import '../../node_modules/nhsuk-frontend/dist/nhsuk/index'
 
 @import "./vendor/ckeditor5"
 @import './components/header-bar'

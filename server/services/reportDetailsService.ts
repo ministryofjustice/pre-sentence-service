@@ -72,6 +72,32 @@ export default class ReportDetailsService {
       })
   }
 
+  public async getAllReportsPaginated(
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{ reports: ReportDetails[]; total: number; totalPages: number }> {
+    const reportRepository = getConnection().getRepository(ReportDetails)
+    const skip = (page - 1) * limit
+
+    const [reports, total] = await reportRepository.findAndCount({
+      where: {
+        isDeleted: false,
+      },
+      relations: ['person'],
+      order: {
+        createdAt: 'DESC', // Most recent first
+      },
+      skip,
+      take: limit,
+    })
+
+    return {
+      reports,
+      total,
+      totalPages: Math.ceil(total / limit),
+    }
+  }
+
   public async updateReportDetails(id: string, reportData: Partial<IReportDetails>): Promise<ReportDetails | null> {
     const reportRepository = getConnection().getRepository(ReportDetails)
     const report = await reportRepository.findOne({
