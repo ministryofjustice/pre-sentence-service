@@ -29,7 +29,7 @@ export const pageFields: Array<string> = [
 export default class PreviewReportController extends BaseController {
   override templatePath = 'preview-report'
 
-  override redirectPath = 'preview-report'
+  override redirectPath = 'sign-your-report'
 
   override pageFields = pageFields
 }

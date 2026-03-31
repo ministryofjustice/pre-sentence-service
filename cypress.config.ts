@@ -4,6 +4,7 @@ import { resetStubs } from './integration_tests/mockApis/wiremock'
 import auth from './integration_tests/mockApis/auth'
 import communityApi from './integration_tests/mockApis/communityApi'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
+import preSentenceToDeliusApi from './integration_tests/mockApis/preSentenceToDeliusApi'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -22,6 +23,7 @@ export default defineConfig({
         ...auth,
         ...tokenVerification,
         ...communityApi,
+        ...preSentenceToDeliusApi,
       })
     },
     baseUrl: 'http://localhost:3007',
