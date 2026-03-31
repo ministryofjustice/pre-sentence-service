@@ -1,0 +1,97 @@
+{% extends "../partials/psrPageLayout.njk" %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "components/text-editor/macro.njk" import picTextEditor %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% set currentPage = "Sign and lock your report" %}
+{% set pageTitle = preSentenceType + " - " + currentPage %}
+{% block reportForm %}
+    <form method="post"
+          data-autosave="true"
+          data-confirm-submit="true"
+          novalidate>
+        <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
+        {{ govukWarningText({
+            "text": "Submitting your report will lock the PSR and your will no longer be able to make any further edits.",
+            "iconFallbackText": "Warning"
+        }) }}
+        {{ picTextEditor({
+                label: {
+                text: "Enter your full name",
+                classes: "govuk-label--l"
+                },
+                name: "signReportName",
+                id: "signReportName",
+                rows: "1",
+                value: data.signReportName,
+                errorMessage: {
+                text: "You must sign your report before you submit"
+                } if 'signReportName' in elementsWithError
+                }) }}
+        {% set spoNameHtml %}
+            {{ govukInput({
+                        id: "spoName",
+                        name: "spoName",
+                        type: "text",
+                        value: data.spoName,
+                        autocomplete: "name",
+                        classes: "govuk-!-width-one-third",
+                        label: {
+                        text: "Please enter the name of the SPO who has reviewed the report"
+                        },
+                        errorMessage: {
+                        text: "Enter the name of the SPO who reviewed the report"
+                        } if 'spoName' in elementsWithError
+                        }) }}
+        {% endset -%}
+        {{ govukRadios({
+                idPrefix: "isDangerousReport",
+                name: "isDangerousReport",
+                fieldset: {
+                legend: {
+                text: "Is this a dangerous report?",
+                classes: "govuk-fieldset__legend--m"
+                }
+                },
+                hint: {
+                text: "Select one option"
+                },
+                errorMessage: {
+                text: "Specify whether this is a dangerousness report"
+                } if 'isDangerousReport' in elementsWithError,
+                items: [
+                {
+                value: "yes",
+                text: "Yes",
+                checked: data.isDangerousReport == "yes",
+                conditional: {
+                html: spoNameHtml
+                }
+                },
+                {
+                value: "no",
+                text: "No",
+                checked: data.isDangerousReport == "no"
+                }
+                ]
+                }) }}
+        <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+        <input type="hidden" name="reportId" value="{{ reportId }}">
+        <button class="govuk-button govuk-!-margin-top-6">Sign and lock</button>
+    </form>
+    <div class="govuk-modal" id="confirm-modal" hidden>
+        <div class="govuk-modal__overlay"></div>
+        <div class="govuk-modal__content govuk-width-container"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="confirm-title"
+             aria-describedby="confirm-message">
+            <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
+            <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
+            <div class="govuk-button-group">
+                <button class="govuk-button" id="confirm-submit">Continue</button>
+                <button class="govuk-button govuk-button--secondary" id="cancel-submit">Cancel</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

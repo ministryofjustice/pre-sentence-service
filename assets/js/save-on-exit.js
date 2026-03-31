@@ -36,6 +36,7 @@
       })
     }
 
+    let skipBeforeUnload = false
     const storeState = window.reportStoreInstance.getState()
     const questions = storeState.questions || {}
 
@@ -132,7 +133,9 @@
       }
     }
 
-    const links = document.getElementsByTagName('a')
+    const modal = document.getElementById('confirm-modal')
+    const confirmBtn = document.getElementById('confirm-submit')
+    const cancelBtn = document.getElementById('cancel-submit')
 
     const handleLink = link => {
       if (!link.target || link.target === '_self') {
@@ -142,33 +145,43 @@
       }
     }
 
-    for (const link of links) {
-      link.addEventListener('click', event => {
+    let allowSubmit = false
+
+    getForm().addEventListener('submit', event => {
+      const form = getForm()
+
+      if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
         event.preventDefault()
-        const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
-        if (hasUnsavedChanges) {
-          return persistForm()
-            .then(response =>
-              response.text().then(text => {
-                console.log(`Form persisted: ${text}`)
-                handleLink(link)
-              })
-            )
-            .catch(e => console.error(`Failed to persist form: ${e.message}`))
-        } else {
-          handleLink(link)
+        if (modal) {
+          modal.hidden = false
+          confirmBtn.focus()
         }
-      })
-    }
 
-    getForm().addEventListener('submit', () => {
+        return
+      }
+
       clearTimeout(timeoutHandle)
+
       if (window.ReportStore) {
         window.ReportStore.markChangesSaved()
       }
     })
 
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => {
+        skipBeforeUnload = true
+        allowSubmit = true
+        modal.hidden = true
+        getForm().submit()
+      })
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        modal.hidden = true
+      })
+    }
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
 
@@ -183,13 +196,14 @@
           // Reset after a short delay to catch the beforeunload
           setTimeout(() => {
             isInternalNavigation = false
-          }, 100)
+          }, 500)
         }
       }
     })
 
     // Warn user only when closing tab or navigating to external site
     window.addEventListener('beforeunload', event => {
+      if (skipBeforeUnload) return
       const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
       if (hasUnsavedChanges && !isInternalNavigation) {
