@@ -118,7 +118,14 @@
 
     <h3 class="govuk-heading-s">Impact of a custodial sentence</h3>
 
-    <p class="govuk-body-s keep-newlines">{{ data.sentenceImpact }}</p>
+    {% if data.sentenceImpactOption === 'possible-or-expected' %}
+        <p class="govuk-body-s"><strong>A custodial sentence is possible or expected</strong></p>
+        <p class="govuk-body-s keep-newlines">{{ data.sentenceImpactDetails }}</p>
+    {% elif data.sentenceImpactOption === 'not-possible' %}
+        <p class="govuk-body-s"><strong>A custodial sentence will not or cannot be imposed</strong></p>
+    {% else %}
+        <p class="govuk-body-s keep-newlines">{{ data.sentenceImpact }}</p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 

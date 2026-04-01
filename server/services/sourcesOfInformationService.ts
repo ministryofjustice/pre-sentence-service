@@ -40,13 +40,13 @@ export default class SourcesOfInformationService {
     // Combine and map to SourceOfInformation format
     const allSources: SourceOfInformation[] = [
       ...defaultSources.map(s => ({
-        key: s.value,
-        value: s.name,
+        key: s.name,
+        value: s.value,
         isCustom: false,
       })),
       ...reportSources.map(rs => ({
-        key: rs.sourcesOfInformation.value,
-        value: rs.sourcesOfInformation.name,
+        key: rs.sourcesOfInformation.name,
+        value: rs.sourcesOfInformation.value,
         isCustom: true,
       })),
     ]
