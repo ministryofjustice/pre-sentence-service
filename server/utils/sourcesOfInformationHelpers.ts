@@ -67,7 +67,7 @@ export const updatePendingChanges = (
 
   if (customSource && customSource.trim()) {
     const value = customSource.trim()
-    const key = `custom_${formatKey(value)}`
+    const key = formatKey(value)
     const isDuplicate = savedSources?.some(s => s.key === key) || pendingChanges.sourcesToAdd!.some(s => s.key === key)
 
     if (!isDuplicate) {
