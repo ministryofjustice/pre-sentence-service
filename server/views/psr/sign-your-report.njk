@@ -17,6 +17,12 @@
           data-confirm-submit="true"
           novalidate>
         <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
+        {% if data.reviewProgressBlocked %}
+            <p class="govuk-error-message" id="reviewProgress">
+                <span class="govuk-visually-hidden">Error:</span>
+                Complete all sections in <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/preview-report">Review your progress</a> before signing and locking this report.
+            </p>
+        {% endif %}
         {{ govukWarningText({
             "text": "Submitting your report will lock the PSR and your will no longer be able to make any further edits.",
             "iconFallbackText": "Warning"

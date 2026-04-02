@@ -6,60 +6,7 @@
 {% set currentPage = 'Review your progress' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
-{% set nameCompleted = data.name | hasContent %}
-{% set dateOfBirthCompleted = data.dateOfBirth | hasContent %}
-{% set addressCompleted = (
-  (data['address-buildingName'] | hasContent) or
-  (data['address-number'] | hasContent) or
-  (data['address-streetName'] | hasContent) or
-  (data['address-town'] | hasContent) or
-  (data['address-district'] | hasContent) or
-  (data['address-county'] | hasContent) or
-  (data['address-postcode'] | hasContent)
-) %}
-
-{% set offencesUnderConsiderationCompleted = (
-  (data.offencesUnderConsideration | hasContent) or
-  (data.offenceUnderConsideration | hasContent)
-) %}
-{% set offencesPatternCompleted = (
-  (data.offencesPattern | hasContent) or
-  (data.offencePattern | hasContent) or
-  data.noPreviousOffences === 'true'
-) %}
-
-{% set defendantBehaviourCompleted = (
-  (data.defendantBehaviour | hasContent) or
-  (data.behaviourAndLifestyleAssessment | hasContent)
-) %}
-
-{% set riskLevelsCompleted = (
-  ((data.riskToChildren | hasContent) or (data.riskOfHarmForChildren | hasContent)) and
-  ((data.riskToPublic | hasContent) or (data.riskOfHarmForPublic | hasContent)) and
-  ((data.riskToKnownAdults | hasContent) or (data.riskOfHarmForKnownAdults | hasContent)) and
-  ((data.riskToStaff | hasContent) or (data.riskOfHarmForStaff | hasContent))
-) %}
-{% set riskPredictorsCompleted = (
-  (data.riskPredictors | hasContent) or
-  (data.riskPredictorsAndLikelihoodOfReoffending | hasContent)
-) %}
-{% set riskAndHarmFactorsCompleted = (
-  (data.riskAndHarmFactors | hasContent) or
-  (data.relevantRisksAndProtectiveFactors | hasContent)
-) %}
-
-{% set proposedSentenceCompleted = data.proposedSentence | hasContent %}
-{% set proposedSentenceRationaleCompleted = (
-  (data.proposedSentenceRationale | hasContent) or
-  (data.rationaleForProposedSentence | hasContent)
-) %}
-{% set alternativeSentencingOptionsCompleted = data.alternativeSentencingOptions | hasContent %}
-{% set sentenceImpactCompleted = (
-  (data.sentenceImpact | hasContent) or
-  (data.impactOfCustodialSentence | hasContent)
-) %}
-
-{% set sourcesOfInformationCompleted = data.sourcesOfInformation | hasContent %}
+{% set progress = data.sectionStatuses %}
 
 {% macro statusTag(isCompleted) %}
   {{ govukTag({
@@ -89,7 +36,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Name</a>'
       },
       {
-        html: statusTag(nameCompleted)
+        html: statusTag(progress.defendantDetails.name)
       }
     ],
     [
@@ -97,7 +44,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Date of birth</a>'
       },
       {
-        html: statusTag(dateOfBirthCompleted)
+        html: statusTag(progress.defendantDetails.dateOfBirth)
       }
     ],
     [
@@ -105,7 +52,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Address</a>'
       },
       {
-        html: statusTag(addressCompleted)
+        html: statusTag(progress.defendantDetails.address)
       }
     ]
   ]) }}
@@ -117,7 +64,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/offence-analysis">Analyse offences under consideration</a>'
       },
       {
-        html: statusTag(offencesUnderConsiderationCompleted)
+        html: statusTag(progress.offenceAnalysis.offencesUnderConsideration)
       }
     ],
     [
@@ -125,7 +72,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/offence-analysis">Analyse the pattern of offending and response to supervision</a>'
       },
       {
-        html: statusTag(offencesPatternCompleted)
+        html: statusTag(progress.offenceAnalysis.offencesPattern)
       }
     ]
   ]) }}
@@ -137,7 +84,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-behaviour">Defendant behaviour and lifestyle assessment</a>'
       },
       {
-        html: statusTag(defendantBehaviourCompleted)
+        html: statusTag(progress.defendantBehaviour.assessment)
       }
     ]
   ]) }}
@@ -149,7 +96,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Risk levels</a>'
       },
       {
-        html: statusTag(riskLevelsCompleted)
+        html: statusTag(progress.riskAnalysis.riskLevels)
       }
     ],
     [
@@ -157,7 +104,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Confirm risk predictors and assess the immediacy and likelihood of reoffending</a>'
       },
       {
-        html: statusTag(riskPredictorsCompleted)
+        html: statusTag(progress.riskAnalysis.riskPredictors)
       }
     ],
     [
@@ -165,7 +112,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Analyse relevant risks of harm and protective factors</a>'
       },
       {
-        html: statusTag(riskAndHarmFactorsCompleted)
+        html: statusTag(progress.riskAnalysis.riskAndHarmFactors)
       }
     ]
   ]) }}
@@ -177,7 +124,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">The proposed sentence</a>'
       },
       {
-        html: statusTag(proposedSentenceCompleted)
+        html: statusTag(progress.sentencingProposal.proposedSentence)
       }
     ],
     [
@@ -185,7 +132,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Rationale for the proposed sentence</a>'
       },
       {
-        html: statusTag(proposedSentenceRationaleCompleted)
+        html: statusTag(progress.sentencingProposal.proposedSentenceRationale)
       }
     ],
     [
@@ -193,7 +140,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Outline alternative sentencing options</a>'
       },
       {
-        html: statusTag(alternativeSentencingOptionsCompleted)
+        html: statusTag(progress.sentencingProposal.alternativeSentencingOptions)
       }
     ],
     [
@@ -201,7 +148,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Impact of a custodial sentence</a>'
       },
       {
-        html: statusTag(sentenceImpactCompleted)
+        html: statusTag(progress.sentencingProposal.sentenceImpact)
       }
     ]
   ]) }}
@@ -213,7 +160,7 @@
         html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sources-of-information">Sources of information</a>'
       },
       {
-        html: statusTag(sourcesOfInformationCompleted)
+        html: statusTag(progress.sourcesOfInformation.sources)
       }
     ]
   ]) }}
