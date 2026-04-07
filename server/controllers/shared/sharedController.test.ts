@@ -95,12 +95,89 @@ describe('Route Handlers - Shared Controller', () => {
         })
       )
     })
+
+    it('should include derived section statuses from saved page answers', async () => {
+      mockedReportService.getReportById = jest.fn().mockResolvedValue({
+        ...mockedReportData,
+        pages: [
+          {
+            name: 'defendant-details',
+            questions: [
+              { id: 0, value: 'name', answer: 'Jane Doe' },
+              { id: 1, value: 'dateOfBirth', answer: '1990-01-01' },
+              { id: 2, value: 'address-postcode', answer: 'SW1A 1AA' },
+            ],
+          },
+          {
+            name: 'offence-analysis',
+            questions: [
+              { id: 0, value: 'offencesUnderConsideration', answer: 'Some analysis' },
+              { id: 1, value: 'noPreviousOffences', answer: 'true' },
+            ],
+          },
+        ],
+      })
+
+      await handler.get(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        `${handler.path}/${handler.templatePath}`,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            name: 'John Doe',
+            offencesUnderConsideration: 'Some analysis',
+            noPreviousOffences: 'true',
+            sectionStatuses: expect.objectContaining({
+              defendantDetails: expect.objectContaining({
+                status: 'Completed',
+                name: true,
+                dateOfBirth: true,
+                address: true,
+              }),
+              offenceAnalysis: expect.objectContaining({
+                status: 'Completed',
+                offencesUnderConsideration: true,
+                offencesPattern: true,
+              }),
+              riskAnalysis: expect.objectContaining({
+                status: 'Incomplete',
+              }),
+            }),
+          }),
+        })
+      )
+    })
   })
 
   describe('POST', () => {
     it('should redirect to the correct view', async () => {
       await handler.post(req, res)
       expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/${handler.redirectPath}`)
+    })
+
+    it('should allow redirecting to another page even when the current page is incomplete', async () => {
+      handler.model = {
+        safeParse: jest.fn().mockReturnValue({
+          success: false,
+          error: {
+            issues: [
+              {
+                path: ['someField'],
+                message: 'Complete this field',
+              },
+            ],
+          },
+        }),
+      } as never
+
+      req.query = {
+        redirectPath: 'risk-analysis',
+      }
+
+      await handler.post(req, res)
+
+      expect(mockedReportService.updateReport).toHaveBeenCalled()
+      expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/risk-analysis`)
     })
   })
 })
