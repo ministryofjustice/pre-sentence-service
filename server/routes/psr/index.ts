@@ -11,7 +11,6 @@ import OffenceAnalysisController from '../../controllers/psr/offence-analysis-co
 import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
-import PreviewReportController from '../../controllers/psr/preview-report-controller'
 import SourcesOfInformationController from '../../controllers/psr/sources-of-information-controller'
 import SignYourReportController from '../../controllers/psr/sign-your-report-controller'
 import PdfController from '../../controllers/pdf/pdfController'
@@ -78,13 +77,6 @@ export default function Index(
   })
   post('/:reportId/sentencing-proposal', (req, res) => {
     return new SentencingProposalController(reportService, preSentenceToDeliusService).post(req, res)
-  })
-
-  get('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService, preSentenceToDeliusService).get(req, res)
-  })
-  post('/:reportId/preview-report', (req, res) => {
-    return new PreviewReportController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/draft-pdf', (req, res) => {
