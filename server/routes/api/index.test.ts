@@ -135,10 +135,7 @@ describe('Route Handlers - API', () => {
   })
 
   it('should validate that crn is required', () => {
-    return request(app)
-      .post('/api/v1/report')
-      .send({})
-      .expect(400)
+    return request(app).post('/api/v1/report').send({}).expect(400)
   })
 
   it('should create a report with only crn', () => {
