@@ -32,6 +32,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       'node_modules/@ministryofjustice/frontend/moj/components/',
       'node_modules/nhsuk-frontend/dist',
       'node_modules/nhsuk-frontend/dist/nhsuk/components',
+      'node_modules/nhsuk-frontend/dist/nhsuk/macros',
     ],
     {
       autoescape: true,
@@ -128,5 +129,28 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     }
 
     return age
+  })
+
+  njkEnv.addFilter('hasContent', value => {
+    if (value === null || value === undefined) return false
+
+    if (Array.isArray(value)) {
+      return value.length > 0
+    }
+
+    if (value instanceof Date) {
+      return true
+    }
+
+    if (typeof value === 'string') {
+      const withoutTags = value.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ')
+      return withoutTags.trim().length > 0
+    }
+
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return true
+    }
+
+    return false
   })
 }
