@@ -1,0 +1,60 @@
+import { areReviewSectionsComplete, getReportProgress, hasContent } from './reportProgress'
+
+describe('reportProgress', () => {
+  describe('hasContent', () => {
+    it('returns false for empty rich text', () => {
+      expect(hasContent('<p>&nbsp;</p>')).toBe(false)
+    })
+
+    it('returns true for populated values', () => {
+      expect(hasContent('Some text')).toBe(true)
+      expect(hasContent(['source'])).toBe(true)
+    })
+  })
+
+  it('derives completed statuses from saved answers', () => {
+    const progress = getReportProgress({
+      name: 'Jane Doe',
+      dateOfBirth: '1990-01-01',
+      'address-postcode': 'SW1A 1AA',
+      offencesUnderConsideration: 'Details',
+      noPreviousOffences: 'true',
+      defendantBehaviour: 'Assessment',
+      riskToChildren: 'low',
+      riskToPublic: 'medium',
+      riskToKnownAdults: 'low',
+      riskToStaff: 'low',
+      riskPredictors: 'Predictors',
+      riskAndHarmFactors: 'Factors',
+      proposedSentence: 'Community order',
+      proposedSentenceRationale: 'Rationale',
+      alternativeSentencingOptions: 'Alternatives',
+      sentenceImpact: 'Impact',
+      sourcesOfInformation: 'cps_summary',
+      signReportName: 'Officer Name',
+      isDangerousReport: 'no',
+    })
+
+    expect(progress.defendantDetails.status).toBe('Completed')
+    expect(progress.offenceAnalysis.status).toBe('Completed')
+    expect(progress.defendantBehaviour.status).toBe('Completed')
+    expect(progress.riskAnalysis.status).toBe('Completed')
+    expect(progress.sentencingProposal.status).toBe('Completed')
+    expect(progress.sourcesOfInformation.status).toBe('Completed')
+    expect(progress.signYourReport.status).toBe('Completed')
+    expect(areReviewSectionsComplete(progress)).toBe(true)
+  })
+
+  it('keeps sections incomplete when required answers are missing', () => {
+    const progress = getReportProgress({
+      name: 'Jane Doe',
+      isDangerousReport: 'yes',
+    })
+
+    expect(progress.defendantDetails.status).toBe('Incomplete')
+    expect(progress.riskAnalysis.status).toBe('Incomplete')
+    expect(progress.signYourReport.status).toBe('Incomplete')
+    expect(progress.signYourReport.spoName).toBe(false)
+    expect(areReviewSectionsComplete(progress)).toBe(false)
+  })
+})
