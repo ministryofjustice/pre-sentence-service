@@ -25,6 +25,10 @@
           {% set class = "govuk-tag--grey " %}
         {% elseif item.state === "In progress" %}
           {% set class = "govuk-tag--blue " %}
+        {% elseif item.state === "Incomplete" %}
+          {% set class = "govuk-tag--blue " %}
+        {% elseif item.state === "Completed" %}
+          {% set class = "govuk-tag--green " %}
         {% endif %}
         {{ govukTag({
           text: item.state,
