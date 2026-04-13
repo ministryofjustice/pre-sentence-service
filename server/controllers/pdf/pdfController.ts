@@ -9,13 +9,17 @@ import {
 } from '../../utils/pdfFormat'
 import logger from '../../../logger'
 import config from '../../config'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import ReportService from '../../services/reportService'
 import ReportDetails from '../../repositories/entities/reportDetails'
 import path from 'path'
 import fs from 'fs'
 
 export default class PdfController {
-  constructor(protected readonly reportService: ReportService) {}
+  constructor(
+    protected readonly reportService: ReportService,
+    protected readonly preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {}
 
   renderPdf = async (req: Request, res: Response, draft: boolean): Promise<void> => {
     const { reportId } = req.params
@@ -34,6 +38,32 @@ export default class PdfController {
       const riskToChildren: string = reportData.riskToChildren as string
       const riskToKnownAdults: string = reportData.riskToKnownAdults as string
       const riskToStaff: string = reportData.riskToStaff as string
+      let impactExplanation: string = ''
+      switch (reportData.custodialSentenceConsideration as string) {
+        case 'possible':
+          impactExplanation = 'A custodial sentence is possible or expected'
+          break
+        case 'not-threshold':
+          impactExplanation =
+            'A custodial sentence is not being considered as the offence does not meet the custodial threshold'
+          break
+        case 'court-indicated':
+          impactExplanation = 'The court has indicated a custodial sentence is not being considered'
+          break
+      }
+
+      let offenceData = {}
+
+      try {
+        if (this.preSentenceToDeliusService) {
+          const eventNumber = reportData.reportOrigin ? parseInt(reportData.reportOrigin as string, 10) : 0
+          offenceData = await this.preSentenceToDeliusService.getOffences(reportData.crn as string, eventNumber)
+        }
+      } catch (error) {
+        logger.warn({ reportId, error }, 'Failed to fetch offence details from API')
+
+        throw error
+      }
 
       const pdfData = {
         ...reportData,
@@ -42,7 +72,11 @@ export default class PdfController {
         riskToKnownAdults: riskToKnownAdults.replace('_', ' '),
         riskToStaff: riskToStaff.replace('_', ' '),
         ageInYears: ageInYears,
+        impactExplanation: impactExplanation,
+        offenceData: offenceData,
       }
+
+      console.log(pdfData)
 
       const headerHtml = draft ? getDraftHeader() : getHeader()
       const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })

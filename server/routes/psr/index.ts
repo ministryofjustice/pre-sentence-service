@@ -88,11 +88,11 @@ export default function Index(
   })
 
   get('/:reportId/draft-pdf', (req, res) => {
-    return new PdfController(reportService).renderPdf(req, res, true)
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req, res, true)
   })
 
   get('/:reportId/pdf', (req, res) => {
-    return new PdfController(reportService).renderPdf(req, res, false)
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req, res, false)
   })
 
   get('/:reportId/sign-your-report', (req, res) => {

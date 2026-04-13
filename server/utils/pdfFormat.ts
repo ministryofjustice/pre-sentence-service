@@ -60,6 +60,7 @@ export function configureReportData(report: ReportDetails) {
     reportStatus: report.status,
     reportType: report.reportType,
     reportVersion: report.version || 1,
+    reportOrigin: report.origin,
   }
 
   // Extract data from pages structure
