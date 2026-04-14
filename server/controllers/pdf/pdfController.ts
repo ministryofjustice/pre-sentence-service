@@ -76,8 +76,6 @@ export default class PdfController {
         offenceData: offenceData,
       }
 
-      console.log(pdfData)
-
       const headerHtml = draft ? getDraftHeader() : getHeader()
       const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })
 
