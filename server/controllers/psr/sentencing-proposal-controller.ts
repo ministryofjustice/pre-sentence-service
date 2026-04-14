@@ -17,7 +17,7 @@ const sentencingProposalModel = z
       if (!data.custodialSentenceImpact || data.custodialSentenceImpact.trim() === '') {
         ctx.addIssue({
           code: 'custom',
-          message: 'Explain the impact of a custodial sentence if relevant',
+          message: 'Explain the impact of a custodial sentence',
           path: ['custodialSentenceImpact'],
         })
       }
