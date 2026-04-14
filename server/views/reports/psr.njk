@@ -1,4 +1,5 @@
 {% extends "../partials/pdfLayout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% block header %}
 <header class="govuk-width-container pdf-header">
@@ -44,7 +45,30 @@
 
     <h2 class="govuk-heading-m">Offence analysis</h2>
 
-    <h3 class="govuk-heading-s">Offences under consideration</h3>
+
+    <div class="govuk-grid-column-two-thirds">
+        <table class="govuk-table govuk-table--no-borders govuk-table--small-headers">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+            <th class="govuk-table__header">Offences under consideration</th>
+            <th class="govuk-table__header">Date of offence</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+            <td class="govuk-table__cell govuk-body-s"><strong>{{ data.offenceData.mainOffence.mainCategory.description }}</strong></td>
+            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date }}</td>
+            </tr>
+
+            {% for offence in data.offenceData.additionalOffences %}
+                <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-body-s"><strong>{{ offence.mainCategory.description }}</strong></td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
 
     <h3 class="govuk-heading-s">Analysis of offences under consideration</h3>
 
