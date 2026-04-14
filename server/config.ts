@@ -123,4 +123,7 @@ export default {
       eventVersion: 1,
     },
   },
+  dev: {
+    fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
+  },
 }
