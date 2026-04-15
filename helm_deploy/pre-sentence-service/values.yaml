@@ -34,6 +34,7 @@ generic-service:
     TOKEN_VERIFICATION_ENABLED: "true"
     DATABASE_SCHEMA: "presentenceservice"
     DB_SSL_ENABLED: "true"
+    HMPPS_DOMAIN_EVENTS_QUEUE_URL: "https://sqs.eu-west-2.amazonaws.com/placeholder-queue-url"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

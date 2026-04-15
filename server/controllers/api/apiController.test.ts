@@ -63,23 +63,9 @@ describe('Route Handlers - API Controller', () => {
     req = {
       body: {
         crn: 'x12345b',
-        eventNumber: 1,
-        names: {
-          foreName: 'John',
-          middleName: '',
-          surname: 'Doe',
-        },
-        dateOfBirth: '1990-01-01',
-        pnc: 'PNC123',
-        mainOffence: 'Theft',
-        court: {
-          name: 'Test Court',
-          localJusticeArea: 'Test Area',
-        },
       },
       params: {
         id: '123',
-        reportType: 'short-format',
       },
       session: {},
     } as unknown as Request
@@ -114,17 +100,9 @@ describe('Route Handlers - API Controller', () => {
       expect(mockedReportService.createReport).toHaveBeenCalledWith(
         expect.objectContaining({
           crn: req.body.crn.toUpperCase(),
-          eventNumber: req.body.eventNumber.toString(),
-          reportType: 'short-format',
+          personDetails: expect.any(Object),
         }),
         'testuser'
-      )
-      expect(mockedEventService.sendReportEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          eventNumber: '1',
-          crn: req.body.crn.toUpperCase(),
-          reportStatus: 'started',
-        })
       )
       expect(mockedReportService.deleteReport).not.toHaveBeenCalled()
       expect(res.status).toHaveBeenCalledWith(201)

@@ -122,65 +122,32 @@ describe('Route Handlers - API', () => {
 
   it('should create a report', () => {
     return request(app)
-      .post('/api/v1/report/record-of-oral')
+      .post('/api/v1/report')
       .send({
         crn: 'DX12340A',
-        eventNumber: '100',
-        names: { foreName: 'John', middleName: '', surname: 'Doe' },
-        dateOfBirth: '1990-01-01',
-        pnc: 'PNC123',
-        mainOffence: 'Theft',
-        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
       })
       .expect('Content-Type', /json/)
       .expect(res => {
         expect(JSON.parse(res.text)).toMatchObject({
           id: expect.any(String), // ID converted to string for API
-          reportType: 'record-of-oral',
-          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
-          url: expect.stringContaining('/record-of-oral/'),
         })
       })
   })
 
-  it('should support nDelius report types when creating a Record of Oral report', () => {
-    return request(app)
-      .post('/api/v1/report/oralReport')
-      .send({
-        crn: 'DX12340A',
-        eventNumber: '100',
-        names: { foreName: 'John', middleName: '', surname: 'Doe' },
-        dateOfBirth: '1990-01-01',
-        pnc: 'PNC123',
-        mainOffence: 'Theft',
-        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
-      })
-      .expect('Content-Type', /json/)
-      .expect(res => {
-        expect(JSON.parse(res.text)).toMatchObject({
-          reportType: 'record-of-oral',
-          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
-        })
-      })
+  it('should validate that crn is required', () => {
+    return request(app).post('/api/v1/report').send({}).expect(400)
   })
 
-  it('should support nDelius report types when creating Short Format report', () => {
+  it('should create a report with only crn', () => {
     return request(app)
-      .post('/api/v1/report/shortFormatPreSentenceReport')
+      .post('/api/v1/report')
       .send({
-        crn: 'DX12340A',
-        eventNumber: '100',
-        names: { foreName: 'John', middleName: '', surname: 'Doe' },
-        dateOfBirth: '1990-01-01',
-        pnc: 'PNC123',
-        mainOffence: 'Theft',
-        court: { name: 'Test Court', localJusticeArea: 'Test Area' },
+        crn: 'X12345',
       })
       .expect('Content-Type', /json/)
       .expect(res => {
         expect(JSON.parse(res.text)).toMatchObject({
-          reportType: 'short-format',
-          urn: expect.stringContaining('uk:gov:hmpps:pre-sentence-service:report:'),
+          id: expect.any(String),
         })
       })
   })

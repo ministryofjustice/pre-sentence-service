@@ -15,7 +15,7 @@ export default function Index(reportService: ReportService, eventService: EventS
   router.get('/v1/reports/:reportType', (req, res) => {
     return new ApiController(reportService, eventService).getAllReportsByType(req, res)
   })
-  router.post('/v1/report/:reportType', (req, res) => {
+  router.post('/v1/report', (req, res) => {
     return new ApiController(reportService, eventService).createReport(req, res)
   })
   router.post('/v1/report/:id/save', (req, res) => {

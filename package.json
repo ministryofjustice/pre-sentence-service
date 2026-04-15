@@ -101,6 +101,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sns": "^3.817.0",
+    "@aws-sdk/client-sqs": "^3.1030.0",
     "@aws-sdk/client-sts": "^3.1020.0",
     "@aws-sdk/credential-provider-web-identity": "^3.972.27",
     "@eslint/compat": "^1.2.9",
