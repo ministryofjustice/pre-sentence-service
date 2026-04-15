@@ -21,6 +21,7 @@ import {
 import { Session, SessionData } from 'express-session'
 import * as z from 'zod'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
+import { getReportProgress } from '../../utils/reportProgress'
 
 enum RiskLevel {
   Low = 'low',
@@ -134,14 +135,11 @@ export default class SharedController {
   private getStoredData = () => {
     this.data = {}
     if (this.report && this.report.pages) {
-      // Find the page that matches this template
-      const page = this.report.pages.find(p => p.name === this.templatePath)
-      if (page) {
-        // Convert questions to data object
+      this.report.pages.forEach(page => {
         page.questions.forEach(question => {
           this.data[question.value] = question.answer
         })
-      }
+      })
     }
   }
 
@@ -285,6 +283,16 @@ export default class SharedController {
       if (this.templatePath === 'sources-of-information') {
         sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
       }
+      if (this.updateReport) {
+        this.updateReport()
+      }
+      const data = {
+        name: persistentData.name,
+        ...this.defaultTemplateData,
+        ...this.data,
+        ...this.report,
+        ...persistentData,
+      }
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: reportIdParam,
@@ -292,11 +300,8 @@ export default class SharedController {
         pendingChanges,
         sourcesOfInformation,
         data: {
-          name: persistentData.name,
-          ...this.defaultTemplateData,
-          ...persistentData,
-          ...this.report,
-          ...this.data, // API data from beforeRender hook takes precedence
+          ...data,
+          sectionStatuses: getReportProgress(data),
         },
       })
     } else {

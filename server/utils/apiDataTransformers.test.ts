@@ -7,6 +7,17 @@ import {
   transformOffenceDetails,
 } from './apiDataTransformers'
 import type { Name, Address, DefendantDetails, Offence, OffenceDetails } from '../@types/preSentenceToDelius'
+import config from '../config'
+
+// Mock the config to disable fake offences during tests
+jest.mock('../config', () => ({
+  __esModule: true,
+  default: {
+    dev: {
+      fakeAdditionalOffences: false,
+    },
+  },
+}))
 
 describe('apiDataTransformers', () => {
   describe('transformName', () => {
@@ -300,6 +311,85 @@ describe('apiDataTransformers', () => {
 
       expect(result.mainOffence.description).toBe('Theft from shop')
       expect(result.additionalOffences).toHaveLength(0)
+    })
+
+    it('should generate fake additional offences when enabled and no offences exist', () => {
+      // Temporarily enable the feature for this test
+      const originalValue = config.dev.fakeAdditionalOffences
+      config.dev.fakeAdditionalOffences = true
+
+      const apiData: OffenceDetails = {
+        mainOffence: {
+          date: '2024-01-01',
+          mainCategory: {
+            code: '010',
+            description: 'Theft',
+          },
+          subCategory: {
+            code: '01001',
+            description: 'Theft from shop',
+          },
+        },
+        additionalOffences: [],
+      }
+
+      const result = transformOffenceDetails(apiData)
+
+      expect(result.mainOffence.description).toBe('Theft from shop')
+      expect(result.additionalOffences.length).toBeGreaterThan(0)
+      expect(result.additionalOffences.length).toBeLessThanOrEqual(3)
+      // Verify the generated offences have the correct structure
+      result.additionalOffences.forEach(offence => {
+        expect(offence).toHaveProperty('description')
+        expect(offence).toHaveProperty('code')
+        expect(offence).toHaveProperty('date')
+        expect(offence.isMainOffence).toBe(false)
+      })
+
+      // Restore original value
+      config.dev.fakeAdditionalOffences = originalValue
+    })
+
+    it('should not generate fake offences when additional offences already exist', () => {
+      // Temporarily enable the feature for this test
+      const originalValue = config.dev.fakeAdditionalOffences
+      config.dev.fakeAdditionalOffences = true
+
+      const apiData: OffenceDetails = {
+        mainOffence: {
+          date: '2024-04-12',
+          mainCategory: {
+            code: '030',
+            description: 'Criminal damage',
+          },
+          subCategory: {
+            code: '03001',
+            description: 'Criminal damage to property',
+          },
+        },
+        additionalOffences: [
+          {
+            date: '2024-04-12',
+            mainCategory: {
+              code: '020',
+              description: 'Violence',
+            },
+            subCategory: {
+              code: '02004',
+              description: 'Assault on emergency worker',
+            },
+          },
+        ],
+      }
+
+      const result = transformOffenceDetails(apiData)
+
+      // Should have exactly 1 additional offence (not generate fake ones)
+      expect(result.additionalOffences).toHaveLength(1)
+      expect(result.additionalOffences[0].description).toBe('Assault on emergency worker')
+
+      // Restore original value
+      config.dev.fakeAdditionalOffences = originalValue
     })
   })
 })

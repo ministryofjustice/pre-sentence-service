@@ -14,9 +14,9 @@ export interface IReportDetails {
   id?: string
   personId: number
   status?: ReportStatus
-  origin: string
+  origin?: string
   pages?: IReportPage[]
-  reportType: string
+  reportType?: string
   createdBy: string
   isDeleted?: boolean
   version?: number
@@ -28,6 +28,8 @@ export default class ReportDetailsService {
     const report = reportRepository.create({
       ...reportData,
       status: reportData.status || ReportStatus.NOT_STARTED,
+      origin: reportData.origin || '',
+      reportType: reportData.reportType || 'standard',
       createdAt: new Date(),
       lastUpdatedBy: new Date(),
       isDeleted: false,
