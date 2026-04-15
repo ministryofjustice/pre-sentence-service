@@ -34,8 +34,7 @@
     "reset-database": "npm run build && node dist/scripts/reset-database.js",
     "seed-test-data": "npm run build && node dist/scripts/seed-test-data.js",
     "migrate-delius-reports": "npm run build && node dist/scripts/migrate-delius-reports.js",
-    "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots",
-    "setup": "npm ci && hmpps-npm-script-run-allowlist"
+    "clean": "rm -rf dist build node_modules stylesheets test_results integration_tests/screenshots"
   },
   "engines": {
     "node": "^18.17.1 || >=20.5.0 || ^24.0.0",
@@ -156,7 +155,6 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@types/bunyan": "1.8.11",
     "@types/bunyan-format": "0.2.9",
     "@types/compression": "1.8.0",
