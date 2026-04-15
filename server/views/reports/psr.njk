@@ -1,4 +1,5 @@
 {% extends "../partials/pdfLayout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% block header %}
 <header class="govuk-width-container pdf-header">
@@ -44,7 +45,30 @@
 
     <h2 class="govuk-heading-m">Offence analysis</h2>
 
-    <h3 class="govuk-heading-s">Offences under consideration</h3>
+
+    <div class="govuk-grid-column-two-thirds">
+        <table class="govuk-table govuk-table--no-borders govuk-table--small-headers">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+            <th class="govuk-table__header">Offences under consideration</th>
+            <th class="govuk-table__header">Date of offence</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+            <td class="govuk-table__cell govuk-body-s"><strong>{{ data.offenceData.mainOffence.mainCategory.description }}</strong></td>
+            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date }}</td>
+            </tr>
+
+            {% for offence in data.offenceData.additionalOffences %}
+                <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-body-s"><strong>{{ offence.mainCategory.description }}</strong></td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
 
     <h3 class="govuk-heading-s">Analysis of offences under consideration</h3>
 
@@ -118,18 +142,25 @@
 
     <h3 class="govuk-heading-s">Impact of a custodial sentence</h3>
 
-    <p class="govuk-body-s keep-newlines">{{ data.sentenceImpact }}</p>
+    <p class="govuk-body-s keep-newlines">{{ data.impactExplanation }}</p>
+
+    {% if data.custodialSentenceConsideration === 'possible' %}
+        <p class="govuk-body-s"> {{ data.custodialSentenceImpact }}</p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     <h2 class="govuk-heading-m">Completion details</h2>
 
     <h3 class="govuk-heading-s">Report author:</h3>
+    <p class="govuk-body-s"> {{ data.signReportName }}</p>
 
     <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
+    {% if data.spoName %}
+        <p class="govuk-body-s"> {{ data.spoName }}</p>
+    {% endif %}
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
-
     <p class="govuk-body-s"> DD/MM/YY </p>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
