@@ -1,27 +1,11 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "../components/task-list/macro.njk" import picTaskList %}
 
 {% set currentPage = 'Review your progress' %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% set progress = data.sectionStatuses %}
-
-{% macro statusTag(isCompleted) %}
-  {{ govukTag({
-    text: "Completed" if isCompleted else "Incomplete",
-    classes: "govuk-tag--green" if isCompleted else "govuk-tag--blue"
-  }) }}
-{% endmacro %}
-
-{% macro sectionTable(rows) %}
-  {{ govukTable({
-    firstCellIsHeader: true,
-    classes: "govuk-!-margin-bottom-7",
-    rows: rows
-  }) }}
-{% endmacro %}
 
 {% block reportForm %}
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">{{ currentPage }}</h1>
@@ -30,140 +14,140 @@
   </p>
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Defendant details</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Name</a>'
-      },
-      {
-        html: statusTag(progress.defendantDetails.name)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Date of birth</a>'
-      },
-      {
-        html: statusTag(progress.defendantDetails.dateOfBirth)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-details">Address</a>'
-      },
-      {
-        html: statusTag(progress.defendantDetails.address)
+        items: [
+          {
+            text: "Name",
+            href: "/" + reportPath + "/" + reportId + "/defendant-details",
+            state: "Completed" if progress.defendantDetails.name else "Incomplete"
+          },
+          {
+            text: "Date of birth",
+            href: "/" + reportPath + "/" + reportId + "/defendant-details",
+            state: "Completed" if progress.defendantDetails.dateOfBirth else "Incomplete"
+          },
+          {
+            text: "Address",
+            href: "/" + reportPath + "/" + reportId + "/defendant-details",
+            state: "Completed" if progress.defendantDetails.address else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Offence analysis</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/offence-analysis">Analyse offences under consideration</a>'
-      },
-      {
-        html: statusTag(progress.offenceAnalysis.offencesUnderConsideration)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/offence-analysis">Analyse the pattern of offending and response to supervision</a>'
-      },
-      {
-        html: statusTag(progress.offenceAnalysis.offencesPattern)
+        items: [
+          {
+            text: "Analyse offences under consideration",
+            href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+            state: "Completed" if progress.offenceAnalysis.offencesUnderConsideration else "Incomplete"
+          },
+          {
+            text: "Analyse the pattern of offending and response to supervision",
+            href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+            state: "Completed" if progress.offenceAnalysis.offencesPattern else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Defendant behaviour and lifestyle assessment</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/defendant-behaviour">Defendant behaviour and lifestyle assessment</a>'
-      },
-      {
-        html: statusTag(progress.defendantBehaviour.assessment)
+        items: [
+          {
+            text: "Defendant behaviour and lifestyle assessment",
+            href: "/" + reportPath + "/" + reportId + "/defendant-behaviour",
+            state: "Completed" if progress.defendantBehaviour.assessment else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Risk analysis</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Risk levels</a>'
-      },
-      {
-        html: statusTag(progress.riskAnalysis.riskLevels)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Confirm risk predictors and assess the immediacy and likelihood of reoffending</a>'
-      },
-      {
-        html: statusTag(progress.riskAnalysis.riskPredictors)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/risk-analysis">Analyse relevant risks of harm and protective factors</a>'
-      },
-      {
-        html: statusTag(progress.riskAnalysis.riskAndHarmFactors)
+        items: [
+          {
+            text: "Risk levels",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+            state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
+          },
+          {
+            text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+            state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
+          },
+          {
+            text: "Analyse relevant risks of harm and protective factors",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+            state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Sentencing proposal</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">The proposed sentence</a>'
-      },
-      {
-        html: statusTag(progress.sentencingProposal.proposedSentence)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Rationale for the proposed sentence</a>'
-      },
-      {
-        html: statusTag(progress.sentencingProposal.proposedSentenceRationale)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Outline alternative sentencing options</a>'
-      },
-      {
-        html: statusTag(progress.sentencingProposal.alternativeSentencingOptions)
-      }
-    ],
-    [
-      {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sentencing-proposal">Impact of a custodial sentence</a>'
-      },
-      {
-        html: statusTag(progress.sentencingProposal.sentenceImpact)
+        items: [
+          {
+            text: "The proposed sentence",
+            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+            state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
+          },
+          {
+            text: "Rationale for the proposed sentence",
+            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+            state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
+          },
+          {
+            text: "Outline alternative sentencing options",
+            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+            state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
+          },
+          {
+            text: "Impact of a custodial sentence",
+            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+            state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Sources of information</h2>
-  {{ sectionTable([
-    [
+  {{ picTaskList({
+    classes: "govuk-!-margin-bottom-7",
+    sections: [
       {
-        html: '<a class="govuk-link govuk-link--no-visited-state" href="/' + reportPath + '/' + reportId + '/sources-of-information">Sources of information</a>'
-      },
-      {
-        html: statusTag(progress.sourcesOfInformation.sources)
+        items: [
+          {
+            text: "Sources of information",
+            href: "/" + reportPath + "/" + reportId + "/sources-of-information",
+            state: "Completed" if progress.sourcesOfInformation.sources else "Incomplete"
+          }
+        ]
       }
     ]
-  ]) }}
+  }) }}
 
   <form method="post" data-autosave="true" novalidate>
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
