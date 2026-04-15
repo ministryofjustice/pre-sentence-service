@@ -13,11 +13,14 @@
     You must complete all sections of the PSR before you can preview your report.
   </p>
 
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Defendant details</h2>
   {{ picTaskList({
     classes: "govuk-!-margin-bottom-7",
     sections: [
       {
+        heading: {
+          text: "Defendant details",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "Name",
@@ -35,15 +38,12 @@
             state: "Completed" if progress.defendantDetails.address else "Incomplete"
           }
         ]
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Offence analysis</h2>
-  {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
-    sections: [
+      },
       {
+        heading: {
+          text: "Offence analysis",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "Analyse offences under consideration",
@@ -56,15 +56,12 @@
             state: "Completed" if progress.offenceAnalysis.offencesPattern else "Incomplete"
           }
         ]
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Defendant behaviour and lifestyle assessment</h2>
-  {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
-    sections: [
+      },
       {
+        heading: {
+          text: "Defendant behaviour and lifestyle assessment",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "Defendant behaviour and lifestyle assessment",
@@ -72,15 +69,12 @@
             state: "Completed" if progress.defendantBehaviour.assessment else "Incomplete"
           }
         ]
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Risk analysis</h2>
-  {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
-    sections: [
+      },
       {
+        heading: {
+          text: "Risk analysis",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "Risk levels",
@@ -98,15 +92,12 @@
             state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
           }
         ]
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Sentencing proposal</h2>
-  {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
-    sections: [
+      },
       {
+        heading: {
+          text: "Sentencing proposal",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "The proposed sentence",
@@ -129,15 +120,12 @@
             state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
           }
         ]
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-3">Sources of information</h2>
-  {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
-    sections: [
+      },
       {
+        heading: {
+          text: "Sources of information",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
         items: [
           {
             text: "Sources of information",
