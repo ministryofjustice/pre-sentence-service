@@ -20,9 +20,9 @@
 {% set proposedSentenceRationaleHelp %}
   <p class="govuk-body">You should outline the intended outcomes of the sentence by:</p>
   <ul>
-    <li>explaining how the proposal addresses identified risks and needs</li>
-    <li>considering how the proposal may reduce the person's risk of reconviction</li>
-    <li>stating how the proposed sentence will manage identified risks of harm and any risks to identified victims</li>
+    <li>explaining how it addresses identified risks and needs</li>
+    <li>considering how it may reduce the defendants risk of reconviction</li>
+    <li>stating how it will manage identified risks of harm</li>
   </ul>
 {% endset %}
 
@@ -122,7 +122,7 @@
                         rows: "10",
                         value: data.custodialSentenceImpact,
                         errorMessage: {
-                            text: "Explain the impact of a custodial sentence if relevant"
+                            text: "Explain the impact of a custodial sentence"
                         } if 'custodialSentenceImpact' in elementsWithError
                     }) }}
                 </div>

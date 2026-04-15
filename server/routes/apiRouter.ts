@@ -1,25 +1,41 @@
 import { Router, Request, Response, NextFunction } from 'express'
+import passport from 'passport'
 import apiRoutes from './api'
 
-import { apiAuthenticationMiddleware, initAuth } from '../authentication/apiAuth'
+import { initAuth } from '../authentication/apiAuth'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
-import auth from '../authentication/auth'
-import tokenVerifier from '../data/tokenVerification'
-import setUpAuthentication from '../middleware/setUpAuthentication'
 
 const testMode = process.env.NODE_ENV === 'test'
 
-// Middleware that allows both JWT and session-based authentication
-const hybridAuthenticationMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const hasCSRFToken = req.headers['x-csrf-token']
-  const hasAuthHeader = req.headers.authorization
-
-  if (hasCSRFToken && !hasAuthHeader) {
-    return next()
+// Middleware that requires JWT authentication for API endpoints
+const apiOnlyAuthenticationMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+  // Check if Authorization header is present
+  if (!req.headers.authorization) {
+    res.status(401).json({ error: 'Authorization header required' })
+    return
   }
 
-  return apiAuthenticationMiddleware()(req, res, next)
+  // Validate the JWT token using passport
+  passport.authenticate(
+    'jwt',
+    { session: false },
+    (err: Error | null, jwtPayload: { user_name?: string; sub?: string } | false) => {
+      if (err || !jwtPayload) {
+        res.status(401).json({ error: 'Invalid or expired token' })
+        return
+      }
+
+      // Store JWT payload in res.locals for the API controller to access
+      res.locals.user = {
+        username: jwtPayload.user_name || jwtPayload.sub || 'api-user',
+        token: req.headers.authorization?.replace('Bearer ', '') || '',
+        authSource: 'jwt',
+      }
+
+      next()
+    }
+  )(req, res, next)
 }
 
 export default function apiRouter(): Router {
@@ -28,11 +44,8 @@ export default function apiRouter(): Router {
   const reportService = new ReportService()
 
   if (!testMode) {
-    router.use(setUpAuthentication())
-    router.use(auth.authenticationMiddleware(tokenVerifier))
-
     initAuth()
-    router.use(hybridAuthenticationMiddleware)
+    router.use(apiOnlyAuthenticationMiddleware)
   }
 
   router.use(apiRoutes(reportService, eventService))

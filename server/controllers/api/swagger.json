@@ -71,24 +71,17 @@
         }
       }
     },
-    "/api/v1/report/{reportType}": {
+    "/api/v1/report": {
       "post": {
         "tags": ["report"],
         "summary": "Create report",
-        "description": "Creates a new report based on report type",
+        "description": "Creates a new pre-sentence report. Only requires the CRN (Case Reference Number). The report type defaults to 'short-format' and an event number is auto-generated.",
         "parameters": [
-          {
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "name": "reportType",
-            "enum": ["record-of-oral", "short-format"],
-            "description": "Type of report to be created"
-          },
           {
             "in": "body",
             "name": "body",
-            "description": "External identifiers to be stored with the report",
+            "required": true,
+            "description": "Report creation request containing the defendant's CRN",
             "schema": {
               "$ref": "#/components/schemas/createReport"
             }
@@ -96,16 +89,24 @@
         ],
         "responses": {
           "201": {
-            "description": "Returns a report object",
+            "description": "Report created successfully. Returns the report ID.",
             "schema": {
-              "$ref": "#/components/schemas/newReport"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "babb539f-33c3-4948-9b87-946ad9c06a42",
+                  "description": "The unique identifier for the created report"
+                }
+              }
             }
           },
           "400": {
-            "description": "Bad request.  Unsupported or malformed report type."
+            "description": "Bad request. CRN is required."
           },
           "401": {
-            "description": "Authorization error.  See response body for more details."
+            "description": "Authorization error. Bearer token required."
           }
         }
       }
@@ -115,20 +116,15 @@
     "schemas": {
       "createReport": {
         "type": "object",
+        "required": ["crn"],
         "properties": {
-          "eventNumber": {
-            "type": "string",
-            "example": "300",
-            "description": "External unique identifier reference"
-          },
           "crn": {
             "type": "string",
             "example": "DX12340A",
-            "description": "Defendant CRN"
+            "description": "Defendant CRN (Case Reference Number)"
           }
         },
         "example": {
-          "eventNumber": "300",
           "crn": "DX12340A"
         }
       },

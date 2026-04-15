@@ -31,23 +31,28 @@ export default class ApiController {
   createReport = async (req: Request, res: Response): Promise<void> => {
     let reportId: string | undefined
     try {
-      const reportType = this.correctReportType(req.params.reportType)
+      const crn = req.body.crn?.toUpperCase()
+      if (!crn) {
+        res.status(400).send('CRN is required')
+        return
+      }
+
       const username = res.locals?.user?.username || 'system'
 
       // Create person details from request body
       const personDetails = {
-        crn: req.body.crn.toUpperCase(),
-        names: req.body.names || {
+        crn,
+        names: {
           foreName: '',
           middleName: '',
           surname: '',
         },
-        dateOfBirth: req.body.dateOfBirth ? new Date(req.body.dateOfBirth) : new Date(),
-        pnc: req.body.pnc || '',
-        address: req.body.address,
-        mainOffence: req.body.mainOffence || '',
-        otherOffences: req.body.otherOffences,
-        court: req.body.court || {
+        dateOfBirth: new Date(),
+        pnc: '',
+        address: undefined,
+        mainOffence: '',
+        otherOffences: [],
+        court: {
           name: '',
           localJusticeArea: '',
         },
@@ -56,9 +61,7 @@ export default class ApiController {
 
       const report = await this.reportService.createReport(
         {
-          crn: req.body.crn.toUpperCase(),
-          eventNumber: req.body.eventNumber.toString(),
-          reportType,
+          crn,
           personDetails,
         },
         username
@@ -66,18 +69,8 @@ export default class ApiController {
 
       reportId = report.id
 
-      await this.eventService.sendReportEvent({
-        reportId: report.id.toString(),
-        eventNumber: req.body.eventNumber.toString(),
-        crn: req.body.crn.toUpperCase(),
-        reportStatus: 'started',
-      })
-
       res.status(201).json({
-        ...report,
-        id: report.id.toString(), // Convert to string for API compatibility
-        urn: `uk:gov:hmpps:pre-sentence-service:report:${report.id}`,
-        url: `${config.domain}/${reportType}/${report.id}`,
+        id: report.id.toString(),
       })
     } catch (e) {
       const error = e as HttpError

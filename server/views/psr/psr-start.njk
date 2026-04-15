@@ -1,5 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% from 'do-dont-list/macro.njk' import list %}
+{% from "../components/task-list/macro.njk" import picTaskList %}
 
 {% set pageTitle = preSentenceType + " - Home" %}
 
@@ -82,6 +83,50 @@
     <p class="govuk-body">
       If requested by court, you may also need to give them additional risk information through a <a class="govkuk-link" href="https://equip-portal.equip.service.justice.gov.uk/CtrlWebIsapi.dll/app/documents/60BA213882A84926AD26C6A2A2A3A4A2/master">dangerousness assessment</a>.
     </p>
+
+    <h2 class="govuk-heading-l govuk-!-margin-top-8">Report progress</h2>
+
+    {{ picTaskList({
+      sections: [{
+        items: [
+          {
+            text: "Defendant details",
+            href: "/psr/" + reportId + "/defendant-details",
+            state: data.sectionStatuses.defendantDetails.status
+          },
+          {
+            text: "Offence analysis",
+            href: "/psr/" + reportId + "/offence-analysis",
+            state: data.sectionStatuses.offenceAnalysis.status
+          },
+          {
+            text: "Defendant behaviour and lifestyle assessment",
+            href: "/psr/" + reportId + "/defendant-behaviour",
+            state: data.sectionStatuses.defendantBehaviour.status
+          },
+          {
+            text: "Risk analysis",
+            href: "/psr/" + reportId + "/risk-analysis",
+            state: data.sectionStatuses.riskAnalysis.status
+          },
+          {
+            text: "Sentencing proposal",
+            href: "/psr/" + reportId + "/sentencing-proposal",
+            state: data.sectionStatuses.sentencingProposal.status
+          },
+          {
+            text: "Sources of information",
+            href: "/psr/" + reportId + "/sources-of-information",
+            state: data.sectionStatuses.sourcesOfInformation.status
+          },
+          {
+            text: "Sign your report",
+            href: "/psr/" + reportId + "/sign-your-report",
+            state: data.sectionStatuses.signYourReport.status
+          }
+        ]
+      }]
+    }) }}
 
     <p class="govuk-body govuk-!-margin-top-6">
       <a href="/psr/{{ reportId }}/defendant-details" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">

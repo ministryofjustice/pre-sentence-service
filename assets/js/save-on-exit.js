@@ -17,6 +17,18 @@
     return getForm() !== null
   }
 
+  function hasBlockingConfirmSubmitValidationErrors(form) {
+    const signReportName = document.getElementById('signReportName')
+    const dangerousReport = form.querySelector('input[name="isDangerousReport"]:checked')
+    const spoName = document.getElementById('spoName')
+
+    if (!signReportName?.value.trim()) return true
+    if (!dangerousReport?.value) return true
+    if (dangerousReport.value === 'yes' && !spoName?.value.trim()) return true
+
+    return false
+  }
+
   function persistForm() {
     if (!window.reportStoreInstance) {
       console.warn('Report store not available, falling back to form data')
@@ -151,6 +163,10 @@
       const form = getForm()
 
       if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
+        if (hasBlockingConfirmSubmitValidationErrors(form)) {
+          return
+        }
+
         event.preventDefault()
 
         if (modal) {
