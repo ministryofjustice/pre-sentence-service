@@ -6,6 +6,7 @@ import {
   Offence,
 } from '../@types/preSentenceToDelius'
 import logger from '../../logger'
+import config from '../config'
 
 /**
  * Transform API Name format to application format
@@ -100,6 +101,47 @@ export function transformOffence(offence: Offence, isMainOffence = false): Trans
 }
 
 /**
+ * Generate fake additional offences for development purposes
+ */
+function generateFakeAdditionalOffences(count: number): Offence[] {
+  const fakeOffences: Array<{ code: string; description: string }> = [
+    { code: 'TH68001', description: 'Theft from a shop' },
+    { code: 'CJ88001', description: 'Common assault' },
+    { code: 'CJ88002', description: 'Assault occasioning actual bodily harm' },
+    { code: 'TH68023', description: 'Burglary - dwelling' },
+    { code: 'CD98001', description: 'Criminal damage to property valued under £5000' },
+    { code: 'DR10001', description: 'Driving whilst disqualified' },
+    { code: 'RT88001', description: 'Public order offence' },
+    { code: 'FH68001', description: 'Fraud by false representation' },
+  ]
+
+  const generatedOffences: Offence[] = []
+  const now = new Date()
+
+  for (let i = 0; i < count; i++) {
+    const selectedOffence = fakeOffences[i % fakeOffences.length]
+    // Generate dates going back in time (30-365 days ago)
+    const daysAgo = 30 + Math.floor(Math.random() * 335)
+    const offenceDate = new Date(now)
+    offenceDate.setDate(offenceDate.getDate() - daysAgo)
+
+    generatedOffences.push({
+      date: offenceDate.toISOString(),
+      mainCategory: {
+        code: selectedOffence.code.substring(0, 2),
+        description: 'Main category',
+      },
+      subCategory: {
+        code: selectedOffence.code,
+        description: selectedOffence.description,
+      },
+    })
+  }
+
+  return generatedOffences
+}
+
+/**
  * Transform API OffenceDetails to application format
  */
 export interface TransformedOffences {
@@ -110,8 +152,17 @@ export interface TransformedOffences {
 export function transformOffenceDetails(apiData: OffenceDetails): TransformedOffences {
   logger.debug({ apiData }, 'Transforming offence details from API')
 
+  let additionalOffences = apiData.additionalOffences
+
+  // If dev mode is enabled and there are no additional offences, generate fake ones
+  if (config.dev.fakeAdditionalOffences && additionalOffences.length === 0) {
+    const count = Math.floor(Math.random() * 3) + 1 // Random number between 1 and 3
+    logger.info({ count }, 'DEV: Generating fake additional offences')
+    additionalOffences = generateFakeAdditionalOffences(count)
+  }
+
   return {
     mainOffence: transformOffence(apiData.mainOffence, true),
-    additionalOffences: apiData.additionalOffences.map(offence => transformOffence(offence, false)),
+    additionalOffences: additionalOffences.map(offence => transformOffence(offence, false)),
   }
 }

@@ -130,4 +130,7 @@ export default {
       endpoint: get('AWS_ENDPOINT', ''), // Only set locally for localstack
     },
   },
+  dev: {
+    fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
+  },
 }

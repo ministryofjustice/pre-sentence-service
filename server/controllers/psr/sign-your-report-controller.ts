@@ -37,7 +37,7 @@ export default class SignYourReportController extends BaseController {
     if (!req.body.isDangerousReport) {
       elementsWithError.push('isDangerousReport')
     }
-    if (req.body.isDangerousReport === 'yes' && !req.body.spoName) {
+    if (req.body.isDangerousReport === 'yes' && !req.body.spoName?.trim()) {
       elementsWithError.push('spoName')
     }
     return { elementsWithError }
