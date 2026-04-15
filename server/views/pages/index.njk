@@ -19,6 +19,7 @@
             <th scope="col" class="govuk-table__header">Report ID</th>
             <th scope="col" class="govuk-table__header">Defendant Name</th>
             <th scope="col" class="govuk-table__header">Status</th>
+            <th scope="col" class="govuk-table__header">Has Address</th>
             <th scope="col" class="govuk-table__header">Created</th>
           </tr>
         </thead>
@@ -41,6 +42,13 @@
                 <strong class="govuk-tag {% if report.status === 'STARTED' %}govuk-tag--blue{% else %}govuk-tag--grey{% endif %}">
                   {{ report.status | replace("_", " ") }}
                 </strong>
+              </td>
+              <td class="govuk-table__cell">
+                {% if report.person and report.person.address %}
+                  true
+                {% else %}
+                  false
+                {% endif %}
               </td>
               <td class="govuk-table__cell">
                 {{ report.createdAt | formatDateTime }}
