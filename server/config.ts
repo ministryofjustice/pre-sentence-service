@@ -123,6 +123,13 @@ export default {
       eventVersion: 1,
     },
   },
+  domainEvents: {
+    sqs: {
+      queueUrl: get('HMPPS_DOMAIN_EVENTS_QUEUE_URL', '', requiredInProduction),
+      region: get('AWS_REGION', 'eu-west-2'),
+      endpoint: get('AWS_ENDPOINT', ''), // Only set locally for localstack
+    },
+  },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
   },

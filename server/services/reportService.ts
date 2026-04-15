@@ -7,8 +7,6 @@ import ReportDetails, { ReportStatus } from '../repositories/entities/reportDeta
 export interface IReport {
   id?: string
   crn: string
-  eventNumber: string
-  reportType: string
   personDetails?: IPersonDetails
 }
 
@@ -50,8 +48,6 @@ export default class ReportService {
     // Create report
     const report = await this.reportDetailsService.createReportDetails({
       personId: person.id!,
-      origin: reportData.eventNumber,
-      reportType: reportData.reportType,
       createdBy,
     })
 
