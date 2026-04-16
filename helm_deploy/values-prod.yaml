@@ -15,6 +15,9 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
+    COMMON_PLATFORM_URL: "https://my-services.cjscp.org.uk"
+    DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
+    NDELIUS_URL: "https://ndelius.probation.service.justice.gov.uk"
 
   allowlist:
     office: "217.33.148.210/32"

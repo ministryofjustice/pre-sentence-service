@@ -130,6 +130,18 @@ export default {
       endpoint: get('AWS_ENDPOINT', ''), // Only set locally for localstack
     },
   },
+  links: {
+    commonPlatformUrl: get('COMMON_PLATFORM_URL', 'https://my-services.cjscp.org.uk', requiredInProduction),
+    digitalCaseSystemUrl: get(
+      'DIGITAL_CASE_SYSTEM_URL',
+      'https://crowncourtdcs.caselines.co.uk/',
+      requiredInProduction
+    ),
+    ndeliusUrl: get(
+      'NDELIUS_URL',
+      'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction
+    ),
+  },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
   },

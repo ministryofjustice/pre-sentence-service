@@ -1,4 +1,5 @@
 import BaseController from './baseController'
+import config from '../../config'
 
 export default class PublishReportController extends BaseController {
   override templatePath = 'publish-report'
@@ -6,8 +7,8 @@ export default class PublishReportController extends BaseController {
   override redirectPath = 'psr-start'
 
   override defaultTemplateData = {
-    commonPlatformUrl: 'https://my-services.cjscp.org.uk',
-    digitalCaseSystemUrl: 'https://crowncourtdcs.caselines.co.uk/',
-    ndeliusUrl: 'https://ndelius.probation.service.justice.gov.uk',
+    commonPlatformUrl: config.links.commonPlatformUrl,
+    digitalCaseSystemUrl: config.links.digitalCaseSystemUrl,
+    ndeliusUrl: config.links.ndeliusUrl,
   }
 }
