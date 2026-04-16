@@ -137,10 +137,7 @@ export default {
       'https://crowncourtdcs.caselines.co.uk/',
       requiredInProduction
     ),
-    ndeliusUrl: get(
-      'NDELIUS_URL',
-      'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction
-    ),
+    ndeliusUrl: get('NDELIUS_URL', 'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction),
   },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
