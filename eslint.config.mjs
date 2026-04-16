@@ -99,7 +99,7 @@ export default defineConfig([
       'import/no-extraneous-dependencies': [
         'error',
         {
-          devDependencies: ['**/*.test.js', '**/*.test.ts', './cypress.config.ts', './.allowed-scripts.mjs'],
+          devDependencies: ['**/*.test.js', '**/*.test.ts', './cypress.config.ts'],
         },
       ],
 

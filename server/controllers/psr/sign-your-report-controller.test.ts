@@ -119,7 +119,7 @@ describe('SignYourReportController', () => {
 
     await controller.post(req, res)
 
-    expect(res.redirect).toHaveBeenCalledWith('/psr/123/submit-completed')
+    expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
   })
 
   it('does not allow dangerous reports to be submitted without an SPO name', async () => {

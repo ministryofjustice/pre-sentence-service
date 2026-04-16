@@ -119,7 +119,12 @@ export const getReportProgress = (data: ReportData): ReportProgress => {
     proposedSentenceRationale:
       hasContent(data.proposedSentenceRationale) || hasContent(data.rationaleForProposedSentence),
     alternativeSentencingOptions: hasContent(data.alternativeSentencingOptions),
-    sentenceImpact: hasContent(data.sentenceImpact) || hasContent(data.impactOfCustodialSentence),
+    sentenceImpact:
+      hasContent(data.sentenceImpact) ||
+      hasContent(data.impactOfCustodialSentence) ||
+      data.custodialSentenceConsideration === 'not-threshold' ||
+      data.custodialSentenceConsideration === 'court-indicated' ||
+      (data.custodialSentenceConsideration === 'possible' && hasContent(data.custodialSentenceImpact)),
   }
 
   const sourcesOfInformation = {

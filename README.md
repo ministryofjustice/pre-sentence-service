@@ -35,7 +35,7 @@ To start the main services excluding the typescript app:
 
 Now in a separate terminal window or tab, at the project root.
 
-Install dependencies using `npm install` and `npm run setup`, ensuring you are using >= `Node v24.0.0` LTS
+Install dependencies using `npm install`, ensuring you are using >= `Node v24.0.0` LTS
 
 And then, to build the assets and start the app with nodemon:
 

@@ -57,4 +57,29 @@ describe('reportProgress', () => {
     expect(progress.signYourReport.spoName).toBe(false)
     expect(areReviewSectionsComplete(progress)).toBe(false)
   })
+
+  it('marks custodial sentence impact as complete when a non-custodial option is selected', () => {
+    const progress = getReportProgress({
+      proposedSentence: 'Community order',
+      proposedSentenceRationale: 'Rationale',
+      alternativeSentencingOptions: 'Alternatives',
+      custodialSentenceConsideration: 'not-threshold',
+    })
+
+    expect(progress.sentencingProposal.sentenceImpact).toBe(true)
+    expect(progress.sentencingProposal.status).toBe('Completed')
+  })
+
+  it('keeps custodial sentence impact incomplete when custodial is possible but no explanation is entered', () => {
+    const progress = getReportProgress({
+      proposedSentence: 'Community order',
+      proposedSentenceRationale: 'Rationale',
+      alternativeSentencingOptions: 'Alternatives',
+      custodialSentenceConsideration: 'possible',
+      custodialSentenceImpact: '   ',
+    })
+
+    expect(progress.sentencingProposal.sentenceImpact).toBe(false)
+    expect(progress.sentencingProposal.status).toBe('Incomplete')
+  })
 })
