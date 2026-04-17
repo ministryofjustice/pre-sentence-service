@@ -7,9 +7,8 @@ const sentencingProposalModel = z
     proposedSentenceRationale: z.string().min(1, 'Explain your rationale for the proposed sentence'),
     alternativeSentencingOptions: z.string().min(1, 'Outline alternative sentencing options'),
     custodialSentenceConsideration: z.preprocess(
-      (val) => val ?? '',
-      z.string()
-      .min(1, 'Select the button that best describes the possibility of a custodial sentence if relevant')
+      val => val ?? '',
+      z.string().min(1, 'Select the button that best describes the possibility of a custodial sentence if relevant')
     ),
     custodialSentenceImpact: z.string().optional(),
   })
