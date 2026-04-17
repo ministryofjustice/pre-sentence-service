@@ -19,6 +19,7 @@ generic-service:
     COMMON_PLATFORM_URL: "https://dummy.common.url"
     DIGITAL_CASE_SYSTEM_URL: "https://dummy.case.system.url/"
     NDELIUS_URL: "https://ndelius-test.probation.service.justice.gov.uk"
+    HMPPS_DOMAIN_EVENTS_QUEUE_URL: "https://hmpps-domain-events-dev.live-1.cloud-platform.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
 
   allowlist: null
