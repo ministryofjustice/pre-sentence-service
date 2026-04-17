@@ -20,8 +20,8 @@
 {% set proposedSentenceRationaleHelp %}
   <p class="govuk-body">You should outline the intended outcomes of the sentence by:</p>
   <ul>
-    <li>explaining how it addresses identified risks and needs</li>
-    <li>considering how it may reduce the defendants risk of reconviction</li>
+    <li>explaining how the proposal addresses identified risks and needs</li>
+    <li>considering how the proposal may reduce the defendants risk of reconviction</li>
     <li>stating how it will manage identified risks of harm</li>
   </ul>
 {% endset %}
@@ -94,11 +94,11 @@
     <div class="govuk-form-group{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
         <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                Explain the impact of a custodial sentence
+                Explain the impact of a custodial sentence if relevant
             </legend>
             {% if 'custodialSentenceConsideration' in elementsWithError %}
                 <p class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Select the button that best describes the possibility of a custodial sentence if relevant
+                    <span class="govuk-visually-hidden">Error:</span> Select the button that best describes the possibility of a custodial sentence
                 </p>
             {% endif %}
             <div class="govuk-radios">

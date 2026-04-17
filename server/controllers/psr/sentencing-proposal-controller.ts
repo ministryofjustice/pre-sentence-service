@@ -6,9 +6,11 @@ const sentencingProposalModel = z
     proposedSentence: z.string().min(1, 'Enter the proposed sentence'),
     proposedSentenceRationale: z.string().min(1, 'Explain your rationale for the proposed sentence'),
     alternativeSentencingOptions: z.string().min(1, 'Outline alternative sentencing options'),
-    custodialSentenceConsideration: z
-      .string()
-      .min(1, 'Select the button that best describes the possibility of a custodial sentence if relevant'),
+    custodialSentenceConsideration: z.preprocess(
+      (val) => val ?? '',
+      z.string()
+      .min(1, 'Select the button that best describes the possibility of a custodial sentence if relevant')
+    ),
     custodialSentenceImpact: z.string().optional(),
   })
   .superRefine((data, ctx) => {
