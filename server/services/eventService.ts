@@ -8,6 +8,7 @@ export interface IReportEventData {
   eventNumber: string
   crn: string
   reportStatus: string
+  username: string
   pdfUrl?: string
 }
 
@@ -20,6 +21,8 @@ export interface IDomainEvent {
   additionalInformation: {
     eventNumber: string
     reportId: string
+    psrId: string
+    username: string
   }
   personReference: {
     identifiers: [
@@ -94,7 +97,12 @@ export default class EventService {
       description: `A Pre-Sentence Report has been ${reportEventData.reportStatus}`,
       detailUrl: reportEventData.pdfUrl || `${config.domain}/api/v1/report/${reportEventData.reportId}`,
       occurredAt: new Date().toISOString(),
-      additionalInformation: { eventNumber: reportEventData.eventNumber, reportId: reportEventData.reportId },
+      additionalInformation: {
+        eventNumber: reportEventData.eventNumber,
+        reportId: reportEventData.reportId,
+        psrId: reportEventData.reportId,
+        username: reportEventData.username,
+      },
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 
