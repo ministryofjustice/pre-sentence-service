@@ -14,8 +14,8 @@ export const signYourReportModel = z
     signReportName: z.string().min(1, 'You must sign your report before you submit'),
 
     isDangerousReport: z.preprocess(
-          val => val ?? '',
-          z.string().min(1, 'Specify whether this is a dangerousness report')
+      val => val ?? '',
+      z.string().min(1, 'Specify whether this is a dangerousness report')
     ),
     spoName: z.string().optional(),
   })
