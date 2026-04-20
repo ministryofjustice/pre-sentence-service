@@ -120,7 +120,7 @@ describe('OffenceAnalysisController', () => {
 
       await controller.get(mockRequest as Request, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('X123456', 12345)
+      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
       expect(mockResponse.render).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -158,7 +158,7 @@ describe('OffenceAnalysisController', () => {
 
       await controller.get(mockRequest as Request, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('X123456', 12345)
+      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
       expect(mockResponse.render).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -175,33 +175,6 @@ describe('OffenceAnalysisController', () => {
       await controllerWithoutService.get(mockRequest as Request, mockResponse as Response)
 
       expect(mockResponse.render).toHaveBeenCalled()
-    })
-
-    it('should not fetch API data if CRN is missing', async () => {
-      const reportWithoutCrn = {
-        ...mockReport,
-        person: {
-          ...mockReport.person,
-          crn: undefined,
-        },
-      }
-      mockReportService.getReportById = jest.fn().mockResolvedValue(reportWithoutCrn)
-
-      await controller.get(mockRequest as Request, mockResponse as Response)
-
-      expect(mockPreSentenceToDeliusService.getOffences).not.toHaveBeenCalled()
-    })
-
-    it('should not fetch API data if eventNumber is missing', async () => {
-      const reportWithoutOrigin = {
-        ...mockReport,
-        origin: undefined,
-      }
-      mockReportService.getReportById = jest.fn().mockResolvedValue(reportWithoutOrigin)
-
-      await controller.get(mockRequest as Request, mockResponse as Response)
-
-      expect(mockPreSentenceToDeliusService.getOffences).not.toHaveBeenCalled()
     })
   })
 
