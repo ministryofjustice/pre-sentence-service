@@ -146,6 +146,7 @@ describe('SignYourReportController', () => {
       eventNumber: '123',
       crn: 'X012345',
       reportStatus: 'created',
+      username: 'testuser',
       pdfUrl: expect.stringContaining('/psr/123/pdf'),
     })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')

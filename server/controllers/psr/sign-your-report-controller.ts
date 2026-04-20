@@ -223,6 +223,7 @@ export default class SignYourReportController extends BaseController {
           eventNumber: this.report.id!, // Using reportId as eventNumber
           crn: this.report.person.crn,
           reportStatus: 'created',
+          username,
           pdfUrl: `${config.domain}/${this.path}/${this.report.id}/pdf`,
         })
 
