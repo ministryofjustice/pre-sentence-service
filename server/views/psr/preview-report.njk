@@ -6,6 +6,14 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% set progress = data.sectionStatuses %}
+{% set canViewSignAndLock =
+  progress.defendantDetails.status == "Completed" and
+  progress.offenceAnalysis.status == "Completed" and
+  progress.defendantBehaviour.status == "Completed" and
+  progress.riskAnalysis.status == "Completed" and
+  progress.sentencingProposal.status == "Completed" and
+  progress.sourcesOfInformation.status == "Completed"
+%}
 
 {% block reportForm %}
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">{{ currentPage }}</h1>
@@ -131,6 +139,19 @@
             text: "Sources of information",
             href: "/" + reportPath + "/" + reportId + "/sources-of-information",
             state: "Completed" if progress.sourcesOfInformation.sources else "Incomplete"
+          }
+        ]
+      },
+      {
+        heading: {
+          text: "Sign and lock your report",
+          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+        },
+        items: [
+          {
+            text: "Sign and lock your report",
+            href: "/" + reportPath + "/" + reportId + "/sign-your-report",
+            state: "Ready to view" if canViewSignAndLock else "Cannot start yet"
           }
         ]
       }
