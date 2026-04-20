@@ -13,8 +13,10 @@ export const signYourReportModel = z
   .object({
     signReportName: z.string().min(1, 'You must sign your report before you submit'),
 
-    isDangerousReport: z.string().min(1, 'Specify whether this is a dangerousness report'),
-
+    isDangerousReport: z.preprocess(
+          val => val ?? '',
+          z.string().min(1, 'Specify whether this is a dangerousness report')
+    ),
     spoName: z.string().optional(),
   })
   .superRefine((data, ctx) => {
