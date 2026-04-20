@@ -20,14 +20,16 @@ createApplication()
       console.log(data.toString())
       logger.info(`Server listening on port: ${app.get('port')}`)
 
-      // Log AWS configuration for domain events
-      logger.info('AWS Domain Events Configuration', {
-        awsRegion: config.domainEvents.sqs.region,
-        queueUrl: config.domainEvents.sqs.queueUrl || 'NOT_SET',
-        awsEndpoint: config.domainEvents.sqs.endpoint || 'NOT_SET (using AWS default)',
-        awsEndpointEnvVar: process.env.AWS_ENDPOINT || 'NOT_SET',
+      // Log AWS SNS configuration for domain events
+      logger.info('AWS SNS Domain Events Configuration', {
+        awsRegion: config.aws.sns.region,
+        topicArn: config.aws.sns.topicArn || 'NOT_SET',
+        topicArnEnvVar: process.env.TOPIC_ARN || 'NOT_SET',
+        endpoint: config.aws.sns.endpoint || 'NOT_SET (using AWS default)',
+        eventVersion: config.aws.sns.eventVersion,
         hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
         awsRoleArn: process.env.AWS_ROLE_ARN || 'NOT_SET',
+        awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE || 'NOT_SET',
       })
     })
   })

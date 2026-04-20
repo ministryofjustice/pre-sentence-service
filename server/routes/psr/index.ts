@@ -6,7 +6,7 @@ import LandingPageController from '../../controllers/psr/landingPageController'
 
 import ReportService from '../../services/reportService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
-import DomainEventService from '../../services/domainEventService'
+import EventService from '../../services/eventService'
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
 import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
 import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
@@ -21,7 +21,7 @@ import PublishReportController from '../../controllers/psr/publish-report-contro
 export default function Index(
   reportService: ReportService,
   preSentenceToDeliusService?: PreSentenceToDeliusService,
-  domainEventService?: DomainEventService
+  eventService?: EventService
 ): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
@@ -98,10 +98,10 @@ export default function Index(
   })
 
   get('/:reportId/sign-your-report', (req, res) => {
-    return new SignYourReportController(reportService, preSentenceToDeliusService, domainEventService).get(req, res)
+    return new SignYourReportController(reportService, preSentenceToDeliusService, eventService).get(req, res)
   })
   post('/:reportId/sign-your-report', (req, res) => {
-    return new SignYourReportController(reportService, preSentenceToDeliusService, domainEventService).post(req, res)
+    return new SignYourReportController(reportService, preSentenceToDeliusService, eventService).post(req, res)
   })
   get('/:reportId/publish-report', (req, res) => {
     return new PublishReportController(reportService).get(req, res)
