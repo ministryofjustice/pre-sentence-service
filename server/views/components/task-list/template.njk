@@ -27,6 +27,8 @@
           {% set class = "govuk-tag--blue " %}
         {% elseif item.state === "Incomplete" %}
           {% set class = "govuk-tag--blue " %}
+        {% elseif item.state === "Ready to view" %}
+          {% set class = "govuk-tag--blue " %}
         {% elseif item.state === "Completed" %}
           {% set class = "govuk-tag--green " %}
         {% endif %}

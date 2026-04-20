@@ -3,6 +3,11 @@ import * as z from 'zod'
 import { Request, Response } from 'express'
 import { validateForm } from '../../utils/formValidation'
 import { areReviewSectionsComplete, getReportProgress } from '../../utils/reportProgress'
+import DomainEventService from '../../services/domainEventService'
+import ReportService from '../../services/reportService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import config from '../../config'
+import logger from '../../../logger'
 
 export const signYourReportModel = z
   .object({
@@ -31,6 +36,18 @@ export default class SignYourReportController extends BaseController {
   override model = signYourReportModel
 
   override pageFields = pageFields
+
+  private domainEventService?: DomainEventService
+
+  constructor(
+    reportService: ReportService,
+    preSentenceToDeliusService?: PreSentenceToDeliusService,
+    domainEventService?: DomainEventService
+  ) {
+    super(reportService, preSentenceToDeliusService)
+    this.domainEventService = domainEventService
+  }
+
   override correctFormData = (req: Request) => {
     const elementsWithError: string[] = []
 
@@ -76,32 +93,61 @@ export default class SignYourReportController extends BaseController {
   }
 
   override post = async (req: Request, res: Response): Promise<void> => {
+    const reportId = req.params.reportId
+    const username = res.locals?.user?.username || 'system'
+
+    logger.info('Sign and lock report request initiated', {
+      reportId,
+      username,
+      hasRedirectPath: !!req.query?.redirectPath,
+    })
+
     if (req.query?.redirectPath) {
+      logger.info('Delegating to super.post due to redirectPath', { reportId })
       await super.post(req, res)
       return
     }
 
-    const reportId = req.params.reportId
+    logger.info('Fetching report for signing', { reportId })
     const rep = await this.reportService.getReportById(reportId)
 
     if (!rep) {
+      logger.warn('Report not found for signing', { reportId })
       res.redirect(`/${this.path}/${reportId}/not-found`)
       return
     }
+
+    logger.info('Report retrieved successfully', {
+      reportId,
+      reportStatus: rep.status,
+      hasPerson: !!rep.person,
+      crn: rep.person?.crn,
+    })
 
     this.report = rep
 
     const validatedForm = validateForm(req.body, this.model)
     if (!validatedForm.isValid) {
+      logger.warn('Form validation failed for sign and lock', {
+        reportId,
+        errors: validatedForm.errors,
+      })
       await super.post(req, res)
       return
     }
+
+    logger.info('Form validation successful', {
+      reportId,
+      signReportName: req.body.signReportName,
+      isDangerousReport: req.body.isDangerousReport,
+    })
 
     req.body = {
       ...req.body,
       ...this.correctFormData(req),
     }
 
+    logger.info('Building report data for progress check', { reportId })
     const data = {
       ...this.defaultTemplateData,
       ...this.getSavedAnswers(),
@@ -111,7 +157,17 @@ export default class SignYourReportController extends BaseController {
     }
     const sectionStatuses = getReportProgress(data)
 
+    logger.info('Report progress calculated', {
+      reportId,
+      sectionStatuses,
+      allSectionsComplete: areReviewSectionsComplete(sectionStatuses),
+    })
+
     if (!areReviewSectionsComplete(sectionStatuses)) {
+      logger.warn('Report sections incomplete, cannot sign and lock', {
+        reportId,
+        sectionStatuses,
+      })
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId,
@@ -130,7 +186,76 @@ export default class SignYourReportController extends BaseController {
       return
     }
 
-    await this.updateReportActions(req)
+    logger.info('All report sections complete, proceeding to sign and lock', { reportId })
+
+    logger.info('Updating report actions (signing and locking)', { reportId })
+    try {
+      await this.updateReportActions(req)
+      logger.info('Report actions updated successfully', { reportId })
+    } catch (error) {
+      logger.error('Failed to update report actions', {
+        reportId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      })
+      throw error
+    }
+
+    // Publish domain event for report signed and locked
+    if (this.domainEventService && this.report) {
+      logger.info('Preparing to publish PSR completed domain event', {
+        reportId: this.report.id,
+        crn: this.report.person.crn,
+        hasDomainEventService: !!this.domainEventService,
+      })
+
+      try {
+        const pdfUrl = `${config.domain}/psr/${this.report.id}/pdf`
+
+        logger.info('Publishing PSR completed domain event', {
+          reportId: this.report.id,
+          crn: this.report.person.crn,
+          username,
+          pdfUrl,
+          eventType: 'pre-sentence.report.created',
+        })
+
+        await this.domainEventService.publishPSRCompletedEvent({
+          psrId: this.report.id!,
+          crn: this.report.person.crn,
+          username,
+          pdfUrl,
+        })
+
+        logger.info('PSR completed domain event published successfully', {
+          reportId: this.report.id,
+          crn: this.report.person.crn,
+          username,
+          pdfUrl,
+        })
+      } catch (error) {
+        logger.error('Failed to publish PSR completed domain event', {
+          reportId: this.report.id,
+          crn: this.report.person.crn,
+          username,
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          errorType: error?.constructor?.name,
+        })
+        // Don't fail the request if domain event publishing fails
+      }
+    } else {
+      logger.warn('Domain event not published - service or report missing', {
+        reportId,
+        hasDomainEventService: !!this.domainEventService,
+        hasReport: !!this.report,
+      })
+    }
+
+    logger.info('Redirecting to publish report page', {
+      reportId,
+      redirectPath: this.redirectPath,
+    })
     res.redirect(`/${this.path}/${reportId}/${this.redirectPath}`)
   }
 }
