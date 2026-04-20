@@ -56,8 +56,7 @@ export default class PdfController {
 
       try {
         if (this.preSentenceToDeliusService) {
-          const eventNumber = reportData.reportOrigin ? parseInt(reportData.reportOrigin as string, 10) : 0
-          offenceData = await this.preSentenceToDeliusService.getOffences(reportData.crn as string, eventNumber)
+          offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
         }
       } catch (error) {
         logger.warn({ reportId, error }, 'Failed to fetch offence details from API')

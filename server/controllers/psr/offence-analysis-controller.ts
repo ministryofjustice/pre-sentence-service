@@ -64,27 +64,20 @@ export default class OffenceAnalysisController extends BaseController {
     // Try to fetch offence details from the API if service is available
     if (this.preSentenceToDeliusService && reportId && this.report) {
       try {
-        const crn = this.report.person?.crn
-        const eventNumber = this.report.origin ? parseInt(this.report.origin, 10) : undefined
+        logger.info({ reportId }, 'Fetching offence details from Pre-Sentence to Delius API')
+        const apiData = await this.preSentenceToDeliusService.getOffences(reportId)
 
-        if (crn && eventNumber) {
-          logger.info({ reportId, crn, eventNumber }, 'Fetching offence details from Pre-Sentence to Delius API')
-          const apiData = await this.preSentenceToDeliusService.getOffences(crn, eventNumber)
+        // Transform API data to application format
+        const transformedOffences = transformOffenceDetails(apiData)
 
-          // Transform API data to application format
-          const transformedOffences = transformOffenceDetails(apiData)
-
-          // Store the offence data for template rendering
-          this.data = {
-            ...this.data,
-            offencesData: transformedOffences,
-            apiOffencesAvailable: true,
-          }
-
-          logger.info({ reportId, crn, eventNumber }, 'Successfully fetched offence details from API')
-        } else {
-          logger.warn({ reportId, crn, eventNumber }, 'Missing CRN or event number for fetching offences')
+        // Store the offence data for template rendering
+        this.data = {
+          ...this.data,
+          offencesData: transformedOffences,
+          apiOffencesAvailable: true,
         }
+
+        logger.info({ reportId }, 'Successfully fetched offence details from API')
       } catch (error) {
         logger.warn({ reportId, error }, 'Failed to fetch offence details from API, using database data')
         // Continue without API offence data - error is logged but not thrown

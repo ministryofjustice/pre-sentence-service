@@ -125,8 +125,9 @@ export default class PreSentenceToDeliusService {
     return this.client({ path }) as Promise<DefendantDetails>
   }
 
-  async getOffences(crn: string, eventNumber: number): Promise<OffenceDetails> {
-    const path = `${this.apiUrl}/case/${crn}/event/${eventNumber}/offences`
+  async getOffences(psrUuid: string): Promise<OffenceDetails> {
+    const defendantDetails = await this.getDefendantDetails(psrUuid)
+    const path = `${this.apiUrl}/case/${defendantDetails.crn}/event/${defendantDetails.eventNumber}/offences`
     return this.client({ path }) as Promise<OffenceDetails>
   }
 }
