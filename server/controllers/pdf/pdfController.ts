@@ -59,12 +59,9 @@ export default class PdfController {
           offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
         }
       } catch (error) {
-        logger.warn(
-          { reportId, error },
-          'Failed to fetch offence details from API - continuing with empty offence data'
-        )
-        // Continue with empty offence data rather than crashing
-        offenceData = {}
+        logger.warn({ reportId, error }, 'Failed to fetch offence details from API')
+
+        throw error
       }
 
       const pdfData = {
