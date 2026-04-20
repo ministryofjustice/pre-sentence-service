@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 
 import SignYourReportController from './sign-your-report-controller'
 import ReportService from '../../services/reportService'
+import DomainEventService from '../../services/domainEventService'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 
 describe('SignYourReportController', () => {
   let controller: SignYourReportController
   let reportService: ReportService
+  let domainEventService: DomainEventService
   let req: Request
   let res: Response
   const completePages = [
@@ -62,7 +64,11 @@ describe('SignYourReportController', () => {
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
     } as unknown as ReportService
 
-    controller = new SignYourReportController(reportService)
+    domainEventService = {
+      publishPSRCompletedEvent: jest.fn().mockResolvedValue(undefined),
+    } as unknown as DomainEventService
+
+    controller = new SignYourReportController(reportService, undefined, domainEventService)
 
     req = {
       params: { reportId: '123' },
@@ -119,6 +125,28 @@ describe('SignYourReportController', () => {
 
     await controller.post(req, res)
 
+    expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
+  })
+
+  it('publishes domain event when report is signed and locked', async () => {
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      id: '123',
+      pages: completePages,
+      person: {
+        ...mockedReportData.person,
+        crn: 'X012345',
+      },
+    })
+
+    await controller.post(req, res)
+
+    expect(domainEventService.publishPSRCompletedEvent).toHaveBeenCalledWith({
+      psrId: '123',
+      crn: 'X012345',
+      username: 'testuser',
+      pdfUrl: expect.stringContaining('/psr/123/pdf'),
+    })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
   })
 
