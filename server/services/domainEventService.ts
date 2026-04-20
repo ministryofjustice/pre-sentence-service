@@ -35,7 +35,10 @@ export default class DomainEventService {
       queueUrl: config.domainEvents.sqs.queueUrl || 'NOT_SET',
       hasEndpoint: !!config.domainEvents.sqs.endpoint,
       endpoint: config.domainEvents.sqs.endpoint || 'not set (using AWS default)',
+      awsEndpointEnvVar: process.env.AWS_ENDPOINT || 'NOT_SET',
       hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
+      awsRoleArn: process.env.AWS_ROLE_ARN || 'NOT_SET',
+      awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE || 'NOT_SET',
     })
 
     const sqsConfig: {
@@ -111,7 +114,9 @@ export default class DomainEventService {
         region: config.domainEvents.sqs.region,
         hasEndpoint: !!config.domainEvents.sqs.endpoint,
         endpoint: config.domainEvents.sqs.endpoint || 'default',
+        awsEndpointEnvVar: process.env.AWS_ENDPOINT || 'NOT_SET',
         messageSize: JSON.stringify(event).length,
+        hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
       })
 
       const command = new SendMessageCommand({
