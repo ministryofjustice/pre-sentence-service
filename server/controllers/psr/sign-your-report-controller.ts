@@ -3,11 +3,11 @@ import * as z from 'zod'
 import { Request, Response } from 'express'
 import { validateForm } from '../../utils/formValidation'
 import { areReviewSectionsComplete, getReportProgress } from '../../utils/reportProgress'
-import DomainEventService from '../../services/domainEventService'
+import EventService from '../../services/eventService'
 import ReportService from '../../services/reportService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
-import config from '../../config'
 import logger from '../../../logger'
+import config from '../../config'
 
 export const signYourReportModel = z
   .object({
@@ -37,15 +37,15 @@ export default class SignYourReportController extends BaseController {
 
   override pageFields = pageFields
 
-  private domainEventService?: DomainEventService
+  private eventService?: EventService
 
   constructor(
     reportService: ReportService,
     preSentenceToDeliusService?: PreSentenceToDeliusService,
-    domainEventService?: DomainEventService
+    eventService?: EventService
   ) {
     super(reportService, preSentenceToDeliusService)
-    this.domainEventService = domainEventService
+    this.eventService = eventService
   }
 
   override correctFormData = (req: Request) => {
@@ -201,40 +201,38 @@ export default class SignYourReportController extends BaseController {
       throw error
     }
 
-    // Publish domain event for report signed and locked
-    if (this.domainEventService && this.report) {
-      logger.info('Preparing to publish PSR completed domain event', {
+    // Publish domain event for report created
+    if (this.eventService && this.report) {
+      logger.info('Preparing to publish PSR created domain event', {
         reportId: this.report.id,
         crn: this.report.person.crn,
-        hasDomainEventService: !!this.domainEventService,
+        hasEventService: !!this.eventService,
       })
 
       try {
-        const pdfUrl = `${config.domain}/psr/${this.report.id}/pdf`
-
-        logger.info('Publishing PSR completed domain event', {
+        logger.info('Publishing PSR created domain event', {
           reportId: this.report.id,
           crn: this.report.person.crn,
           username,
-          pdfUrl,
+          reportStatus: 'created',
           eventType: 'pre-sentence.report.created',
         })
 
-        await this.domainEventService.publishPSRCompletedEvent({
-          psrId: this.report.id!,
+        await this.eventService.sendReportEvent({
+          reportId: this.report.id!,
+          eventNumber: this.report.id!, // Using reportId as eventNumber
           crn: this.report.person.crn,
-          username,
-          pdfUrl,
+          reportStatus: 'created',
+          pdfUrl: `${config.domain}/${this.path}/${this.report.id}/pdf`,
         })
 
-        logger.info('PSR completed domain event published successfully', {
+        logger.info('PSR created domain event published successfully', {
           reportId: this.report.id,
           crn: this.report.person.crn,
           username,
-          pdfUrl,
         })
       } catch (error) {
-        logger.error('Failed to publish PSR completed domain event', {
+        logger.error('Failed to publish PSR created domain event', {
           reportId: this.report.id,
           crn: this.report.person.crn,
           username,
@@ -247,7 +245,7 @@ export default class SignYourReportController extends BaseController {
     } else {
       logger.warn('Domain event not published - service or report missing', {
         reportId,
-        hasDomainEventService: !!this.domainEventService,
+        hasEventService: !!this.eventService,
         hasReport: !!this.report,
       })
     }

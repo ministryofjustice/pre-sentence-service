@@ -13,7 +13,7 @@ import psrRoutes from './psr'
 import type UserService from '../services/userService'
 import ReportService from '../services/reportService'
 import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
-import DomainEventService from '../services/domainEventService'
+import EventService from '../services/eventService'
 import HmppsAuthClient from '../data/hmppsAuthClient'
 import { createRedisClient } from '../data/redisClient'
 import TokenStore from '../data/tokenStore'
@@ -31,10 +31,10 @@ export default function standardRouter(userService: UserService): Router {
   const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
   const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
-  // Initialize DomainEventService
-  logger.info('StandardRouter: Creating DomainEventService instance')
-  const domainEventService = new DomainEventService()
-  logger.info('StandardRouter: DomainEventService instance created, passing to PSR routes')
+  // Initialize EventService
+  logger.info('StandardRouter: Creating EventService instance')
+  const eventService = new EventService()
+  logger.info('StandardRouter: EventService instance created, passing to PSR routes')
 
   if (!testMode) {
     router.use(setUpAuthentication())
@@ -52,7 +52,7 @@ export default function standardRouter(userService: UserService): Router {
   })
 
   router.use(populateCurrentUser(userService))
-  router.use(psrRoutes(reportService, preSentenceToDeliusService, domainEventService))
+  router.use(psrRoutes(reportService, preSentenceToDeliusService, eventService))
 
   return router
 }
