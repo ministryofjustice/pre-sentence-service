@@ -59,9 +59,12 @@ export default class PdfController {
           offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
         }
       } catch (error) {
-        logger.warn({ reportId, error }, 'Failed to fetch offence details from API')
-
-        throw error
+        logger.warn(
+          { reportId, error },
+          'Failed to fetch offence details from API - continuing with empty offence data'
+        )
+        // Continue with empty offence data rather than crashing
+        offenceData = {}
       }
 
       const pdfData = {
@@ -88,7 +91,7 @@ export default class PdfController {
       const purpleB64 = fs.readFileSync(purplePath).toString('base64')
 
       res.renderPDF(
-        `reports/${reportData.reportType}`,
+        'reports/psr',
         { preSentenceUrl, data: pdfData, images: { armsB64, purpleB64 } },
         {
           filename,
