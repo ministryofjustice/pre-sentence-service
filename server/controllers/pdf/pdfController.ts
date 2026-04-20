@@ -88,7 +88,7 @@ export default class PdfController {
       const purpleB64 = fs.readFileSync(purplePath).toString('base64')
 
       res.renderPDF(
-        `reports/${reportData.reportType}`,
+        'reports/psr',
         { preSentenceUrl, data: pdfData, images: { armsB64, purpleB64 } },
         {
           filename,

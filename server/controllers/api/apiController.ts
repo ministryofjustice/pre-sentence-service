@@ -12,22 +12,6 @@ export default class ApiController {
     protected readonly eventService: EventService
   ) {}
 
-  // Support legacy nDelius report types
-  private correctReportType(reportType: string): string {
-    let correctedReportType: string
-    switch (reportType) {
-      case 'shortFormatPreSentenceReport':
-        correctedReportType = 'short-format'
-        break
-      case 'oralReport':
-        correctedReportType = 'record-of-oral'
-        break
-      default:
-        correctedReportType = ''
-    }
-    return correctedReportType.length ? correctedReportType : reportType
-  }
-
   createReport = async (req: Request, res: Response): Promise<void> => {
     let reportId: string | undefined
     try {
@@ -118,7 +102,7 @@ export default class ApiController {
       const { preSentenceUrl } = config.apis.gotenberg
       const filename = `${reportData.reportType}_${reportId}.pdf`
       res.renderPDF(
-        `reports/${reportData.reportType}`,
+        'reports/psr',
         { preSentenceUrl, data: reportData },
         { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
       )
@@ -130,7 +114,7 @@ export default class ApiController {
 
   getAllReportsByType = async (req: Request, res: Response): Promise<void> => {
     try {
-      const reportType = this.correctReportType(req.params.reportType)
+      const reportType = req.params.reportType
       const results = await this.reportService.getAllReportsByType(reportType)
 
       // Convert IDs to strings for API compatibility

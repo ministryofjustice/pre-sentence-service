@@ -29,7 +29,7 @@ export default class ReportDetailsService {
       ...reportData,
       status: reportData.status || ReportStatus.NOT_STARTED,
       origin: reportData.origin || '',
-      reportType: reportData.reportType || 'standard',
+      reportType: reportData.reportType || 'psr',
       createdAt: new Date(),
       lastUpdatedBy: new Date(),
       isDeleted: false,
