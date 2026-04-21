@@ -4,7 +4,6 @@ import { PublishCommandOutput } from '@aws-sdk/client-sns'
 import APIController from './apiController'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
-import { mockGeneratePdf } from '../../services/__mocks__/pdfGenerationService'
 import ReportDetails, { ReportStatus } from '../../repositories/entities/reportDetails'
 
 jest.mock('../../services/reportService')
