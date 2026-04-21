@@ -31,7 +31,6 @@ export default function createApplication(userService: UserService): Application
 
   app.use(setUpHealthChecks())
   app.use(setUpWebSecurity())
-  app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
   nunjucksSetup(app, path)
@@ -48,7 +47,11 @@ export default function createApplication(userService: UserService): Application
     })
   )
 
+  // API routes - no session required (uses JWT authentication)
   app.use('/api', apiRouter())
+
+  // Web routes - require session-based authentication
+  app.use(setUpWebSession())
   app.use('/', indexRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

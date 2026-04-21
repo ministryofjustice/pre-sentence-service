@@ -13,8 +13,10 @@ export const signYourReportModel = z
   .object({
     signReportName: z.string().min(1, 'You must sign your report before you submit'),
 
-    isDangerousReport: z.string().min(1, 'Specify whether this is a dangerousness report'),
-
+    isDangerousReport: z.preprocess(
+      val => val ?? '',
+      z.string().min(1, 'Specify whether this is a dangerousness report')
+    ),
     spoName: z.string().optional(),
   })
   .superRefine((data, ctx) => {
@@ -224,7 +226,7 @@ export default class SignYourReportController extends BaseController {
           crn: this.report.person.crn,
           reportStatus: 'created',
           username,
-          pdfUrl: `${config.domain}/${this.path}/${this.report.id}/pdf`,
+          pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
         })
 
         logger.info('PSR created domain event published successfully', {

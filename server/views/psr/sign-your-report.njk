@@ -65,9 +65,6 @@
                 classes: "govuk-fieldset__legend--m"
                 }
                 },
-                hint: {
-                text: "Select one option"
-                },
                 errorMessage: {
                 text: "Specify whether this is a dangerousness report"
                 } if 'isDangerousReport' in elementsWithError,
@@ -89,7 +86,7 @@
                 }) }}
         <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
         <input type="hidden" name="reportId" value="{{ reportId }}">
-        <button class="govuk-button govuk-!-margin-top-6">Sign and lock</button>
+        <button class="govuk-button govuk-!-margin-top-6">Submit</button>
     </form>
     <div class="govuk-modal" id="confirm-modal" hidden>
         <div class="govuk-modal__overlay"></div>
