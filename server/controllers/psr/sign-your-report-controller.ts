@@ -224,7 +224,7 @@ export default class SignYourReportController extends BaseController {
           crn: this.report.person.crn,
           reportStatus: 'created',
           username,
-          pdfUrl: `${config.domain}/${this.path}/${this.report.id}/pdf`,
+          pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
         })
 
         logger.info('PSR created domain event published successfully', {
