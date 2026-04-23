@@ -145,59 +145,6 @@
       }
     }
 
-    const modal = document.getElementById('confirm-modal')
-    const confirmBtn = document.getElementById('confirm-submit')
-    const cancelBtn = document.getElementById('cancel-submit')
-
-    const handleLink = link => {
-      if (!link.target || link.target === '_self') {
-        window.location = link.href
-      } else {
-        window.open(link.href, link.target)
-      }
-    }
-
-    let allowSubmit = false
-
-    getForm().addEventListener('submit', event => {
-      const form = getForm()
-
-      if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
-        if (hasBlockingConfirmSubmitValidationErrors(form)) {
-          return
-        }
-
-        event.preventDefault()
-
-        if (modal) {
-          modal.hidden = false
-          confirmBtn.focus()
-        }
-
-        return
-      }
-
-      clearTimeout(timeoutHandle)
-
-      if (window.ReportStore) {
-        window.ReportStore.markChangesSaved()
-      }
-    })
-
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => {
-        skipBeforeUnload = true
-        allowSubmit = true
-        modal.hidden = true
-        getForm().submit()
-      })
-    }
-
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
-        modal.hidden = true
-      })
-    }
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
 
