@@ -142,7 +142,11 @@
     {% endif %}
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
-    <p class="govuk-body-s"> DD/MM/YY </p>
+    {% if data.reportSubmittedAt %}
+        <p class="govuk-body-s"> {{ data.reportSubmittedAt | formatDate }} </p>
+    {% else %}
+        <p class="govuk-body-s"> DD/MM/YY </p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 

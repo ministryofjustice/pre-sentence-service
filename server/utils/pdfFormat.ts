@@ -95,6 +95,7 @@ export function configureReportData(report: ReportDetails) {
     reportType: report.reportType,
     reportVersion: report.version || 1,
     reportOrigin: report.origin,
+    reportSubmittedAt: report.submittedAt,
   }
 
   if (report.pages) {
