@@ -80,17 +80,19 @@ export const hasContent = (value: unknown): boolean => {
 const getStatus = (isComplete: boolean): CompletionStatus => (isComplete ? 'Completed' : 'Incomplete')
 
 export const getReportProgress = (data: ReportData): ReportProgress => {
+  const apiDefendantAvailable = data.apiDefendantDetailsAvailable === true
   const defendantDetails = {
-    name: hasContent(data.name),
-    dateOfBirth: hasContent(data.dateOfBirth),
+    name: apiDefendantAvailable && hasContent(data.name),
+    dateOfBirth: apiDefendantAvailable && hasContent(data.dateOfBirth),
     address:
-      hasContent(data['address-buildingName']) ||
-      hasContent(data['address-number']) ||
-      hasContent(data['address-streetName']) ||
-      hasContent(data['address-town']) ||
-      hasContent(data['address-district']) ||
-      hasContent(data['address-county']) ||
-      hasContent(data['address-postcode']),
+      apiDefendantAvailable &&
+      (hasContent(data['address-buildingName']) ||
+        hasContent(data['address-number']) ||
+        hasContent(data['address-streetName']) ||
+        hasContent(data['address-town']) ||
+        hasContent(data['address-district']) ||
+        hasContent(data['address-county']) ||
+        hasContent(data['address-postcode'])),
   }
 
   const offenceAnalysis = {

@@ -29,28 +29,6 @@ describe('DefendantDetailsController', () => {
     person: {
       id: 1,
       crn: 'X123456',
-      names: {
-        foreName: 'John',
-        middleName: 'Middle',
-        surname: 'Doe',
-      },
-      dateOfBirth: new Date('1990-01-15'),
-      pnc: 'PNC123',
-      address: {
-        noFixedAbode: false,
-        buildingNumber: '10',
-        addressNumber: '',
-        streetName: 'Main Street',
-        town: 'London',
-        district: 'Westminster',
-        county: 'Greater London',
-        postcode: 'SW1A 1AA',
-      },
-      mainOffence: 'Theft',
-      court: {
-        name: 'Westminster Magistrates Court',
-        localJusticeArea: 'Westminster',
-      },
       createdAt: new Date(),
       createdBy: 'test-user',
       lastUpdatedBy: new Date(),
@@ -106,72 +84,62 @@ describe('DefendantDetailsController', () => {
     controller = new DefendantDetailsController(mockReportService, mockPreSentenceToDeliusService)
   })
 
-  describe('beforeRender hook', () => {
-    it('should fetch defendant details from API and transform data', async () => {
-      mockPreSentenceToDeliusService.getDefendantDetails.mockResolvedValue(mockApiDefendantDetails)
+  it('fetches defendant details from the API and flattens them into the template data', async () => {
+    mockPreSentenceToDeliusService.getDefendantDetails.mockResolvedValue(mockApiDefendantDetails)
 
-      await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
-      expect(mockResponse.render).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          data: expect.objectContaining({
-            name: 'Jane Mary Smith',
-            dateOfBirth: new Date('1992-03-20'),
-            crn: 'X123456',
-            'address-buildingName': 'Flat 5',
-            'address-number': '42',
-            'address-streetName': 'High Street',
-            'address-town': 'London',
-            'address-district': 'Camden',
-            'address-county': 'Greater London',
-            'address-postcode': 'NW1 2AB',
-          }),
-        })
-      )
-    })
+    expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
+    expect(mockResponse.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        data: expect.objectContaining({
+          apiDefendantDetailsAvailable: true,
+          name: 'Jane Mary Smith',
+          dateOfBirth: new Date('1992-03-20'),
+          crn: 'X123456',
+          'address-buildingName': 'Flat 5',
+          'address-number': '42',
+          'address-streetName': 'High Street',
+          'address-town': 'London',
+          'address-district': 'Camden',
+          'address-county': 'Greater London',
+          'address-postcode': 'NW1 2AB',
+        }),
+      })
+    )
+  })
 
-    it('should handle API errors gracefully and fall back to database data', async () => {
-      mockPreSentenceToDeliusService.getDefendantDetails.mockRejectedValue(new Error('API Error'))
+  it('marks defendant details unavailable when the API call fails', async () => {
+    mockPreSentenceToDeliusService.getDefendantDetails.mockRejectedValue(new Error('API Error'))
 
-      await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
-      expect(mockResponse.render).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          data: expect.objectContaining({
-            name: 'John Doe',
-            crn: 'X123456',
-          }),
-        })
-      )
-    })
+    expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
+    expect(mockResponse.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        data: expect.objectContaining({
+          apiDefendantDetailsAvailable: false,
+          crn: 'X123456',
+        }),
+      })
+    )
+  })
 
-    it('should work without PreSentenceToDeliusService injected', async () => {
-      const controllerWithoutService = new DefendantDetailsController(mockReportService)
+  it('renders with defendant details unavailable when no API service is injected', async () => {
+    const controllerWithoutService = new DefendantDetailsController(mockReportService)
 
-      await controllerWithoutService.get(mockRequest as Request, mockResponse as Response)
+    await controllerWithoutService.get(mockRequest as Request, mockResponse as Response)
 
-      expect(mockResponse.render).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          data: expect.objectContaining({
-            name: 'John Doe',
-            crn: 'X123456',
-          }),
-        })
-      )
-    })
-
-    it('should not fetch API data if reportId is missing', async () => {
-      mockRequest.params = {}
-      mockRequest.query = {}
-
-      await controller.get(mockRequest as Request, mockResponse as Response)
-
-      expect(mockPreSentenceToDeliusService.getDefendantDetails).not.toHaveBeenCalled()
-    })
+    expect(mockResponse.render).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        data: expect.objectContaining({
+          apiDefendantDetailsAvailable: false,
+          crn: 'X123456',
+        }),
+      })
+    )
   })
 })

@@ -29,18 +29,6 @@ describe('OffenceAnalysisController', () => {
     person: {
       id: 1,
       crn: 'X123456',
-      names: {
-        foreName: 'John',
-        middleName: '',
-        surname: 'Doe',
-      },
-      dateOfBirth: new Date('1990-01-15'),
-      pnc: 'PNC123',
-      mainOffence: 'Theft',
-      court: {
-        name: 'Westminster Magistrates Court',
-        localJusticeArea: 'Westminster',
-      },
       createdAt: new Date(),
       createdBy: 'test-user',
       lastUpdatedBy: new Date(),

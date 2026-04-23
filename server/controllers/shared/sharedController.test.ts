@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 
 import SharedController from './sharedController'
 import ReportService from '../../services/reportService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import type { DefendantDetails as DefendantDetailsApiResponse } from '../../@types/preSentenceToDelius'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 import validateUUID from '../../utils/reportValidation'
 
@@ -25,12 +27,26 @@ describe('Route Handlers - Shared Controller', () => {
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
   } as unknown as ReportService
+
+  const mockApiDefendantDetails: DefendantDetailsApiResponse = {
+    crn: 'X123456',
+    eventNumber: 12345,
+    name: { forename: 'Jane', middleName: '', surname: 'Doe' },
+    dateOfBirth: '1990-01-01',
+    mainAddress: { postcode: 'SW1A 1AA' },
+  }
+
+  const mockPreSentenceToDeliusService = {
+    getDefendantDetails: jest.fn().mockResolvedValue(mockApiDefendantDetails),
+    getOffences: jest.fn(),
+  } as unknown as jest.Mocked<PreSentenceToDeliusService>
+
   let handler: SharedController
   let req: Request
   let res: Response
 
   beforeAll(() => {
-    handler = new SharedController(mockedReportService)
+    handler = new SharedController(mockedReportService, mockPreSentenceToDeliusService)
   })
 
   afterAll(() => {
@@ -96,18 +112,10 @@ describe('Route Handlers - Shared Controller', () => {
       )
     })
 
-    it('should include derived section statuses from saved page answers', async () => {
+    it('should derive section statuses from API defendant details and saved page answers', async () => {
       mockedReportService.getReportById = jest.fn().mockResolvedValue({
         ...mockedReportData,
         pages: [
-          {
-            name: 'defendant-details',
-            questions: [
-              { id: 0, value: 'name', answer: 'Jane Doe' },
-              { id: 1, value: 'dateOfBirth', answer: '1990-01-01' },
-              { id: 2, value: 'address-postcode', answer: 'SW1A 1AA' },
-            ],
-          },
           {
             name: 'offence-analysis',
             questions: [
@@ -124,7 +132,7 @@ describe('Route Handlers - Shared Controller', () => {
         `${handler.path}/${handler.templatePath}`,
         expect.objectContaining({
           data: expect.objectContaining({
-            name: 'John Doe',
+            name: 'Jane Doe',
             offencesUnderConsideration: 'Some analysis',
             noPreviousOffences: 'true',
             sectionStatuses: expect.objectContaining({
@@ -141,6 +149,33 @@ describe('Route Handlers - Shared Controller', () => {
               }),
               riskAnalysis: expect.objectContaining({
                 status: 'Incomplete',
+              }),
+            }),
+          }),
+        })
+      )
+    })
+
+    it('marks the defendant details section incomplete when the API call fails', async () => {
+      mockPreSentenceToDeliusService.getDefendantDetails.mockRejectedValueOnce(new Error('API down'))
+      mockedReportService.getReportById = jest.fn().mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+
+      await handler.get(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        `${handler.path}/${handler.templatePath}`,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            apiDefendantDetailsAvailable: false,
+            sectionStatuses: expect.objectContaining({
+              defendantDetails: expect.objectContaining({
+                status: 'Incomplete',
+                name: false,
+                dateOfBirth: false,
+                address: false,
               }),
             }),
           }),

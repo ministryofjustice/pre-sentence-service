@@ -5,6 +5,7 @@ import logger from '../../logger'
 import config from '../config'
 import ReportDetails from '../repositories/entities/reportDetails'
 import PreSentenceToDeliusService from './preSentenceToDeliusService'
+import type { Address, DefendantDetails } from '../@types/preSentenceToDelius'
 import {
   configureReportData,
   getDraftHeader,
@@ -18,6 +19,32 @@ export interface PdfGenerationOptions {
   draft?: boolean
 }
 
+interface PdfAddress {
+  buildingName: string
+  addressNumber: string
+  streetName: string
+  town: string
+  district: string
+  county: string
+  postcode: string
+}
+
+function buildPdfAddress(apiAddress?: Address): PdfAddress {
+  return {
+    buildingName: apiAddress?.buildingName ?? '',
+    addressNumber: apiAddress?.buildingNumber ?? '',
+    streetName: apiAddress?.streetName ?? '',
+    town: apiAddress?.town ?? '',
+    district: apiAddress?.district ?? '',
+    county: apiAddress?.county ?? '',
+    postcode: apiAddress?.postcode ?? '',
+  }
+}
+
+function fullName(defendant: DefendantDetails): string {
+  return [defendant.name.forename, defendant.name.middleName, defendant.name.surname].filter(Boolean).join(' ')
+}
+
 export default class PdfGenerationService {
   constructor(private readonly preSentenceToDeliusService?: PreSentenceToDeliusService) {}
 
@@ -27,17 +54,26 @@ export default class PdfGenerationService {
 
     logger.info(`Request to print PDF for report ${reportId}`)
 
+    if (!this.preSentenceToDeliusService) {
+      throw new Error('Pre-Sentence to Delius service is required to generate a PDF')
+    }
+
     const reportData = configureReportData(report)
+
+    const defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
+    const offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
+
+    const dob = new Date(defendant.dateOfBirth)
     const now = new Date()
-    const dob = new Date(reportData.dateOfBirth as string)
     const birthdayThisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate())
     const ageOffset = now < birthdayThisYear ? 1 : 0
     const ageInYears = now.getFullYear() - dob.getFullYear() - ageOffset
+
     const riskToPublic: string = reportData.riskToPublic as string
     const riskToChildren: string = reportData.riskToChildren as string
     const riskToKnownAdults: string = reportData.riskToKnownAdults as string
     const riskToStaff: string = reportData.riskToStaff as string
-    let impactExplanation: string = ''
+    let impactExplanation = ''
     switch (reportData.custodialSentenceConsideration as string) {
       case 'possible':
         impactExplanation = 'A custodial sentence is possible or expected'
@@ -51,32 +87,23 @@ export default class PdfGenerationService {
         break
     }
 
-    let offenceData = {}
-
-    try {
-      if (this.preSentenceToDeliusService) {
-        offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
-      }
-    } catch (error) {
-      logger.warn({ reportId, error }, 'Failed to fetch offence details from API')
-      throw error
-    }
-
     const pdfData = {
       ...reportData,
+      name: fullName(defendant),
+      dateOfBirth: dob,
+      address: buildPdfAddress(defendant.mainAddress),
       riskToPublic: riskToPublic.replace('_', ' '),
       riskToChildren: riskToChildren.replace('_', ' '),
       riskToKnownAdults: riskToKnownAdults.replace('_', ' '),
       riskToStaff: riskToStaff.replace('_', ' '),
-      ageInYears: ageInYears,
-      impactExplanation: impactExplanation,
-      offenceData: offenceData,
+      ageInYears,
+      impactExplanation,
+      offenceData,
     }
 
     const headerHtml = draft ? getDraftHeader() : getHeader()
     const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })
 
-    // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
     const { preSentenceUrl } = config.apis.gotenberg
     const filename = `${reportData.reportType}_${reportId}.pdf`
 

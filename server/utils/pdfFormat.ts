@@ -63,7 +63,6 @@ export function configureReportData(report: ReportDetails) {
     reportOrigin: report.origin,
   }
 
-  // Extract data from pages structure
   if (report.pages) {
     report.pages.forEach(page => {
       page.questions.forEach(question => {
@@ -72,12 +71,8 @@ export function configureReportData(report: ReportDetails) {
     })
   }
 
-  // Add person details if available
   if (report.person) {
     reportData.crn = report.person.crn
-    reportData.name = `${report.person.names.foreName} ${report.person.names.surname}`
-    reportData.dateOfBirth = report.person.dateOfBirth
-    reportData.address = report.person.address
   }
 
   return reportData
