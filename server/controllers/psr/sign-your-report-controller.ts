@@ -9,6 +9,7 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import logger from '../../../logger'
 import config from '../../config'
 
+//Any changes in the validation here may need to be reflected in confirm-modal.js
 export const signYourReportModel = z
   .object({
     signReportName: z.string().min(1, 'You must sign your report before you submit'),
