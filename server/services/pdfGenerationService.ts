@@ -100,7 +100,7 @@ export default class PdfGenerationService {
       impactExplanation,
       offenceData,
     }
-    
+
     const { preSentenceUrl } = config.apis.gotenberg
     const filename = `${reportData.reportType}_${reportId}.pdf`
 
@@ -110,7 +110,7 @@ export default class PdfGenerationService {
     const purpleB64 = fs.readFileSync(purplePath).toString('base64')
 
     const headerHtml = draft ? getDraftHeader(armsB64, purpleB64) : getHeader(armsB64, purpleB64)
-    const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })
+    const footerHtml = draft ? getDraftFooter() : getFooter()
 
     res.renderPDF(
       'reports/psr',

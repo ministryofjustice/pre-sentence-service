@@ -7,19 +7,12 @@ export const pdfOptions = {
   marginRight: '0.9',
 }
 
-interface FooterData {
-  version: number | string
-}
-
 const footerDivStyle = 'display:flex; justify-content:flex-end; width:100%;'
 const headerFooterStyle =
   'font-family: Arial; font-size: 10px; width: 100%; height: 15px; padding: 10px; display: flex; align-items: center;'
 const pdfHeaderLogoStyle = 'height: 70px; width: auto; object-fit: contain;'
 const headerRowStyle =
   'display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 50px; box-sizing: border-box;'
-
-
-
 
 export function getHeader(armsB64: string, purpleB64: string): string {
   return `
@@ -79,7 +72,7 @@ export function getDraftFooter(): string {
   `
 }
 
-export function getFooter(data: FooterData): string {
+export function getFooter(): string {
   return `
     <span id="qa-official-footer" style="${headerFooterStyle}">
         <div style="${footerDivStyle}">
