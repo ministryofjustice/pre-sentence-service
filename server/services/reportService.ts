@@ -3,6 +3,13 @@ import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetai
 import SourcesOfInformationService from './sourcesOfInformationService'
 import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
+import EventService, { IReportEventData } from './eventService'
+import logger from '../../logger'
+
+const PUBLISH_MAX_ATTEMPTS = 3
+const PUBLISH_BACKOFF_MS = [500, 1500]
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export interface IReport {
   id?: string
@@ -143,5 +150,50 @@ export default class ReportService {
       ...result,
       currentPage: page,
     }
+  }
+
+  public async submitReport(
+    reportId: string,
+    eventService: EventService,
+    eventData: Omit<IReportEventData, 'reportId'>
+  ): Promise<ReportDetails> {
+    const submittedAt = new Date()
+
+    const stamped = await this.reportDetailsService.updateReportDetails(reportId, { submittedAt })
+    if (!stamped) {
+      throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+    }
+
+    try {
+      await this.publishWithRetry(eventService, { ...eventData, reportId })
+    } catch (error) {
+      await this.reportDetailsService.updateReportDetails(reportId, { submittedAt: null })
+      throw error
+    }
+
+    logger.info('Report submitted', { reportId, submittedAt: submittedAt.toISOString() })
+
+    return stamped
+  }
+
+  private async publishWithRetry(eventService: EventService, eventData: IReportEventData): Promise<void> {
+    let lastError: unknown
+    for (let attempt = 1; attempt <= PUBLISH_MAX_ATTEMPTS; attempt += 1) {
+      try {
+        await eventService.sendReportEvent(eventData)
+        return
+      } catch (error) {
+        lastError = error
+        if (attempt < PUBLISH_MAX_ATTEMPTS) {
+          logger.warn('Domain event publish attempt failed, retrying', {
+            reportId: eventData.reportId,
+            attempt,
+            error: error instanceof Error ? error.message : String(error),
+          })
+          await sleep(PUBLISH_BACKOFF_MS[attempt - 1] ?? PUBLISH_BACKOFF_MS[PUBLISH_BACKOFF_MS.length - 1])
+        }
+      }
+    }
+    throw lastError
   }
 }
