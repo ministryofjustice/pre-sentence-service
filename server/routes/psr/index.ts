@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+import lockedReportMiddleware from '../../middleware/lockedReportMiddleware'
 import BaseController from '../../controllers/psr/baseController'
 import LandingPageController from '../../controllers/psr/landingPageController'
 
@@ -25,8 +26,11 @@ export default function Index(
 ): Router {
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
-  const get = (path: string, handler: RequestHandler) => router.get(routePrefix(path), asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) => router.post(routePrefix(path), asyncMiddleware(handler))
+  const lockGuard = lockedReportMiddleware(reportService)
+  const get = (path: string, handler: RequestHandler) =>
+    router.get(routePrefix(path), lockGuard, asyncMiddleware(handler))
+  const post = (path: string, handler: RequestHandler) =>
+    router.post(routePrefix(path), lockGuard, asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
     return new LandingPageController(reportService, preSentenceToDeliusService).get(req, res)
