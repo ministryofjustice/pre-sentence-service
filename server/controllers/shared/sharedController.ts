@@ -143,47 +143,25 @@ export default class SharedController {
     }
   }
 
-  private getPersistentData = async (reportId?: string): Promise<object> => {
-    const data: { [key: string]: unknown } = {}
+  private fetchDefendantDetails = async (reportId: string): Promise<void> => {
+    const crn = this.report?.person?.crn
 
-    // Try to fetch from API first if service is available
-    if (this.preSentenceToDeliusService && reportId) {
-      try {
-        logger.info({ reportId }, 'Fetching defendant details from Pre-Sentence to Delius API for persistent data')
-        const apiData = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
-        const transformedData = transformDefendantDetails(apiData)
-
-        // Return API data
-        logger.info({ reportId }, 'Successfully fetched defendant details from API for persistent data')
-        return transformedData
-      } catch (error) {
-        logger.warn(
-          { reportId, error },
-          'Failed to fetch defendant details from API for persistent data, falling back to database'
-        )
-        // Fall through to database fallback
-      }
+    if (!this.preSentenceToDeliusService) {
+      this.data = { ...this.data, crn, apiDefendantDetailsAvailable: false }
+      return
     }
 
-    // Fallback to database data
-    if (this.report && this.report.person) {
-      // Extract persistent data from person details
-      data.crn = this.report.person.crn
-      data.name = `${this.report.person.names.foreName} ${this.report.person.names.surname}`
-      data.dateOfBirth = this.report.person.dateOfBirth
-
-      // Flatten address object if it exists
-      if (this.report.person.address) {
-        data['address-buildingName'] = this.report.person.address.buildingNumber || ''
-        data['address-number'] = this.report.person.address.addressNumber || ''
-        data['address-streetName'] = this.report.person.address.streetName || ''
-        data['address-town'] = this.report.person.address.town || ''
-        data['address-district'] = this.report.person.address.district || ''
-        data['address-county'] = this.report.person.address.county || ''
-        data['address-postcode'] = this.report.person.address.postcode || ''
+    try {
+      const apiData = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
+      this.data = {
+        ...this.data,
+        ...transformDefendantDetails(apiData),
+        apiDefendantDetailsAvailable: true,
       }
+    } catch (error) {
+      logger.warn({ reportId, error }, 'Failed to fetch defendant details from Pre-Sentence to Delius API')
+      this.data = { ...this.data, crn, apiDefendantDetailsAvailable: false }
     }
-    return data
   }
 
   protected updateFields = async (
@@ -258,14 +236,14 @@ export default class SharedController {
       this.report = rep
       this.getStoredData()
 
+      await this.fetchDefendantDetails(reportId)
+
       // Call the hook for subclasses to add their data
       await this.beforeRender(req, res)
 
-      const persistentData: { name?: string; crn?: string } = await this.getPersistentData(reportId)
-
       if (!req.session?.isAllowedAccess) {
         const inclusionExclusionCheck = await this.checkInclusionExclusion(
-          persistentData.crn ?? '',
+          (this.data.crn as string | undefined) ?? '',
           res.locals?.user?.username
         )
         if (!inclusionExclusionCheck.hasAccess) {
@@ -287,11 +265,9 @@ export default class SharedController {
         this.updateReport()
       }
       const data = {
-        name: persistentData.name,
         ...this.defaultTemplateData,
-        ...this.data,
         ...this.report,
-        ...persistentData,
+        ...this.data,
       }
       this.renderTemplate(res, {
         ...this.templateValues,
@@ -353,10 +329,7 @@ export default class SharedController {
       await this.updateReportActions(req)
 
       if (this.additionalPostAction) {
-        this.data = {
-          ...this.data,
-          ...(await this.getPersistentData(reportIdParam)),
-        }
+        await this.fetchDefendantDetails(reportIdParam)
         await this.additionalPostAction()
       }
       res.redirect(`/${this.path}/${reportIdParam}/${req.query?.redirectPath || this.redirectPath}`)
@@ -365,6 +338,7 @@ export default class SharedController {
       if (this.templatePath === 'sources-of-information') {
         sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
       }
+      await this.fetchDefendantDetails(reportIdParam)
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: reportIdParam,
@@ -372,7 +346,6 @@ export default class SharedController {
         data: {
           ...this.data,
           ...req.body,
-          ...(await this.getPersistentData(reportIdParam)),
         },
         formValidation: validatedForm,
       })

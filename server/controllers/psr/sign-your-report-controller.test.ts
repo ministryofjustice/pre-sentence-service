@@ -3,23 +3,29 @@ import { Request, Response } from 'express'
 import SignYourReportController from './sign-your-report-controller'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import type { DefendantDetails as DefendantDetailsApiResponse } from '../../@types/preSentenceToDelius'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 
 describe('SignYourReportController', () => {
   let controller: SignYourReportController
   let reportService: ReportService
   let eventService: EventService
+  let preSentenceToDeliusService: jest.Mocked<PreSentenceToDeliusService>
   let req: Request
   let res: Response
-  const completePages = [
-    {
-      name: 'defendant-details',
-      questions: [
-        { id: 0, value: 'name', answer: 'Jane Doe' },
-        { id: 1, value: 'dateOfBirth', answer: '1990-01-01' },
-        { id: 2, value: 'address-postcode', answer: 'SW1A 1AA' },
-      ],
+
+  const mockApiDefendantDetails: DefendantDetailsApiResponse = {
+    crn: 'X123456',
+    eventNumber: 12345,
+    name: { forename: 'Jane', middleName: '', surname: 'Doe' },
+    dateOfBirth: '1990-01-01',
+    mainAddress: {
+      postcode: 'SW1A 1AA',
     },
+  }
+
+  const completePages = [
     {
       name: 'offence-analysis',
       questions: [
@@ -68,7 +74,12 @@ describe('SignYourReportController', () => {
       sendReportEvent: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
     } as unknown as EventService
 
-    controller = new SignYourReportController(reportService, undefined, eventService)
+    preSentenceToDeliusService = {
+      getDefendantDetails: jest.fn().mockResolvedValue(mockApiDefendantDetails),
+      getOffences: jest.fn(),
+    } as unknown as jest.Mocked<PreSentenceToDeliusService>
+
+    controller = new SignYourReportController(reportService, preSentenceToDeliusService, eventService)
 
     req = {
       params: { reportId: '123' },
@@ -111,6 +122,26 @@ describe('SignYourReportController', () => {
           errors: expect.objectContaining({
             reviewProgress: 'Complete all sections in Review your progress before signing and locking this report',
           }),
+        }),
+      })
+    )
+    expect(res.redirect).not.toHaveBeenCalled()
+  })
+
+  it('blocks submission when the Pre-Sentence to Delius API is unavailable', async () => {
+    preSentenceToDeliusService.getDefendantDetails.mockRejectedValue(new Error('API down'))
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      pages: completePages,
+    })
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sign-your-report',
+      expect.objectContaining({
+        data: expect.objectContaining({
+          reviewProgressBlocked: true,
         }),
       })
     )

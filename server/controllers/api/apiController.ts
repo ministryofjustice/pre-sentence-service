@@ -28,33 +28,7 @@ export default class ApiController {
 
       const username = res.locals?.user?.username || 'system'
 
-      // Create person details from request body
-      const personDetails = {
-        crn,
-        names: {
-          foreName: '',
-          middleName: '',
-          surname: '',
-        },
-        dateOfBirth: new Date(),
-        pnc: '',
-        address: undefined,
-        mainOffence: '',
-        otherOffences: [],
-        court: {
-          name: '',
-          localJusticeArea: '',
-        },
-        createdBy: username,
-      }
-
-      const report = await this.reportService.createReport(
-        {
-          crn,
-          personDetails,
-        },
-        username
-      )
+      const report = await this.reportService.createReport({ crn }, username)
 
       reportId = report.id
 

@@ -4,32 +4,6 @@ import PersonDetails from '../repositories/entities/personDetails'
 export interface IPersonDetails {
   id?: number
   crn: string
-  names: {
-    foreName: string
-    middleName: string
-    surname: string
-  }
-  dateOfBirth: Date
-  pnc: string
-  address?: {
-    noFixedAbode: boolean
-    buildingNumber: string
-    addressNumber: string
-    streetName: string
-    town: string
-    district: string
-    county: string
-    postcode: string
-  }
-  mainOffence: string
-  otherOffences?: Array<{
-    description: string
-    code: string
-  }>
-  court: {
-    name: string
-    localJusticeArea: string
-  }
   createdBy: string
   isDeleted?: boolean
   version?: number
@@ -68,25 +42,6 @@ export default class PersonDetailsService {
           isDeleted: false,
         },
       })
-  }
-
-  public async updatePersonDetails(id: number, personData: Partial<IPersonDetails>): Promise<PersonDetails | null> {
-    const personRepository = getConnection().getRepository(PersonDetails)
-    const person = await personRepository.findOne({
-      where: { id, isDeleted: false },
-    })
-
-    if (!person) {
-      return null
-    }
-
-    const updated = personRepository.merge(person, {
-      ...personData,
-      lastUpdatedBy: new Date(),
-      version: (person.version || 1) + 1,
-    })
-
-    return personRepository.save(updated)
   }
 
   public async deletePersonDetails(id: number): Promise<boolean> {

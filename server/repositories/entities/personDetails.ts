@@ -1,32 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
-interface Names {
-  foreName: string
-  middleName: string
-  surname: string
-}
-
-interface Address {
-  noFixedAbode: boolean
-  buildingNumber: string
-  addressNumber: string
-  streetName: string
-  town: string
-  district: string
-  county: string
-  postcode: string
-}
-
-interface Court {
-  name: string
-  localJusticeArea: string
-}
-
-interface OtherOffence {
-  description: string
-  code: string
-}
-
 @Entity({ schema: 'presentenceservice' })
 export default class PersonDetails {
   @PrimaryGeneratedColumn()
@@ -34,27 +7,6 @@ export default class PersonDetails {
 
   @Column()
   crn!: string
-
-  @Column({ type: 'jsonb' })
-  names!: Names
-
-  @Column({ type: 'timestamp' })
-  dateOfBirth!: Date
-
-  @Column()
-  pnc!: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  address?: Address
-
-  @Column()
-  mainOffence!: string
-
-  @Column({ type: 'jsonb', nullable: true })
-  otherOffences?: OtherOffence[]
-
-  @Column({ type: 'jsonb' })
-  court!: Court
 
   @Column({ type: 'timestamp' })
   createdAt!: Date
