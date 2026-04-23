@@ -20,6 +20,7 @@ export interface IReportDetails {
   createdBy: string
   isDeleted?: boolean
   version?: number
+  submittedAt?: Date | null
 }
 
 export default class ReportDetailsService {

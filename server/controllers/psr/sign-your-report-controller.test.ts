@@ -64,15 +64,19 @@ describe('SignYourReportController', () => {
   ]
 
   beforeEach(() => {
+    eventService = {
+      sendReportEvent: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
+    } as unknown as EventService
+
     reportService = {
       getReportById: jest.fn(),
       updateReport: jest.fn().mockResolvedValue(mockedReportData),
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
+      submitReport: jest.fn().mockImplementation(async (reportId: string, es: EventService, eventData) => {
+        await es.sendReportEvent({ ...eventData, reportId })
+        return mockedReportData
+      }),
     } as unknown as ReportService
-
-    eventService = {
-      sendReportEvent: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
-    } as unknown as EventService
 
     preSentenceToDeliusService = {
       getDefendantDetails: jest.fn().mockResolvedValue(mockApiDefendantDetails),
@@ -181,6 +185,31 @@ describe('SignYourReportController', () => {
       pdfUrl: expect.stringContaining('/api/v1/report/123/pdf'),
     })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
+  })
+
+  it('re-renders the sign page with a submission error when submitReport fails', async () => {
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      id: '123',
+      pages: completePages,
+    })
+    ;(reportService.submitReport as jest.Mock).mockRejectedValue(new Error('SNS down'))
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sign-your-report',
+      expect.objectContaining({
+        reportId: '123',
+        formValidation: expect.objectContaining({
+          isValid: false,
+          errors: expect.objectContaining({
+            submission: expect.stringContaining("We couldn't submit your report right now"),
+          }),
+        }),
+      })
+    )
+    expect(res.redirect).not.toHaveBeenCalled()
   })
 
   it('does not allow dangerous reports to be submitted without an SPO name', async () => {

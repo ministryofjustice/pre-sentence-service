@@ -199,54 +199,28 @@ export default class SignYourReportController extends BaseController {
       throw error
     }
 
-    // Publish domain event for report created
-    if (this.eventService && this.report) {
-      logger.info('Preparing to publish PSR created domain event', {
-        reportId: this.report.id,
+    if (!this.eventService) {
+      logger.error('Domain event service not available, cannot submit report', { reportId })
+      this.renderSubmissionFailure(res, reportId, data)
+      return
+    }
+
+    try {
+      await this.reportService.submitReport(reportId, this.eventService, {
+        eventNumber: this.report.id!,
         crn: this.report.person.crn,
-        hasEventService: !!this.eventService,
+        reportStatus: 'created',
+        username,
+        pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
       })
-
-      try {
-        logger.info('Publishing PSR created domain event', {
-          reportId: this.report.id,
-          crn: this.report.person.crn,
-          username,
-          reportStatus: 'created',
-          eventType: 'pre-sentence.report.created',
-        })
-
-        await this.eventService.sendReportEvent({
-          reportId: this.report.id!,
-          eventNumber: this.report.id!, // Using reportId as eventNumber
-          crn: this.report.person.crn,
-          reportStatus: 'created',
-          username,
-          pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
-        })
-
-        logger.info('PSR created domain event published successfully', {
-          reportId: this.report.id,
-          crn: this.report.person.crn,
-          username,
-        })
-      } catch (error) {
-        logger.error('Failed to publish PSR created domain event', {
-          reportId: this.report.id,
-          crn: this.report.person.crn,
-          username,
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-          errorType: error?.constructor?.name,
-        })
-        // Don't fail the request if domain event publishing fails
-      }
-    } else {
-      logger.warn('Domain event not published - service or report missing', {
+    } catch (error) {
+      logger.error('Failed to submit report after retries, rolled back submittedAt', {
         reportId,
-        hasEventService: !!this.eventService,
-        hasReport: !!this.report,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
       })
+      this.renderSubmissionFailure(res, reportId, data)
+      return
     }
 
     logger.info('Redirecting to publish report page', {
@@ -254,5 +228,20 @@ export default class SignYourReportController extends BaseController {
       redirectPath: this.redirectPath,
     })
     res.redirect(`/${this.path}/${reportId}/${this.redirectPath}`)
+  }
+
+  private renderSubmissionFailure = (res: Response, reportId: string, data: Record<string, unknown>): void => {
+    this.renderTemplate(res, {
+      ...this.templateValues,
+      reportId,
+      data,
+      formValidation: {
+        isValid: false,
+        errors: {
+          submission:
+            "We couldn't submit your report right now. Please wait a moment and try again. If this keeps happening, contact support.",
+        },
+      },
+    })
   }
 }
