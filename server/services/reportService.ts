@@ -1,4 +1,4 @@
-import PersonDetailsService, { IPersonDetails } from './personDetailsService'
+import PersonDetailsService from './personDetailsService'
 import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetailsService'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
@@ -7,7 +7,6 @@ import ReportDetails, { ReportStatus } from '../repositories/entities/reportDeta
 export interface IReport {
   id?: string
   crn: string
-  personDetails?: IPersonDetails
 }
 
 export interface IFieldValue {
@@ -29,23 +28,15 @@ export default class ReportService {
   }
 
   public async createReport(reportData: IReport, createdBy: string): Promise<ReportDetails> {
-    // Check if person already exists
     let person = await this.personDetailsService.getPersonDetailsByCrn(reportData.crn)
 
-    // Create person if doesn't exist
-    if (!person && reportData.personDetails) {
+    if (!person) {
       person = await this.personDetailsService.createPersonDetails({
-        ...reportData.personDetails,
         crn: reportData.crn,
         createdBy,
       })
     }
 
-    if (!person) {
-      throw new Error('Person details are required to create a report')
-    }
-
-    // Create report
     const report = await this.reportDetailsService.createReportDetails({
       personId: person.id!,
       createdBy,

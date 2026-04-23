@@ -6,6 +6,7 @@ import { areReviewSectionsComplete, getReportProgress } from '../../utils/report
 import EventService from '../../services/eventService'
 import ReportService from '../../services/reportService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import { transformDefendantDetails } from '../../utils/apiDataTransformers'
 import logger from '../../../logger'
 import config from '../../config'
 
@@ -74,24 +75,17 @@ export default class SignYourReportController extends BaseController {
     return data
   }
 
-  private getSignPagePersistentData = () => {
-    const data: Record<string, unknown> = {
-      crn: this.report.person.crn,
-      name: `${this.report.person.names.foreName} ${this.report.person.names.surname}`,
-      dateOfBirth: this.report.person.dateOfBirth,
+  private fetchApiDefendantData = async (reportId: string): Promise<Record<string, unknown>> => {
+    if (!this.preSentenceToDeliusService) {
+      return { crn: this.report.person.crn, apiDefendantDetailsAvailable: false }
     }
-
-    if (this.report.person.address) {
-      data['address-buildingName'] = this.report.person.address.buildingNumber || ''
-      data['address-number'] = this.report.person.address.addressNumber || ''
-      data['address-streetName'] = this.report.person.address.streetName || ''
-      data['address-town'] = this.report.person.address.town || ''
-      data['address-district'] = this.report.person.address.district || ''
-      data['address-county'] = this.report.person.address.county || ''
-      data['address-postcode'] = this.report.person.address.postcode || ''
+    try {
+      const apiData = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
+      return { ...transformDefendantDetails(apiData), apiDefendantDetailsAvailable: true }
+    } catch (error) {
+      logger.warn({ reportId, error }, 'Failed to fetch defendant details from Pre-Sentence to Delius API')
+      return { crn: this.report.person.crn, apiDefendantDetailsAvailable: false }
     }
-
-    return data
   }
 
   override post = async (req: Request, res: Response): Promise<void> => {
@@ -150,11 +144,12 @@ export default class SignYourReportController extends BaseController {
     }
 
     logger.info('Building report data for progress check', { reportId })
+    const apiDefendantData = await this.fetchApiDefendantData(reportId)
     const data = {
       ...this.defaultTemplateData,
       ...this.getSavedAnswers(),
       ...this.report,
-      ...this.getSignPagePersistentData(),
+      ...apiDefendantData,
       ...req.body,
     }
     const sectionStatuses = getReportProgress(data)

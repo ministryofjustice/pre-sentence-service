@@ -12,8 +12,9 @@ describe('reportProgress', () => {
     })
   })
 
-  it('derives completed statuses from saved answers', () => {
+  it('derives completed statuses from API defendant details and saved answers', () => {
     const progress = getReportProgress({
+      apiDefendantDetailsAvailable: true,
       name: 'Jane Doe',
       dateOfBirth: '1990-01-01',
       'address-postcode': 'SW1A 1AA',
@@ -45,8 +46,23 @@ describe('reportProgress', () => {
     expect(areReviewSectionsComplete(progress)).toBe(true)
   })
 
+  it('keeps defendant details incomplete when the API response is unavailable', () => {
+    const progress = getReportProgress({
+      apiDefendantDetailsAvailable: false,
+      name: 'Jane Doe',
+      dateOfBirth: '1990-01-01',
+      'address-postcode': 'SW1A 1AA',
+    })
+
+    expect(progress.defendantDetails.status).toBe('Incomplete')
+    expect(progress.defendantDetails.name).toBe(false)
+    expect(progress.defendantDetails.dateOfBirth).toBe(false)
+    expect(progress.defendantDetails.address).toBe(false)
+  })
+
   it('keeps sections incomplete when required answers are missing', () => {
     const progress = getReportProgress({
+      apiDefendantDetailsAvailable: true,
       name: 'Jane Doe',
       isDangerousReport: 'yes',
     })
