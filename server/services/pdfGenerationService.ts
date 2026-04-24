@@ -101,9 +101,6 @@ export default class PdfGenerationService {
       offenceData,
     }
 
-    const headerHtml = draft ? getDraftHeader() : getHeader()
-    const footerHtml = draft ? getDraftFooter() : getFooter({ version: reportData.reportVersion as string })
-
     const { preSentenceUrl } = config.apis.gotenberg
     const filename = `${reportData.reportType}_${reportId}.pdf`
 
@@ -112,9 +109,12 @@ export default class PdfGenerationService {
     const armsB64 = fs.readFileSync(armsPath).toString('base64')
     const purpleB64 = fs.readFileSync(purplePath).toString('base64')
 
+    const headerHtml = draft ? getDraftHeader(armsB64, purpleB64) : getHeader(armsB64, purpleB64)
+    const footerHtml = draft ? getDraftFooter() : getFooter()
+
     res.renderPDF(
       'reports/psr',
-      { preSentenceUrl, data: pdfData, images: { armsB64, purpleB64 } },
+      { preSentenceUrl, data: pdfData },
       {
         filename,
         pdfOptions: {
@@ -122,10 +122,6 @@ export default class PdfGenerationService {
           printBackground: true,
           headerHtml,
           footerHtml,
-          embeddedFiles: [
-            { path: armsPath, as: 'arms.png' },
-            { path: purplePath, as: 'purple.png' },
-          ],
         },
       }
     )
