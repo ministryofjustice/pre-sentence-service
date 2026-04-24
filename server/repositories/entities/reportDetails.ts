@@ -51,6 +51,9 @@ export default class ReportDetails {
   @Column({ type: 'timestamp' })
   lastUpdatedBy!: Date
 
+  @Column({ type: 'timestamp', nullable: true })
+  submittedAt?: Date | null
+
   @Column()
   isDeleted!: boolean
 

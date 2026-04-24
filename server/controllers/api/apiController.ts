@@ -1,16 +1,21 @@
 import { Request, Response } from 'express'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
-import config from '../../config'
-import { configureReportData, getFooter, getHeader, pdfOptions } from '../../utils/pdfFormat'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import PdfGenerationService from '../../services/pdfGenerationService'
 import { HttpError } from '../../@types/httpError'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 
 export default class ApiController {
+  private pdfGenerationService: PdfGenerationService
+
   constructor(
     protected readonly reportService: ReportService,
-    protected readonly eventService: EventService
-  ) {}
+    protected readonly eventService: EventService,
+    protected readonly preSentenceToDeliusService?: PreSentenceToDeliusService
+  ) {
+    this.pdfGenerationService = new PdfGenerationService(preSentenceToDeliusService)
+  }
 
   createReport = async (req: Request, res: Response): Promise<void> => {
     let reportId: string | undefined
@@ -23,33 +28,7 @@ export default class ApiController {
 
       const username = res.locals?.user?.username || 'system'
 
-      // Create person details from request body
-      const personDetails = {
-        crn,
-        names: {
-          foreName: '',
-          middleName: '',
-          surname: '',
-        },
-        dateOfBirth: new Date(),
-        pnc: '',
-        address: undefined,
-        mainOffence: '',
-        otherOffences: [],
-        court: {
-          name: '',
-          localJusticeArea: '',
-        },
-        createdBy: username,
-      }
-
-      const report = await this.reportService.createReport(
-        {
-          crn,
-          personDetails,
-        },
-        username
-      )
+      const report = await this.reportService.createReport({ crn }, username)
 
       reportId = report.id
 
@@ -95,17 +74,7 @@ export default class ApiController {
         return
       }
 
-      const reportData = configureReportData(report)
-      const headerHtml = getHeader()
-      const footerHtml = getFooter({ version: reportData.reportVersion as string })
-      // Specify preSentenceUrl so that it is used in the NJK template as http://host.docker.internal:3000/assets
-      const { preSentenceUrl } = config.apis.gotenberg
-      const filename = `${reportData.reportType}_${reportId}.pdf`
-      res.renderPDF(
-        'reports/psr',
-        { preSentenceUrl, data: reportData },
-        { filename, pdfOptions: { ...pdfOptions, headerHtml, footerHtml } }
-      )
+      await this.pdfGenerationService.generatePdf(report, res, { draft: false })
     } catch (e) {
       const error = e as HttpError
       res.status(error.status || 500).send(error.message)

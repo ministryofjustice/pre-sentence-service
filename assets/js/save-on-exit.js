@@ -132,21 +132,6 @@
       }
     }
 
-    let skipBeforeUnload = false
-
-    getForm().addEventListener('submit', event => {
-      if (event.defaultPrevented) {
-        return
-      }
-
-      skipBeforeUnload = true
-      clearTimeout(timeoutHandle)
-
-      if (window.ReportStore) {
-        window.ReportStore.markChangesSaved()
-      }
-    })
-
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
 

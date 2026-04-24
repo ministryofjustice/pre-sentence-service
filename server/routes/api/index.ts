@@ -2,24 +2,29 @@ import { Router } from 'express'
 import ApiController from '../../controllers/api/apiController'
 import EventService from '../../services/eventService'
 import ReportService from '../../services/reportService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 
-export default function Index(reportService: ReportService, eventService: EventService): Router {
+export default function Index(
+  reportService: ReportService,
+  eventService: EventService,
+  preSentenceToDeliusService?: PreSentenceToDeliusService
+): Router {
   const router = Router()
 
   router.get('/v1/report/:id', (req, res) => {
-    return new ApiController(reportService, eventService).getReportById(req, res)
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).getReportById(req, res)
   })
   router.get('/v1/report/:id/pdf', (req, res) => {
-    return new ApiController(reportService, eventService).getPdfById(req, res)
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).getPdfById(req, res)
   })
   router.get('/v1/reports/:reportType', (req, res) => {
-    return new ApiController(reportService, eventService).getAllReportsByType(req, res)
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).getAllReportsByType(req, res)
   })
   router.post('/v1/report', (req, res) => {
-    return new ApiController(reportService, eventService).createReport(req, res)
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).createReport(req, res)
   })
   router.post('/v1/report/:id/save', (req, res) => {
-    return new ApiController(reportService, eventService).save(req, res)
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).save(req, res)
   })
 
   return router

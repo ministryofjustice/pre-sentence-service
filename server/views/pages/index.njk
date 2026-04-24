@@ -17,9 +17,8 @@
         <thead class="govuk-table__head">
           <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Report ID</th>
-            <th scope="col" class="govuk-table__header">Defendant Name</th>
+            <th scope="col" class="govuk-table__header">CRN</th>
             <th scope="col" class="govuk-table__header">Status</th>
-            <th scope="col" class="govuk-table__header">Has Address</th>
             <th scope="col" class="govuk-table__header">Created</th>
           </tr>
         </thead>
@@ -32,23 +31,12 @@
                 </a>
               </td>
               <td class="govuk-table__cell">
-                {% if report.person and report.person.names %}
-                  {{ report.person.names.foreName }} {{ report.person.names.surname }}
-                {% else %}
-                  N/A
-                {% endif %}
+                {{ report.person.crn if report.person else 'N/A' }}
               </td>
               <td class="govuk-table__cell">
                 <strong class="govuk-tag {% if report.status === 'STARTED' %}govuk-tag--blue{% else %}govuk-tag--grey{% endif %}">
                   {{ report.status | replace("_", " ") }}
                 </strong>
-              </td>
-              <td class="govuk-table__cell">
-                {% if report.person and report.person.address %}
-                  true
-                {% else %}
-                  false
-                {% endif %}
               </td>
               <td class="govuk-table__cell">
                 {{ report.createdAt | formatDateTime }}

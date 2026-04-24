@@ -1,23 +1,6 @@
 {% extends "../partials/pdfLayout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
-{% block header %}
-<header class="govuk-width-container pdf-header">
-
-    
-<img
-  src="data:image/png;base64,{{ images.armsB64 | safe }}"
-  class="pdf-header-logo"
-/>
-<img
-  src="data:image/png;base64,{{ images.purpleB64 | safe }}"
-  class="pdf-header-logo"
-/>
-
-
-</header>
-{% endblock %}
-
 {% block content %}
     <h1 class="govuk-heading-l">Pre-sentence report</h1>
 
@@ -57,13 +40,13 @@
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
             <td class="govuk-table__cell govuk-body-s"><strong>{{ data.offenceData.mainOffence.mainCategory.description }}</strong></td>
-            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date }}</td>
+            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
             </tr>
 
             {% for offence in data.offenceData.additionalOffences %}
                 <tr class="govuk-table__row">
                 <td class="govuk-table__cell govuk-body-s"><strong>{{ offence.mainCategory.description }}</strong></td>
-                <td class="govuk-table__cell govuk-body-s">{{ offence.date }}</td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -94,25 +77,23 @@
 
     <h3 class="govuk-heading-s">Risk of serious harm</h3>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-three-quarters govuk-!-padding-0">
-            <div class="govuk-grid-column-one-quarter">
+    <div class="risk-row">
+            <div>
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Children:</h3>
                 <p class="govuk-body-s keep-newlines">{{ data.riskToChildren }}</p>
             </div>
-            <div class="govuk-grid-column-one-quarter">
+            <div>
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Public:</h3>
                 <p class="govuk-body-s keep-newlines">{{ data.riskToPublic }}</p>
             </div>
-            <div class="govuk-grid-column-one-quarter">
+            <div>
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Known adults:</h3>
                 <p class="govuk-body-s keep-newlines">{{ data.riskToKnownAdults }}</p>
             </div>
-            <div class="govuk-grid-column-one-quarter">
+            <div>
                 <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Staff:</h3>
                 <p class="govuk-body-s keep-newlines">{{ data.riskToStaff }}</p>
             </div>
-        </div>
     </div>
 
     <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
@@ -161,7 +142,11 @@
     {% endif %}
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
-    <p class="govuk-body-s"> DD/MM/YY </p>
+    {% if data.reportSubmittedAt %}
+        <p class="govuk-body-s"> {{ data.reportSubmittedAt | formatDate }} </p>
+    {% else %}
+        <p class="govuk-body-s"> DD/MM/YY </p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 

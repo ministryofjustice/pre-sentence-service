@@ -27,11 +27,6 @@ const mockShortFormatData = {
   version: 1,
   person: {
     crn: 'DX12340A',
-    names: { foreName: 'John', middleName: '', surname: 'Doe' },
-    dateOfBirth: new Date('1990-01-01'),
-    pnc: 'PNC123',
-    mainOffence: 'Theft',
-    court: { name: 'Test Court', localJusticeArea: 'Test Area' },
   },
 }
 

@@ -5,6 +5,10 @@ import apiRoutes from './api'
 import { initAuth } from '../authentication/apiAuth'
 import ReportService from '../services/reportService'
 import EventService from '../services/eventService'
+import PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
+import HmppsAuthClient from '../data/hmppsAuthClient'
+import { createRedisClient } from '../data/redisClient'
+import TokenStore from '../data/tokenStore'
 
 const testMode = process.env.NODE_ENV === 'test'
 
@@ -43,12 +47,16 @@ export default function apiRouter(): Router {
   const eventService = new EventService()
   const reportService = new ReportService()
 
+  // Initialize PreSentenceToDeliusService for API routes
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+  const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
+
   if (!testMode) {
     initAuth()
     router.use(apiOnlyAuthenticationMiddleware)
   }
 
-  router.use(apiRoutes(reportService, eventService))
+  router.use(apiRoutes(reportService, eventService, preSentenceToDeliusService))
 
   router.use((req, res, next) => {
     if (typeof req.csrfToken === 'function') {

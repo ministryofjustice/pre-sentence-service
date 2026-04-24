@@ -3,23 +3,29 @@ import { Request, Response } from 'express'
 import SignYourReportController from './sign-your-report-controller'
 import ReportService from '../../services/reportService'
 import EventService from '../../services/eventService'
+import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
+import type { DefendantDetails as DefendantDetailsApiResponse } from '../../@types/preSentenceToDelius'
 import { mockedReportData } from '../../services/__mocks__/reportService'
 
 describe('SignYourReportController', () => {
   let controller: SignYourReportController
   let reportService: ReportService
   let eventService: EventService
+  let preSentenceToDeliusService: jest.Mocked<PreSentenceToDeliusService>
   let req: Request
   let res: Response
-  const completePages = [
-    {
-      name: 'defendant-details',
-      questions: [
-        { id: 0, value: 'name', answer: 'Jane Doe' },
-        { id: 1, value: 'dateOfBirth', answer: '1990-01-01' },
-        { id: 2, value: 'address-postcode', answer: 'SW1A 1AA' },
-      ],
+
+  const mockApiDefendantDetails: DefendantDetailsApiResponse = {
+    crn: 'X123456',
+    eventNumber: 12345,
+    name: { forename: 'Jane', middleName: '', surname: 'Doe' },
+    dateOfBirth: '1990-01-01',
+    mainAddress: {
+      postcode: 'SW1A 1AA',
     },
+  }
+
+  const completePages = [
     {
       name: 'offence-analysis',
       questions: [
@@ -58,17 +64,26 @@ describe('SignYourReportController', () => {
   ]
 
   beforeEach(() => {
-    reportService = {
-      getReportById: jest.fn(),
-      updateReport: jest.fn().mockResolvedValue(mockedReportData),
-      updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
-    } as unknown as ReportService
-
     eventService = {
       sendReportEvent: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' }),
     } as unknown as EventService
 
-    controller = new SignYourReportController(reportService, undefined, eventService)
+    reportService = {
+      getReportById: jest.fn(),
+      updateReport: jest.fn().mockResolvedValue(mockedReportData),
+      updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
+      submitReport: jest.fn().mockImplementation(async (reportId: string, es: EventService, eventData) => {
+        await es.sendReportEvent({ ...eventData, reportId })
+        return mockedReportData
+      }),
+    } as unknown as ReportService
+
+    preSentenceToDeliusService = {
+      getDefendantDetails: jest.fn().mockResolvedValue(mockApiDefendantDetails),
+      getOffences: jest.fn(),
+    } as unknown as jest.Mocked<PreSentenceToDeliusService>
+
+    controller = new SignYourReportController(reportService, preSentenceToDeliusService, eventService)
 
     req = {
       params: { reportId: '123' },
@@ -117,6 +132,26 @@ describe('SignYourReportController', () => {
     expect(res.redirect).not.toHaveBeenCalled()
   })
 
+  it('blocks submission when the Pre-Sentence to Delius API is unavailable', async () => {
+    preSentenceToDeliusService.getDefendantDetails.mockRejectedValue(new Error('API down'))
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      pages: completePages,
+    })
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sign-your-report',
+      expect.objectContaining({
+        data: expect.objectContaining({
+          reviewProgressBlocked: true,
+        }),
+      })
+    )
+    expect(res.redirect).not.toHaveBeenCalled()
+  })
+
   it('allows final submission when all review sections are complete', async () => {
     ;(reportService.getReportById as jest.Mock).mockResolvedValue({
       ...mockedReportData,
@@ -147,9 +182,34 @@ describe('SignYourReportController', () => {
       crn: 'X012345',
       reportStatus: 'created',
       username: 'testuser',
-      pdfUrl: expect.stringContaining('/psr/123/pdf'),
+      pdfUrl: expect.stringContaining('/api/v1/report/123/pdf'),
     })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
+  })
+
+  it('re-renders the sign page with a submission error when submitReport fails', async () => {
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      id: '123',
+      pages: completePages,
+    })
+    ;(reportService.submitReport as jest.Mock).mockRejectedValue(new Error('SNS down'))
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sign-your-report',
+      expect.objectContaining({
+        reportId: '123',
+        formValidation: expect.objectContaining({
+          isValid: false,
+          errors: expect.objectContaining({
+            submission: expect.stringContaining("We couldn't submit your report right now"),
+          }),
+        }),
+      })
+    )
+    expect(res.redirect).not.toHaveBeenCalled()
   })
 
   it('does not allow dangerous reports to be submitted without an SPO name', async () => {
