@@ -17,18 +17,6 @@
     return getForm() !== null
   }
 
-  function hasBlockingConfirmSubmitValidationErrors(form) {
-    const signReportName = document.getElementById('signReportName')
-    const dangerousReport = form.querySelector('input[name="isDangerousReport"]:checked')
-    const spoName = document.getElementById('spoName')
-
-    if (!signReportName?.value.trim()) return true
-    if (!dangerousReport?.value) return true
-    if (dangerousReport.value === 'yes' && !spoName?.value.trim()) return true
-
-    return false
-  }
-
   function persistForm() {
     if (!window.reportStoreInstance) {
       console.warn('Report store not available, falling back to form data')
@@ -48,7 +36,6 @@
       })
     }
 
-    let skipBeforeUnload = false
     const storeState = window.reportStoreInstance.getState()
     const questions = storeState.questions || {}
 
@@ -145,38 +132,14 @@
       }
     }
 
-    const modal = document.getElementById('confirm-modal')
-    const confirmBtn = document.getElementById('confirm-submit')
-    const cancelBtn = document.getElementById('cancel-submit')
-
-    const handleLink = link => {
-      if (!link.target || link.target === '_self') {
-        window.location = link.href
-      } else {
-        window.open(link.href, link.target)
-      }
-    }
-
-    let allowSubmit = false
+    let skipBeforeUnload = false
 
     getForm().addEventListener('submit', event => {
-      const form = getForm()
-
-      if (form.dataset.confirmSubmit === 'true' && !allowSubmit) {
-        if (hasBlockingConfirmSubmitValidationErrors(form)) {
-          return
-        }
-
-        event.preventDefault()
-
-        if (modal) {
-          modal.hidden = false
-          confirmBtn.focus()
-        }
-
+      if (event.defaultPrevented) {
         return
       }
 
+      skipBeforeUnload = true
       clearTimeout(timeoutHandle)
 
       if (window.ReportStore) {
@@ -184,20 +147,6 @@
       }
     })
 
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => {
-        skipBeforeUnload = true
-        allowSubmit = true
-        modal.hidden = true
-        getForm().submit()
-      })
-    }
-
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
-        modal.hidden = true
-      })
-    }
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
 
