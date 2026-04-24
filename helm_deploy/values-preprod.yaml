@@ -11,7 +11,6 @@ generic-service:
   env:
     INGRESS_URL: "https://pre-sentence-service-preprod.hmpps.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
-    COMMUNITY_API_URL: "https://community-api.pre-prod.delius.probation.hmpps.dsd.io"
     PRE_SENTENCE_TO_DELIUS_API_URL: "https://pre-sentence-reports-to-delius-preprod.hmpps.service.justice.gov.uk"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
@@ -19,7 +18,6 @@ generic-service:
     COMMON_PLATFORM_URL: "https://dummy.common.url"
     DIGITAL_CASE_SYSTEM_URL: "https://dummy.case.system.url/"
     NDELIUS_URL: "https://ndelius-preprod.probation.service.justice.gov.uk"
-    HMPPS_DOMAIN_EVENTS_QUEUE_URL: "https://hmpps-domain-events-preprod.live-1.cloud-platform.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
 
   allowList:

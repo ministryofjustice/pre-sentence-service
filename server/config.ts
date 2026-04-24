@@ -77,14 +77,6 @@ export default {
       },
       agent: new AgentConfig(),
     },
-    communityApi: {
-      url: get('COMMUNITY_API_URL', 'http://localhost:8096', requiredInProduction),
-      timeout: {
-        response: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000)),
-        deadline: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_DEADLINE', 5000)),
-      },
-      agent: new AgentConfig(),
-    },
     gotenberg: {
       apiUrl: get('GOTENBERG_API_URL', 'http://localhost:3001', requiredInProduction),
       /*
@@ -121,13 +113,6 @@ export default {
         requiredInProduction
       ),
       eventVersion: 1,
-    },
-  },
-  domainEvents: {
-    sqs: {
-      queueUrl: get('HMPPS_DOMAIN_EVENTS_QUEUE_URL', '', requiredInProduction),
-      region: get('AWS_REGION', 'eu-west-2'),
-      endpoint: get('AWS_ENDPOINT', ''), // Only set locally for localstack
     },
   },
   links: {
