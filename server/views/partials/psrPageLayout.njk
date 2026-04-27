@@ -58,6 +58,11 @@
     <h3 class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</h3>
       {{ govukButton({
       text: "Download draft report",
+      href: "/psr/" + reportId + "/draft-pdf",
+      attributes: {
+        target: "_blank",
+        rel: "noopener noreferrer"
+      },
       classes: "govuk-button--secondary"
         }) 
       }}
