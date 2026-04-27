@@ -21,7 +21,7 @@ import {
 import { Session, SessionData } from 'express-session'
 import * as z from 'zod'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
-import { getReportProgress } from '../../utils/reportProgress'
+import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'
 
 enum RiskLevel {
   Low = 'low',
@@ -269,6 +269,7 @@ export default class SharedController {
         ...this.report,
         ...this.data,
       }
+      const reportProgress = getReportProgress(data)
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: reportIdParam,
@@ -277,7 +278,8 @@ export default class SharedController {
         sourcesOfInformation,
         data: {
           ...data,
-          sectionStatuses: getReportProgress(data),
+          sectionStatuses: reportProgress,
+          reviewSectionsComplete: areReviewSectionsComplete(reportProgress)
         },
       })
     } else {
