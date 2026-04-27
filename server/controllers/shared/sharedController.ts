@@ -279,7 +279,7 @@ export default class SharedController {
         data: {
           ...data,
           sectionStatuses: reportProgress,
-          reviewSectionsComplete: areReviewSectionsComplete(reportProgress)
+          reviewSectionsComplete: areReviewSectionsComplete(reportProgress),
         },
       })
     } else {
