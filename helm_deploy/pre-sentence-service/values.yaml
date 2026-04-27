@@ -34,7 +34,6 @@ generic-service:
     TOKEN_VERIFICATION_ENABLED: "true"
     DATABASE_SCHEMA: "presentenceservice"
     DB_SSL_ENABLED: "true"
-    # HMPPS_DOMAIN_EVENTS_QUEUE_URL is set per environment (see values-dev.yaml, values-preprod.yaml, values-prod.yaml)
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
