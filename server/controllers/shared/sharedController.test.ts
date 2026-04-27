@@ -8,7 +8,6 @@ import { mockedReportData } from '../../services/__mocks__/reportService'
 import validateUUID from '../../utils/reportValidation'
 
 jest.mock('../../services/reportService')
-jest.mock('../../services/communityService')
 jest.mock('../../utils/reportValidation')
 
 describe('Route Handlers - Shared Controller', () => {
