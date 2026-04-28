@@ -12,12 +12,12 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <section class="psr-complete-card">
-          <h1 class="govuk-heading-l psr-complete-card__title">
+          <h1 class="govuk-heading-m psr-complete-card__title">
             Pre-sentence report completed
             <span class="psr-complete-card__date">{{ data.createdAt | formatDate }}</span>
           </h1>
-          <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">{{ data.name }}</p>
-          <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-5">CRN: {{ data.crn }}</p>
+          <p class="govuk-heading-m psr-complete-card__title govuk-!-margin-bottom-0 govuk-!-font-weight-regular">{{ data.name }}</p>
+          <p class="govuk-heading-m psr-complete-card__title govuk-!-font-weight-bold govuk-!-margin-bottom-5 govuk-!-padding-top-0">CRN: {{ data.crn }}</p>
           <p class="govuk-body govuk-!-margin-bottom-0">
             This PSR is now published on NDelius. It is locked and cannot be edited.
           </p>
