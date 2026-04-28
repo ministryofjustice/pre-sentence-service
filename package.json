@@ -101,8 +101,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-sns": "^3.817.0",
-    "@aws-sdk/client-sqs": "^3.1030.0",
-    "@aws-sdk/client-sts": "^3.1020.0",
     "@aws-sdk/credential-provider-web-identity": "^3.972.27",
     "@eslint/compat": "^1.2.9",
     "@eslint/eslintrc": "^3.3.1",
@@ -125,7 +123,6 @@
     "csrf-sync": "^4.2.1",
     "date-fns": "4.1.0",
     "dotenv": "16.5.0",
-    "encrypt-storage": "^2.14.7",
     "eslint": "^9.39.4",
     "eslint-plugin-import": "2.31.0",
     "express": "^5.1.0",
@@ -151,8 +148,7 @@
     "swagger-ui-express": "5.0.1",
     "typeorm": "0.3.24",
     "uuid": "11.1.0",
-    "zod": "^4.0.17",
-    "zustand": "^4.5.4"
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/bunyan": "1.8.11",
