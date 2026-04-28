@@ -25,7 +25,7 @@
     {# Add main offence #}
     {% set mainOffenceHtml %}
       <strong class='govuk-!-font-weight-bold'>{{ data.offencesData.mainOffence.description }}</strong>
-      <br><span class='govuk-hint govuk-!-font-size-16'>{{ data.offencesData.mainOffence.code }}</span>
+      <br>
       {{ govukTag({
         text: "Main offence",
         classes: "govuk-tag--blue govuk-!-margin-left-2"
@@ -40,7 +40,6 @@
     {% for offence in data.offencesData.additionalOffences %}
       {% set offenceHtml %}
         <strong class='govuk-!-font-weight-bold'>{{ offence.description }}</strong>
-        <br><span class='govuk-hint govuk-!-font-size-16'>{{ offence.code }}</span>
       {% endset %}
       {% set offenceRows = (offenceRows.push([
         { html: offenceHtml },
