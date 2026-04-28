@@ -29,7 +29,7 @@
   </p>
 
   {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
+    classes: "psr-review-task-list govuk-!-margin-bottom-7",
     sections: [
       {
         heading: {
@@ -120,7 +120,7 @@
             state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
           },
           {
-            text: "Rationale for the proposed sentence",
+            text: "Rationale for proposed sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
           },
@@ -130,7 +130,7 @@
             state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
           },
           {
-            text: "Impact of a custodial sentence",
+            text: "Impact of custodial sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
           }
