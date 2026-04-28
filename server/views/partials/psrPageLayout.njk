@@ -39,7 +39,7 @@
   }
 ] %}
 
-{% if data.reviewSectionsComplete %}
+{% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
   {% set navItems = navItems.concat([
     {
       text: 'Sign and lock your report',
@@ -61,7 +61,7 @@
     }]
   }) }}
 
-  {% if data.reviewSectionsComplete %}
+  {% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
     <h3 class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</h3>
       {{ govukButton({
       text: "Download draft report",
