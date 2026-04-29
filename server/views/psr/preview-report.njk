@@ -7,6 +7,21 @@
 
 {% set progress = data.sectionStatuses %}
 
+{% if data.reviewSectionsComplete %}
+  {% set signAndLockItem = {
+      text: "Sign and lock your report",
+      href: "/" + reportPath + "/" + reportId + "/sign-your-report",
+      state: "Ready to view"
+    }
+  %}
+{% else %}
+  {% set signAndLockItem = {
+      text: "Sign and lock your report",
+      state: "Cannot start yet"
+    }
+  %}
+{% endif %}
+
 {% block reportForm %}
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">{{ currentPage }}</h1>
   <p class="govuk-body govuk-!-margin-bottom-7">
@@ -14,7 +29,7 @@
   </p>
 
   {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
+    classes: "psr-review-task-list govuk-!-margin-bottom-7",
     sections: [
       {
         heading: {
@@ -105,7 +120,7 @@
             state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
           },
           {
-            text: "Rationale for the proposed sentence",
+            text: "Rationale for proposed sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
           },
@@ -115,7 +130,7 @@
             state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
           },
           {
-            text: "Impact of a custodial sentence",
+            text: "Impact of custodial sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
           }
@@ -140,11 +155,7 @@
           classes: "govuk-heading-l govuk-!-margin-bottom-3"
         },
         items: [
-          {
-            text: "Sign and lock your report",
-            href: "/" + reportPath + "/" + reportId + "/sign-your-report",
-            state: "Ready to view" if data.reviewSectionsComplete else "Cannot start yet"
-          }
+          signAndLockItem
         ]
       }
     ]

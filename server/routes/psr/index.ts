@@ -108,7 +108,7 @@ export default function Index(
     return new SignYourReportController(reportService, preSentenceToDeliusService, eventService).post(req, res)
   })
   get('/:reportId/publish-report', (req, res) => {
-    return new PublishReportController(reportService).get(req, res)
+    return new PublishReportController(reportService, preSentenceToDeliusService).get(req, res)
   })
   post('/:reportId/publish-report', (req, res) => {
     return new PublishReportController(reportService).post(req, res)

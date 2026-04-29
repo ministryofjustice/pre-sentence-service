@@ -17,18 +17,6 @@
     return getForm() !== null
   }
 
-  function hasBlockingConfirmSubmitValidationErrors(form) {
-    const signReportName = document.getElementById('signReportName')
-    const dangerousReport = form.querySelector('input[name="isDangerousReport"]:checked')
-    const spoName = document.getElementById('spoName')
-
-    if (!signReportName?.value.trim()) return true
-    if (!dangerousReport?.value) return true
-    if (dangerousReport.value === 'yes' && !spoName?.value.trim()) return true
-
-    return false
-  }
-
   function persistForm() {
     if (!window.reportStoreInstance) {
       console.warn('Report store not available, falling back to form data')
@@ -48,7 +36,6 @@
       })
     }
 
-    let skipBeforeUnload = false
     const storeState = window.reportStoreInstance.getState()
     const questions = storeState.questions || {}
 

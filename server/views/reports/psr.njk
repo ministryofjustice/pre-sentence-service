@@ -29,7 +29,7 @@
     <h2 class="govuk-heading-m">Offence analysis</h2>
 
 
-    <div class="govuk-grid-column-two-thirds">
+    <div>
         <table class="govuk-table govuk-table--no-borders govuk-table--small-headers">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -57,7 +57,7 @@
 
     <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
 
-    <h3 class="govuk-heading-s">Pattern of offending response to supervision</h3>
+    <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
 
     {% if data.noPreviousOffences === 'true' %}
         <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
@@ -136,9 +136,11 @@
     <h3 class="govuk-heading-s">Report author:</h3>
     <p class="govuk-body-s"> {{ data.signReportName }}</p>
 
-    <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
-    {% if data.spoName %}
-        <p class="govuk-body-s"> {{ data.spoName }}</p>
+    {% if data.isDangerousReport == "yes" %}
+        <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
+        {% if data.spoName %}
+            <p class="govuk-body-s"> {{ data.spoName }}</p>
+        {% endif %}
     {% endif %}
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
