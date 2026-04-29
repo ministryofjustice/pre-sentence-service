@@ -46,7 +46,7 @@ function fullName(defendant: DefendantDetails): string {
 }
 
 function capitalise(str: string): string {
-  if(!str) return str
+  if (!str) return str
   return str[0].toUpperCase() + str.slice(1)
 }
 
