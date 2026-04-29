@@ -1,0 +1,15 @@
+.pic-character-count {
+  margin-top: 5px;
+  font-size: 16px;
+  color: #505a5f;
+
+  &.pic-character-count--warning {
+    color: #594d00;
+    font-weight: bold;
+  }
+
+  &.pic-character-count--error {
+    color: #d4351c;
+    font-weight: bold;
+  }
+}
