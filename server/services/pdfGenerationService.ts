@@ -45,6 +45,11 @@ function fullName(defendant: DefendantDetails): string {
   return [defendant.name.forename, defendant.name.middleName, defendant.name.surname].filter(Boolean).join(' ')
 }
 
+function capitalise(str: string): string {
+  if (!str) return str
+  return str[0].toUpperCase() + str.slice(1)
+}
+
 export default class PdfGenerationService {
   constructor(private readonly preSentenceToDeliusService?: PreSentenceToDeliusService) {}
 
@@ -92,10 +97,10 @@ export default class PdfGenerationService {
       name: fullName(defendant),
       dateOfBirth: dob,
       address: buildPdfAddress(defendant.mainAddress),
-      riskToPublic: riskToPublic.replace('_', ' '),
-      riskToChildren: riskToChildren.replace('_', ' '),
-      riskToKnownAdults: riskToKnownAdults.replace('_', ' '),
-      riskToStaff: riskToStaff.replace('_', ' '),
+      riskToPublic: capitalise(riskToPublic.replace('_', ' ')),
+      riskToChildren: capitalise(riskToChildren.replace('_', ' ')),
+      riskToKnownAdults: capitalise(riskToKnownAdults.replace('_', ' ')),
+      riskToStaff: capitalise(riskToStaff.replace('_', ' ')),
       ageInYears,
       impactExplanation,
       offenceData,
