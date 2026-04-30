@@ -74,6 +74,7 @@
     id: "offencesUnderConsideration",
     value: data.offencesUnderConsideration,
     rows: "10",
+    attributes: { "data-max-length": longTextMax },
     label: {
       text: ""
     },
@@ -91,6 +92,7 @@
       text: "Analyse the offences under consideration"
     } if 'offencesUnderConsideration' in elementsWithError
   }) }}
+  <div class="pic-character-count" data-character-count-for="offencesUnderConsideration" id="offencesUnderConsideration-info" aria-live="polite" hidden></div>
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
@@ -101,6 +103,7 @@
     id: "offencesPattern",
     value: data.offencesPattern,
     rows: "10",
+    attributes: { "data-max-length": longTextMax },
     label: {
       text: ""
     },
@@ -116,6 +119,7 @@
       text: "Analyse the pattern of offending and response to supervision"
     } if 'offencesPattern' in elementsWithError
   }) }}
+  <div class="pic-character-count" data-character-count-for="offencesPattern" id="offencesPattern-info" aria-live="polite" hidden></div>
 
   {{ govukCheckboxes({
     id: "noPreviousOffences",

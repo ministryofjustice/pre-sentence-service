@@ -115,4 +115,23 @@ describe('Route Handlers - API Controller', () => {
       // The test passes if no error is thrown
     })
   })
+
+  describe('save', () => {
+    it('rejects with 400 when a field exceeds the long-text limit and does not persist', async () => {
+      const status = jest.fn().mockReturnValue({ json: jest.fn() })
+      res.status = status as unknown as Response['status']
+
+      req = {
+        body: { defendantBehaviour: 'a'.repeat(10_001) },
+        params: { id: '123' },
+        query: {},
+        headers: {},
+      } as unknown as Request
+
+      await handler.save(req, res)
+
+      expect(status).toHaveBeenCalledWith(400)
+      expect(mockedReportService.updateFieldValues).not.toHaveBeenCalled()
+    })
+  })
 })

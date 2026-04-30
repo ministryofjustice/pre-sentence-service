@@ -1,5 +1,6 @@
 import BaseController from './baseController'
 import * as z from 'zod'
+import { longText } from '../../utils/validation'
 
 export const pageFields: Array<string> = [
   'pnc',
@@ -18,8 +19,14 @@ const riskAnalysisModel = z.object({
   riskToPublic: z.string().min(1, 'Select the level of risk to the public from OASys'),
   riskToKnownAdults: z.string().min(1, 'Select the level of risk to known adults from OASys'),
   riskToStaff: z.string().min(1, 'Select the level of risk to staff from OASys'),
-  riskPredictors: z.string().min(1, 'Confirm risk predictors and assess the likelihood of reoffending'),
-  riskAndHarmFactors: z.string().min(1, 'Analyse relevant risks of harm and protective factors'),
+  riskPredictors: longText({
+    label: 'Risk predictors and likelihood of reoffending',
+    requiredMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
+  }),
+  riskAndHarmFactors: longText({
+    label: 'Risks of harm and protective factors',
+    requiredMessage: 'Analyse relevant risks of harm and protective factors',
+  }),
 })
 
 export default class RiskAnalysisController extends BaseController {
