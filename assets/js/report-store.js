@@ -45,6 +45,7 @@ const persist = (config, options) => (set, get, api) => {
     questions: { ...configResult.questions, ...initialState.questions },
     pageSaveState: { ...configResult.pageSaveState, ...initialState.pageSaveState },
     errors: [...(configResult.errors || []), ...(initialState.errors || [])],
+    overLimitFields: [],
   }
 
   set(mergedState, true)
@@ -91,13 +92,14 @@ const createEncryptedStorage = () => {
 const createJSONStorage = () => createEncryptedStorage()
 
 const initReportStore = () => {
-  return { questions: {}, pageSaveState: {}, errors: [] }
+  return { questions: {}, pageSaveState: {}, errors: [], overLimitFields: [] }
 }
 
 const defaultInitState = {
   questions: {},
   pageSaveState: {},
   errors: [],
+  overLimitFields: [],
 }
 
 const createReportStore = (initState = defaultInitState) => {
@@ -156,6 +158,16 @@ const createReportStore = (initState = defaultInitState) => {
 
             return newState
           }),
+        setFieldOverLimit: (questionId, isOver) =>
+          set(state => {
+            const current = state.overLimitFields || []
+            if (isOver) {
+              if (current.includes(questionId)) return state
+              return { ...state, overLimitFields: [...current, questionId] }
+            }
+            if (!current.includes(questionId)) return state
+            return { ...state, overLimitFields: current.filter(id => id !== questionId) }
+          }),
       }),
       {
         name: 'report-store',
@@ -173,6 +185,7 @@ const createReportStore = (initState = defaultInitState) => {
     updatePageSaveState: (page, saveState) => store.getState().updatePageSaveState(page, saveState),
     addError: (pageId, questionId, errorText) => store.getState().addError(pageId, questionId, errorText),
     removeError: (pageId, questionId) => store.getState().removeError(pageId, questionId),
+    setFieldOverLimit: (questionId, isOver) => store.getState().setFieldOverLimit(questionId, isOver),
   }
 }
 

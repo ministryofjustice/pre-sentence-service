@@ -102,12 +102,22 @@
 
     let timeoutHandle = null
 
+    const hasOverLimitFields = () => {
+      const state = window.reportStoreInstance && window.reportStoreInstance.getState()
+      return Boolean(state && state.overLimitFields && state.overLimitFields.length > 0)
+    }
+
     const handleEvent = () => {
       if (timeoutHandle) {
         clearTimeout(timeoutHandle)
       }
 
       timeoutHandle = setTimeout(() => {
+        if (hasOverLimitFields()) {
+          // Skip autosave while any field exceeds the character limit; dirty flag stays set.
+          return
+        }
+
         persistForm()
           .then(response =>
             response.text().then(text => {

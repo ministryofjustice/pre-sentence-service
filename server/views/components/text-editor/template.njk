@@ -52,10 +52,17 @@
     }) | indent(2) | trim }}
   {% endif %}
 
+  {% set maxLength = params.maxLength if params.maxLength else ((longTextMax or 10000) if params.longText else null) %}
+
   <textarea hidden class="govuk-textarea {%- if params.errorMessage %} govuk-textarea--error{% endif %}" id="{{ params.id }}" name="{{ params.name }}" rows="{%if params.rows %} {{- params.rows -}} {% else %}5{%endif %}"
   {%- if (params.spellcheck === false) or (params.spellcheck === true) %} spellcheck="{{ params.spellcheck }}"{% endif %}
     {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
     {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
+    {%- if maxLength %} data-max-length="{{ maxLength }}"{% endif %}
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value }}</textarea>
+
+  {% if maxLength %}
+    <div class="pic-character-count" data-character-count-for="{{ params.id }}" id="{{ params.id }}-info" aria-live="polite" hidden></div>
+  {% endif %}
 
 </div>
