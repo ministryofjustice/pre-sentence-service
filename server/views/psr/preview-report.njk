@@ -6,14 +6,21 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% set progress = data.sectionStatuses %}
-{% set canViewSignAndLock =
-  progress.defendantDetails.status == "Completed" and
-  progress.offenceAnalysis.status == "Completed" and
-  progress.defendantBehaviour.status == "Completed" and
-  progress.riskAnalysis.status == "Completed" and
-  progress.sentencingProposal.status == "Completed" and
-  progress.sourcesOfInformation.status == "Completed"
-%}
+
+{% if data.reviewSectionsComplete %}
+  {% set signAndLockItem = {
+      text: "Sign and lock your report",
+      href: "/" + reportPath + "/" + reportId + "/sign-your-report",
+      state: "Ready to view"
+    }
+  %}
+{% else %}
+  {% set signAndLockItem = {
+      text: "Sign and lock your report",
+      state: "Cannot start yet"
+    }
+  %}
+{% endif %}
 
 {% block reportForm %}
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">{{ currentPage }}</h1>
@@ -22,7 +29,7 @@
   </p>
 
   {{ picTaskList({
-    classes: "govuk-!-margin-bottom-7",
+    classes: "psr-review-task-list govuk-!-margin-bottom-7",
     sections: [
       {
         heading: {
@@ -113,7 +120,7 @@
             state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
           },
           {
-            text: "Rationale for the proposed sentence",
+            text: "Rationale for proposed sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
           },
@@ -123,7 +130,7 @@
             state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
           },
           {
-            text: "Impact of a custodial sentence",
+            text: "Impact of custodial sentence",
             href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
             state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
           }
@@ -148,11 +155,7 @@
           classes: "govuk-heading-l govuk-!-margin-bottom-3"
         },
         items: [
-          {
-            text: "Sign and lock your report",
-            href: "/" + reportPath + "/" + reportId + "/sign-your-report",
-            state: "Ready to view" if canViewSignAndLock else "Cannot start yet"
-          }
+          signAndLockItem
         ]
       }
     ]

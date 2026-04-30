@@ -5,6 +5,7 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import PdfGenerationService from '../../services/pdfGenerationService'
 import { HttpError } from '../../@types/httpError'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
+import { LONG_TEXT_MAX } from '../../utils/validation'
 
 export default class ApiController {
   private pdfGenerationService: PdfGenerationService
@@ -106,6 +107,15 @@ export default class ApiController {
   save = async (req: Request, res: Response): Promise<void> => {
     try {
       const reportId = req.params.id
+
+      const overLimitFields = Object.entries(req.body)
+        .filter(([, value]) => typeof value === 'string' && value.length > LONG_TEXT_MAX)
+        .map(([key]) => key)
+
+      if (overLimitFields.length > 0) {
+        res.status(400).json({ error: 'Field exceeds maximum length', fields: overLimitFields })
+        return
+      }
 
       const report = await this.reportService.getReportById(reportId)
 

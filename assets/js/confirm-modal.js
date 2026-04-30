@@ -80,6 +80,12 @@ document.addEventListener('DOMContentLoaded', function () {
   confirmBtn.addEventListener('click', function () {
     allowSubmit = true
     modal.hidden = true
+
+    if (typeof form.requestSubmit === 'function') {
+      form.requestSubmit()
+      return
+    }
+
     form.submit()
   })
 

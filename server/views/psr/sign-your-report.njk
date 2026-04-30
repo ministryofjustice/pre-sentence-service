@@ -28,9 +28,9 @@
             "iconFallbackText": "Warning"
         }) }}
         {{ picTextEditor({
-                label: {
+                hint: {
                 text: "Enter your full name",
-                classes: "govuk-label--l"
+                classes: "govuk-hint govuk-!-margin-bottom-2"
                 },
                 name: "signReportName",
                 id: "signReportName",
@@ -98,7 +98,7 @@
             <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
             <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
             <div class="govuk-button-group">
-                <button class="govuk-button govuk-!-margin-bottom-0" id="confirm-submit">Sign and lock</button>
+                <button class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6" id="confirm-submit">Sign and lock</button>
                 <a href="#" id="cancel-submit">Cancel</a>
             </div>
         </div>

@@ -15,8 +15,7 @@
     <div class="govuk-body-s address-row govuk-!-margin-bottom-0"><strong>Current address: </strong>
         <div class='address-lines'>
             <p class="govuk-body-s">{{ data.address.buildingName }}</p>
-            <p class="govuk-body-s">{{ data.address.addressNumber }}</p>
-            <p class="govuk-body-s">{{ data.address.streetName }}</p>
+            <p class="govuk-body-s">{{ data.address.addressNumber }} {{ data.address.streetName }}</p>
             <p class="govuk-body-s">{{ data.address.town }}</p>
             <p class="govuk-body-s">{{ data.address.district }}</p>
             <p class="govuk-body-s">{{ data.address.county }}</p>
@@ -29,7 +28,7 @@
     <h2 class="govuk-heading-m">Offence analysis</h2>
 
 
-    <div class="govuk-grid-column-two-thirds">
+    <div>
         <table class="govuk-table govuk-table--no-borders govuk-table--small-headers">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -57,7 +56,7 @@
 
     <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
 
-    <h3 class="govuk-heading-s">Pattern of offending response to supervision</h3>
+    <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
 
     {% if data.noPreviousOffences === 'true' %}
         <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
@@ -110,7 +109,7 @@
 
     <div class="border-box">
         <h3 class="govuk-heading-s">The proposed sentence</h3>
-        <p class="govuk-body-s keep-newlines">{{ data.proposedSentence }}</p>
+        <p class="govuk-body-s keep-newlines govuk-!-margin-bottom-0">{{ data.proposedSentence }}</p>
     </div>
 
     <h3 class="govuk-heading-s">Rationale for the proposed sentence</h3>
@@ -136,16 +135,18 @@
     <h3 class="govuk-heading-s">Report author:</h3>
     <p class="govuk-body-s"> {{ data.signReportName }}</p>
 
-    <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
-    {% if data.spoName %}
-        <p class="govuk-body-s"> {{ data.spoName }}</p>
+    {% if data.isDangerousReport == "yes" %}
+        <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
+        {% if data.spoName %}
+            <p class="govuk-body-s"> {{ data.spoName }}</p>
+        {% endif %}
     {% endif %}
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
     {% if data.reportSubmittedAt %}
         <p class="govuk-body-s"> {{ data.reportSubmittedAt | formatDate }} </p>
     {% else %}
-        <p class="govuk-body-s"> DD/MM/YY </p>
+        <p class="govuk-body-s"> DD/MM/YYYY </p>
     {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
