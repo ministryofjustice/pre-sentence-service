@@ -3,13 +3,14 @@ import { Request, Response } from 'express'
 import * as z from 'zod'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import { transformOffenceDetails } from '../../utils/apiDataTransformers'
+import { longText } from '../../utils/validation'
 import logger from '../../../logger'
 
 const offenceAnalysisModel = z
   .object({
     pnc: z.string().optional(),
-    offencesUnderConsideration: z.string(),
-    offencesPattern: z.string(),
+    offencesUnderConsideration: longText({ label: 'Offences under consideration' }),
+    offencesPattern: longText({ label: 'Pattern of offending' }),
     noPreviousOffences: z.string().optional(),
   })
   .superRefine((data, ctx) => {
