@@ -77,6 +77,10 @@ export default class ReportService {
     })
   }
 
+  public persistPartialFieldValues(_reportId: string, _body: unknown, _pageName: string, _drop?: string[]) {
+    return Promise.resolve({ persisted: [], dropped: [] })
+  }
+
   public getAllReportsByType(reportType: string) {
     return new Promise(resolve => {
       process.nextTick(() => resolve(reportType ? [mockedReportData] : []))

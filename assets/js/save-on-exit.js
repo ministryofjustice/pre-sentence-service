@@ -66,7 +66,7 @@
 
     // Add essential form fields that might not be in the store
     // These are typically hidden fields or system fields
-    const systemFields = ['reportId', 'CSRFToken', 'crn', 'pnc', 'name', 'dateOfBirth', 'age', 'address']
+    const systemFields = ['reportId', 'CSRFToken', 'pageName', 'crn', 'pnc', 'name', 'dateOfBirth', 'age', 'address']
     systemFields.forEach(fieldName => {
       const fieldValue = formData.get(fieldName)
       if (fieldValue && !storeFormData.has(fieldName)) {
