@@ -52,9 +52,7 @@ describe('Route Handlers - API Controller', () => {
     jest.spyOn(mockedReportService, 'createReport').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'getReportById').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'updateFieldValues').mockResolvedValue(mockReportDetails)
-    jest
-      .spyOn(mockedReportService, 'persistPartialFieldValues')
-      .mockResolvedValue({ persisted: [], dropped: [] })
+    jest.spyOn(mockedReportService, 'persistPartialFieldValues').mockResolvedValue({ persisted: [], dropped: [] })
     jest.spyOn(mockedReportService, 'updateReport').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'deleteReport').mockResolvedValue(true)
     jest.spyOn(mockedEventService, 'sendReportEvent').mockResolvedValue({} as PublishCommandOutput)

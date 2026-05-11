@@ -129,14 +129,10 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
     })
 
     it('spoName required only when isDangerousReport is yes', () => {
-      const noDanger = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'no' })
-      )
+      const noDanger = getReportProgress(apiAvailable({ signReportName: 'me', isDangerousReport: 'no' }))
       expect(noDanger.signYourReport.spoName).toBe(true)
 
-      const dangerNoSpo = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'yes' })
-      )
+      const dangerNoSpo = getReportProgress(apiAvailable({ signReportName: 'me', isDangerousReport: 'yes' }))
       expect(dangerNoSpo.signYourReport.spoName).toBe(false)
 
       const dangerWithSpo = getReportProgress(
