@@ -75,7 +75,7 @@ export default class OffenceAnalysisController extends BaseController {
         this.data = {
           ...this.data,
           offencesData: transformedOffences,
-          apiOffencesAvailable: true,
+            apiOffencesAvailable: true,
         }
 
         logger.info({ reportId }, 'Successfully fetched offence details from API')
