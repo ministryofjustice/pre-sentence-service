@@ -116,12 +116,8 @@ export default {
     },
   },
   links: {
-    commonPlatformUrl: get('COMMON_PLATFORM_URL', 'https://my-services.cjscp.org.uk', requiredInProduction),
-    digitalCaseSystemUrl: get(
-      'DIGITAL_CASE_SYSTEM_URL',
-      'https://crowncourtdcs.caselines.co.uk/',
-      requiredInProduction
-    ),
+    commonPlatformUrl: get('COMMON_PLATFORM_URL', 'https://dummy.common.url', requiredInProduction),
+    digitalCaseSystemUrl: get('DIGITAL_CASE_SYSTEM_URL', 'https://dummy.case.system.url/', requiredInProduction),
     ndeliusUrl: get('NDELIUS_URL', 'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction),
   },
   dev: {

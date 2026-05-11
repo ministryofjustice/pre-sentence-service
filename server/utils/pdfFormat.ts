@@ -7,7 +7,7 @@ export const pdfOptions = {
   marginRight: '0.9',
 }
 
-const footerDivStyle = 'display:flex; justify-content:flex-end; width:100%;'
+const footerDivStyle = 'display:flex; justify-content:flex-end; width:100%; padding: 0 50px;'
 const headerFooterStyle =
   'font-family: Arial; font-size: 10px; width: 100%; height: 15px; padding: 10px; display: flex; align-items: center;'
 const pdfHeaderLogoStyle = 'height: 70px; width: auto; object-fit: contain;'

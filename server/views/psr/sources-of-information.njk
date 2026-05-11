@@ -46,8 +46,8 @@
               <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
                 {{ source.value }}
               </label>
-              {% if isEditing and source.isCustom %}
-                <a href="?remove={{ source.key }}"
+              {% if source.isCustom %}
+                <a href="/psr/{{ reportId }}/sources-of-information/edit?remove={{ source.key }}"
                    class="govuk-link govuk-link--no-visited-state checkbox-action">
                   Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
                 </a>
