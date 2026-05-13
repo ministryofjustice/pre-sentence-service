@@ -20,13 +20,7 @@ describe('authorisationMiddleware', () => {
   const req: Request = {} as jest.Mocked<Request>
   const next = jest.fn()
 
-  function createResWithToken({
-    authorities,
-    authSource,
-  }: {
-    authorities: string[]
-    authSource?: string
-  }): Response {
+  function createResWithToken({ authorities, authSource }: { authorities: string[]; authSource?: string }): Response {
     return {
       locals: {
         user: {
