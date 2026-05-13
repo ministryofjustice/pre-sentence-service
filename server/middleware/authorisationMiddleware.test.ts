@@ -3,11 +3,11 @@ import type { Request, Response } from 'express'
 
 import authorisationMiddleware from './authorisationMiddleware'
 
-function createToken(authorities: string[]) {
+function createToken(authorities: string[], authSource = 'delius') {
   const payload = {
     user_name: 'USER1',
     scope: ['read', 'write'],
-    auth_source: 'nomis',
+    auth_source: authSource,
     authorities,
     jti: 'a610a10-cca6-41db-985f-e87efb303aaf',
     client_id: 'clientid',
@@ -20,11 +20,11 @@ describe('authorisationMiddleware', () => {
   const req: Request = {} as jest.Mocked<Request>
   const next = jest.fn()
 
-  function createResWithToken({ authorities }: { authorities: string[] }): Response {
+  function createResWithToken({ authorities, authSource }: { authorities: string[]; authSource?: string }): Response {
     return {
       locals: {
         user: {
-          token: createToken(authorities),
+          token: createToken(authorities, authSource),
         },
       },
       redirect: jest.fn(),
@@ -60,5 +60,23 @@ describe('authorisationMiddleware', () => {
 
     expect(next).toHaveBeenCalled()
     expect(res.redirect).not.toHaveBeenCalled()
+  })
+
+  it('should redirect when auth_source is not delius', async () => {
+    const res = createResWithToken({ authorities: ['SOME_REQUIRED_ROLE'], authSource: 'nomis' })
+
+    await authorisationMiddleware(['SOME_REQUIRED_ROLE'])(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.redirect).toHaveBeenCalledWith('/authError')
+  })
+
+  it('should redirect when auth_source is not delius even with no required roles', async () => {
+    const res = createResWithToken({ authorities: [], authSource: 'nomis' })
+
+    await authorisationMiddleware()(req, res, next)
+
+    expect(next).not.toHaveBeenCalled()
+    expect(res.redirect).toHaveBeenCalledWith('/authError')
   })
 })
