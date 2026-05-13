@@ -110,6 +110,12 @@ services:
       - "3000:3000"
     environment:
       - REDIS_HOST=redis
+      - DB_SERVER=postgres
+      - DB_USER=pre-sentence-service
+      - DB_PASS=pre-sentence-service
+      - DB_NAME=pre-sentence-service
+      - DB_PORT=5432
+      - DB_SSL_ENABLED=false
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
       # These will need to match new creds in the seed auth service auth
@@ -119,9 +125,9 @@ services:
       - SYSTEM_CLIENT_ID=pre-sentence-service
       - SYSTEM_CLIENT_SECRET=system-client-secret
       - SESSION_SECRET=app-insecure-default-session
-      - GOTENBERG_API_URL=http://localhost:3001
+      - GOTENBERG_API_URL=http://gotenberg:3001
       - INGRESS_URL=http://localhost:3000
-      - AWS_ENDPOINT=http://localhost:4566
+      - AWS_ENDPOINT=http://localstack:4566
       - ACCESS_KEY_ID=pre-sentence-service
       - SECRET_ACCESS_KEY=pre-sentence-service
 
