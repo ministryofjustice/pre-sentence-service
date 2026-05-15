@@ -34,8 +34,8 @@
       </div>
     {% endset %}
     {% set offenceRows = (offenceRows.push([
-      { html: mainOffenceHtml },
-      { text: data.offencesData.mainOffence.date }
+      { html: mainOffenceHtml, classes: "psr-main-offence-cell" },
+      { text: data.offencesData.mainOffence.date, classes: "psr-main-offence-cell" }
     ]), offenceRows) %}
 
     {# Add additional offences #}
