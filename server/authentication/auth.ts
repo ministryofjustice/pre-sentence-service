@@ -21,6 +21,9 @@ export type AuthenticationMiddleware = (tokenVerifier: TokenVerifier) => Request
 const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
   return async (req, res, next) => {
     if (req.isAuthenticated() && (await verifyToken(req))) {
+      if ((req.user as { authSource?: string })?.authSource !== 'delius') {
+        return res.redirect('/authError')
+      }
       return next()
     }
     req.session.returnTo = req.originalUrl
@@ -40,6 +43,7 @@ function init(): void {
       customHeaders: { Authorization: generateOauthClientToken() },
     },
     (token, refreshToken, params, profile, done) => {
+      console.log('User login payload:', { token, refreshToken, params, profile })
       return done(null, { token, username: params.user_name, authSource: params.auth_source })
     }
   )

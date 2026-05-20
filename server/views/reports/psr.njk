@@ -36,13 +36,15 @@
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
-            <td class="govuk-table__cell govuk-body-s"><strong>{{ data.offenceData.mainOffence.mainCategory.description }}</strong></td>
+            <td class="govuk-table__cell govuk-body-s">
+                <strong>{{ data.offenceData.mainOffence.subCategory.description }}</strong>
+            </td>
             <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
             </tr>
 
             {% for offence in data.offenceData.additionalOffences %}
                 <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-body-s"><strong>{{ offence.mainCategory.description }}</strong></td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.subCategory.description }}</td>
                 <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
                 </tr>
             {% endfor %}
