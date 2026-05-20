@@ -89,4 +89,13 @@ describe('LandingPageController', () => {
     expect(mockResponse.redirect).toHaveBeenCalledWith('/psr/report-123/defendant-details')
     expect(mockResponse.render).not.toHaveBeenCalled()
   })
+
+  it('redirects to not found when the report does not exist', async () => {
+    mockReportService.getReportById = jest.fn().mockResolvedValue(null)
+
+    await controller.get(mockRequest as Request, mockResponse as Response)
+
+    expect(mockResponse.redirect).toHaveBeenCalledWith('/psr/report-123/not-found')
+    expect(mockResponse.render).not.toHaveBeenCalled()
+  })
 })

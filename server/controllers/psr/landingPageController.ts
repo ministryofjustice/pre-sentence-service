@@ -21,29 +21,12 @@ export default class LandingPageController extends BaseController {
     return
   }
 
-  override get = async (req: Request, res: Response): Promise<void> => {
-    const reportId = req.params.reportId
-    const report = await this.reportService.getReportById(reportId)
-
-    if (!report) {
-      res.redirect(`/${this.path}/${reportId}/not-found`)
-      return
+  protected async redirectOnGet(req: Request, res: Response): Promise<boolean> {
+    if (this.report?.status === ReportStatus.STARTED) {
+      res.redirect(`/${this.path}/${req.params.reportId}/defendant-details`)
+      return true
     }
 
-    if (report.status === ReportStatus.STARTED) {
-      res.redirect(`/${this.path}/${reportId}/defendant-details`)
-      return
-    }
-
-    this.report = report
-    this.updateReport()
-    res.render(`${this.path}/${this.templatePath}`, {
-      ...this.templateValues,
-      reportId,
-      data: {
-        ...this.defaultTemplateData,
-        ...report,
-      },
-    })
+    return false
   }
 }
