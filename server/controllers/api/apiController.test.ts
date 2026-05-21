@@ -52,6 +52,8 @@ describe('Route Handlers - API Controller', () => {
     jest.spyOn(mockedReportService, 'createReport').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'getReportById').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'updateFieldValues').mockResolvedValue(mockReportDetails)
+    jest.spyOn(mockedReportService, 'persistPartialFieldValues').mockResolvedValue({ persisted: [], dropped: [] })
+    jest.spyOn(mockedReportService, 'updateReport').mockResolvedValue(mockReportDetails)
     jest.spyOn(mockedReportService, 'deleteReport').mockResolvedValue(true)
     jest.spyOn(mockedEventService, 'sendReportEvent').mockResolvedValue({} as PublishCommandOutput)
 
@@ -117,12 +119,21 @@ describe('Route Handlers - API Controller', () => {
   })
 
   describe('save', () => {
-    it('rejects with 400 when a field exceeds the long-text limit and does not persist', async () => {
-      const status = jest.fn().mockReturnValue({ json: jest.fn() })
+    it('drops over-limit fields and persists the rest, returning droppedFields in the response', async () => {
+      const json = jest.fn()
+      const status = jest.fn().mockReturnValue({ json })
       res.status = status as unknown as Response['status']
 
+      jest
+        .spyOn(mockedReportService, 'persistPartialFieldValues')
+        .mockResolvedValue({ persisted: ['otherField'], dropped: ['defendantBehaviour'] })
+
       req = {
-        body: { defendantBehaviour: 'a'.repeat(10_001) },
+        body: {
+          defendantBehaviour: 'a'.repeat(10_001),
+          otherField: 'ok',
+          pageName: 'psr-defendant-behaviour',
+        },
         params: { id: '123' },
         query: {},
         headers: {},
@@ -130,8 +141,28 @@ describe('Route Handlers - API Controller', () => {
 
       await handler.save(req, res)
 
-      expect(status).toHaveBeenCalledWith(400)
-      expect(mockedReportService.updateFieldValues).not.toHaveBeenCalled()
+      expect(mockedReportService.persistPartialFieldValues).toHaveBeenCalledWith(
+        '123',
+        req.body,
+        'psr-defendant-behaviour'
+      )
+      expect(status).toHaveBeenCalledWith(200)
+      expect(json).toHaveBeenCalledWith(
+        expect.objectContaining({ success: true, droppedFields: ['defendantBehaviour'] })
+      )
+    })
+
+    it('uses form-supplied pageName over referer scraping', async () => {
+      req = {
+        body: { someField: 'value', pageName: 'offence-analysis' },
+        params: { id: '123' },
+        query: {},
+        headers: { referer: 'http://x/psr/123/risk-analysis' },
+      } as unknown as Request
+
+      await handler.save(req, res)
+
+      expect(mockedReportService.persistPartialFieldValues).toHaveBeenCalledWith('123', req.body, 'offence-analysis')
     })
   })
 })

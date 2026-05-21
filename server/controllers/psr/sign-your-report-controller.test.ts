@@ -54,7 +54,7 @@ describe('SignYourReportController', () => {
         { id: 0, value: 'proposedSentence', answer: 'Sentence' },
         { id: 1, value: 'proposedSentenceRationale', answer: 'Rationale' },
         { id: 2, value: 'alternativeSentencingOptions', answer: 'Alternatives' },
-        { id: 3, value: 'sentenceImpact', answer: 'Impact' },
+        { id: 3, value: 'custodialSentenceConsideration', answer: 'not-threshold' },
       ],
     },
     {
@@ -72,6 +72,7 @@ describe('SignYourReportController', () => {
       getReportById: jest.fn(),
       updateReport: jest.fn().mockResolvedValue(mockedReportData),
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
+      persistPartialFieldValues: jest.fn().mockResolvedValue({ persisted: [], dropped: [] }),
       submitReport: jest.fn().mockImplementation(async (reportId: string, es: EventService, eventData) => {
         await es.sendReportEvent({ ...eventData, reportId })
         return mockedReportData

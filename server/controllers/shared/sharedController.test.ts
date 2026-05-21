@@ -25,6 +25,7 @@ describe('Route Handlers - Shared Controller', () => {
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
+    persistPartialFieldValues: jest.fn().mockResolvedValue({ persisted: [], dropped: [] }),
   } as unknown as ReportService
 
   const mockApiDefendantDetails: DefendantDetailsApiResponse = {
@@ -212,6 +213,81 @@ describe('Route Handlers - Shared Controller', () => {
 
       expect(mockedReportService.updateReport).toHaveBeenCalled()
       expect(res.redirect).toHaveBeenCalledWith(`/${handler.path}/${req.params.reportId}/risk-analysis`)
+    })
+
+    describe('persist-on-invalid', () => {
+      const setInvalidModel = (issues: Array<{ path: (string | number)[]; code: string; message: string }>) => {
+        handler.model = {
+          safeParse: jest.fn().mockReturnValue({
+            success: false,
+            error: { issues },
+          }),
+        } as never
+      }
+
+      const originalTemplatePath = handler?.templatePath
+      beforeEach(() => {
+        ;(mockedReportService.persistPartialFieldValues as jest.Mock).mockClear()
+        ;(mockedReportService.persistPartialFieldValues as jest.Mock).mockResolvedValue({
+          persisted: [],
+          dropped: [],
+        })
+        handler.templatePath = 'offence-analysis'
+      })
+      afterAll(() => {
+        handler.templatePath = originalTemplatePath ?? ''
+      })
+
+      it('persists valid fields when validation fails on a cross-field rule', async () => {
+        setInvalidModel([{ path: ['offencesPattern'], code: 'custom', message: 'Cross-field rule' }])
+        req.body = {
+          offencesUnderConsideration: 'valid analysis',
+          offencesPattern: '',
+          noPreviousOffences: '',
+        }
+
+        await handler.post(req, res)
+
+        expect(mockedReportService.persistPartialFieldValues).toHaveBeenCalledWith(
+          '123',
+          expect.objectContaining({ offencesUnderConsideration: 'valid analysis' }),
+          'offence-analysis',
+          []
+        )
+        expect(res.render).toHaveBeenCalled()
+      })
+
+      it('drops fields that have structural issues (too_big, invalid_type)', async () => {
+        setInvalidModel([
+          { path: ['offencesUnderConsideration'], code: 'too_big', message: 'Too long' },
+          { path: ['offencesPattern'], code: 'custom', message: 'Cross-field' },
+        ])
+        req.body = {
+          offencesUnderConsideration: 'a'.repeat(20_000),
+          offencesPattern: 'short text',
+        }
+
+        await handler.post(req, res)
+
+        const dropArg = (mockedReportService.persistPartialFieldValues as jest.Mock).mock.calls[0][3]
+        expect(dropArg).toContain('offencesUnderConsideration')
+        expect(dropArg).not.toContain('offencesPattern')
+      })
+
+      it('passes the controller-known pageName, not anything else', async () => {
+        handler.templatePath = 'sentencing-proposal'
+        setInvalidModel([{ path: ['proposedSentence'], code: 'too_small', message: 'Required' }])
+        req.body = { proposedSentence: '', proposedSentenceRationale: 'rationale' }
+
+        await handler.post(req, res)
+
+        expect(mockedReportService.persistPartialFieldValues).toHaveBeenCalledWith(
+          '123',
+          expect.any(Object),
+          'sentencing-proposal',
+          expect.any(Array)
+        )
+      })
     })
   })
 })

@@ -30,7 +30,7 @@ describe('reportProgress', () => {
       proposedSentence: 'Community order',
       proposedSentenceRationale: 'Rationale',
       alternativeSentencingOptions: 'Alternatives',
-      sentenceImpact: 'Impact',
+      custodialSentenceConsideration: 'not-threshold',
       sourcesOfInformation: 'cps_summary',
       signReportName: 'Officer Name',
       isDangerousReport: 'no',
