@@ -1,4 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
+  function plainTextLength(editor) {
+    const text = editor.editing.view.getDomRoot()?.innerText || ''
+    return text.length
+  }
+
+  function enforceEditorMaxLength(editor, maxLength) {
+    if (!Number.isFinite(maxLength) || maxLength <= 0) return
+
+    let lastValidData = editor.getData()
+    let restoring = false
+
+    editor.model.document.on('change:data', () => {
+      if (restoring) return
+
+      const length = plainTextLength(editor)
+      if (length <= maxLength) {
+        lastValidData = editor.getData()
+        return
+      }
+
+      restoring = true
+      const selection = editor.model.document.selection.getFirstPosition()
+
+      editor.setData(lastValidData)
+
+      if (selection) {
+        editor.model.change(writer => {
+          const root = editor.model.document.getRoot()
+          const maxOffset = root.maxOffset
+          const offset = Math.min(selection.offset, maxOffset)
+          writer.setSelection(writer.createPositionAt(root, offset))
+        })
+      }
+
+      restoring = false
+    })
+  }
+
   function hideError() {
     var $el = document.querySelector('#pss-version-mismatch')
     $el.classList.add('govuk-!-display-none')
@@ -62,8 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
       //     )
       //   },
       // },
-    }).catch(err => {
-      console.error(err)
     })
+      .then(editor => {
+        const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
+        enforceEditorMaxLength(editor, maxLength)
+      })
+      .catch(err => {
+      console.error(err)
+      })
   })
 })
