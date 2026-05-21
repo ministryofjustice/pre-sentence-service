@@ -1,4 +1,7 @@
+import { Request, Response } from 'express'
+
 import BaseController from './baseController'
+import { ReportStatus } from '../../repositories/entities/reportDetails'
 
 export default class LandingPageController extends BaseController {
   override templatePath = 'psr-start'
@@ -16,5 +19,14 @@ export default class LandingPageController extends BaseController {
 
   override post = async (): Promise<void> => {
     return
+  }
+
+  protected async redirectOnGet(req: Request, res: Response): Promise<boolean> {
+    if (this.report?.status === ReportStatus.STARTED) {
+      res.redirect(`/${this.path}/${req.params.reportId}/defendant-details`)
+      return true
+    }
+
+    return false
   }
 }
