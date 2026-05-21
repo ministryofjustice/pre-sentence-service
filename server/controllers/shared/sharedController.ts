@@ -212,6 +212,10 @@ export default class SharedController {
     // Called after report is loaded but before rendering
   }
 
+  protected async redirectOnGet(_req: Request, _res: Response): Promise<boolean> {
+    return false
+  }
+
   public get = async (req: Request, res: Response): Promise<void> => {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
@@ -234,6 +238,11 @@ export default class SharedController {
     const rep = await this.reportService.getReportById(reportId)
     if (rep) {
       this.report = rep
+
+      if (await this.redirectOnGet(req, res)) {
+        return
+      }
+
       this.getStoredData()
 
       await this.fetchDefendantDetails(reportId)
