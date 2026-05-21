@@ -49,6 +49,7 @@ export interface TemplateValues<T> {
   preSentenceType: string
   reportPath: string
   reportId?: string
+  pageName?: string
   data?: Record<string, unknown>
   formValidation?: ValidatedForm<T>
   riskOptions?: { value: string; text: string }[]
@@ -123,7 +124,7 @@ export default class SharedController {
         this.data['sourcesOfInformation'] as string | undefined
       )
     }
-    res.render(`${this.path}/${this.templatePath}`, templateValues)
+    res.render(`${this.path}/${this.templatePath}`, { ...templateValues, pageName: this.templatePath })
   }
 
   private checkInclusionExclusion = async (_crn: string, _user: string): Promise<InclusionExclusion> => {
@@ -345,6 +346,8 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${req.query?.redirectPath || this.redirectPath}`)
     } else {
+      await this.persistOnInvalid(req, reportId)
+
       let sourcesOfInformation: SourceOfInformation[] | undefined
       if (this.templatePath === 'sources-of-information') {
         sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
@@ -361,6 +364,41 @@ export default class SharedController {
         formValidation: validatedForm,
       })
     }
+  }
+
+  private persistOnInvalid = async (req: Request, reportId: string): Promise<void> => {
+    if (!this.report?.id) return
+
+    const body = this.correctFormData ? { ...req.body, ...this.correctFormData(req) } : { ...req.body }
+    const dropKeys = this.structurallyInvalidFields(body)
+
+    if (this.report.status === ReportStatus.NOT_STARTED) {
+      await this.reportService.updateReport(this.report.id, { status: ReportStatus.STARTED })
+    } else {
+      await this.reportService.updateReport(this.report.id, {})
+    }
+
+    const result = await this.reportService.persistPartialFieldValues(reportId, body, this.templatePath, dropKeys)
+
+    logger.info(
+      { reportId, pageName: this.templatePath, persisted: result.persisted, dropped: result.dropped },
+      'persisted partial field values after validation failure'
+    )
+  }
+
+  private structurallyInvalidFields = (body: Record<string, unknown>): string[] => {
+    const result = this.model.safeParse(body)
+    if (result.success) return []
+
+    const drop = new Set<string>()
+    for (const issue of result.error.issues) {
+      const field = issue.path[0]
+      if (typeof field !== 'string') continue
+      if (issue.code === 'invalid_type' || issue.code === 'too_big') {
+        drop.add(field)
+      }
+    }
+    return [...drop]
   }
 
   private async handleSourceActions(

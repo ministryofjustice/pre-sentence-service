@@ -1,3 +1,15 @@
+import { isOffencesUnderConsiderationComplete, isOffencesPatternComplete } from '../schemas/offence-analysis'
+import { isDefendantBehaviourComplete } from '../schemas/defendant-behaviour'
+import { isRiskLevelsComplete, isRiskPredictorsComplete, isRiskAndHarmFactorsComplete } from '../schemas/risk-analysis'
+import {
+  isProposedSentenceComplete,
+  isProposedSentenceRationaleComplete,
+  isAlternativeSentencingOptionsComplete,
+  isSentenceImpactComplete,
+} from '../schemas/sentencing-proposal'
+import { isSourcesOfInformationComplete } from '../schemas/sources-of-information'
+import { isSignedByComplete, isDangerousnessReportComplete, isSpoNameComplete } from '../schemas/sign-your-report'
+
 export type CompletionStatus = 'Completed' | 'Incomplete'
 
 type ReportData = Record<string, unknown>
@@ -96,47 +108,35 @@ export const getReportProgress = (data: ReportData): ReportProgress => {
   }
 
   const offenceAnalysis = {
-    offencesUnderConsideration:
-      hasContent(data.offencesUnderConsideration) || hasContent(data.offenceUnderConsideration),
-    offencesPattern:
-      hasContent(data.offencesPattern) || hasContent(data.offencePattern) || data.noPreviousOffences === 'true',
+    offencesUnderConsideration: isOffencesUnderConsiderationComplete(data),
+    offencesPattern: isOffencesPatternComplete(data),
   }
 
   const defendantBehaviour = {
-    assessment: hasContent(data.defendantBehaviour) || hasContent(data.behaviourAndLifestyleAssessment),
+    assessment: isDefendantBehaviourComplete(data),
   }
 
   const riskAnalysis = {
-    riskLevels:
-      (hasContent(data.riskToChildren) || hasContent(data.riskOfHarmForChildren)) &&
-      (hasContent(data.riskToPublic) || hasContent(data.riskOfHarmForPublic)) &&
-      (hasContent(data.riskToKnownAdults) || hasContent(data.riskOfHarmForKnownAdults)) &&
-      (hasContent(data.riskToStaff) || hasContent(data.riskOfHarmForStaff)),
-    riskPredictors: hasContent(data.riskPredictors) || hasContent(data.riskPredictorsAndLikelihoodOfReoffending),
-    riskAndHarmFactors: hasContent(data.riskAndHarmFactors) || hasContent(data.relevantRisksAndProtectiveFactors),
+    riskLevels: isRiskLevelsComplete(data),
+    riskPredictors: isRiskPredictorsComplete(data),
+    riskAndHarmFactors: isRiskAndHarmFactorsComplete(data),
   }
 
   const sentencingProposal = {
-    proposedSentence: hasContent(data.proposedSentence),
-    proposedSentenceRationale:
-      hasContent(data.proposedSentenceRationale) || hasContent(data.rationaleForProposedSentence),
-    alternativeSentencingOptions: hasContent(data.alternativeSentencingOptions),
-    sentenceImpact:
-      hasContent(data.sentenceImpact) ||
-      hasContent(data.impactOfCustodialSentence) ||
-      data.custodialSentenceConsideration === 'not-threshold' ||
-      data.custodialSentenceConsideration === 'court-indicated' ||
-      (data.custodialSentenceConsideration === 'possible' && hasContent(data.custodialSentenceImpact)),
+    proposedSentence: isProposedSentenceComplete(data),
+    proposedSentenceRationale: isProposedSentenceRationaleComplete(data),
+    alternativeSentencingOptions: isAlternativeSentencingOptionsComplete(data),
+    sentenceImpact: isSentenceImpactComplete(data),
   }
 
   const sourcesOfInformation = {
-    sources: hasContent(data.sourcesOfInformation),
+    sources: isSourcesOfInformationComplete(data),
   }
 
   const signYourReport = {
-    signedBy: hasContent(data.signReportName),
-    dangerousnessReport: hasContent(data.isDangerousReport),
-    spoName: data.isDangerousReport === 'yes' ? hasContent(data.spoName) : true,
+    signedBy: isSignedByComplete(data),
+    dangerousnessReport: isDangerousnessReportComplete(data),
+    spoName: isSpoNameComplete(data),
   }
 
   return {

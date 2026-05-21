@@ -5,7 +5,6 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import PdfGenerationService from '../../services/pdfGenerationService'
 import { HttpError } from '../../@types/httpError'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
-import { LONG_TEXT_MAX } from '../../utils/validation'
 
 export default class ApiController {
   private pdfGenerationService: PdfGenerationService
@@ -108,15 +107,6 @@ export default class ApiController {
     try {
       const reportId = req.params.id
 
-      const overLimitFields = Object.entries(req.body)
-        .filter(([, value]) => typeof value === 'string' && value.length > LONG_TEXT_MAX)
-        .map(([key]) => key)
-
-      if (overLimitFields.length > 0) {
-        res.status(400).json({ error: 'Field exceeds maximum length', fields: overLimitFields })
-        return
-      }
-
       const report = await this.reportService.getReportById(reportId)
 
       if (!report) {
@@ -124,24 +114,18 @@ export default class ApiController {
         return
       }
 
-      // Update report status if needed
       if (report.status === ReportStatus.NOT_STARTED) {
         await this.reportService.updateReport(reportId, { status: ReportStatus.STARTED })
       } else {
         await this.reportService.updateReport(reportId, {})
       }
 
-      // Get page name from request body or query param, fallback to extracting from referer
       let pageName = req.body.pageName || req.query.pageName
 
       if (!pageName && req.headers.referer) {
-        // Extract page name from referer URL and match it to template naming
-        // E.g., /psr/123/defendant-details -> psr-defendant-details (matches template)
-        // E.g., /psr/123/risk-analysis -> risk-analysis (matches template)
         const urlMatch = req.headers.referer.match(/\/psr\/[^/]+\/([^/?]+)/)
         if (urlMatch) {
           const urlPageName = urlMatch[1]
-          // defendant-details and defendant-behaviour pages use psr- prefix in templates
           if (urlPageName === 'defendant-details' || urlPageName === 'defendant-behaviour') {
             pageName = `psr-${urlPageName}`
           } else {
@@ -150,35 +134,17 @@ export default class ApiController {
         }
       }
 
-      // If still no page name, use 'default' as fallback
       if (!pageName) {
         pageName = 'default'
       }
 
-      const fieldValues = []
-      let questionId = 0
-      for (const [key, value] of Object.entries(req.body)) {
-        if (
-          value !== undefined &&
-          key !== 'action' &&
-          key !== 'pageName' &&
-          key !== 'CSRFToken' &&
-          key !== 'reportId'
-        ) {
-          fieldValues.push({
-            pageName,
-            questionId: questionId++,
-            questionValue: key,
-            answer: Array.isArray(value) ? value.join(',') : String(value),
-          })
-        }
-      }
+      const result = await this.reportService.persistPartialFieldValues(reportId, req.body, pageName)
 
-      if (fieldValues.length > 0) {
-        await this.reportService.updateFieldValues(reportId, fieldValues)
-      }
-
-      res.status(200).json({ success: true, message: 'Report saved successfully' })
+      res.status(200).json({
+        success: true,
+        message: 'Report saved successfully',
+        ...(result.dropped.length > 0 ? { droppedFields: result.dropped } : {}),
+      })
     } catch (e) {
       const error = e as HttpError
       res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
