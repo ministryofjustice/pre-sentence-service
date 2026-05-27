@@ -8,7 +8,7 @@ const createToken = () => {
   const payload = {
     user_name: 'USER1',
     scope: ['read'],
-    auth_source: 'nomis',
+    auth_source: 'delius',
     authorities: [],
     jti: '83b50a10-cca6-41db-985f-e87efb303ddb',
     client_id: 'clientid',
@@ -111,6 +111,7 @@ const token = () =>
         access_token: createToken(),
         token_type: 'bearer',
         user_name: 'USER1',
+        auth_source: 'delius',
         expires_in: 599,
         scope: 'read',
         internalUser: true,
