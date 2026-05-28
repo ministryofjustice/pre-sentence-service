@@ -17,6 +17,7 @@
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "types": ["jest", "node"],
     "emitDecoratorMetadata": true,
     "strict": true
   },
