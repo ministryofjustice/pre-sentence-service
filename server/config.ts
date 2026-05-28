@@ -122,5 +122,6 @@ export default {
   },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
+    skipAuth: get('SKIP_AUTH', 'false') === 'true',
   },
 }

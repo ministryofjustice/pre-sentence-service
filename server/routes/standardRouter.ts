@@ -36,7 +36,7 @@ export default function standardRouter(userService: UserService): Router {
   const eventService = new EventService()
   logger.info('StandardRouter: EventService instance created, passing to PSR routes')
 
-  if (!testMode) {
+  if (!testMode && !config.dev.skipAuth) {
     router.use(setUpAuthentication())
     router.use(authorisationMiddleware())
     router.use(auth.authenticationMiddleware(tokenVerifier))
