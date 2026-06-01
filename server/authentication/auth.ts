@@ -43,7 +43,6 @@ function init(): void {
       customHeaders: { Authorization: generateOauthClientToken() },
     },
     (token, refreshToken, params, profile, done) => {
-      console.log('User login payload:', { token, refreshToken, params, profile })
       return done(null, { token, username: params.user_name, authSource: params.auth_source })
     }
   )
