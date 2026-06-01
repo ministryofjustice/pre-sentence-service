@@ -5,6 +5,14 @@ import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOf
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
+import { LONG_TEXT_MAX } from '../utils/validation'
+
+const RESERVED_BODY_KEYS = new Set(['action', 'pageName', 'CSRFToken', 'reportId', 'source'])
+
+export interface PersistPartialResult {
+  persisted: string[]
+  dropped: string[]
+}
 
 const PUBLISH_MAX_ATTEMPTS = 3
 const PUBLISH_BACKOFF_MS = [500, 1500]
@@ -128,6 +136,52 @@ export default class ReportService {
     }
 
     return this.reportDetailsService.updateReportPages(reportId, pages)
+  }
+
+  public async persistPartialFieldValues(
+    reportId: string,
+    body: Record<string, unknown>,
+    pageName: string,
+    extraDropKeys: string[] = []
+  ): Promise<PersistPartialResult> {
+    const dropSet = new Set(extraDropKeys)
+    const persisted: string[] = []
+    const dropped: string[] = [...extraDropKeys]
+    const fieldValues: IFieldValue[] = []
+    let questionId = 0
+
+    for (const [key, value] of Object.entries(body)) {
+      if (RESERVED_BODY_KEYS.has(key)) continue
+      if (value === undefined) continue
+      if (dropSet.has(key)) continue
+
+      if (typeof value === 'string' && value.length > LONG_TEXT_MAX) {
+        dropped.push(key)
+        continue
+      }
+
+      let answer: string
+      if (Array.isArray(value)) {
+        if (value.some(v => typeof v === 'string' && v.length > LONG_TEXT_MAX)) {
+          dropped.push(key)
+          continue
+        }
+        answer = value.join(',')
+      } else if (value === null) {
+        answer = ''
+      } else {
+        answer = String(value)
+      }
+
+      fieldValues.push({ pageName, questionId: questionId++, questionValue: key, answer })
+      persisted.push(key)
+    }
+
+    if (fieldValues.length > 0) {
+      await this.updateFieldValues(reportId, fieldValues)
+    }
+
+    return { persisted, dropped }
   }
 
   public async getDefinitionByType(_type: string): Promise<{ id: number } | null> {

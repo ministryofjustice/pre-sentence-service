@@ -1,5 +1,4 @@
 import BaseController from './baseController'
-import * as z from 'zod'
 import { Request, Response } from 'express'
 import { validateForm } from '../../utils/formValidation'
 import { areReviewSectionsComplete, getReportProgress } from '../../utils/reportProgress'
@@ -9,27 +8,10 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import { transformDefendantDetails } from '../../utils/apiDataTransformers'
 import logger from '../../../logger'
 import config from '../../config'
+import { signYourReportModel } from '../../schemas/sign-your-report'
 
-//Any changes in the validation here may need to be reflected in confirm-modal.js
-export const signYourReportModel = z
-  .object({
-    signReportName: z.string().min(1, 'You must sign your report before you submit'),
+export { signYourReportModel } from '../../schemas/sign-your-report'
 
-    isDangerousReport: z.preprocess(
-      val => val ?? '',
-      z.string().min(1, 'Specify whether this is a dangerousness report')
-    ),
-    spoName: z.string().optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.isDangerousReport === 'yes' && !data.spoName?.trim()) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['spoName'],
-        message: 'Enter the name of the SPO who reviewed the report',
-      })
-    }
-  })
 export const pageFields: Array<string> = ['signReportName', 'isDangerousReport', 'spoName']
 
 export default class SignYourReportController extends BaseController {
