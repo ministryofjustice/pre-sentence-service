@@ -108,7 +108,15 @@ document.addEventListener('DOMContentLoaded', () => {
         enforceEditorMaxLength(editor, maxLength)
       })
       .catch(err => {
-      console.error(err)
-      })
+        const fieldId = $el.id || $el.getAttribute('name') || '(unknown field)'
+        const configuredMaxLength = $el.getAttribute('data-max-length')
+        const page = window.location.pathname.split('/').pop() || '(unknown page)'
+
+        console.error('CKEditor initialization failed', {
+          fieldId,
+          configuredMaxLength,
+          page,
+          error: err,
+        })
   })
 })
