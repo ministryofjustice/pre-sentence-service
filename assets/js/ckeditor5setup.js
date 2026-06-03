@@ -20,20 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       restoring = true
-      const selection = editor.model.document.selection.getFirstPosition()
+      try {
+        const selection = editor.model.document.selection.getFirstPosition()
 
-      editor.setData(lastValidData)
+        editor.setData(lastValidData)
 
-      if (selection) {
-        editor.model.change(writer => {
-          const root = editor.model.document.getRoot()
-          const maxOffset = root.maxOffset
-          const offset = Math.min(selection.offset, maxOffset)
-          writer.setSelection(writer.createPositionAt(root, offset))
-        })
+        if (selection) {
+          editor.model.change(writer => {
+            const root = editor.model.document.getRoot()
+            const maxOffset = root.maxOffset
+            const offset = Math.min(selection.offset, maxOffset)
+            writer.setSelection(writer.createPositionAt(root, offset))
+          })
+        }
+      } finally {
+        restoring = false
       }
-
-      restoring = false
     })
   }
 
