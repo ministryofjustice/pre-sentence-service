@@ -49,7 +49,7 @@ export default {
   https: production,
   staticResourceCacheDuration: 20,
   wproofreader: {
-    licenceKey: get('WPROOFREADER_LICENCE_KEY', 'Pnuq1jJKtDYLRFW'),
+    licenceKey: get('WPROOFREADER_LICENCE_KEY', 'default-licence-key'),
     bundleUrl: wproofreaderBundleUrl,
     host: wproofreaderHost,
   },
