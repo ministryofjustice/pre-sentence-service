@@ -104,11 +104,13 @@
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <h2 class="govuk-heading-m">Sentencing proposal</h2>
+    <div class="pdf-sentencing-proposal-section">
+        <h2 class="govuk-heading-m">Sentencing proposal</h2>
 
-    <div class="border-box">
-        <h3 class="govuk-heading-s">The proposed sentence</h3>
-        <p class="govuk-body-s keep-newlines govuk-!-margin-bottom-0">{{ data.proposedSentence }}</p>
+        <div class="border-box pdf-sentencing-proposal-box">
+            <h3 class="govuk-heading-s">The proposed sentence</h3>
+            <p class="govuk-body-s keep-newlines govuk-!-margin-bottom-0">{{ data.proposedSentence }}</p>
+        </div>
     </div>
 
     <h3 class="govuk-heading-s">Rationale for the proposed sentence</h3>

@@ -1,11 +1,12 @@
 import * as z from 'zod'
-import { longText } from '../utils/validation'
+import { PROPOSED_SENTENCE_MAX, longText } from '../utils/validation'
 
 export const sentencingProposalModel = z
   .object({
     proposedSentence: longText({
       label: 'Proposed sentence',
       requiredMessage: 'Enter the proposed sentence',
+      max: PROPOSED_SENTENCE_MAX,
     }),
     proposedSentenceRationale: longText({
       label: 'Rationale for the proposed sentence',
