@@ -48,4 +48,20 @@ describe('longText', () => {
       }
     })
   })
+
+  describe('with a custom max', () => {
+    const customMaxSchema = longText({ label: 'Custom field', max: 4000 })
+
+    it('accepts a string exactly at the custom limit', () => {
+      expect(customMaxSchema.safeParse('a'.repeat(4000)).success).toBe(true)
+    })
+
+    it('rejects a string one character over the custom limit', () => {
+      const result = customMaxSchema.safeParse('a'.repeat(4001))
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].message).toBe('Custom field must be 4,000 characters or fewer')
+      }
+    })
+  })
 })

@@ -1,4 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
+  function plainTextLength(editor) {
+    const text = editor.editing.view.getDomRoot()?.innerText || ''
+    return text.length
+  }
+
+  function enforceEditorMaxLength(editor, maxLength) {
+    if (!Number.isFinite(maxLength) || maxLength <= 0) return
+
+    let lastValidData = editor.getData()
+    let restoring = false
+
+    editor.model.document.on('change:data', () => {
+      if (restoring) return
+
+      const length = plainTextLength(editor)
+      if (length <= maxLength) {
+        lastValidData = editor.getData()
+        return
+      }
+
+      restoring = true
+      try {
+        const selection = editor.model.document.selection.getFirstPosition()
+
+        editor.setData(lastValidData)
+
+        if (selection) {
+          editor.model.change(writer => {
+            const root = editor.model.document.getRoot()
+            const maxOffset = root.maxOffset
+            const offset = Math.min(selection.offset, maxOffset)
+            writer.setSelection(writer.createPositionAt(root, offset))
+          })
+        }
+      } finally {
+        restoring = false
+      }
+    })
+  }
+
   function hideError() {
     var $el = document.querySelector('#pss-version-mismatch')
     $el.classList.add('govuk-!-display-none')
@@ -78,13 +118,33 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsSections: ['general', 'options'],
       }
     }
-    Editor.create($el, editorConfig).catch(err => {
-      console.error(err)
-      if (wproofreaderLicenceKey) {
-        Editor.create($el, { toolbar: { items: baseToolbar.slice() } }).catch(function (innerErr) {
-          console.error(innerErr)
+    Editor.create($el, editorConfig)
+      .then(editor => {
+        const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
+        enforceEditorMaxLength(editor, maxLength)
+      })
+      .catch(err => {
+        const fieldId = $el.id || $el.getAttribute('name') || '(unknown field)'
+        const configuredMaxLength = $el.getAttribute('data-max-length')
+        const page = window.location.pathname.split('/').pop() || '(unknown page)'
+
+        console.error('CKEditor initialization failed', {
+          fieldId,
+          configuredMaxLength,
+          page,
+          error: err,
         })
-      }
-    })
+
+        if (wproofreaderLicenceKey) {
+          Editor.create($el, { toolbar: { items: baseToolbar.slice() } })
+            .then(editor => {
+              const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
+              enforceEditorMaxLength(editor, maxLength)
+            })
+            .catch(function (innerErr) {
+              console.error(innerErr)
+            })
+        }
+      })
   })
 })
