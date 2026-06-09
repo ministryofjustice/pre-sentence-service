@@ -118,5 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
           page,
           error: err,
         })
+      })
   })
 })
