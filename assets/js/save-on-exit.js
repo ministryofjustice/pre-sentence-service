@@ -125,7 +125,7 @@
             })
           )
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 30 * 1000)
+      }, 15 * 1000)
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
