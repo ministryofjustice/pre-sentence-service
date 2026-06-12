@@ -23,7 +23,8 @@
       const form = getForm()
       const formData = new URLSearchParams(new FormData(form))
       const reportId = formData.get('reportId')
-      const endpoint = `/api/v1/report/${reportId}/save`
+      const endpoint = `/psr/${reportId}/autosave`
+
 
       document.dispatchEvent(new CustomEvent('autosave'))
 
@@ -78,7 +79,7 @@
       storeFormData.append('CSRFToken', document.getElementsByName('CSRFToken')[0].value)
     }
 
-    const endpoint = `/api/v1/report/${reportId}/save`
+    const endpoint = `/psr/${reportId}/autosave`
 
     document.dispatchEvent(new CustomEvent('autosave'))
 
@@ -119,13 +120,15 @@
         }
 
         persistForm()
-          .then(response =>
-            response.text().then(text => {
-              console.log(`Form persisted: ${text}`)
-            })
-          )
+          .then(async response => {
+            const text = await response.text()
+            if (!response.ok) {
+              throw new Error(`Autosave failed (${response.status}): ${text}`)
+            }
+            console.log(`Form persisted: ${text}`)
+          })
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 30 * 1000)
+      }, 15 * 1000)
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
@@ -163,7 +166,6 @@
 
     // Warn user only when closing tab or navigating to external site
     window.addEventListener('beforeunload', event => {
-      if (skipBeforeUnload) return
       const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
       if (hasUnsavedChanges && !isInternalNavigation) {
