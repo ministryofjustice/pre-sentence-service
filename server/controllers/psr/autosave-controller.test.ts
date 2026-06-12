@@ -81,11 +81,7 @@ describe('AutosaveController', () => {
     await controller.post(req, res)
 
     expect(updateReportSpy).toHaveBeenCalledWith('123', { status: ReportStatus.STARTED })
-    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith(
-      '123',
-      req.body,
-      'psr-defendant-behaviour'
-    )
+    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith('123', req.body, 'psr-defendant-behaviour')
     expect(status).toHaveBeenCalledWith(200)
     expect(statusJson).toHaveBeenCalledWith(
       expect.objectContaining({ success: true, droppedFields: ['defendantBehaviour'] })
@@ -164,11 +160,7 @@ describe('AutosaveController', () => {
 
     await controller.post(req, res)
 
-    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith(
-      '123',
-      req.body,
-      'psr-defendant-behaviour'
-    )
+    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith('123', req.body, 'psr-defendant-behaviour')
   })
 
   it('calls updateReport with empty object when report is already STARTED', async () => {

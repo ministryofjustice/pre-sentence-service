@@ -4,7 +4,6 @@ import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import PdfGenerationService from '../../services/pdfGenerationService'
 import { HttpError } from '../../@types/httpError'
-import { ReportStatus } from '../../repositories/entities/reportDetails'
 
 export default class ApiController {
   private pdfGenerationService: PdfGenerationService
