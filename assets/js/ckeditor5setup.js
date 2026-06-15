@@ -6,36 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function enforceEditorMaxLength(editor, maxLength) {
     if (!Number.isFinite(maxLength) || maxLength <= 0) return
+    attachHardCharacterCap(editor, maxLength)
+  }
 
-    let lastValidData = editor.getData()
-    let restoring = false
+  function selectedTextLength(editor) {
+    if (!editor || !editor.model || !editor.model.document) return 0
+    const selection = editor.model.document.selection
+    if (selection.isCollapsed) return 0
 
-    editor.model.document.on('change:data', () => {
-      if (restoring) return
-
-      const length = plainTextLength(editor)
-      if (length <= maxLength) {
-        lastValidData = editor.getData()
-        return
+    let total = 0
+    for (const range of selection.getRanges()) {
+      for (const item of range.getItems()) {
+        if (item.is('$textProxy')) total += item.data.length
       }
+    }
+    return total
+  }
 
-      restoring = true
-      try {
-        const selection = editor.model.document.selection.getFirstPosition()
+  function remainingCapacity(editor, maxLength) {
+    const current = plainTextLength(editor)
+    const selected = selectedTextLength(editor)
+    return Math.max(0, maxLength - (current - selected))
+  }
 
-        editor.setData(lastValidData)
-
-        if (selection) {
-          editor.model.change(writer => {
-            const root = editor.model.document.getRoot()
-            const maxOffset = root.maxOffset
-            const offset = Math.min(selection.offset, maxOffset)
-            writer.setSelection(writer.createPositionAt(root, offset))
-          })
-        }
-      } finally {
-        restoring = false
-      }
+  function insertPlainText(editor, text) {
+    if (!text) return
+    editor.model.change(writer => {
+      editor.model.insertContent(writer.createText(text))
     })
   }
 
@@ -49,6 +46,78 @@ document.addEventListener('DOMContentLoaded', () => {
     var $el = document.querySelector('#pss-version-mismatch')
     $el.classList.remove('govuk-!-display-none')
     $el.removeAttribute('aria-hidden')
+  }
+
+  function attachHardCharacterCap(editor, maxLength) {
+    const editable = editor.ui?.view?.editable?.element
+    if (!editable) return
+
+    const blockedInsertTypes = new Set([
+      'insertText',
+      'insertFromPaste',
+      'insertFromDrop',
+      'insertCompositionText',
+    ])
+
+    editable.addEventListener(
+      'beforeinput',
+      event => {
+        if (!blockedInsertTypes.has(event.inputType)) return
+
+        const remaining = remainingCapacity(editor, maxLength)
+
+        if (remaining <= 0) {
+          event.preventDefault()
+          return
+        }
+
+        if (typeof event.data === 'string' && event.data.length > remaining) {
+          event.preventDefault()
+          insertPlainText(editor, event.data.slice(0, remaining))
+        }
+      },
+      true
+    )
+
+    // CKEditor-native clipboard pipeline
+    // This is necessary because paste can bypass DOM-level beforeinput in some browsers/paths.
+    const clipboard = editor.plugins.get('ClipboardPipeline')
+
+    clipboard.on('inputTransformation', (event, data) => {
+      const pasted = data.dataTransfer?.getData('text/plain') || ''
+
+      if (!pasted) return
+
+      const remaining = remainingCapacity(editor, maxLength)
+
+      if (remaining <= 0) {
+        event.stop()
+        return
+      }
+
+      if (pasted.length <= remaining) return
+
+      event.stop()
+      insertPlainText(editor, pasted.slice(0, remaining))
+    })
+
+    // Keep drop guard for browsers/paths that do not route as expected.
+    editable.addEventListener(
+      'drop',
+      event => {
+        const dropped = event.dataTransfer?.getData('text/plain') || ''
+        if (!dropped) return
+
+        const remaining = remainingCapacity(editor, maxLength)
+        if (dropped.length <= remaining) return
+
+        event.preventDefault()
+        if (remaining > 0) {
+          insertPlainText(editor, dropped.slice(0, remaining))
+        }
+      },
+      true
+    )
   }
 
   document.querySelectorAll('.moj-side-navigation__item a').forEach(function ($el) {
