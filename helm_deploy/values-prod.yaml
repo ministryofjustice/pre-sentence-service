@@ -18,7 +18,7 @@ generic-service:
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius.probation.service.justice.gov.uk"
 
-#  TODO: update the allow list to use the groubs.internal, same as dev and preprod, once tested.
+#  TODO: update the allow list to use the groups.internal, same as dev and preprod, once tested.
   allowlist:
     office: "217.33.148.210/32"
     health-kick: "35.177.252.195/32"
