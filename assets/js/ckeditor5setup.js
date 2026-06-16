@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   function plainTextLength(editor) {
     const text = editor.editing.view.getDomRoot()?.innerText || ''
-    return text.length
+    return text.replace(/\r\n|\r|\n/g, '').length
   }
 
   function enforceEditorMaxLength(editor, maxLength) {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var wpCfg = window.wproofreaderConfig || {}
   var wproofreaderLicenceKey = wpCfg.serviceId || ''
   var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
-  var baseToolbar = ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo', '|', 'removeFormat']
+  var baseToolbar = []
 
   var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.classList.add('app-apply-ckeditor5')
     var editorConfig = { toolbar: { items: baseToolbar.slice() } }
     if (wproofreaderLicenceKey && wproofreaderBundleUrl) {
-      editorConfig.toolbar.items.push('|', 'wproofreader')
+      // editorConfig.toolbar.items.push('wproofreader')
       editorConfig.wproofreader = {
         serviceId: wproofreaderLicenceKey,
         srcUrl: wproofreaderBundleUrl,
