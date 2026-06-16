@@ -30,7 +30,7 @@ describe('longText', () => {
   })
 
   it('exposes the limit constant', () => {
-    expect(LONG_TEXT_MAX).toBe(10000)
+    expect(LONG_TEXT_MAX).toBe(20000)
   })
 
   describe('without a requiredMessage', () => {

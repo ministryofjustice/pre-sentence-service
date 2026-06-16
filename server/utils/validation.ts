@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const LONG_TEXT_MAX = 10000
+export const LONG_TEXT_MAX = 20000
 export const PROPOSED_SENTENCE_MAX = 4000
 
 export const maxLengthMessage = (label: string, max: number) =>
