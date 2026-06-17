@@ -33,7 +33,8 @@
 
     const length = getLength(field)
     const remaining = max - length
-    const isWarning = length >= max * WARNING_THRESHOLD && length < max
+    const isAtLimit = length === max
+    const isWarning = length >= max * WARNING_THRESHOLD && length <= max
     const isError = length > max
 
     counter.classList.remove('pic-character-count--warning', 'pic-character-count--error')
@@ -46,6 +47,10 @@
       counter.hidden = false
       counter.textContent = `You have ${overBy.toLocaleString()} character${overBy === 1 ? '' : 's'} too many. You will not be able to save until you reduce this.`
       counter.classList.add('pic-character-count--error')
+    } else if (isAtLimit) {
+      counter.hidden = false
+      counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot enter any more characters.`
+      counter.classList.add('pic-character-count--warning')
     } else {
       counter.hidden = false
       counter.textContent = `You have ${remaining.toLocaleString()} character${remaining === 1 ? '' : 's'} remaining. You will not be able to save if you go over ${max.toLocaleString()} characters.`

@@ -2,6 +2,7 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 import * as pathModule from 'path'
 import { LONG_TEXT_MAX } from './validation'
+import config from '../config'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -12,6 +13,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.applicationName = 'Pre-sentence Service'
   app.locals.headerTitle = 'Write a pre-sentence report'
   app.locals.longTextMax = LONG_TEXT_MAX
+  app.locals.wproofreaderLicenceKey = config.wproofreader.licenceKey
+  app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
 
   // Cachebusting version string
   if (production) {
