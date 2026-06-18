@@ -36,18 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  function hideError() {
-    var $el = document.querySelector('#pss-version-mismatch')
-    $el.classList.add('govuk-!-display-none')
-    $el.setAttribute('aria-hidden', 'true')
-  }
-
-  function showError() {
-    var $el = document.querySelector('#pss-version-mismatch')
-    $el.classList.remove('govuk-!-display-none')
-    $el.removeAttribute('aria-hidden')
-  }
-
   function attachHardCharacterCap(editor, maxLength) {
     const editable = editor.ui?.view?.editable?.element
     if (!editable) return
@@ -80,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     )
 
     // CKEditor-native clipboard pipeline
-    // This is necessary because paste can bypass DOM-level beforeinput in some browsers/paths.
+    // Prevents paste from bypassing DOM-level beforeinput in some browsers/paths.
     const clipboard = editor.plugins.get('ClipboardPipeline')
 
     clipboard.on('inputTransformation', (event, data) => {
