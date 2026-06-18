@@ -177,7 +177,43 @@
     })
   }
 
+  // Handle sign-out: save before logout
+  function handleSignOut(event) {
+    const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+    const signOutUrl = event.currentTarget?.href || '/sign-out'
+
+    if (!hasUnsavedChanges || !hasFormOnPage()) {
+      return true
+    }
+
+    event.preventDefault()
+
+    // Attempt save, but always continue logout
+    persistForm()
+      .then(async response => {
+        const text = await response.text()
+        if (response.ok) {
+          console.log('Sign-out autosave successful')
+        } else {
+          console.error(`Autosave failed (${response.status}): ${text}`)
+        }
+      })
+      .catch(e => {
+        console.error(`Sign-out autosave error: ${e.message}`)
+      })
+      .finally(() => {
+        window.location.assign(signOutUrl)
+      })
+  }
+
   window.addEventListener('load', () => {
+    // Attach sign-out handler to the sign-out link
+    const signOutLink = document.querySelector('a[data-qa="signOut"]')
+    if (signOutLink) {
+      signOutLink.addEventListener('click', handleSignOut)
+    }
+
+    // Initialize autosave only if a form is present on the page
     if (hasFormOnPage()) {
       function initializeAutosave() {
         if (!window.reportStoreInstance) {
