@@ -1,7 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const NEWLINE_LIKE_CHARS = /\r\n|[\r\n\u2028\u2029]/g
+  const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
+
+  function normaliseForLength(value) {
+    return (value || '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;|&#160;/gi, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&#39;|&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(NEWLINE_LIKE_CHARS, '') // Remove newlines, including Unicode line/paragraph separators
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '') // Remove zero-width characters
+  }
+
+  function normaliseIncomingPlainText(value) {
+    return (value || '')
+      .replace(/\r\n?/g, '\n')
+      .replace(/[\u2028\u2029]/g, '\n')
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
+  }
+
+  function incomingCount(text) {
+    return normaliseForLength(normaliseIncomingPlainText(text)).length
+  }
+
   function plainTextLength(editor) {
     const text = editor.editing.view.getDomRoot()?.innerText || ''
-    return text.replace(/\r\n|\r|\n/g, '').length
+    return normaliseForLength(text).trim().length
   }
 
   function enforceEditorMaxLength(editor, maxLength) {
@@ -11,16 +38,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function selectedTextLength(editor) {
     if (!editor || !editor.model || !editor.model.document) return 0
+
     const selection = editor.model.document.selection
     if (selection.isCollapsed) return 0
 
-    let total = 0
+    let selected = ''
     for (const range of selection.getRanges()) {
       for (const item of range.getItems()) {
-        if (item.is('$textProxy')) total += item.data.length
+        if (item.is('$textProxy')) selected += item.data
       }
     }
-    return total
+
+    return normaliseForLength(selected).length
+  }
+
+  function truncateToRemaining(rawText, remaining) {
+    if (!rawText || remaining <= 0) return ''
+
+    const input = normaliseIncomingPlainText(rawText)
+    let allowed = remaining
+    let out = ''
+
+    for (let i = 0; i < input.length; i += 1) {
+      const ch = input[i]
+
+      if (ch === '\n') {
+        out += ch
+        continue
+      }
+
+      if (allowed <= 0) break
+      out += ch
+      allowed -= 1
+    }
+
+    return out
   }
 
   function remainingCapacity(editor, maxLength) {
@@ -59,9 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return
         }
 
-        if (typeof event.data === 'string' && event.data.length > remaining) {
+        if (typeof event.data === 'string' && incomingCount(event.data) > remaining) {
           event.preventDefault()
-          insertPlainText(editor, event.data.slice(0, remaining))
         }
       },
       true
@@ -70,39 +121,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // CKEditor-native clipboard pipeline
     // Prevents paste from bypassing DOM-level beforeinput in some browsers/paths.
     const clipboard = editor.plugins.get('ClipboardPipeline')
+    if (!clipboard) return
 
+    // Always flatten pasted content to plain text (formatting removed on paste)
     clipboard.on('inputTransformation', (event, data) => {
-      const pasted = data.dataTransfer?.getData('text/plain') || ''
+      // Stop default CKEditor insertion first, even when text/plain is empty.
+      event.stop()
 
-      if (!pasted) return
+      const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
+      if (!pastedRaw) return
 
       const remaining = remainingCapacity(editor, maxLength)
+      if (remaining <= 0) return
 
-      if (remaining <= 0) {
-        event.stop()
-        return
-      }
+      const toInsert = truncateToRemaining(pastedRaw, remaining)
+      if (!toInsert) return
 
-      if (pasted.length <= remaining) return
-
-      event.stop()
-      insertPlainText(editor, pasted.slice(0, remaining))
+      insertPlainText(editor, toInsert)
     })
 
-    // Keep drop guard for browsers/paths that do not route as expected.
+    // Always flatten dropped content to plain text (formatting removed on drop)
     editable.addEventListener(
       'drop',
       event => {
-        const dropped = event.dataTransfer?.getData('text/plain') || ''
-        if (!dropped) return
+        // Intercept all drops on the editable so HTML never gets inserted by default handlers.
+        event.preventDefault()
+        event.stopImmediatePropagation()
+
+        const droppedRaw = event.dataTransfer?.getData('text/plain') || ''
+        if (!droppedRaw) return
 
         const remaining = remainingCapacity(editor, maxLength)
-        if (dropped.length <= remaining) return
+        if (remaining <= 0) return
 
-        event.preventDefault()
-        if (remaining > 0) {
-          insertPlainText(editor, dropped.slice(0, remaining))
-        }
+        const toInsert = truncateToRemaining(droppedRaw, remaining)
+        if (!toInsert) return
+
+        insertPlainText(editor, toInsert)
       },
       true
     )
@@ -137,29 +192,45 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
+  var Editor = window.ClassicEditor
+  if (!Editor && typeof module !== 'undefined' && module.exports) {
+    Editor = module.exports
+    window.ClassicEditor = Editor
+  }
+  if (!Editor) {
+    console.error('ClassicEditor not available — ckeditor.js did not load')
+    return
+  }
+
+  var wpCfg = window.wproofreaderConfig || {}
+  var wproofreaderLicenceKey = wpCfg.serviceId || ''
+  var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
+  var baseToolbar = ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo', '|', 'removeFormat']
+
+  var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
-    ClassicEditor.create($el, {
-      // autosave: {
-      //   save(editor) {
-      //     var xhr = new XMLHttpRequest()
-      //     xhr.open('POST', 'auto-save', true)
-      //     xhr.setRequestHeader('Content-Type', 'application/json')
-      //     xhr.setRequestHeader('x-csrf-token', window.csrfToken)
-      //     xhr.setRequestHeader('Accept', 'application/json')
-      //     xhr.onload = function () {
-      //       this.status >= 200 && this.status < 400 ? hideError() : showError()
-      //     }
-      //     xhr.send(
-      //       JSON.stringify([
-      //         {
-      //           id: $(editor.sourceElement).attr('id'),
-      //           value: editor.getData(),
-      //         },
-      //       ])
-      //     )
-      //   },
-      // },
-    })
+    targets.add($el)
+  })
+  document.querySelectorAll('textarea').forEach(function ($el) {
+    if ($el.hasAttribute('data-no-rich-text')) return
+    var rows = parseInt($el.getAttribute('rows'), 10)
+    if (rows && rows > 1) targets.add($el)
+  })
+
+  targets.forEach(function ($el) {
+    $el.classList.add('app-apply-ckeditor5')
+    var editorConfig = { toolbar: { items: baseToolbar.slice() } }
+    if (wproofreaderLicenceKey && wproofreaderBundleUrl) {
+      editorConfig.toolbar.items.push('wproofreader')
+      editorConfig.wproofreader = {
+        serviceId: wproofreaderLicenceKey,
+        srcUrl: wproofreaderBundleUrl,
+        lang: 'en_GB',
+        removeBranding: true,
+        settingsSections: ['general', 'options'],
+      }
+    }
+    Editor.create($el, editorConfig)
       .then(editor => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
@@ -175,5 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
           page,
           error: err,
         })
+      })
   })
 })
