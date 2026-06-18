@@ -20,7 +20,11 @@ generic-service:
     NDELIUS_URL: "https://ndelius.test.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
 
-  allowlist: null
+  allowlist:
+    groups:
+      - internal
+
+  # TODO: add generic-prometheus-alerts
 
 gotenberg:
   replicaCount: 1
