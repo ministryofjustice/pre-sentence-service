@@ -21,6 +21,7 @@ import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
+import setUpRouteDebugging from './middleware/setUpRouteDebuging'
 
 export default function createApplication(userService: UserService): Application {
   const app = express()
@@ -33,6 +34,7 @@ export default function createApplication(userService: UserService): Application
   app.use(setUpWebSecurity())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
+  app.use(setUpRouteDebugging)
   nunjucksSetup(app, path)
   app.use(pdfRenderer(new GotenbergClient(config.apis.gotenberg.apiUrl)))
   app.use(
