@@ -106,6 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(editor => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
+
+        // Dispatch native event on editor data change to ensure CKEditor content is included in form submissions and autosave
+        editor.model.document.on('change:data', () => {
+          const html = editor.getData()
+          $el.value = html
+          $el.dispatchEvent(new Event('input', { bubbles: true }))
+        })
       })
       .catch(err => {
         const fieldId = $el.id || $el.getAttribute('name') || '(unknown field)'
@@ -118,5 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
           page,
           error: err,
         })
+      })
   })
 })
