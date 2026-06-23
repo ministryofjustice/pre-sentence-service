@@ -25,7 +25,7 @@ describe('longText', () => {
     const result = schema.safeParse('a'.repeat(LONG_TEXT_MAX + 1))
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Test field must be 10,000 characters or fewer')
+      expect(result.error.issues[0].message).toBe('Test field must be 20,000 characters or fewer')
     }
   })
 
@@ -44,7 +44,7 @@ describe('longText', () => {
       const result = optionalSchema.safeParse('a'.repeat(LONG_TEXT_MAX + 1))
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe('Optional field must be 10,000 characters or fewer')
+        expect(result.error.issues[0].message).toBe('Optional field must be 20,000 characters or fewer')
       }
     })
   })
