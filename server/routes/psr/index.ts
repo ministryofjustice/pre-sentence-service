@@ -18,6 +18,7 @@ import SourcesOfInformationController from '../../controllers/psr/sources-of-inf
 import SignYourReportController from '../../controllers/psr/sign-your-report-controller'
 import PdfController from '../../controllers/pdf/pdfController'
 import PublishReportController from '../../controllers/psr/publish-report-controller'
+import AutosaveController from '../../controllers/psr/autosave-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -112,6 +113,9 @@ export default function Index(
   })
   post('/:reportId/publish-report', (req, res) => {
     return new PublishReportController(reportService).post(req, res)
+  })
+  post('/:reportId/autosave', (req, res) => {
+    return new AutosaveController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   return router
