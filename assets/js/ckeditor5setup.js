@@ -80,45 +80,29 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  var Editor = window.ClassicEditor
-  if (!Editor && typeof module !== 'undefined' && module.exports) {
-    Editor = module.exports
-    window.ClassicEditor = Editor
-  }
-  if (!Editor) {
-    console.error('ClassicEditor not available — ckeditor.js did not load')
-    return
-  }
-
-  var wpCfg = window.wproofreaderConfig || {}
-  var wproofreaderLicenceKey = wpCfg.serviceId || ''
-  var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
-  var baseToolbar = ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo', '|', 'removeFormat']
-
-  var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
-    targets.add($el)
-  })
-  document.querySelectorAll('textarea').forEach(function ($el) {
-    if ($el.hasAttribute('data-no-rich-text')) return
-    var rows = parseInt($el.getAttribute('rows'), 10)
-    if (rows && rows > 1) targets.add($el)
-  })
-
-  targets.forEach(function ($el) {
-    $el.classList.add('app-apply-ckeditor5')
-    var editorConfig = { toolbar: { items: baseToolbar.slice() } }
-    if (wproofreaderLicenceKey && wproofreaderBundleUrl) {
-      editorConfig.toolbar.items.push('|', 'wproofreader')
-      editorConfig.wproofreader = {
-        serviceId: wproofreaderLicenceKey,
-        srcUrl: wproofreaderBundleUrl,
-        lang: 'en_GB',
-        removeBranding: true,
-        settingsSections: ['general', 'options'],
-      }
-    }
-    Editor.create($el, editorConfig)
+    ClassicEditor.create($el, {
+      // autosave: {
+      //   save(editor) {
+      //     var xhr = new XMLHttpRequest()
+      //     xhr.open('POST', 'auto-save', true)
+      //     xhr.setRequestHeader('Content-Type', 'application/json')
+      //     xhr.setRequestHeader('x-csrf-token', window.csrfToken)
+      //     xhr.setRequestHeader('Accept', 'application/json')
+      //     xhr.onload = function () {
+      //       this.status >= 200 && this.status < 400 ? hideError() : showError()
+      //     }
+      //     xhr.send(
+      //       JSON.stringify([
+      //         {
+      //           id: $(editor.sourceElement).attr('id'),
+      //           value: editor.getData(),
+      //         },
+      //       ])
+      //     )
+      //   },
+      // },
+    })
       .then(editor => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
@@ -134,17 +118,5 @@ document.addEventListener('DOMContentLoaded', () => {
           page,
           error: err,
         })
-
-        if (wproofreaderLicenceKey) {
-          Editor.create($el, { toolbar: { items: baseToolbar.slice() } })
-            .then(editor => {
-              const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
-              enforceEditorMaxLength(editor, maxLength)
-            })
-            .catch(function (innerErr) {
-              console.error(innerErr)
-            })
-        }
-      })
   })
 })
