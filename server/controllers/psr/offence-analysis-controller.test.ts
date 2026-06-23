@@ -190,9 +190,9 @@ describe('OffenceAnalysisController', () => {
       expect(mockRequest.body.noPreviousOffences).toBe('true')
     })
 
-    it('should re-render with validation errors when offencesUnderConsideration exceeds 10,000 characters', async () => {
+    it('should re-render with validation errors when offencesUnderConsideration exceeds 20,000 characters', async () => {
       mockRequest.body = {
-        offencesUnderConsideration: 'a'.repeat(10_001),
+        offencesUnderConsideration: 'a'.repeat(20_001),
         offencesPattern: 'Pattern analysis',
         noPreviousOffences: 'true',
       }
@@ -206,7 +206,7 @@ describe('OffenceAnalysisController', () => {
           formValidation: expect.objectContaining({
             isValid: false,
             errors: expect.objectContaining({
-              offencesUnderConsideration: 'Offences under consideration must be 10,000 characters or fewer',
+              offencesUnderConsideration: 'Offences under consideration must be 20,000 characters or fewer',
             }),
           }),
         })

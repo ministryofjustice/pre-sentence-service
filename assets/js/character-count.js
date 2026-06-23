@@ -20,8 +20,26 @@
     return field.value || ''
   }
 
+  const NEWLINE_LIKE_CHARS = /\r\n|[\r\n\u2028\u2029]/g
+  const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
+
+  function normaliseForLength(value) {
+    return (value || '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;|&#160;/gi, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&#39;|&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(NEWLINE_LIKE_CHARS, '') // Remove newlines, including Unicode line/paragraph separators
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '') // Remove zero-width characters
+  }
+
+
   function getLength(field) {
-    return getEditableContent(field).length
+    const text = getEditableContent(field)
+    return normaliseForLength(text).trim().length
   }
 
   function updateCounter(field) {
