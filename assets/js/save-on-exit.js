@@ -147,6 +147,21 @@
 
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
+    // Track form submission to avoid showing alert when submitting the form
+    let isFormSubmitting = false
+
+    const form = getForm()
+    if (form) {
+      form.addEventListener('submit', event => {
+        // Check if the event has been prevented by other handlers (eg validation errors)
+        if (event.defaultPrevented) return
+        console.log('Form submission save initiated')
+        isFormSubmitting = true
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle)
+        }
+      })
+    }
 
     document.addEventListener('click', event => {
       const link = event.target.closest('a')
@@ -168,7 +183,7 @@
     window.addEventListener('beforeunload', event => {
       const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
-      if (hasUnsavedChanges && !isInternalNavigation) {
+      if (hasUnsavedChanges && !isInternalNavigation && !isFormSubmitting) {
         const message = 'You have unsaved changes that will be lost. Are you sure you want to leave?'
         event.preventDefault()
         event.returnValue = message
@@ -189,6 +204,7 @@
     event.preventDefault()
 
     // Attempt save, but always continue logout
+    console.log('Sign-out: Attempting to save form before logout')
     persistForm()
       .then(async response => {
         const text = await response.text()
