@@ -155,6 +155,7 @@
       form.addEventListener('submit', event => {
         // Check if the event has been prevented by other handlers (eg validation errors)
         if (event.defaultPrevented) return
+
         console.log('Form submission save initiated')
         isFormSubmitting = true
         if (timeoutHandle) {
@@ -204,7 +205,6 @@
     event.preventDefault()
 
     // Attempt save, but always continue logout
-    console.log('Sign-out: Attempting to save form before logout')
     persistForm()
       .then(async response => {
         const text = await response.text()
