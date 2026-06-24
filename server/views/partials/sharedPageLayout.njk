@@ -57,18 +57,20 @@
 {% endblock %}
 
 {% block additionalScripts %}
-  <script nonce="{{ nonce }}">
-    (function () {
-      window.csrfToken = '{{ csrfToken }}';
-      window.wproofreaderConfig = {
-        serviceId: '{{ wproofreaderLicenceKey }}',
-        bundleUrl: '{{ wproofreaderBundleUrl }}'
-      };
-    })()
-  </script>
-  <script src="/assets/ckeditor.js"></script>
-  <script src="/assets/ckeditor5setup.js"></script>
-  <script src="/assets/wproofreader.js"></script>
+  {% if featureRichTextEditor %}
+    <script nonce="{{ nonce }}">
+      (function () {
+        window.csrfToken = '{{ csrfToken }}';
+        window.wproofreaderConfig = {
+          serviceId: '{{ wproofreaderLicenceKey }}',
+          bundleUrl: '{{ wproofreaderBundleUrl }}'
+        };
+      })()
+    </script>
+    <script src="/assets/ckeditor.js"></script>
+    <script src="/assets/ckeditor5setup.js"></script>
+    <script src="/assets/wproofreader.js"></script>
+  {% endif %}
   <script src="/assets/character-count.js"></script>
   <script src="/assets/save-on-exit.js"></script>
 {% endblock %}

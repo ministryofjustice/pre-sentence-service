@@ -5,9 +5,9 @@ import config from '../config'
 export default function setUpWebSecurity(): Router {
   const router = express.Router()
 
-  const wpHost = config.wproofreader.host
-  const wpSources = wpHost ? [wpHost] : []
-  const wpWebsocket = wpHost ? [`wss://${wpHost}`] : []
+  const wpEnabled = config.features.richTextEditor && !!config.wproofreader.host
+  const wpSources = wpEnabled ? [config.wproofreader.host] : []
+  const wpWebsocket = wpEnabled ? [`wss://${config.wproofreader.host}`] : []
 
   // Secure code best practice - see:
   // 1. https://expressjs.com/en/advanced/best-practice-security.html,

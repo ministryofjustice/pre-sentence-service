@@ -61,7 +61,7 @@
     {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
     {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
     {%- if maxLength %} data-max-length="{{ maxLength }}"{% endif %}
-  {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value }}</textarea>
+  {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value | editableText }}</textarea>
 
   {% if maxLength %}
     <div class="pic-character-count" data-character-count-for="{{ params.id }}" id="{{ params.id }}-info" aria-live="polite" hidden></div>

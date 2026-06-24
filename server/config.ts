@@ -137,6 +137,9 @@ export default {
     digitalCaseSystemUrl: get('DIGITAL_CASE_SYSTEM_URL', 'https://dummy.case.system.url/', requiredInProduction),
     ndeliusUrl: get('NDELIUS_URL', 'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction),
   },
+  features: {
+    richTextEditor: get('FEATURE_RICH_TEXT_EDITOR', 'false') === 'true',
+  },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
   },

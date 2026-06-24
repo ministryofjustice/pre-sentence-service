@@ -19,6 +19,7 @@ generic-service:
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius-preprod.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
+    FEATURE_RICH_TEXT_EDITOR: "false"
 
   allowList:
     office: "217.33.148.210/32"

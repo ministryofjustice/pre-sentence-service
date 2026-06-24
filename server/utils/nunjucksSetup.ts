@@ -3,6 +3,7 @@ import express from 'express'
 import * as pathModule from 'path'
 import { LONG_TEXT_MAX } from './validation'
 import config from '../config'
+import { htmlToPlainText } from './htmlToPlainText'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -15,6 +16,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.longTextMax = LONG_TEXT_MAX
   app.locals.wproofreaderLicenceKey = config.wproofreader.licenceKey
   app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
+  app.locals.featureRichTextEditor = config.features.richTextEditor
 
   // Cachebusting version string
   if (production) {
@@ -158,4 +160,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
     return false
   })
+
+  njkEnv.addFilter('editableText', (v: string) => (config.features.richTextEditor ? v : htmlToPlainText(v)))
 }

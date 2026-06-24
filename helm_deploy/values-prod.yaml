@@ -17,6 +17,7 @@ generic-service:
     COMMON_PLATFORM_URL: "https://my-services.cjscp.org.uk/"
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius.probation.service.justice.gov.uk"
+    FEATURE_RICH_TEXT_EDITOR: "false"
 
   allowlist:
     office: "217.33.148.210/32"
