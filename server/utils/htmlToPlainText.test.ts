@@ -38,10 +38,9 @@ describe('htmlToPlainText', () => {
     expect(out).toContain('2.')
   })
 
-  it('decodes HTML entities', () => {
-    expect(htmlToPlainText('R&amp;D &lt; 5%')).toBe('R&D < 5%')
-    // html-to-text decodes &nbsp; to U+00A0 (non-breaking space), not a regular space — assert the entity is gone
-    const nbspResult = htmlToPlainText('a&nbsp;b')
+  it('decodes HTML entities inside HTML content', () => {
+    expect(htmlToPlainText('<p>R&amp;D &lt; 5%</p>')).toBe('R&D < 5%')
+    const nbspResult = htmlToPlainText('<p>a&nbsp;b</p>')
     expect(nbspResult).not.toContain('&nbsp;')
     expect(nbspResult).toMatch(/a.b/) // decoded to some whitespace-like character between a and b
   })
@@ -52,5 +51,18 @@ describe('htmlToPlainText', () => {
 
   it('returns plain text unchanged', () => {
     expect(htmlToPlainText('already plain text')).toBe('already plain text')
+  })
+
+  it('preserves newlines in plain text (no HTML tags)', () => {
+    expect(htmlToPlainText('Line one\nLine two\n\nParagraph two')).toBe('Line one\nLine two\n\nParagraph two')
+  })
+
+  it('treats a string with no HTML tags but with angle brackets as plain text', () => {
+    expect(htmlToPlainText('5 < 10 and 10 > 5')).toBe('5 < 10 and 10 > 5')
+  })
+
+  it('preserves newlines around user-typed bracket tokens that are not HTML elements', () => {
+    expect(htmlToPlainText('Line A\n\nLine B <pasted>\n\nLine C')).toBe('Line A\n\nLine B <pasted>\n\nLine C')
+    expect(htmlToPlainText('text with <somecustomthing> in it')).toBe('text with <somecustomthing> in it')
   })
 })

@@ -39,6 +39,58 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  function debounce(fn, ms) {
+    var t = null
+    return function () {
+      var args = arguments
+      var ctx = this
+      if (t) clearTimeout(t)
+      t = setTimeout(function () {
+        fn.apply(ctx, args)
+      }, ms)
+    }
+  }
+
+  function wireEditorToStore($el, editor) {
+    var questionId = $el.id || $el.getAttribute('name')
+    if (!questionId) return
+
+    var initialData = editor.getData()
+    var lastPushed = initialData
+
+    var push = debounce(function () {
+      var data = editor.getData()
+      if (data === lastPushed) return
+      lastPushed = data
+      var store = window.reportStoreInstance
+      if (store && typeof store.pushFromEditor === 'function') {
+        store.pushFromEditor(questionId, data)
+      }
+    }, 250)
+
+    editor.model.document.on('change:data', function () {
+      push()
+    })
+  }
+
+  function forcePastePlainText(editor) {
+    editor.editing.view.document.on(
+      'clipboardInput',
+      function (evt, data) {
+        var text = data.dataTransfer.getData('text/plain') || ''
+        if (!text) {
+          return
+        }
+        var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        // convert each \n into a  <br>
+        var html = escaped.replace(/\n\n+/g, '</p><p>').replace(/\n/g, '<br>')
+        html = '<p>' + html + '</p>'
+        data.content = editor.data.processor.toView(html)
+      },
+      { priority: 'high' }
+    )
+  }
+
   function hideError() {
     var $el = document.querySelector('#pss-version-mismatch')
     $el.classList.add('govuk-!-display-none')
@@ -93,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var wpCfg = window.wproofreaderConfig || {}
   var wproofreaderLicenceKey = wpCfg.serviceId || ''
   var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
-  var baseToolbar = ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo', '|', 'removeFormat']
+  var baseToolbar = ['wproofreader', '|', 'undo', 'redo']
 
   var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
@@ -109,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.classList.add('app-apply-ckeditor5')
     var editorConfig = { toolbar: { items: baseToolbar.slice() } }
     if (wproofreaderLicenceKey && wproofreaderBundleUrl) {
-      editorConfig.toolbar.items.push('|', 'wproofreader')
       editorConfig.wproofreader = {
         serviceId: wproofreaderLicenceKey,
         srcUrl: wproofreaderBundleUrl,
@@ -122,6 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(editor => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
+        wireEditorToStore($el, editor)
+        forcePastePlainText(editor)
       })
       .catch(err => {
         const fieldId = $el.id || $el.getAttribute('name') || '(unknown field)'
@@ -136,10 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
         if (wproofreaderLicenceKey) {
-          Editor.create($el, { toolbar: { items: baseToolbar.slice() } })
+          Editor.create($el, { toolbar: { items: ['undo', 'redo'] } })
             .then(editor => {
               const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
               enforceEditorMaxLength(editor, maxLength)
+              wireEditorToStore($el, editor)
+              forcePastePlainText(editor)
             })
             .catch(function (innerErr) {
               console.error(innerErr)

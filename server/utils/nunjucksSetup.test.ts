@@ -57,3 +57,45 @@ describe('editableText nunjucks filter', () => {
     expect(out).toBe('hello world')
   })
 })
+
+describe('editorValue nunjucks filter', () => {
+  let env: nunjucks.Environment
+
+  beforeEach(() => {
+    const app = express()
+    const configureSpy = jest.spyOn(nunjucks, 'configure')
+    nunjucksSetup(app, path)
+    env = configureSpy.mock.results[0].value as nunjucks.Environment
+    configureSpy.mockRestore()
+  })
+
+  afterEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.richTextEditor = true
+  })
+
+  it('wraps plain text into editor HTML when the flag is ON', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.richTextEditor = true
+    const out = env.renderString('{{ value | editorValue | safe }}', { value: 'a\n\nb' })
+    expect(out).toBe('<p>a</p><p>b</p>')
+  })
+
+  it('strips HTML to plain text when the flag is OFF', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.richTextEditor = false
+    const out = env.renderString('{{ value | editorValue | safe }}', {
+      value: '<p>hello <strong>world</strong></p>',
+    })
+    expect(out).toBe('hello world')
+  })
+
+  it('returns empty string for empty input under either flag', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.richTextEditor = true
+    expect(env.renderString('{{ value | editorValue | safe }}', { value: '' })).toBe('')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.richTextEditor = false
+    expect(env.renderString('{{ value | editorValue | safe }}', { value: '' })).toBe('')
+  })
+})

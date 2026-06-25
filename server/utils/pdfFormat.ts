@@ -1,5 +1,4 @@
 import ReportDetails from '../repositories/entities/reportDetails'
-import config from '../config'
 import { htmlToPlainText } from './htmlToPlainText'
 
 export const pdfOptions = {
@@ -96,7 +95,7 @@ export function configureReportData(report: ReportDetails) {
   if (report.pages) {
     report.pages.forEach(page => {
       page.questions.forEach(question => {
-        reportData[question.value] = config.features.richTextEditor ? question.answer : htmlToPlainText(question.answer)
+        reportData[question.value] = htmlToPlainText(question.answer)
       })
     })
   }
