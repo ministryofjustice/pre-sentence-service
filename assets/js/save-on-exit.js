@@ -265,7 +265,7 @@
     window.addEventListener('beforeunload', onBeforeUnload)
   }
 
-  function addListenersToFormElements() {
+  function initialiseAutosaveListeners() {
     const formElements = getFormElements()
     const form = getForm()
 
@@ -281,7 +281,7 @@
       return
     }
 
-    addListenersToFormElements()
+    initialiseAutosaveListeners()
     getForm().setAttribute('data-autosave-enabled', true)
   }
 
