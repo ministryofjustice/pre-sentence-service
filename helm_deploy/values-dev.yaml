@@ -15,13 +15,20 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     GOTENBERG_API_URL: "http://pre-sentence-service-gotenberg"
     PRE_SENTENCE_URL: "http://pre-sentence-service"
-    COMMON_PLATFORM_URL: "https://dummy.common.url"
+    COMMON_PLATFORM_URL: "https://login.dev.cjscp.org.uk/"
     DIGITAL_CASE_SYSTEM_URL: "https://dummy.case.system.url/"
     NDELIUS_URL: "https://ndelius.test.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
     FEATURE_RICH_TEXT_EDITOR: "true"
 
-  allowlist: null
+  allowlist:
+    delius-test-1: "35.176.126.163/32"
+    delius-test-2: "35.178.162.73/32"
+    delius-test-3: "52.56.195.113/32"
+    groups:
+      - internal
+
+  # TODO: add generic-prometheus-alerts
 
 gotenberg:
   replicaCount: 1

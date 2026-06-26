@@ -23,7 +23,8 @@
       const form = getForm()
       const formData = new URLSearchParams(new FormData(form))
       const reportId = formData.get('reportId')
-      const endpoint = `/api/v1/report/${reportId}/save`
+      const endpoint = `/psr/${reportId}/autosave`
+
 
       document.dispatchEvent(new CustomEvent('autosave'))
 
@@ -78,7 +79,7 @@
       storeFormData.append('CSRFToken', document.getElementsByName('CSRFToken')[0].value)
     }
 
-    const endpoint = `/api/v1/report/${reportId}/save`
+    const endpoint = `/psr/${reportId}/autosave`
 
     document.dispatchEvent(new CustomEvent('autosave'))
 
@@ -119,13 +120,15 @@
         }
 
         persistForm()
-          .then(response =>
-            response.text().then(text => {
-              console.log(`Form persisted: ${text}`)
-            })
-          )
+          .then(async response => {
+            const text = await response.text()
+            if (!response.ok) {
+              throw new Error(`Autosave failed (${response.status}): ${text}`)
+            }
+            console.log(`Form persisted: ${text}`)
+          })
           .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 30 * 1000)
+      }, 15 * 1000)
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
@@ -144,6 +147,22 @@
 
     // Track internal navigation to avoid showing alert for page-to-page navigation
     let isInternalNavigation = false
+    // Track form submission to avoid showing alert when submitting the form
+    let isFormSubmitting = false
+
+    const form = getForm()
+    if (form) {
+      form.addEventListener('submit', event => {
+        // Check if the event has been prevented by other handlers (eg validation errors)
+        if (event.defaultPrevented) return
+
+        console.log('Form submission save initiated')
+        isFormSubmitting = true
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle)
+        }
+      })
+    }
 
     document.addEventListener('click', event => {
       const link = event.target.closest('a')
@@ -163,10 +182,9 @@
 
     // Warn user only when closing tab or navigating to external site
     window.addEventListener('beforeunload', event => {
-      if (skipBeforeUnload) return
       const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
 
-      if (hasUnsavedChanges && !isInternalNavigation) {
+      if (hasUnsavedChanges && !isInternalNavigation && !isFormSubmitting) {
         const message = 'You have unsaved changes that will be lost. Are you sure you want to leave?'
         event.preventDefault()
         event.returnValue = message
@@ -175,7 +193,43 @@
     })
   }
 
+  // Handle sign-out: save before logout
+  function handleSignOut(event) {
+    const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+    const signOutUrl = event.currentTarget?.href || '/sign-out'
+
+    if (!hasUnsavedChanges || !hasFormOnPage()) {
+      return true
+    }
+
+    event.preventDefault()
+
+    // Attempt save, but always continue logout
+    persistForm()
+      .then(async response => {
+        const text = await response.text()
+        if (response.ok) {
+          console.log('Sign-out autosave successful')
+        } else {
+          console.error(`Autosave failed (${response.status}): ${text}`)
+        }
+      })
+      .catch(e => {
+        console.error(`Sign-out autosave error: ${e.message}`)
+      })
+      .finally(() => {
+        window.location.assign(signOutUrl)
+      })
+  }
+
   window.addEventListener('load', () => {
+    // Attach sign-out handler to the sign-out link
+    const signOutLink = document.querySelector('a[data-qa="signOut"]')
+    if (signOutLink) {
+      signOutLink.addEventListener('click', handleSignOut)
+    }
+
+    // Initialize autosave only if a form is present on the page
     if (hasFormOnPage()) {
       function initializeAutosave() {
         if (!window.reportStoreInstance) {

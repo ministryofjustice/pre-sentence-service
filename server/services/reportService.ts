@@ -5,8 +5,14 @@ import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOf
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
-import { LONG_TEXT_MAX } from '../utils/validation'
+import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
+
+const FIELD_MAX_BY_KEY: Record<string, number> = {
+  proposedSentence: PROPOSED_SENTENCE_MAX,
+}
+
+const maxForField = (key: string): number => FIELD_MAX_BY_KEY[key] ?? LONG_TEXT_MAX
 
 const RESERVED_BODY_KEYS = new Set(['action', 'pageName', 'CSRFToken', 'reportId', 'source'])
 
@@ -158,14 +164,16 @@ export default class ReportService {
       if (value === undefined) continue
       if (dropSet.has(key)) continue
 
-      if (typeof value === 'string' && value.length > LONG_TEXT_MAX) {
+      const max = maxForField(key)
+
+      if (typeof value === 'string' && exceedsMaxPlainTextLength(value, max)) {
         dropped.push(key)
         continue
       }
 
       let answer: string
       if (Array.isArray(value)) {
-        if (value.some(v => typeof v === 'string' && v.length > LONG_TEXT_MAX)) {
+        if (value.some(v => typeof v === 'string' && exceedsMaxPlainTextLength(v, max))) {
           dropped.push(key)
           continue
         }

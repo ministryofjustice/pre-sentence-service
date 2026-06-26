@@ -342,7 +342,7 @@ export default class SharedController {
 
       if (this.additionalPostAction) {
         await this.fetchDefendantDetails(reportIdParam)
-        await this.additionalPostAction()
+        this.additionalPostAction()
       }
       res.redirect(`/${this.path}/${reportIdParam}/${req.query?.redirectPath || this.redirectPath}`)
     } else {

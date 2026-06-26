@@ -52,7 +52,7 @@
     }) | indent(2) | trim }}
   {% endif %}
 
-  {% set maxLength = params.maxLength if params.maxLength else ((longTextMax or 10000) if params.longText else null) %}
+  {% set maxLength = params.maxLength if params.maxLength else ((longTextMax or 20000) if params.longText else null) %}
   {% set effectiveRows = params.rows if params.rows else "5" %}
   {% set isMultiline = effectiveRows | int > 1 %}
 
