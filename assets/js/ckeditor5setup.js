@@ -172,10 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return true
       }
 
-      if (currentPath.indexOf('/sign-your-report') > 0) {
-        return true
-      }
-
       const formElement = document.querySelector('form[data-autosave="true"]')
 
       if (!formElement) {
@@ -183,10 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       event.preventDefault()
-      const form = $(formElement)
       const redirectPath = targetLink.getAttribute('href')
       const targetSegment = redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
 
+      const form = $(formElement)
       form.attr('action', currentPath + '?redirectPath=' + targetSegment)
       form.submit()
     })
