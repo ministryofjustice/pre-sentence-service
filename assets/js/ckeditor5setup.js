@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function normaliseForLength(value) {
     return (value || '')
+      .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;|&#160;/gi, ' ')
       .replace(/&amp;/g, '&')
@@ -60,8 +61,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function truncateToRemaining(rawText, remaining) {
     if (!rawText || remaining <= 0) return ''
+
     const input = normaliseIncomingPlainText(rawText)
-    return input.substring(0, remaining)
+    let count = 0
+
+    for (let i = 0; i < input.length; i++) {
+      // Count all characters except newlines, which are not counted in the length limit
+      if (input[i] !== '\n') count++
+      // If we have exceeded the remaining capacity, return the substring up to this point
+      if (count > remaining) return input.substring(0, i)
+    }
+  
+    return input
   }
 
   function remainingCapacity(editor, maxLength) {

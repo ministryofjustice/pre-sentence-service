@@ -17,6 +17,7 @@
 
   function normaliseForLength(value) {
     return (value || '')
+      .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;|&#160;/gi, ' ')
       .replace(/&amp;/g, '&')
