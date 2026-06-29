@@ -25,7 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function plainTextLength(editor) {
-    const text = editor.editing.view.getDomRoot()?.innerText || ''
+    const root = editor.model.document.getRoot()
+    const range = editor.model.createRangeIn(root)
+    let text = ''
+
+    for (const item of range.getItems()) {
+      if (!item.is('$textProxy')) continue
+      text += item.data
+    }
+
     return normaliseForLength(text).length
   }
 
@@ -53,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function truncateToRemaining(rawText, remaining) {
     if (!rawText || remaining <= 0) return ''
     const input = normaliseIncomingPlainText(rawText)
-    return Array.from(input).slice(0, remaining).join('')
+    return input.substring(0, remaining)
   }
 
   function remainingCapacity(editor, maxLength) {
