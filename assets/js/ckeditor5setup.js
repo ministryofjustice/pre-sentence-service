@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const NEWLINE_LIKE_CHARS = /\r\n|[\r\n\u2028\u2029]/g
   const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
   function normaliseForLength(value) {
@@ -11,8 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/&gt;/g, '>')
       .replace(/&#39;|&apos;/g, "'")
       .replace(/&quot;/g, '"')
-      .replace(NEWLINE_LIKE_CHARS, '') // Remove newlines, including Unicode line/paragraph separators
-      .replace(INVISIBLE_NON_COUNTING_CHARS, '') // Remove zero-width characters
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
   }
 
   function normaliseIncomingPlainText(value) {
@@ -28,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function plainTextLength(editor) {
     const text = editor.editing.view.getDomRoot()?.innerText || ''
-    return normaliseForLength(text).trim().length
+    return normaliseForLength(text).length
   }
 
   function enforceEditorMaxLength(editor, maxLength) {
@@ -54,25 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function truncateToRemaining(rawText, remaining) {
     if (!rawText || remaining <= 0) return ''
-
     const input = normaliseIncomingPlainText(rawText)
-    let allowed = remaining
-    let out = ''
-
-    for (let i = 0; i < input.length; i += 1) {
-      const ch = input[i]
-
-      if (ch === '\n') {
-        out += ch
-        continue
-      }
-
-      if (allowed <= 0) break
-      out += ch
-      allowed -= 1
-    }
-
-    return out
+    return Array.from(input).slice(0, remaining).join('')
   }
 
   function remainingCapacity(editor, maxLength) {
@@ -118,33 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
       true
     )
 
-    // CKEditor-native clipboard pipeline
-    // Prevents paste from bypassing DOM-level beforeinput in some browsers/paths.
     const clipboard = editor.plugins.get('ClipboardPipeline')
     if (!clipboard) return
 
-    // Always flatten pasted content to plain text (formatting removed on paste)
-    clipboard.on('inputTransformation', (event, data) => {
-      // Stop default CKEditor insertion first, even when text/plain is empty.
-      event.stop()
+    clipboard.on(
+      'inputTransformation',
+      (event, data) => {
+        event.stop()
 
-      const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
-      if (!pastedRaw) return
+        const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
+        if (!pastedRaw) return
 
-      const remaining = remainingCapacity(editor, maxLength)
-      if (remaining <= 0) return
+        const remaining = remainingCapacity(editor, maxLength)
+        if (remaining <= 0) return
 
-      const toInsert = truncateToRemaining(pastedRaw, remaining)
-      if (!toInsert) return
+        const toInsert = truncateToRemaining(pastedRaw, remaining)
+        if (!toInsert) return
 
-      insertPlainText(editor, toInsert)
-    })
+        insertPlainText(editor, toInsert)
+      },
+      { priority: 'highest' }
+    )
 
-    // Always flatten dropped content to plain text (formatting removed on drop)
     editable.addEventListener(
       'drop',
       event => {
-        // Intercept all drops on the editable so HTML never gets inserted by default handlers.
         event.preventDefault()
         event.stopImmediatePropagation()
 
@@ -235,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
 
-        // Dispatch native event on editor data change to ensure CKEditor content is included in form submissions and autosave
         editor.model.document.on('change:data', () => {
           const html = editor.getData()
           $el.value = html
