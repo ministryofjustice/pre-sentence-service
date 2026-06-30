@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const NEWLINE_LIKE_CHARS = /\r\n|[\r\n\u2028\u2029]/g
   const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
   function normaliseForLength(value) {
     return (value || '')
+      .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;|&#160;/gi, ' ')
       .replace(/&amp;/g, '&')
@@ -11,8 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/&gt;/g, '>')
       .replace(/&#39;|&apos;/g, "'")
       .replace(/&quot;/g, '"')
-      .replace(NEWLINE_LIKE_CHARS, '') // Remove newlines, including Unicode line/paragraph separators
-      .replace(INVISIBLE_NON_COUNTING_CHARS, '') // Remove zero-width characters
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
   }
 
   function normaliseIncomingPlainText(value) {
@@ -27,8 +26,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function plainTextLength(editor) {
-    const text = editor.editing.view.getDomRoot()?.innerText || ''
-    return normaliseForLength(text).trim().length
+    const root = editor.model.document.getRoot()
+    const range = editor.model.createRangeIn(root)
+    let text = ''
+
+    for (const item of range.getItems()) {
+      if (!item.is('$textProxy')) continue
+      text += item.data
+    }
+
+    return normaliseForLength(text).length
   }
 
   function enforceEditorMaxLength(editor, maxLength) {
@@ -56,23 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!rawText || remaining <= 0) return ''
 
     const input = normaliseIncomingPlainText(rawText)
-    let allowed = remaining
-    let out = ''
+    let count = 0
 
-    for (let i = 0; i < input.length; i += 1) {
-      const ch = input[i]
-
-      if (ch === '\n') {
-        out += ch
-        continue
-      }
-
-      if (allowed <= 0) break
-      out += ch
-      allowed -= 1
+    for (let i = 0; i < input.length; i++) {
+      // Count all characters except newlines, which are not counted in the length limit
+      if (input[i] !== '\n') count++
+      // If we have exceeded the remaining capacity, return the substring up to this point
+      if (count > remaining) return input.substring(0, i)
     }
-
-    return out
+  
+    return input
   }
 
   function remainingCapacity(editor, maxLength) {
@@ -176,33 +176,31 @@ document.addEventListener('DOMContentLoaded', () => {
       true
     )
 
-    // CKEditor-native clipboard pipeline
-    // Prevents paste from bypassing DOM-level beforeinput in some browsers/paths.
     const clipboard = editor.plugins.get('ClipboardPipeline')
     if (!clipboard) return
 
-    // Always flatten pasted content to plain text (formatting removed on paste)
-    clipboard.on('inputTransformation', (event, data) => {
-      // Stop default CKEditor insertion first, even when text/plain is empty.
-      event.stop()
+    clipboard.on(
+      'inputTransformation',
+      (event, data) => {
+        event.stop()
 
-      const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
-      if (!pastedRaw) return
+        const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
+        if (!pastedRaw) return
 
-      const remaining = remainingCapacity(editor, maxLength)
-      if (remaining <= 0) return
+        const remaining = remainingCapacity(editor, maxLength)
+        if (remaining <= 0) return
 
-      const toInsert = truncateToRemaining(pastedRaw, remaining)
-      if (!toInsert) return
+        const toInsert = truncateToRemaining(pastedRaw, remaining)
+        if (!toInsert) return
 
-      insertPlainText(editor, toInsert)
-    })
+        insertPlainText(editor, toInsert)
+      },
+      { priority: 'highest' }
+    )
 
-    // Always flatten dropped content to plain text (formatting removed on drop)
     editable.addEventListener(
       'drop',
       event => {
-        // Intercept all drops on the editable so HTML never gets inserted by default handlers.
         event.preventDefault()
         event.stopImmediatePropagation()
 
@@ -230,10 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return true
       }
 
-      if (currentPath.indexOf('/sign-your-report') > 0) {
-        return true
-      }
-
       const formElement = document.querySelector('form[data-autosave="true"]')
 
       if (!formElement) {
@@ -241,10 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       event.preventDefault()
-      const form = $(formElement)
       const redirectPath = targetLink.getAttribute('href')
       const targetSegment = redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
 
+      const form = $(formElement)
       form.attr('action', currentPath + '?redirectPath=' + targetSegment)
       form.submit()
     })
