@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
+  // Normalise content into the shape used for visible character counting
   function normaliseForLength(value) {
     return (value || '')
       .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(INVISIBLE_NON_COUNTING_CHARS, '')
   }
 
+  // Normalise pasted or dropped plain text before counting or truncating it
   function normaliseIncomingPlainText(value) {
     return (value || '')
       .replace(/\r\n?/g, '\n')
@@ -65,10 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = normaliseIncomingPlainText(rawText)
     let count = 0
 
+    // Iterate index so newlines stay in the returned substring without counting against the character limit
     for (let i = 0; i < input.length; i++) {
-      // Count all characters except newlines, which are not counted in the length limit
       if (input[i] !== '\n') count++
-      // If we have exceeded the remaining capacity, return the substring up to this point
       if (count > remaining) return input.substring(0, i)
     }
   
@@ -78,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function remainingCapacity(editor, maxLength) {
     const current = plainTextLength(editor)
     const selected = selectedTextLength(editor)
+    // This allows users to replace selected text with new text
     return Math.max(0, maxLength - (current - selected))
   }
 
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'insertCompositionText',
     ])
 
+    // Handle beforeinput events to prevent typing or composition from exceeding the limit
     editable.addEventListener(
       'beforeinput',
       event => {
@@ -121,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clipboard = editor.plugins.get('ClipboardPipeline')
     if (!clipboard) return
 
+    // Intercept paste before CKEditor converts clipboard content into editor content
     clipboard.on(
       'inputTransformation',
       (event, data) => {
@@ -137,9 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         insertPlainText(editor, toInsert)
       },
-      { priority: 'highest' }
+      { priority: 'highest' } // Must intercept before CKEditor's default handling
     )
 
+    // Handle drop events to get raw text before CKEditor transforms it
     editable.addEventListener(
       'drop',
       event => {
@@ -233,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
 
+        // Keep the original textarea in sync so existing autosave and character count listeners still fire
         editor.model.document.on('change:data', () => {
           const html = editor.getData()
           $el.value = html
