@@ -226,6 +226,45 @@
     }
   }
 
+  // Side-nav must submit the current form with redirectPath so page changes..
+  // ..persist even when rich-text scripts are disabled
+  function wireSideNavSubmit() {
+    document.querySelectorAll('.moj-side-navigation__item a').forEach(link => {
+      link.addEventListener('click', event => {
+        const targetLink = event.currentTarget
+
+        if (!(targetLink instanceof HTMLAnchorElement) || !targetLink.href) {
+          return
+        }
+
+        const formElement = getForm()
+        if (!formElement) {
+          return
+        }
+
+        const targetUrl = new URL(targetLink.href, window.location.origin)
+        if (targetUrl.origin !== window.location.origin) {
+          return
+        }
+
+        const targetSegment = targetUrl.pathname.split('/').filter(Boolean).pop()
+        if (!targetSegment) {
+          return
+        }
+
+        event.preventDefault()
+
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle)
+        }
+        isFormSubmitting = true
+
+        formElement.setAttribute('action', window.location.pathname + '?redirectPath=' + encodeURIComponent(targetSegment))
+        formElement.submit()
+      })
+    })
+  }
+
   function wireSubmitState(form) {
     if (!form) return
 
@@ -271,6 +310,7 @@
 
     wireAutosaveInputs(formElements)
     wireSubmitState(form)
+    wireSideNavSubmit()
     wireInternalNavState()
     wireLeaveWarning()
   }

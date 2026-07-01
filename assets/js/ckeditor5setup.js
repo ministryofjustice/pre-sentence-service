@@ -213,31 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   }
 
-  document.querySelectorAll('.moj-side-navigation__item a').forEach(function ($el) {
-    $($el).on('click', function (event) {
-      const currentPath = window.location.pathname
-      const targetLink = event.currentTarget
-
-      if (!targetLink || !targetLink.href) {
-        return true
-      }
-
-      const formElement = document.querySelector('form[data-autosave="true"]')
-
-      if (!formElement) {
-        return true
-      }
-
-      event.preventDefault()
-      const redirectPath = targetLink.getAttribute('href')
-      const targetSegment = redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
-
-      const form = $(formElement)
-      form.attr('action', currentPath + '?redirectPath=' + targetSegment)
-      form.submit()
-    })
-  })
-
   var Editor = window.ClassicEditor
   if (!Editor && typeof module !== 'undefined' && module.exports) {
     Editor = module.exports
