@@ -1,4 +1,5 @@
 import ReportDetails from '../repositories/entities/reportDetails'
+import { htmlToPlainText } from './htmlToPlainText'
 
 export const pdfOptions = {
   marginTop: '1.65',
@@ -94,7 +95,7 @@ export function configureReportData(report: ReportDetails) {
   if (report.pages) {
     report.pages.forEach(page => {
       page.questions.forEach(question => {
-        reportData[question.value] = question.answer
+        reportData[question.value] = htmlToPlainText(question.answer)
       })
     })
   }
