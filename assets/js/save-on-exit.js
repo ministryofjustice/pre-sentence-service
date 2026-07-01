@@ -1,9 +1,12 @@
 ;(function initialiseAutosave() {
-  const isTypeOf = elementType => element => element.type === elementType
+  // ---- UTILITIES ---- 
 
+  const isTypeOf = elementType => element => element.type === elementType
   const isRadio = isTypeOf('radio')
   const isCheckbox = isTypeOf('checkbox')
   const isSelect = element => isTypeOf('select-one')(element) || isTypeOf('select-multiple')(element)
+
+  // ---- DOM HELPERS ---- 
 
   function getForm() {
     return document.querySelector('form[data-autosave="true"]')
@@ -17,80 +20,83 @@
     return getForm() !== null
   }
 
-  function persistForm() {
-    if (!window.reportStoreInstance) {
-      console.warn('Report store not available, falling back to form data')
-      const form = getForm()
-      const formData = new URLSearchParams(new FormData(form))
-      const reportId = formData.get('reportId')
-      const endpoint = `/psr/${reportId}/autosave`
+  function getCsrfToken() {
+    return document.getElementsByName('CSRFToken')[0]?.value || ''
+  }
 
+  // ---- PAYLOAD BUILDER ---- 
 
-      document.dispatchEvent(new CustomEvent('autosave'))
+  function buildAutosavePayload() {
+    const form = getForm()
+    if (!form) return null
 
-      return fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'x-csrf-token': document.getElementsByName('CSRFToken')[0].value,
-        },
+    const formData = new FormData(form)
+    const reportId = formData.get('reportId')
+    if (!reportId) return null
+
+    const payload = new URLSearchParams()
+
+    if (window.reportStoreInstance) {
+      const storeState = window.reportStoreInstance.getState()
+      const questions = storeState.questions || {}
+
+      for (const [questionId, value] of Object.entries(questions)) {
+        if (value === undefined || value === null) continue
+
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
+            payload.append(questionId, '')
+          } else {
+            value.forEach(item => payload.append(questionId, item))
+          }
+        } else {
+          payload.append(questionId, value)
+        }
+      }
+    } else {
+      const fallbackFormData = new URLSearchParams(formData)
+      fallbackFormData.forEach((value, key) => {
+        payload.append(key, value)
       })
     }
 
-    const storeState = window.reportStoreInstance.getState()
-    const questions = storeState.questions || {}
-
-    const form = getForm()
-    const formData = new URLSearchParams(new FormData(form))
-    const reportId = formData.get('reportId')
-
-    const storeFormData = new URLSearchParams()
-
-    for (const [questionId, value] of Object.entries(questions)) {
-      if (value !== undefined && value !== null) {
-        // Handle arrays (checkbox groups) specially
-        if (Array.isArray(value)) {
-          // For checkbox groups, if empty array, still send it to clear the field
-          if (value.length === 0) {
-            storeFormData.append(questionId, '')
-          } else {
-            value.forEach(v => {
-              storeFormData.append(questionId, v)
-            })
-          }
-        } else {
-          // For single values, including empty strings for unchecked checkboxes
-          storeFormData.append(questionId, value)
-        }
-      }
-    }
-
-    // Add essential form fields that might not be in the store
-    // These are typically hidden fields or system fields
     const systemFields = ['reportId', 'CSRFToken', 'pageName', 'crn', 'pnc', 'name', 'dateOfBirth', 'age', 'address']
     systemFields.forEach(fieldName => {
       const fieldValue = formData.get(fieldName)
-      if (fieldValue && !storeFormData.has(fieldName)) {
-        storeFormData.append(fieldName, fieldValue)
+      if (fieldValue && !payload.has(fieldName)) {
+        payload.append(fieldName, fieldValue)
       }
     })
 
-    if (!storeFormData.has('CSRFToken')) {
-      storeFormData.append('CSRFToken', document.getElementsByName('CSRFToken')[0].value)
+    if (!payload.has('CSRFToken')) {
+      const csrfToken = getCsrfToken()
+      if (csrfToken) {
+        payload.append('CSRFToken', csrfToken)
+      }
     }
 
-    const endpoint = `/psr/${reportId}/autosave`
+    return {
+      reportId,
+      endpoint: `/psr/${reportId}/autosave`,
+      payload,
+    }
+  }
+
+  // ---- SAVE FUNCTIONS ---- 
+
+  function persistForm() {
+    const autosave = buildAutosavePayload()
+    if (!autosave) return Promise.resolve(null)
 
     document.dispatchEvent(new CustomEvent('autosave'))
 
-    return fetch(endpoint, {
+    return fetch(autosave.endpoint, {
       method: 'POST',
-      body: storeFormData,
+      body: autosave.payload,
       headers: {
-        'x-csrf-token': document.getElementsByName('CSRFToken')[0].value,
+        'x-csrf-token': getCsrfToken(),
       },
     }).then(response => {
-      // Mark changes as saved when successful
       if (response.ok && window.ReportStore) {
         window.ReportStore.markChangesSaved()
       }
@@ -98,102 +104,46 @@
     })
   }
 
-  function addListenersToFormElements() {
-    const formElements = getFormElements()
+  function sendExitAutosaveBeacon() {
+    const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+    if (!hasUnsavedChanges || !hasFormOnPage()) return
 
-    let timeoutHandle = null
+    const autosave = buildAutosavePayload()
+    if (!autosave) return
 
-    const hasOverLimitFields = () => {
-      const state = window.reportStoreInstance && window.reportStoreInstance.getState()
-      return Boolean(state && state.overLimitFields && state.overLimitFields.length > 0)
-    }
+    const csrfToken = getCsrfToken()
+    if (!csrfToken) return
 
-    const handleEvent = () => {
-      if (timeoutHandle) {
-        clearTimeout(timeoutHandle)
-      }
-
-      timeoutHandle = setTimeout(() => {
-        if (hasOverLimitFields()) {
-          // Skip autosave while any field exceeds the character limit; dirty flag stays set.
-          return
-        }
-
-        persistForm()
-          .then(async response => {
-            const text = await response.text()
-            if (!response.ok) {
-              throw new Error(`Autosave failed (${response.status}): ${text}`)
-            }
-            console.log(`Form persisted: ${text}`)
-          })
-          .catch(e => console.error(`Failed to persist form: ${e.message}`))
-      }, 15 * 1000)
-    }
-
-    if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
-      window.reportStoreInstance.subscribe(() => {
-        handleEvent()
-      })
-    }
-
-    document.addEventListener('keyup', handleEvent)
-
-    for (const element of formElements) {
-      if (isRadio(element) || isCheckbox(element) || isSelect(element)) {
-        element.addEventListener('click', handleEvent)
-      }
-    }
-
-    // Track internal navigation to avoid showing alert for page-to-page navigation
-    let isInternalNavigation = false
-    // Track form submission to avoid showing alert when submitting the form
-    let isFormSubmitting = false
-
-    const form = getForm()
-    if (form) {
-      form.addEventListener('submit', event => {
-        // Check if the event has been prevented by other handlers (eg validation errors)
-        if (event.defaultPrevented) return
-
-        console.log('Form submission save initiated')
-        isFormSubmitting = true
-        if (timeoutHandle) {
-          clearTimeout(timeoutHandle)
-        }
-      })
-    }
-
-    document.addEventListener('click', event => {
-      const link = event.target.closest('a')
-      if (link && link.href) {
-        const linkUrl = new URL(link.href, window.location.origin)
-        const currentUrl = new URL(window.location.href)
-
-        if (linkUrl.origin === currentUrl.origin) {
-          isInternalNavigation = true
-          // Reset after a short delay to catch the beforeunload
-          setTimeout(() => {
-            isInternalNavigation = false
-          }, 500)
-        }
-      }
+    const body = new Blob([autosave.payload.toString()], {
+      type: 'application/x-www-form-urlencoded;charset=UTF-8',
     })
 
-    // Warn user only when closing tab or navigating to external site
-    window.addEventListener('beforeunload', event => {
-      const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+    // Call sendBeacon to send the autosave data to the server when the user leaves the page.
+    if (typeof navigator.sendBeacon === 'function' && navigator.sendBeacon(autosave.endpoint, body)) {
+      return
+    }
 
-      if (hasUnsavedChanges && !isInternalNavigation && !isFormSubmitting) {
-        const message = 'You have unsaved changes that will be lost. Are you sure you want to leave?'
-        event.preventDefault()
-        event.returnValue = message
-        return message
-      }
+    // Fallback for browsers without sendBeacon support
+    fetch(autosave.endpoint, {
+      method: 'POST',
+      body: autosave.payload,
+      keepalive: true,
+      headers: {
+        'x-csrf-token': csrfToken,
+      },
     })
   }
 
-  // Handle sign-out: save before logout
+  // ---- EVENT HANDLERS/STATE ---- 
+
+  const AUTOSAVE_DEBOUNCE_MS = 15 * 1000
+  const INTERNAL_NAV_RESET_MS = 500
+  const STORE_READY_RETRY_MS = 100
+
+  let isInternalNavigation = false
+  let isFormSubmitting = false
+  let timeoutHandle = null
+
   function handleSignOut(event) {
     const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
     const signOutUrl = event.currentTarget?.href || '/sign-out'
@@ -222,6 +172,127 @@
       })
   }
 
+  function onBeforeUnload(event) {
+    const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
+
+    if (hasUnsavedChanges && !isInternalNavigation && !isFormSubmitting) {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+  }
+
+  const isAnyFieldOverLimit = () => {
+    const state = window.reportStoreInstance && window.reportStoreInstance.getState()
+    return Boolean(state && state.overLimitFields && state.overLimitFields.length > 0)
+  }
+  
+  const queueAutosave = () => {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle)
+    }
+
+    timeoutHandle = setTimeout(() => {
+      if (isAnyFieldOverLimit()) {
+        return
+      }
+
+      persistForm()
+        .then(async response => {
+          const text = await response.text()
+          if (!response.ok) {
+            throw new Error(`Autosave failed (${response.status}): ${text}`)
+          }
+          console.log(`Form persisted: ${text}`)
+        })
+        .catch(e => console.error(`Failed to persist form: ${e.message}`))
+    }, AUTOSAVE_DEBOUNCE_MS)
+  }
+
+  // ---- LISTENER REGISTRATION ----
+
+  function wireAutosaveInputs(formElements) {
+    if (window.reportStoreInstance && window.reportStoreInstance.subscribe) {
+      window.reportStoreInstance.subscribe(() => {
+        queueAutosave()
+      })
+    }
+
+    document.addEventListener('keyup', queueAutosave)
+
+    for (const element of formElements) {
+      if (isRadio(element) || isCheckbox(element) || isSelect(element)) {
+        element.addEventListener('click', queueAutosave)
+      }
+    }
+  }
+
+  function wireSubmitState(form) {
+    if (!form) return
+
+    form.addEventListener('submit', event => {
+      // Check if the event has been prevented by other handlers (eg validation errors)
+      if (event.defaultPrevented) return
+
+      console.log('Form submission save initiated')
+
+      isFormSubmitting = true
+
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle)
+      }
+    })
+  }
+
+  function wireInternalNavState() {
+    document.addEventListener('click', event => {
+      const link = event.target.closest('a')
+      if (!link || !link.href) return
+
+      const linkUrl = new URL(link.href, window.location.origin)
+      const currentUrl = new URL(window.location.href)
+
+      if (linkUrl.origin === currentUrl.origin) {
+        isInternalNavigation = true
+        // Reset after a short delay to catch the beforeunload
+        setTimeout(() => {
+          isInternalNavigation = false
+        }, INTERNAL_NAV_RESET_MS)
+      }
+    })
+  }
+
+  function wireLeaveWarning() {
+    window.addEventListener('beforeunload', onBeforeUnload)
+  }
+
+  function initialiseAutosaveListeners() {
+    const formElements = getFormElements()
+    const form = getForm()
+
+    wireAutosaveInputs(formElements)
+    wireSubmitState(form)
+    wireInternalNavState()
+    wireLeaveWarning()
+  }
+
+  function startAutosaveWhenStoreReady() {
+    if (!window.reportStoreInstance) {
+      setTimeout(startAutosaveWhenStoreReady, STORE_READY_RETRY_MS)
+      return
+    }
+
+    initialiseAutosaveListeners()
+    getForm().setAttribute('data-autosave-enabled', true)
+  }
+
+  // ---- INITIALISATION HOOKS ----
+
+  // Save form data when the user leaves the page
+  window.addEventListener('pagehide', event => {
+    if (event.persisted) return
+    sendExitAutosaveBeacon()
+  })
+
   window.addEventListener('load', () => {
     // Attach sign-out handler to the sign-out link
     const signOutLink = document.querySelector('a[data-qa="signOut"]')
@@ -231,17 +302,7 @@
 
     // Initialize autosave only if a form is present on the page
     if (hasFormOnPage()) {
-      function initializeAutosave() {
-        if (!window.reportStoreInstance) {
-          setTimeout(initializeAutosave, 100)
-          return
-        }
-
-        addListenersToFormElements()
-        getForm().setAttribute('data-autosave-enabled', true)
-      }
-
-      initializeAutosave()
+      startAutosaveWhenStoreReady()
     }
   })
 })()
