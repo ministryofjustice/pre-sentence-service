@@ -17,7 +17,7 @@ generic-service:
     COMMON_PLATFORM_URL: "https://my-services.cjscp.org.uk/"
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius.probation.service.justice.gov.uk"
-    FEATURE_RICH_TEXT_EDITOR: "false"
+    FEATURE_RICH_TEXT_EDITOR: false
 
 #  TODO: update the allow list to use the groups.internal, same as dev and preprod, once tested.
   allowlist:

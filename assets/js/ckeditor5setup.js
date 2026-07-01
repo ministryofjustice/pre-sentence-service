@@ -140,12 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   }
 
-  function hideError() {
-    var $el = document.querySelector('#pss-version-mismatch')
-    $el.classList.add('govuk-!-display-none')
-    $el.setAttribute('aria-hidden', 'true')
-  }
-
   function attachHardCharacterCap(editor, maxLength) {
     const editable = editor.ui?.view?.editable?.element
     if (!editable) return
