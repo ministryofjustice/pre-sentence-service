@@ -1,93 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
-
-  function normaliseForLength(value) {
-    return (value || '')
-      .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;|&#160;/gi, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&#39;|&apos;/g, "'")
-      .replace(/&quot;/g, '"')
-      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
-  }
-
-  function normaliseIncomingPlainText(value) {
-    return (value || '')
-      .replace(/\r\n?/g, '\n')
-      .replace(/[\u2028\u2029]/g, '\n')
-      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
-  }
-
-  function incomingCount(text) {
-    return normaliseForLength(normaliseIncomingPlainText(text)).length
-  }
-
-  function plainTextLength(editor) {
-    const root = editor.model.document.getRoot()
-    const range = editor.model.createRangeIn(root)
-    let text = ''
-
-    for (const item of range.getItems()) {
-      if (!item.is('$textProxy')) continue
-      text += item.data
-    }
-
-    return normaliseForLength(text).length
-  }
-
-  function enforceEditorMaxLength(editor, maxLength) {
-    if (!Number.isFinite(maxLength) || maxLength <= 0) return
-    attachHardCharacterCap(editor, maxLength)
-  }
-
-  function selectedTextLength(editor) {
-    if (!editor || !editor.model || !editor.model.document) return 0
-
-    const selection = editor.model.document.selection
-    if (selection.isCollapsed) return 0
-
-    let selected = ''
-    for (const range of selection.getRanges()) {
-      for (const item of range.getItems()) {
-        if (item.is('$textProxy')) selected += item.data
-      }
-    }
-
-    return normaliseForLength(selected).length
-  }
-
-  function truncateToRemaining(rawText, remaining) {
-    if (!rawText || remaining <= 0) return ''
-
-    const input = normaliseIncomingPlainText(rawText)
-    let count = 0
-
-    for (let i = 0; i < input.length; i++) {
-      // Count all characters except newlines, which are not counted in the length limit
-      if (input[i] !== '\n') count++
-      // If we have exceeded the remaining capacity, return the substring up to this point
-      if (count > remaining) return input.substring(0, i)
-    }
-  
-    return input
-  }
-
-  function remainingCapacity(editor, maxLength) {
-    const current = plainTextLength(editor)
-    const selected = selectedTextLength(editor)
-    return Math.max(0, maxLength - (current - selected))
-  }
-
-  function insertPlainText(editor, text) {
-    if (!text) return
-    editor.model.change(writer => {
-      editor.model.insertContent(writer.createText(text))
-    })
-  }
-
   function debounce(fn, ms) {
     var t = null
     return function () {
@@ -140,79 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   }
 
-  function attachHardCharacterCap(editor, maxLength) {
-    const editable = editor.ui?.view?.editable?.element
-    if (!editable) return
-
-    const blockedInsertTypes = new Set([
-      'insertText',
-      'insertFromPaste',
-      'insertFromDrop',
-      'insertCompositionText',
-    ])
-
-    editable.addEventListener(
-      'beforeinput',
-      event => {
-        if (!blockedInsertTypes.has(event.inputType)) return
-
-        const remaining = remainingCapacity(editor, maxLength)
-
-        if (remaining <= 0) {
-          event.preventDefault()
-          return
-        }
-
-        if (typeof event.data === 'string' && incomingCount(event.data) > remaining) {
-          event.preventDefault()
-        }
-      },
-      true
-    )
-
-    const clipboard = editor.plugins.get('ClipboardPipeline')
-    if (!clipboard) return
-
-    clipboard.on(
-      'inputTransformation',
-      (event, data) => {
-        event.stop()
-
-        const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
-        if (!pastedRaw) return
-
-        const remaining = remainingCapacity(editor, maxLength)
-        if (remaining <= 0) return
-
-        const toInsert = truncateToRemaining(pastedRaw, remaining)
-        if (!toInsert) return
-
-        insertPlainText(editor, toInsert)
-      },
-      { priority: 'highest' }
-    )
-
-    editable.addEventListener(
-      'drop',
-      event => {
-        event.preventDefault()
-        event.stopImmediatePropagation()
-
-        const droppedRaw = event.dataTransfer?.getData('text/plain') || ''
-        if (!droppedRaw) return
-
-        const remaining = remainingCapacity(editor, maxLength)
-        if (remaining <= 0) return
-
-        const toInsert = truncateToRemaining(droppedRaw, remaining)
-        if (!toInsert) return
-
-        insertPlainText(editor, toInsert)
-      },
-      true
-    )
-  }
-
   var Editor = window.ClassicEditor
   if (!Editor && typeof module !== 'undefined' && module.exports) {
     Editor = module.exports
@@ -252,8 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     Editor.create($el, editorConfig)
       .then(editor => {
-        const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
-        enforceEditorMaxLength(editor, maxLength)
         wireEditorToStore($el, editor)
         forcePastePlainText(editor)
 
@@ -278,8 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wproofreaderLicenceKey) {
           Editor.create($el, { toolbar: { items: ['undo', 'redo'] } })
             .then(editor => {
-              const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
-              enforceEditorMaxLength(editor, maxLength)
               wireEditorToStore($el, editor)
               forcePastePlainText(editor)
             })
