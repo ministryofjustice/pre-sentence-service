@@ -36,14 +36,14 @@
 
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
-  <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
-
   {{ govukWarningText({
     text: "You must complete an OASys Layer 1 Assessment to confirm the risk predictors and inform your wider risk analysis.",
     iconFallbackText: "Warning"
   }) }}
 
-  <h2 class="govuk-heading-m">Confirm the risk levels from OASys</h2>
+  <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
+
+  <h3 class="govuk-heading-m">Confirm the risk levels from OASys</h3>
 
   {{ govukSelect({
     id: "risk-to-children",
