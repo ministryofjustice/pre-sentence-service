@@ -5,6 +5,10 @@ import config from '../config'
 export default function setUpWebSecurity(): Router {
   const router = express.Router()
 
+  const wpEnabled = config.features.richTextEditor && !!config.wproofreader.host
+  const wpSources = wpEnabled ? [config.wproofreader.host] : []
+  const wpWebsocket = wpEnabled ? [`wss://${config.wproofreader.host}`] : []
+
   // Secure code best practice - see:
   // 1. https://expressjs.com/en/advanced/best-practice-security.html,
   // 2. https://www.npmjs.com/package/helmet
@@ -18,12 +22,14 @@ export default function setUpWebSecurity(): Router {
           scriptSrc: [
             "'self'",
             'code.jquery.com',
+            ...wpSources,
             "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='",
             `'nonce-${config.nonce}'`,
           ],
           styleSrc: [
             "'self'",
             'code.jquery.com',
+            ...wpSources,
             "'unsafe-hashes'",
             "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
             "'sha256-GET5u+7RHImm0Z/5kU2WWNrT9fM4h+Ua9GiqmxXB03g='",
@@ -34,9 +40,9 @@ export default function setUpWebSecurity(): Router {
             "'sha256-jLD2pxuZtowRxJaa7Gk5fzhU0HYiWxyCk191dG7ioSw='",
             `'nonce-${config.nonce}'`,
           ],
-          connectSrc: ["'self'"],
-          fontSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'", ...wpSources, ...wpWebsocket],
+          fontSrc: ["'self'", ...wpSources],
+          imgSrc: ["'self'", 'data:', ...wpSources],
         },
       },
     })

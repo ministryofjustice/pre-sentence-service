@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   form.addEventListener('submit', function (e) {
+    // Only intercept button-triggered submits, not programmatic saves (e.g. side-nav)
+    if (!e.submitter) {
+      return
+    }
+    
     if (allowSubmit) {
       return
     }
