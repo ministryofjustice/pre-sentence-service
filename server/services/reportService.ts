@@ -6,7 +6,6 @@ import ReportDetails, { ReportStatus } from '../repositories/entities/reportDeta
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
 import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
-import { htmlToPlainText } from '../utils/htmlToPlainText'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -121,15 +120,13 @@ export default class ReportService {
       const page = pageMap.get(fieldValue.pageName)!
       const existingQuestionIndex = page.questions.findIndex(q => q.value === fieldValue.questionValue)
 
-      const normalisedAnswer = htmlToPlainText(fieldValue.answer)
-
       if (existingQuestionIndex >= 0) {
-        page.questions[existingQuestionIndex].answer = normalisedAnswer
+        page.questions[existingQuestionIndex].answer = fieldValue.answer
       } else {
         page.questions.push({
           id: fieldValue.questionId,
           value: fieldValue.questionValue,
-          answer: normalisedAnswer,
+          answer: fieldValue.answer,
         })
       }
     }
