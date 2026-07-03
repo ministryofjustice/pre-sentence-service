@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const NEWLINE_LIKE_CHARS = /\r\n|[\r\n\u2028\u2029]/g
   const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
   function normaliseForLength(value) {
     return (value || '')
-      .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
       .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;|&#160;/gi, ' ')
       .replace(/&amp;/g, '&')
@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/&gt;/g, '>')
       .replace(/&#39;|&apos;/g, "'")
       .replace(/&quot;/g, '"')
-      .replace(INVISIBLE_NON_COUNTING_CHARS, '')
+      .replace(NEWLINE_LIKE_CHARS, '') // Remove newlines, including Unicode line/paragraph separators
+      .replace(INVISIBLE_NON_COUNTING_CHARS, '') // Remove zero-width characters
   }
 
   function normaliseIncomingPlainText(value) {
@@ -26,16 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function plainTextLength(editor) {
-    const root = editor.model.document.getRoot()
-    const range = editor.model.createRangeIn(root)
-    let text = ''
-
-    for (const item of range.getItems()) {
-      if (!item.is('$textProxy')) continue
-      text += item.data
-    }
-
-    return normaliseForLength(text).length
+    const text = editor.editing.view.getDomRoot()?.innerText || ''
+    return normaliseForLength(text).trim().length
   }
 
   function enforceEditorMaxLength(editor, maxLength) {
@@ -63,16 +56,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!rawText || remaining <= 0) return ''
 
     const input = normaliseIncomingPlainText(rawText)
-    let count = 0
+    let allowed = remaining
+    let out = ''
 
-    for (let i = 0; i < input.length; i++) {
-      // Count all characters except newlines, which are not counted in the length limit
-      if (input[i] !== '\n') count++
-      // If we have exceeded the remaining capacity, return the substring up to this point
-      if (count > remaining) return input.substring(0, i)
+    for (let i = 0; i < input.length; i += 1) {
+      const ch = input[i]
+
+      if (ch === '\n') {
+        out += ch
+        continue
+      }
+
+      if (allowed <= 0) break
+      out += ch
+      allowed -= 1
     }
-  
-    return input
+
+    return out
   }
 
   function remainingCapacity(editor, maxLength) {
@@ -86,58 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     editor.model.change(writer => {
       editor.model.insertContent(writer.createText(text))
     })
-  }
-
-  function debounce(fn, ms) {
-    var t = null
-    return function () {
-      var args = arguments
-      var ctx = this
-      if (t) clearTimeout(t)
-      t = setTimeout(function () {
-        fn.apply(ctx, args)
-      }, ms)
-    }
-  }
-
-  function wireEditorToStore($el, editor) {
-    var questionId = $el.id || $el.getAttribute('name')
-    if (!questionId) return
-
-    var initialData = editor.getData()
-    var lastPushed = initialData
-
-    var push = debounce(function () {
-      var data = editor.getData()
-      if (data === lastPushed) return
-      lastPushed = data
-      var store = window.reportStoreInstance
-      if (store && typeof store.pushFromEditor === 'function') {
-        store.pushFromEditor(questionId, data)
-      }
-    }, 250)
-
-    editor.model.document.on('change:data', function () {
-      push()
-    })
-  }
-
-  function forcePastePlainText(editor) {
-    editor.editing.view.document.on(
-      'clipboardInput',
-      function (evt, data) {
-        var text = data.dataTransfer.getData('text/plain') || ''
-        if (!text) {
-          return
-        }
-        var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        // convert each \n into a  <br>
-        var html = escaped.replace(/\n\n+/g, '</p><p>').replace(/\n/g, '<br>')
-        html = '<p>' + html + '</p>'
-        data.content = editor.data.processor.toView(html)
-      },
-      { priority: 'high' }
-    )
   }
 
   function attachHardCharacterCap(editor, maxLength) {
@@ -170,31 +118,33 @@ document.addEventListener('DOMContentLoaded', () => {
       true
     )
 
+    // CKEditor-native clipboard pipeline
+    // Prevents paste from bypassing DOM-level beforeinput in some browsers/paths.
     const clipboard = editor.plugins.get('ClipboardPipeline')
     if (!clipboard) return
 
-    clipboard.on(
-      'inputTransformation',
-      (event, data) => {
-        event.stop()
+    // Always flatten pasted content to plain text (formatting removed on paste)
+    clipboard.on('inputTransformation', (event, data) => {
+      // Stop default CKEditor insertion first, even when text/plain is empty.
+      event.stop()
 
-        const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
-        if (!pastedRaw) return
+      const pastedRaw = data.dataTransfer?.getData('text/plain') || ''
+      if (!pastedRaw) return
 
-        const remaining = remainingCapacity(editor, maxLength)
-        if (remaining <= 0) return
+      const remaining = remainingCapacity(editor, maxLength)
+      if (remaining <= 0) return
 
-        const toInsert = truncateToRemaining(pastedRaw, remaining)
-        if (!toInsert) return
+      const toInsert = truncateToRemaining(pastedRaw, remaining)
+      if (!toInsert) return
 
-        insertPlainText(editor, toInsert)
-      },
-      { priority: 'highest' }
-    )
+      insertPlainText(editor, toInsert)
+    })
 
+    // Always flatten dropped content to plain text (formatting removed on drop)
     editable.addEventListener(
       'drop',
       event => {
+        // Intercept all drops on the editable so HTML never gets inserted by default handlers.
         event.preventDefault()
         event.stopImmediatePropagation()
 
@@ -213,6 +163,35 @@ document.addEventListener('DOMContentLoaded', () => {
     )
   }
 
+  document.querySelectorAll('.moj-side-navigation__item a').forEach(function ($el) {
+    $($el).on('click', function (event) {
+      const currentPath = window.location.pathname
+      const targetLink = event.currentTarget
+
+      if (!targetLink || !targetLink.href) {
+        return true
+      }
+
+      if (currentPath.indexOf('/sign-your-report') > 0) {
+        return true
+      }
+
+      const formElement = document.querySelector('form[data-autosave="true"]')
+
+      if (!formElement) {
+        return true
+      }
+
+      event.preventDefault()
+      const form = $(formElement)
+      const redirectPath = targetLink.getAttribute('href')
+      const targetSegment = redirectPath.substr(redirectPath.lastIndexOf('/') + 1)
+
+      form.attr('action', currentPath + '?redirectPath=' + targetSegment)
+      form.submit()
+    })
+  })
+
   var Editor = window.ClassicEditor
   if (!Editor && typeof module !== 'undefined' && module.exports) {
     Editor = module.exports
@@ -226,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var wpCfg = window.wproofreaderConfig || {}
   var wproofreaderLicenceKey = wpCfg.serviceId || ''
   var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
-  var baseToolbar = ['wproofreader', '|', 'undo', 'redo']
+  var baseToolbar = ['bold', 'italic', 'underline', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo', '|', 'removeFormat']
 
   var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
@@ -242,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $el.classList.add('app-apply-ckeditor5')
     var editorConfig = { toolbar: { items: baseToolbar.slice() } }
     if (wproofreaderLicenceKey && wproofreaderBundleUrl) {
+      editorConfig.toolbar.items.push('wproofreader')
       editorConfig.wproofreader = {
         serviceId: wproofreaderLicenceKey,
         srcUrl: wproofreaderBundleUrl,
@@ -254,9 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(editor => {
         const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
         enforceEditorMaxLength(editor, maxLength)
-        wireEditorToStore($el, editor)
-        forcePastePlainText(editor)
 
+        // Dispatch native event on editor data change to ensure CKEditor content is included in form submissions and autosave
         editor.model.document.on('change:data', () => {
           const html = editor.getData()
           $el.value = html
@@ -274,19 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
           page,
           error: err,
         })
-
-        if (wproofreaderLicenceKey) {
-          Editor.create($el, { toolbar: { items: ['undo', 'redo'] } })
-            .then(editor => {
-              const maxLength = parseInt($el.getAttribute('data-max-length'), 10)
-              enforceEditorMaxLength(editor, maxLength)
-              wireEditorToStore($el, editor)
-              forcePastePlainText(editor)
-            })
-            .catch(function (innerErr) {
-              console.error(innerErr)
-            })
-        }
       })
   })
 })

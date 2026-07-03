@@ -211,12 +211,6 @@ function initAutoBinding() {
 
   const currentPageId = getCurrentPageId()
 
-  reportStore.pushFromEditor = (questionId, value) => {
-    if (!questionId) return
-    reportStore.updateQuestion(questionId, currentPageId, value)
-    markUnsavedChanges()
-  }
-
   function updateStore(inputElement, value) {
     const questionId = inputElement.name || inputElement.id || 'unnamed-input'
 
@@ -286,13 +280,6 @@ function initAutoBinding() {
       element.name === 'reportId' ||
       element.name === '_csrf'
     ) {
-      return
-    }
-
-    // CKEditor-driven textareas push to the store via reportStore.pushFromEditor
-    // (wired in ckeditor5setup.js). The hidden source textarea never fires
-    // native input events from CKEditor, so attaching this listener would be dead.
-    if (tagName === 'textarea' && element.classList.contains('app-apply-ckeditor5')) {
       return
     }
 
