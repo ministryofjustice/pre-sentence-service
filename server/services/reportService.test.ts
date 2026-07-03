@@ -1,6 +1,7 @@
 import ReportService from './reportService'
 import ReportDetailsService from './reportDetailsService'
 import EventService from './eventService'
+import { htmlToPlainText } from '../utils/htmlToPlainText'
 
 jest.mock('./reportDetailsService')
 jest.mock('./personDetailsService')
@@ -102,5 +103,61 @@ describe('ReportService.submitReport', () => {
     ).rejects.toThrow(/not found/)
 
     expect(eventService.sendReportEvent).not.toHaveBeenCalled()
+  })
+})
+
+describe('ReportService.updateFieldValues — write chokepoint', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+  })
+
+  it('stores HTML payloads as plain text in the answer field', async () => {
+    const captured: { pages?: unknown } = {}
+    reportDetailsService.getReportDetailsById = jest.fn().mockResolvedValue({ id: 'r1', pages: [] })
+    reportDetailsService.updateReportPages = jest.fn().mockImplementation(async (_id: string, pages: unknown) => {
+      captured.pages = pages
+      return { id: 'r1', pages }
+    })
+
+    await reportService.updateFieldValues('r1', [
+      {
+        pageName: 'sentencing-proposal',
+        questionId: 1,
+        questionValue: 'proposedSentence',
+        answer: '<p>line one</p><p>line two</p>',
+      },
+    ])
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pages = captured.pages as any[]
+    expect(pages[0].questions[0].answer).toBe(htmlToPlainText('<p>line one</p><p>line two</p>'))
+    expect(pages[0].questions[0].answer).not.toMatch(/</)
+  })
+
+  it('leaves plain text values unchanged', async () => {
+    const captured: { pages?: unknown } = {}
+    reportDetailsService.getReportDetailsById = jest.fn().mockResolvedValue({ id: 'r1', pages: [] })
+    reportDetailsService.updateReportPages = jest.fn().mockImplementation(async (_id: string, pages: unknown) => {
+      captured.pages = pages
+      return { id: 'r1', pages }
+    })
+
+    await reportService.updateFieldValues('r1', [
+      {
+        pageName: 'sentencing-proposal',
+        questionId: 1,
+        questionValue: 'proposedSentence',
+        answer: 'already plain text',
+      },
+    ])
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pages = captured.pages as any[]
+    expect(pages[0].questions[0].answer).toBe('already plain text')
   })
 })

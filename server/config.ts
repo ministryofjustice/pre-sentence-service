@@ -32,10 +32,27 @@ export interface ApiConfig {
   agent: AgentConfig
 }
 
+const wproofreaderBundleUrl = get(
+  'WPROOFREADER_BUNDLE_URL',
+  'https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js'
+)
+let wproofreaderHost = ''
+try {
+  wproofreaderHost = new URL(wproofreaderBundleUrl).hostname
+} catch {
+  console.log('Could not init wproofreader, incorrect URL')
+  // Failing will just cause wproof reader to not init
+}
+
 export default {
   nonce: crypto.randomBytes(16).toString('base64'),
   https: production,
   staticResourceCacheDuration: 20,
+  wproofreader: {
+    licenceKey: get('WPROOFREADER_LICENCE_KEY', 'default-licence-key'),
+    bundleUrl: wproofreaderBundleUrl,
+    host: wproofreaderHost,
+  },
   redis: {
     host: get('REDIS_HOST', 'localhost', requiredInProduction),
     port: parseInt(process.env.REDIS_PORT ?? '', 10) || 6379,
@@ -119,6 +136,9 @@ export default {
     commonPlatformUrl: get('COMMON_PLATFORM_URL', 'https://dummy.common.url', requiredInProduction),
     digitalCaseSystemUrl: get('DIGITAL_CASE_SYSTEM_URL', 'https://dummy.case.system.url/', requiredInProduction),
     ndeliusUrl: get('NDELIUS_URL', 'https://ndelius.test.probation.service.justice.gov.uk', requiredInProduction),
+  },
+  features: {
+    richTextEditor: get('FEATURE_RICH_TEXT_EDITOR', 'false') === 'true',
   },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',
