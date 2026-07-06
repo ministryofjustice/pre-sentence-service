@@ -75,27 +75,12 @@
 
     <h3 class="govuk-heading-s">Risk of serious harm</h3>
 
-    <div class="risk-row">
-        <div>
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Children:</h3>
-            <p class="govuk-body-s keep-newlines">{{ data.riskToChildren }}</p>
-        </div>
-        <div>
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Public:</h3>
-            <p class="govuk-body-s keep-newlines">{{ data.riskToPublic }}</p>
-        </div>
-        <div>
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Known adults:</h3>
-            <p class="govuk-body-s keep-newlines">{{ data.riskToKnownAdults }}</p>
-        </div>
-        <div>
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Staff:</h3>
-            <p class="govuk-body-s keep-newlines">{{ data.riskToStaff }}</p>
-        </div>
-        <div>
-            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Prisoners:</h3>
-            <p class="govuk-body-s keep-newlines">{{ data.riskToPrisoners }}</p>
-        </div>
+    <div class="govuk-!-margin-bottom-4">
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Children:</strong> {{ data.riskToChildren }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Public:</strong> {{ data.riskToPublic }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Known adults:</strong> {{ data.riskToKnownAdults }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Staff:</strong> {{ data.riskToStaff }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Prisoners:</strong> {{ data.riskToPrisoners }}</p>
     </div>
 
     <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
