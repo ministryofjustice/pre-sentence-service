@@ -25,6 +25,7 @@ describe('reportProgress', () => {
       riskToPublic: 'medium',
       riskToKnownAdults: 'low',
       riskToStaff: 'low',
+      riskToPrisoners: 'medium',
       riskPredictors: 'Predictors',
       riskAndHarmFactors: 'Factors',
       proposedSentence: 'Community order',

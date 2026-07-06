@@ -58,7 +58,7 @@
       counter.classList.add('pic-character-count--error')
     } else if (isAtLimit) {
       counter.hidden = false
-      counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot enter any more characters.`
+      counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot save if you enter any more characters.`
       counter.classList.add('pic-character-count--warning')
     } else {
       counter.hidden = false
