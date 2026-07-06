@@ -2,7 +2,7 @@
 
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "components/text-editor/macro.njk" import picTextEditor %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 
@@ -71,12 +71,12 @@
 
   <h2 class="govuk-heading-l">Analyse offences under consideration</h2>
 
-  {{ govukTextarea({
+  {{ picTextEditor({
     name: "offencesUnderConsideration",
     id: "offencesUnderConsideration",
     value: data.offencesUnderConsideration,
     rows: "10",
-    attributes: { "data-max-length": longTextMax },
+    longText: true,
     label: {
       text: ""
     },
@@ -94,18 +94,17 @@
       text: "Analyse the offences under consideration"
     } if 'offencesUnderConsideration' in elementsWithError
   }) }}
-  <div class="pic-character-count" data-character-count-for="offencesUnderConsideration" id="offencesUnderConsideration-info" aria-live="polite" hidden></div>
 
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
   <h2 class="govuk-heading-l">Analyse previous offending behaviour and response to supervision</h2>
 
-  {{ govukTextarea({
+  {{ picTextEditor({
     name: "offencesPattern",
     id: "offencesPattern",
     value: data.offencesPattern,
     rows: "10",
-    attributes: { "data-max-length": longTextMax },
+    longText: true,
     label: {
       text: ""
     },
@@ -121,7 +120,6 @@
       text: "Analyse the pattern of offending and response to supervision"
     } if 'offencesPattern' in elementsWithError
   }) }}
-  <div class="pic-character-count" data-character-count-for="offencesPattern" id="offencesPattern-info" aria-live="polite" hidden></div>
 
   {{ govukCheckboxes({
     id: "noPreviousOffences",
