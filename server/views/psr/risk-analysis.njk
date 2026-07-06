@@ -41,6 +41,57 @@
     iconFallbackText: "Warning"
   }) }}
 
+  {{ picTextEditor({
+    label: {
+      text: "Confirm risk predictors and assess the likelihood of reoffending",
+      classes: "govuk-label--l"
+    },
+    hint: {
+      text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
+      and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools."
+    },
+    name: "riskPredictors",
+    id: "risk-predictors",
+    rows: "10",
+    longText: true,
+    value: data.riskPredictors,
+    whatToInclude: riskPredictorsHelp,
+    whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
+    errorMessage: {
+      text: "Confirm risk predictors and assess the likelihood of reoffending"
+    } if 'riskPredictors' in elementsWithError
+  }) }}
+
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+  {{ picTextEditor({
+    label: {
+      text: "Analyse relevant risks of harm and protective factors",
+      classes: "govuk-label--l"
+    },
+    hint: {
+      html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
+        <ul class='govuk-list--bullet'>
+          <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
+          <li>the defendant's circumstances (past and present) and how these may influence offending</li>
+          <li>the potential impact on victims</li>
+          <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
+          <li>a dangerousness assessment (if requested by the court)</li>
+        </ul>
+        <p>Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>"
+    },
+    name: "riskAndHarmFactors",
+    id: "risk-riskAndHarmFactors",
+    rows: "10",
+    longText: true,
+    value: data.riskAndHarmFactors,
+    errorMessage: {
+      text: "Analyse relevant risks of harm and protective factors"
+    } if 'riskAndHarmFactors' in elementsWithError
+  }) }}
+
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
   <h2 class="govuk-heading-l">Assign risk levels</h2>
 
   <h3 class="govuk-heading-m">Confirm the risk levels from OASys</h3>
@@ -99,57 +150,6 @@
     } if 'riskToStaff' in elementsWithError,
     items: riskOptions,
     value: data.riskToStaff
-  }) }}
-
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-  {{ picTextEditor({
-    label: {
-      text: "Confirm risk predictors and assess the likelihood of reoffending",
-      classes: "govuk-label--l"
-    },
-    hint: {
-      text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
-      and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools."
-    },
-    name: "riskPredictors",
-    id: "risk-predictors",
-    rows: "10",
-    longText: true,
-    value: data.riskPredictors,
-    whatToInclude: riskPredictorsHelp,
-    whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
-    errorMessage: {
-      text: "Confirm risk predictors and assess the likelihood of reoffending"
-    } if 'riskPredictors' in elementsWithError
-  }) }}
-
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-  {{ picTextEditor({
-    label: {
-      text: "Analyse relevant risks of harm and protective factors",
-      classes: "govuk-label--l"
-    },
-    hint: {
-      html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
-        <ul class='govuk-list--bullet'>
-          <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
-          <li>the defendant's circumstances (past and present) and how these may influence offending</li>
-          <li>the potential impact on victims</li>
-          <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
-          <li>a dangerousness assessment (if requested by the court)</li>
-        </ul>
-        <p>Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>"
-    },
-    name: "riskAndHarmFactors",
-    id: "risk-riskAndHarmFactors",
-    rows: "10",
-    longText: true,
-    value: data.riskAndHarmFactors,
-    errorMessage: {
-      text: "Analyse relevant risks of harm and protective factors"
-    } if 'riskAndHarmFactors' in elementsWithError
   }) }}
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
