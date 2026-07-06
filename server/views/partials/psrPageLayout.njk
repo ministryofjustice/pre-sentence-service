@@ -54,12 +54,11 @@
   {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
 
   {{ mojSideNavigation({
-    label: 'Side navigation',
-    classes: 'govuk-!-padding-top-0',
-    sections: [{
+      label: 'Side navigation',
+      classes: 'govuk-!-padding-top-0',
       items: navItems
-    }]
-  }) }}
+    })
+  }}
 
   {% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
     <h3 class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</h3>
