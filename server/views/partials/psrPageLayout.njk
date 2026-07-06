@@ -61,7 +61,7 @@
   }}
 
   {% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
-    <h3 class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</h3>
+    <div class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</div>
       {{ govukButton({
       text: "Download draft report",
       href: "/psr/" + reportId + "/draft-pdf",
