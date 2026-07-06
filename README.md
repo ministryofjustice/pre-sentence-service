@@ -88,3 +88,28 @@ API documentation is provided via Swagger.
 Once the applicaiton is running you can access the Swagger UI at:
 
 `http://localhost:3000/api/docs`
+
+---
+
+## Branching & Deployments
+### Branching
+We use the following branching strategy:
+- `main` - protected branch, deployable to preprod and prod environments
+- `develop` - protected branch, deployable to dev environment on merge
+- Feature branches - created from `develop`, merged back to `develop` when ready
+
+We use a Gitflow process, with pull requests from feature branches
+to `develop`, and from `develop` to `main`.
+
+### Deployments
+
+| Env     | Branch  | Trigger   | Approval | Examples                                    |
+|---------|---------|-----------|----------|---------------------------------------------|
+| dev     | develop | Automatic | None     | When PR is merged to develop branch         |
+| preprod | main    | Automatic | None     | When PR is merged to main                   |
+| prod    | main    | Automatic | Manual   | When deployment is manually approved in GHA |
+
+**Additional protections:**
+1. Commits must be signed
+2. Only developers with write access can merge PRs to `develop` and `main` branches.
+3. Only developers with write access can approve deployments to prod.
