@@ -11,7 +11,6 @@ export const pageFields: Array<string> = [
   'riskToPublic',
   'riskToKnownAdults',
   'riskToStaff',
-  'riskToPrisoners',
 ]
 
 export default class RiskAnalysisController extends BaseController {
