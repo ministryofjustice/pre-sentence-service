@@ -43,8 +43,8 @@ export default class ApiController {
     }
   }
 
-  getReportById = async (req: Request, res: Response): Promise<void> => {
-    try {
+getReportById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  try {
       const reportId = req.params.id
 
       const report = await this.reportService.getReportById(reportId)
@@ -63,8 +63,8 @@ export default class ApiController {
     }
   }
 
-  getPdfById = async (req: Request, res: Response): Promise<void> => {
-    try {
+getPdfById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  try {
       const reportId = req.params.id
 
       const report = await this.reportService.getReportById(reportId)
@@ -80,8 +80,8 @@ export default class ApiController {
     }
   }
 
-  getAllReportsByType = async (req: Request, res: Response): Promise<void> => {
-    try {
+getAllReportsByType = async (req: Request<{ reportType: string }>, res: Response): Promise<void> => {
+  try {
       const reportType = req.params.reportType
       const results = await this.reportService.getAllReportsByType(reportType)
 

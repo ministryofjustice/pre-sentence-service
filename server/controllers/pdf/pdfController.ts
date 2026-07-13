@@ -15,8 +15,8 @@ export default class PdfController {
     this.pdfGenerationService = new PdfGenerationService(preSentenceToDeliusService)
   }
 
-  renderPdf = async (req: Request, res: Response, draft: boolean): Promise<void> => {
-    const { reportId } = req.params
+renderPdf = async (req: Request<{ reportId: string }>, res: Response, draft: boolean): Promise<void> => {
+  const { reportId } = req.params
 
     const report: ReportDetails | null = await this.reportService.getReportById(reportId)
 

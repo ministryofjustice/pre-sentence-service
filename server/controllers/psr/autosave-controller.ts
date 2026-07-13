@@ -4,8 +4,8 @@ import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { HttpError } from '../../@types/httpError'
 
 export default class AutosaveController extends BaseController {
-  public post = async (req: Request, res: Response): Promise<void> => {
-    try {
+public post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
+  try {
       const reportId = req.params.reportId
       const report = await this.reportService.getReportById(reportId)
 
