@@ -38,10 +38,9 @@ const wproofreaderBundleUrl = get(
 )
 let wproofreaderHost = ''
 try {
-  wproofreaderHost = new URL(wproofreaderBundleUrl).hostname
+  wproofreaderHost = new URL(wproofreaderBundleUrl).host
 } catch {
   console.log('Could not init wproofreader, incorrect URL')
-  // Failing will just cause wproof reader to not init
 }
 
 export default {
