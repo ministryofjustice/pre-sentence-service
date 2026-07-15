@@ -218,7 +218,7 @@ export default class SharedController {
   }
 
   public get = async (req: Request, res: Response): Promise<void> => {
-    const reportIdParam = req.params.reportId
+    const reportIdParam = req.params.reportId as string
     const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const removeKey = (req.query.remove as string | undefined)?.trim()
@@ -316,11 +316,12 @@ export default class SharedController {
   }
 
   public async post(req: Request, res: Response): Promise<void> {
-    const reportIdParam = req.params.reportId
+    const reportIdParam = req.params.reportId as string
     const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const { action, source } = req.body
-    const username = res.locals?.user?.username || 'system'
+    const username = (res.locals?.user?.username as string | undefined) || 'system'
+    const redirectPath = req.query?.redirectPath as string | undefined
 
     if (isSourceAction(action)) {
       const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, req.session, source, username)
@@ -337,14 +338,14 @@ export default class SharedController {
     }
 
     const validatedForm: ValidatedForm<z.infer<typeof this.model>> = validateForm(req.body, this.model)
-    if (validatedForm.isValid || req.query?.redirectPath) {
+    if (validatedForm.isValid || redirectPath) {
       await this.updateReportActions(req)
 
       if (this.additionalPostAction) {
         await this.fetchDefendantDetails(reportIdParam)
         this.additionalPostAction()
       }
-      res.redirect(`/${this.path}/${reportIdParam}/${req.query?.redirectPath || this.redirectPath}`)
+      res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
       await this.persistOnInvalid(req, reportId)
 

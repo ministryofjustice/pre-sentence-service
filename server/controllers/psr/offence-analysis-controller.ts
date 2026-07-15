@@ -24,7 +24,7 @@ export default class OffenceAnalysisController extends BaseController {
   }
 
   protected override async beforeRender(req: Request, _res: Response): Promise<void> {
-    const reportId = req.params.reportId
+    const reportId = req.params.reportId as string
 
     if (this.preSentenceToDeliusService && reportId && this.report) {
       try {

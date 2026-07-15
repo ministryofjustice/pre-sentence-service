@@ -11,7 +11,8 @@ const lastPathSegment = (path: string): string => {
 
 export default function lockedReportMiddleware(reportService: ReportService): RequestHandler {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const { reportId } = req.params
+    const reportId = req.params.reportId as string | undefined
+    
     if (!reportId) {
       next()
       return

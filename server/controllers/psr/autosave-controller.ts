@@ -20,10 +20,14 @@ public post = async (req: Request<{ reportId: string }>, res: Response): Promise
         await this.reportService.updateReport(reportId, {})
       }
 
-      let pageName = req.body.pageName || req.query.pageName
+      const bodyPageName = req.body.pageName as string | undefined
+      const queryPageName = req.query.pageName as string | undefined
+      let pageName = bodyPageName || queryPageName
+      
+      const referer = req.headers.referer as string | undefined
 
-      if (!pageName && req.headers.referer) {
-        const urlMatch = req.headers.referer.match(/\/psr\/[^/]+\/([^/?]+)/)
+      if (!pageName && referer) {
+        const urlMatch = referer.match(/\/psr\/[^/]+\/([^/?]+)/)
         if (urlMatch) {
           const urlPageName = urlMatch[1]
           if (urlPageName === 'defendant-details' || urlPageName === 'defendant-behaviour') {
