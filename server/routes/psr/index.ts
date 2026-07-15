@@ -88,11 +88,19 @@ export default function Index(
   })
 
   get('/:reportId/draft-pdf', (req, res) => {
-    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req as Request<{ reportId: string }>, res, true)
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(
+      req as Request<{ reportId: string }>,
+      res,
+      true
+    )
   })
 
   get('/:reportId/pdf', (req, res) => {
-    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req as Request<{ reportId: string }>, res, false)
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(
+      req as Request<{ reportId: string }>,
+      res,
+      false
+    )
   })
 
   get('/:reportId/preview-report', (req, res) => {
@@ -115,7 +123,10 @@ export default function Index(
     return new PublishReportController(reportService).post(req, res)
   })
   post('/:reportId/autosave', (req, res) => {
-    return new AutosaveController(reportService, preSentenceToDeliusService).post(req as Request<{ reportId: string }>, res)
+    return new AutosaveController(reportService, preSentenceToDeliusService).post(
+      req as Request<{ reportId: string }>,
+      res
+    )
   })
 
   return router
