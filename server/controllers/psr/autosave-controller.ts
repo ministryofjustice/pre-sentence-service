@@ -20,10 +20,18 @@ export default class AutosaveController extends BaseController {
         await this.reportService.updateReport(reportId, {})
       }
 
-      const bodyPageName = req.body.pageName as string | undefined
-      const queryPageName = req.query.pageName as string | undefined
+      const firstString = (value: string | string[] | undefined): string | undefined =>
+        Array.isArray(value) ? value[0] : value
+
+      const bodyPageNameRaw = req.body.pageName as string | string[] | undefined
+      const queryPageNameRaw = req.query.pageName as string | string[] | undefined
+      const refererRaw = req.headers.referer
+
+      const bodyPageName = firstString(bodyPageNameRaw)
+      const queryPageName = firstString(queryPageNameRaw)
+      const referer = firstString(refererRaw)
+
       let pageName = bodyPageName || queryPageName
-      const referer = req.headers.referer as string | undefined
 
       if (!pageName && referer) {
         const urlMatch = referer.match(/\/psr\/[^/]+\/([^/?]+)/)
