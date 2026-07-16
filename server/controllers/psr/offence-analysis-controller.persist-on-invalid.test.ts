@@ -8,7 +8,7 @@ jest.mock('../../services/reportService')
 describe('OffenceAnalysisController — persist-on-invalid (bug fix)', () => {
   let controller: OffenceAnalysisController
   let reportService: ReportService
-  let req: Request
+  let req: Request<{ reportId: string }>
   let res: Response
 
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('OffenceAnalysisController — persist-on-invalid (bug fix)', () => {
       session: {},
       body: {},
       query: {},
-    } as unknown as Request
+    } as unknown as Request<{ reportId: string }>
 
     res = {
       render: jest.fn(),
