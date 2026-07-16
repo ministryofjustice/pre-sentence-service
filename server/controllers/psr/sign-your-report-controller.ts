@@ -71,8 +71,8 @@ export default class SignYourReportController extends BaseController {
     }
   }
 
-  override post = async (req: Request, res: Response): Promise<void> => {
-    const reportId = req.params.reportId as string
+  override post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
+    const reportId = req.params.reportId
     const username = (res.locals?.user?.username as string | undefined) || 'system'
     const redirectPath = req.query?.redirectPath as string | undefined
 

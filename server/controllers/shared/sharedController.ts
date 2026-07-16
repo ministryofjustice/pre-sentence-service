@@ -217,8 +217,8 @@ export default class SharedController {
     return false
   }
 
-  public get = async (req: Request, res: Response): Promise<void> => {
-    const reportIdParam = req.params.reportId as string
+  public get = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
+    const reportIdParam = req.params.reportId
     const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const removeKey = (req.query.remove as string | undefined)?.trim()
@@ -315,8 +315,8 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
-  public async post(req: Request, res: Response): Promise<void> {
-    const reportIdParam = req.params.reportId as string
+  public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
+    const reportIdParam = req.params.reportId
     const reportId = reportIdParam
     const isEditing = req.path.endsWith('/edit')
     const { action, source } = req.body
