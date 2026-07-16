@@ -8,9 +8,7 @@ import type { ParamsDictionary } from 'express-serve-static-core'
  * @returns Wrapped handler with the same param typing preserved.
  */
 
-export default function asyncMiddleware<P = ParamsDictionary>(
-  fn: RequestHandler<P>
-): RequestHandler<P> {
+export default function asyncMiddleware<P = ParamsDictionary>(fn: RequestHandler<P>): RequestHandler<P> {
   return (req: Request<P>, res: Response, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next)
   }

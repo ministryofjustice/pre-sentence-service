@@ -28,7 +28,7 @@ export default function Index(
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
   const lockGuard = lockedReportMiddleware(reportService)
-  
+
   type ReportParams = { reportId: string }
 
   const get = (path: string, handler: RequestHandler<ReportParams>) =>
