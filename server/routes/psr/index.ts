@@ -1,4 +1,4 @@
-import { Request, RequestHandler, Router } from 'express'
+import { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import lockedReportMiddleware from '../../middleware/lockedReportMiddleware'
@@ -28,10 +28,14 @@ export default function Index(
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
   const lockGuard = lockedReportMiddleware(reportService)
-  const get = (path: string, handler: RequestHandler) =>
-    router.get(routePrefix(path), lockGuard, asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) =>
-    router.post(routePrefix(path), lockGuard, asyncMiddleware(handler))
+  
+  type ReportParams = { reportId: string }
+
+  const get = (path: string, handler: RequestHandler<ReportParams>) =>
+    router.get<ReportParams>(routePrefix(path), lockGuard, asyncMiddleware(handler))
+
+  const post = (path: string, handler: RequestHandler<ReportParams>) =>
+    router.post<ReportParams>(routePrefix(path), lockGuard, asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
     return new LandingPageController(reportService, preSentenceToDeliusService).get(req, res)
@@ -88,19 +92,11 @@ export default function Index(
   })
 
   get('/:reportId/draft-pdf', (req, res) => {
-    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(
-      req as Request<{ reportId: string }>,
-      res,
-      true
-    )
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req, res, true)
   })
 
   get('/:reportId/pdf', (req, res) => {
-    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(
-      req as Request<{ reportId: string }>,
-      res,
-      false
-    )
+    return new PdfController(reportService, preSentenceToDeliusService).renderPdf(req, res, false)
   })
 
   get('/:reportId/preview-report', (req, res) => {
@@ -123,10 +119,7 @@ export default function Index(
     return new PublishReportController(reportService).post(req, res)
   })
   post('/:reportId/autosave', (req, res) => {
-    return new AutosaveController(reportService, preSentenceToDeliusService).post(
-      req as Request<{ reportId: string }>,
-      res
-    )
+    return new AutosaveController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   return router
