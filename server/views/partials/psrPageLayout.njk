@@ -54,14 +54,15 @@
   {%- from "moj/components/side-navigation/macro.njk" import mojSideNavigation -%}
 
   {{ mojSideNavigation({
-      label: 'Side navigation',
-      classes: 'govuk-!-padding-top-0',
+    label: 'Side navigation',
+    classes: 'govuk-!-padding-top-0',
+    sections: [{
       items: navItems
-    })
-  }}
+    }]
+  }) }}
 
   {% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
-    <div class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</div>
+    <h3 class="govuk-heading-m govuk-!-margin-top-5">Share or preview report</h3>
       {{ govukButton({
       text: "Download draft report",
       href: "/psr/" + reportId + "/draft-pdf",

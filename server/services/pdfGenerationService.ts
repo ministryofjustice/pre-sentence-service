@@ -78,7 +78,6 @@ export default class PdfGenerationService {
     const riskToChildren: string = reportData.riskToChildren as string
     const riskToKnownAdults: string = reportData.riskToKnownAdults as string
     const riskToStaff: string = reportData.riskToStaff as string
-    const riskToPrisoners: string = reportData.riskToPrisoners as string
     let impactExplanation = ''
     switch (reportData.custodialSentenceConsideration as string) {
       case 'possible':
@@ -102,7 +101,6 @@ export default class PdfGenerationService {
       riskToChildren: capitalise(riskToChildren.replace('_', ' ')),
       riskToKnownAdults: capitalise(riskToKnownAdults.replace('_', ' ')),
       riskToStaff: capitalise(riskToStaff.replace('_', ' ')),
-      riskToPrisoners: capitalise(riskToPrisoners.replace('_', ' ')),
       ageInYears,
       impactExplanation,
       offenceData,

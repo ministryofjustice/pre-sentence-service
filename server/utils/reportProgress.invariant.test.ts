@@ -52,7 +52,6 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
       riskToPublic: 'low',
       riskToKnownAdults: 'low',
       riskToStaff: 'low',
-      riskToPrisoners: 'low',
       riskPredictors: 'predictors text',
       riskAndHarmFactors: 'factors text',
     }
