@@ -227,12 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   var wpCfg = window.wproofreaderConfig || {}
-  var wproofreaderLicenceKey = wpCfg.serviceId || ''
   var wproofreaderBundleUrl = wpCfg.bundleUrl || ''
   var baseToolbar = ['wproofreader', '|', 'undo', 'redo']
 
   function buildWproofreaderConfig() {
-    if (!wproofreaderLicenceKey || !wproofreaderBundleUrl) return null
+    if (!wproofreaderBundleUrl) return null
     var cfg = {
       srcUrl: wproofreaderBundleUrl,
       lang: 'en_GB',
@@ -241,16 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     try {
       var origin = new URL(wproofreaderBundleUrl)
-      if (origin.hostname.endsWith('webspellchecker.net')) {
-        // Cloud service
-        cfg.serviceId = wproofreaderLicenceKey
-      } else {
-        // self hosted
-        cfg.serviceProtocol = origin.protocol.replace(':', '')
-        cfg.serviceHost = origin.hostname
-        cfg.servicePort = origin.port || (origin.protocol === 'https:' ? '443' : '80')
-        cfg.servicePath = origin.pathname.replace(/wscbundle\/wscbundle\.js$/, 'api').replace(/^\//, '')
-      }
+      cfg.serviceProtocol = origin.protocol.replace(':', '')
+      cfg.serviceHost = origin.hostname
+      cfg.servicePort = origin.port || (origin.protocol === 'https:' ? '443' : '80')
+      cfg.servicePath = origin.pathname.replace(/wscbundle\/wscbundle\.js$/, 'api').replace(/^\//, '')
     } catch (e) {
       return null
     }
@@ -299,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
           error: err,
         })
 
-        if (wproofreaderLicenceKey) {
+        if (wproofreaderBundleUrl) {
           Editor.create($el, { toolbar: { items: ['undo', 'redo'] } })
             .then(editor => {
               const maxLength = parseInt($el.getAttribute('data-max-length'), 10)

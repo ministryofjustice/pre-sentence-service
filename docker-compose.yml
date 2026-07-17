@@ -131,7 +131,6 @@ services:
       - ACCESS_KEY_ID=pre-sentence-service
       - SECRET_ACCESS_KEY=pre-sentence-service
       - FEATURE_RICH_TEXT_EDITOR=true
-      - WPROOFREADER_LICENCE_KEY=${WPROOFREADER_LICENCE_KEY}
       # Browser-facing URL, so localhost (the host machine), not the service name
       - WPROOFREADER_BUNDLE_URL=http://localhost:8081/wscservice/wscbundle/wscbundle.js
 

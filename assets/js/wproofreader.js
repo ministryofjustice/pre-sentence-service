@@ -1,8 +1,7 @@
 (function () {
   var cfg = window.wproofreaderConfig || {}
-  var licenceKey = cfg.serviceId || ''
   var bundleUrl = cfg.bundleUrl || ''
-  if (!licenceKey || !bundleUrl) return
+  if (!bundleUrl) return
 
   var bundleOrigin
   try {
@@ -14,16 +13,11 @@
   window.wproofreaderHost = bundleOrigin.hostname
   window.wproofreaderPort = bundleOrigin.port || (bundleOrigin.protocol === 'https:' ? '443' : '80')
 
-  var serviceOptions = {}
-  if (bundleOrigin.hostname.endsWith('webspellchecker.net')) {
-    // Cloud service
-    serviceOptions.serviceId = licenceKey
-  } else {
-    // self hosted
-    serviceOptions.serviceProtocol = window.wproofreaderProtocol
-    serviceOptions.serviceHost = window.wproofreaderHost
-    serviceOptions.servicePort = window.wproofreaderPort
-    serviceOptions.servicePath = bundleOrigin.pathname.replace(/wscbundle\/wscbundle\.js$/, 'api').replace(/^\//, '')
+  var serviceOptions = {
+    serviceProtocol: window.wproofreaderProtocol,
+    serviceHost: window.wproofreaderHost,
+    servicePort: window.wproofreaderPort,
+    servicePath: bundleOrigin.pathname.replace(/wscbundle\/wscbundle\.js$/, 'api').replace(/^\//, ''),
   }
 
   function initOnTextareas() {
