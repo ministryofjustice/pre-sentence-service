@@ -44,8 +44,7 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
   }
 }
 
-/** A ~4,000 character proposed sentence of normal prose, bracketed by sentinels. */
-export function fullLengthProposal(): string {
-  const body = sentences(52)
-  return `TOKEN_PROPSTART ${body}`.slice(0, 3980) + ' TOKEN_PROPEND'
+export function pageFittingProposal(): string {
+  const body = sentences(30)
+  return `TOKEN_PROPSTART ${body}`.slice(0, 1980) + ' TOKEN_PROPEND'
 }

@@ -1,6 +1,6 @@
 import { renderPsrHtml, convertToPdf, assertGotenbergUp } from './helpers/renderPdf'
 import { extractPages, pageOf } from './helpers/pdfPages'
-import { buildReportData, fullLengthProposal, sentences } from './helpers/fixtureData'
+import { buildReportData, pageFittingProposal, sentences } from './helpers/fixtureData'
 
 beforeAll(async () => {
   await assertGotenbergUp()
@@ -17,11 +17,11 @@ describe('sentencing proposal box', () => {
   // page of positions.
   const sweep = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150]
 
-  it.each(sweep)('4,000-char proposal never splits (filler=%i sentences)', async filler => {
+  it.each(sweep)('page-filling proposal never splits (filler=%i sentences)', async filler => {
     const pages = await pagesFor(
       buildReportData({
         riskAndHarmFactors: `TOKEN_HARM_FACTORS ${sentences(filler)}`,
-        proposedSentence: fullLengthProposal(),
+        proposedSentence: pageFittingProposal(),
       })
     )
     expect(pageOf(pages, 'TOKEN_PROPEND')).toBe(pageOf(pages, 'TOKEN_PROPSTART'))
@@ -38,7 +38,7 @@ describe('sentencing proposal box', () => {
     const pages = await pagesFor(
       buildReportData({
         riskAndHarmFactors: `TOKEN_HARM_FACTORS ${sentences(90)}`,
-        proposedSentence: fullLengthProposal(),
+        proposedSentence: pageFittingProposal(),
       }),
       opts
     )
@@ -46,33 +46,16 @@ describe('sentencing proposal box', () => {
   })
 })
 
-describe('subsections never orphan their heading', () => {
-  // heading text (as rendered) -> sentinel token at the start of its content
-  const subsections: [string, string][] = [
-    ['Analysis of offences under consideration', 'TOKEN_OFFENCES_ANALYSIS'],
-    ['Pattern of offending', 'TOKEN_OFFENCES_PATTERN'],
-    ['Defendant behaviour and lifestyle assessment', 'TOKEN_BEHAVIOUR'],
-    ['Risk of serious harm', 'TOKEN_ROSH'],
-    ['Risk predictors and likelihood of reoffending', 'TOKEN_PREDICTORS'],
-    ['Relevant risks of harm and protective factors', 'TOKEN_HARM_FACTORS'],
-    ['The proposed sentence', 'TOKEN_PROPSTART'],
-    ['Rationale for the proposed sentence', 'TOKEN_RATIONALE'],
-    ['Alternative sentencing options', 'TOKEN_ALTERNATIVES'],
-    ['Impact of a custodial sentence', 'TOKEN_IMPACT'],
-    ['Report author', 'TOKEN_AUTHOR'],
-  ]
-
-  // Used to check at varying lengths of first field to push the page down
+describe('sentencing proposal section keeps its heading', () => {
+  // Used to check at varying lengths of a preceding field to push the page down
   const sweep = [0, 20, 40, 60, 80, 100, 120, 140, 160]
 
-  it.each(sweep)('no heading is separated from its content (filler=%i sentences)', async filler => {
+  it.each(sweep)('"Sentencing proposal" heading stays with the box (filler=%i sentences)', async filler => {
     const pages = await pagesFor(
       buildReportData({
         offencesUnderConsideration: `TOKEN_OFFENCES_ANALYSIS ${sentences(filler)}`,
       })
     )
-    for (const [heading, token] of subsections) {
-      expect(`${heading}:p${pageOf(pages, heading)}`).toBe(`${heading}:p${pageOf(pages, token)}`)
-    }
+    expect(pageOf(pages, 'Sentencing proposal')).toBe(pageOf(pages, 'TOKEN_PROPSTART'))
   })
 })

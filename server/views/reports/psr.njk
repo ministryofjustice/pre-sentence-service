@@ -8,104 +8,88 @@
     <p class="govuk-body-s pdf-secondary-text">This report is not binding upon the court's sentencing decision.</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <div class="no-break">
-        <h2 class="govuk-heading-m">Defendant details</h2>
+    <h2 class="govuk-heading-m">Defendant details</h2>
 
-        <div class="govuk-body-s"><strong>Full name: </strong>{{ data.name }}</div>
-        <div class="govuk-body-s"><strong>Date of birth: </strong>{{ data.dateOfBirth.toLocaleDateString("en-GB")}} ({{data.ageInYears}} years old)</div>
-        <div class="govuk-body-s address-row govuk-!-margin-bottom-0"><strong>Current address: </strong>
-            <div class='address-lines'>
-                <p class="govuk-body-s">{{ data.address.buildingName }}</p>
-                <p class="govuk-body-s">{{ data.address.addressNumber }} {{ data.address.streetName }}</p>
-                <p class="govuk-body-s">{{ data.address.town }}</p>
-                <p class="govuk-body-s">{{ data.address.district }}</p>
-                <p class="govuk-body-s">{{ data.address.county }}</p>
-                <p class="govuk-body-s">{{ data.address.postcode }}</p>
-            </div>
+    <div class="govuk-body-s"><strong>Full name: </strong>{{ data.name }}</div>
+    <div class="govuk-body-s"><strong>Date of birth: </strong>{{ data.dateOfBirth.toLocaleDateString("en-GB")}} ({{data.ageInYears}} years old)</div>
+    <div class="govuk-body-s address-row govuk-!-margin-bottom-0"><strong>Current address: </strong>
+        <div class='address-lines'>
+            <p class="govuk-body-s">{{ data.address.buildingName }}</p>
+            <p class="govuk-body-s">{{ data.address.addressNumber }} {{ data.address.streetName }}</p>
+            <p class="govuk-body-s">{{ data.address.town }}</p>
+            <p class="govuk-body-s">{{ data.address.district }}</p>
+            <p class="govuk-body-s">{{ data.address.county }}</p>
+            <p class="govuk-body-s">{{ data.address.postcode }}</p>
         </div>
     </div>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <div class="no-break">
-        <h2 class="govuk-heading-m">Offence analysis</h2>
+    <h2 class="govuk-heading-m">Offence analysis</h2>
 
-        <table class="govuk-table govuk-table--no-borders">
-            <thead class="govuk-table__head">
+    <table class="govuk-table govuk-table--no-borders">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+            <th class="govuk-table__header table-header">Offences under consideration</th>
+            <th class="govuk-table__header table-header">Date of offence</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+            <td class="govuk-table__cell govuk-body-s">
+                <strong>{{ data.offenceData.mainOffence.subCategory.description }}</strong>
+            </td>
+            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
+            </tr>
+
+            {% for offence in data.offenceData.additionalOffences %}
                 <tr class="govuk-table__row">
-                <th class="govuk-table__header table-header">Offences under consideration</th>
-                <th class="govuk-table__header table-header">Date of offence</th>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.subCategory.description }}</td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
                 </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-body-s">
-                    <strong>{{ data.offenceData.mainOffence.subCategory.description }}</strong>
-                </td>
-                <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
-                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-                {% for offence in data.offenceData.additionalOffences %}
-                    <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-body-s">{{ offence.subCategory.description }}</td>
-                    <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <h3 class="govuk-heading-s">Analysis of offences under consideration</h3>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Analysis of offences under consideration</h3>
+    <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
 
-        <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
-    </div>
+    <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
-
-        {% if data.noPreviousOffences === 'true' %}
-            <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
-        {% else %}
-            <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
-        {% endif %}
-    </div>
+    {% if data.noPreviousOffences === 'true' %}
+        <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
+    {% else %}
+        <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <div class="no-break">
-        <h2 class="govuk-heading-m">Defendant behaviour and lifestyle assessment</h2>
+    <h2 class="govuk-heading-m">Defendant behaviour and lifestyle assessment</h2>
 
-        <p class="govuk-body-s keep-newlines">{{ data.defendantBehaviour }}</p>
-    </div>
+    <p class="govuk-body-s keep-newlines">{{ data.defendantBehaviour }}</p>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <div class="no-break">
-        <h2 class="govuk-heading-m">Risk analysis</h2>
+    <h2 class="govuk-heading-m">Risk analysis</h2>
 
-        <h3 class="govuk-heading-s">Risk of serious harm</h3>
+    <h3 class="govuk-heading-s">Risk of serious harm</h3>
 
-        <div class="govuk-!-margin-bottom-4">
-            <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Children:</strong> {{ data.riskToChildren }}</p>
-            <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Public:</strong> {{ data.riskToPublic }}</p>
-            <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Known adults:</strong> {{ data.riskToKnownAdults }}</p>
-            <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Staff:</strong> {{ data.riskToStaff }}</p>
-            <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Prisoners:</strong> {{ data.riskToPrisoners }}</p>
-        </div>
+    <div class="govuk-!-margin-bottom-4">
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Children:</strong> {{ data.riskToChildren }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Public:</strong> {{ data.riskToPublic }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Known adults:</strong> {{ data.riskToKnownAdults }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Staff:</strong> {{ data.riskToStaff }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Prisoners:</strong> {{ data.riskToPrisoners }}</p>
     </div>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
+    <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
 
-        <p class="govuk-body-s keep-newlines">{{ data.riskPredictors }}</p>
-    </div>
+    <p class="govuk-body-s keep-newlines">{{ data.riskPredictors }}</p>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Relevant risks of harm and protective factors</h3>
+    <h3 class="govuk-heading-s">Relevant risks of harm and protective factors</h3>
 
-        <p class="govuk-body-s keep-newlines">{{ data.riskAndHarmFactors }}</p>
-    </div>
+    <p class="govuk-body-s keep-newlines">{{ data.riskAndHarmFactors }}</p>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
@@ -118,50 +102,42 @@
         </div>
     </div>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Rationale for the proposed sentence</h3>
+    <h3 class="govuk-heading-s">Rationale for the proposed sentence</h3>
 
-        <p class="govuk-body-s keep-newlines">{{ data.proposedSentenceRationale }}</p>
-    </div>
+    <p class="govuk-body-s keep-newlines">{{ data.proposedSentenceRationale }}</p>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Alternative sentencing options</h3>
+    <h3 class="govuk-heading-s">Alternative sentencing options</h3>
 
-        <p class="govuk-body-s keep-newlines">{{ data.alternativeSentencingOptions }}</p>
-    </div>
+    <p class="govuk-body-s keep-newlines">{{ data.alternativeSentencingOptions }}</p>
 
-    <div class="no-break">
-        <h3 class="govuk-heading-s">Impact of a custodial sentence</h3>
+    <h3 class="govuk-heading-s">Impact of a custodial sentence</h3>
 
-        <p class="govuk-body-s keep-newlines">{{ data.impactExplanation }}</p>
+    <p class="govuk-body-s keep-newlines">{{ data.impactExplanation }}</p>
 
-        {% if data.custodialSentenceConsideration === 'possible' %}
-            <p class="govuk-body-s keep-newlines"> {{ data.custodialSentenceImpact }}</p>
-        {% endif %}
-    </div>
+    {% if data.custodialSentenceConsideration === 'possible' %}
+        <p class="govuk-body-s keep-newlines"> {{ data.custodialSentenceImpact }}</p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-    <div class="no-break">
-        <h2 class="govuk-heading-m">Completion details</h2>
+    <h2 class="govuk-heading-m">Completion details</h2>
 
-        <h3 class="govuk-heading-s">Report author:</h3>
-        <p class="govuk-body-s"> {{ data.signReportName }}</p>
+    <h3 class="govuk-heading-s">Report author:</h3>
+    <p class="govuk-body-s"> {{ data.signReportName }}</p>
 
-        {% if data.isDangerousReport == "yes" %}
-            <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
-            {% if data.spoName %}
-                <p class="govuk-body-s"> {{ data.spoName }}</p>
-            {% endif %}
+    {% if data.isDangerousReport == "yes" %}
+        <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
+        {% if data.spoName %}
+            <p class="govuk-body-s"> {{ data.spoName }}</p>
         {% endif %}
+    {% endif %}
 
-        <h3 class="govuk-heading-s">Date submitted:</h3>
-        {% if data.reportSubmittedAt %}
-            <p class="govuk-body-s"> {{ data.reportSubmittedAt | formatDate }} </p>
-        {% else %}
-            <p class="govuk-body-s"> DD/MM/YYYY </p>
-        {% endif %}
-    </div>
+    <h3 class="govuk-heading-s">Date submitted:</h3>
+    {% if data.reportSubmittedAt %}
+        <p class="govuk-body-s"> {{ data.reportSubmittedAt | formatDate }} </p>
+    {% else %}
+        <p class="govuk-body-s"> DD/MM/YYYY </p>
+    {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
