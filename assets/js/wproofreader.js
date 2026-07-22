@@ -1,8 +1,7 @@
 (function () {
   var cfg = window.wproofreaderConfig || {}
-  var licenceKey = cfg.serviceId || ''
   var bundleUrl = cfg.bundleUrl || ''
-  if (!licenceKey || !bundleUrl) return
+  if (!bundleUrl) return
 
   var bundleOrigin
   try {
@@ -14,19 +13,29 @@
   window.wproofreaderHost = bundleOrigin.hostname
   window.wproofreaderPort = bundleOrigin.port || (bundleOrigin.protocol === 'https:' ? '443' : '80')
 
+  var serviceOptions = {
+    serviceProtocol: window.wproofreaderProtocol,
+    serviceHost: window.wproofreaderHost,
+    servicePort: window.wproofreaderPort,
+    servicePath: bundleOrigin.pathname.replace(/wscbundle\/wscbundle\.js$/, 'api').replace(/^\//, ''),
+  }
+
   function initOnTextareas() {
     if (typeof window.WEBSPELLCHECKER === 'undefined') return
     var textareas = document.querySelectorAll('textarea:not([data-wsc-initialised])')
     textareas.forEach(function (el) {
       if (el.classList.contains('app-apply-ckeditor5')) return
       try {
-        window.WEBSPELLCHECKER.init({
+        var initOptions = {
           container: el,
-          serviceId: licenceKey,
           lang: 'en_GB',
           removeBranding: true,
           settingsSections: ['general', 'options'],
+        }
+        Object.keys(serviceOptions).forEach(function (key) {
+          initOptions[key] = serviceOptions[key]
         })
+        window.WEBSPELLCHECKER.init(initOptions)
         el.setAttribute('data-wsc-initialised', 'true')
       } catch (e) {
         // Swallow per-element failures so one bad init can't break the page

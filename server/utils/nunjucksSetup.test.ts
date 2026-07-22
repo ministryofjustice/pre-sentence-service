@@ -8,9 +8,8 @@ jest.mock('../config', () => ({
     nonce: 'test-nonce',
     features: { richTextEditor: true },
     wproofreader: {
-      licenceKey: 'k',
-      bundleUrl: 'https://svc.webspellchecker.net/bundle.js',
-      host: 'svc.webspellchecker.net',
+      bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
+      host: 'spellcheck.example.com',
     },
   },
 }))
