@@ -15,7 +15,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.applicationName = 'Pre-sentence Service'
   app.locals.headerTitle = 'Write a pre-sentence report'
   app.locals.longTextMax = LONG_TEXT_MAX
-  app.locals.wproofreaderLicenceKey = config.wproofreader.licenceKey
   app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
   app.locals.featureRichTextEditor = config.features.richTextEditor
 
