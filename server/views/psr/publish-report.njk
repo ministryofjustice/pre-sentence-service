@@ -26,35 +26,26 @@
         <section class="govuk-!-margin-top-7">     
           <h2 class="govuk-heading-s govuk-!-margin-bottom-3">If you need to upload your report</h2>     
 
-          <ol class="govuk-list govuk-list--number psr-complete-links">
+          <ul class="govuk-list">
             <li>
               <a class="govuk-link govuk-link--no-visited-state" href="/psr/{{ reportId }}/pdf" target="_blank" rel="noreferrer noopener">
                 Download the completed PSR
               </a>
               to share with the court.
-              <ul class="govuk-!-padding-left-0">
-                <li>
-                  <a class="govuk-link govuk-link--no-visited-state" href="{{ data.commonPlatformUrl }}" target="_blank" rel="noreferrer noopener">
-                    Go to Common Platform
-                  </a>
-                  (opens in new tab)
-                </li>
-                <li>
-                  <a class="govuk-link govuk-link--no-visited-state" href="{{ data.digitalCaseSystemUrl }}" target="_blank" rel="noreferrer noopener">
-                    Go to Digital Case System
-                  </a>
-                  (opens in new tab)
-                </li>
-              </ul>
             </li>
-            
-            
-            <li class="govuk-body govuk-!-margin-top-7 govuk-!-margin-bottom-0">
-              <a class="govuk-link govuk-link--no-visited-state" href="{{ data.ndeliusUrl }}">
-                Return to NDelius
+            <li>
+              <a class="govuk-link govuk-link--no-visited-state" href="{{ data.commonPlatformUrl }}" target="_blank" rel="noreferrer noopener">
+                Go to Common Platform
               </a>
+              (opens in new tab)
             </li>
-          </ol>
+            <li>
+              <a class="govuk-link govuk-link--no-visited-state" href="{{ data.digitalCaseSystemUrl }}" target="_blank" rel="noreferrer noopener">
+                Go to Digital Case System
+              </a>
+              (opens in new tab)
+            </li>
+          </ul>
         </section>
       </div>
     </div>
