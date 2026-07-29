@@ -1,0 +1,70 @@
+name: Deploy to QA (manual)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  node_build:
+    name: node build
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2 # WORKFLOW_VERSION
+    secrets: inherit
+  node_unit_tests:
+    name: node unit tests
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_unit_tests.yml@v2 # WORKFLOW_VERSION
+    needs: [ node_build ]
+    secrets: inherit
+  node_integration_tests:
+    name: node integration tests
+    uses: ./.github/workflows/node_integration_tests.yml # WORKFLOW_VERSION
+    needs: [ node_build ]
+    secrets: inherit
+  helm_lint:
+    name: helm lint
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2
+    secrets: inherit
+    with:
+      environment: qa
+#  app_version:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      version: ${{ steps.app_version.outputs.version }}
+#    steps:
+#      - id: app_version
+#        name: Application version creators
+#        uses: ministryofjustice/hmpps-github-shared-actions/.github/actions/build-test-and-deploy/create_app_version@f52dbae537425d92f2216c4a2d9e0e44e603abb1 #v1
+  build_qa:
+    name: Build QA image
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
+    needs:
+      - helm_lint
+      - node_build
+      - node_integration_tests
+      - node_unit_tests
+    secrets: inherit
+    with:
+      docker_registry: ghcr.io
+      registry_org: ministryofjustice
+      # Optional but recommended: makes it obvious this is a QA build tag in GHCR
+      # additional_docker_tag: qa
+      push: true
+      docker_multiplatform: false
+      download_build_artifacts: true
+  deploy_qa:
+    name: Deploy to QA
+    needs:
+      - build_qa
+      - helm_lint
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: qa
+      app_version: ${{ needs.build_qa.outputs.app_version }}
+      slack_notification: "false"
