@@ -15,7 +15,20 @@ describe('Healthcheck', () => {
       done()
     }
 
-    healthCheck(callback, successfulChecks)
+    healthCheck(callback, successfulChecks, [])
+  })
+  it('Healthcheck stays healthy when an informational check fails', done => {
+    const callback: HealthCheckCallback = result => {
+      expect(result).toEqual(
+        expect.objectContaining({
+          healthy: true,
+          checks: { check1: 'some message', wproofreader: 'some error' },
+        })
+      )
+      done()
+    }
+
+    healthCheck(callback, [successfulCheck('check1')], [erroredCheck('wproofreader')])
   })
   it('Healthcheck reports unhealthy', done => {
     const successfulChecks = [successfulCheck('check1'), erroredCheck('check2')]
@@ -30,7 +43,7 @@ describe('Healthcheck', () => {
       done()
     }
 
-    healthCheck(callback, successfulChecks)
+    healthCheck(callback, successfulChecks, [])
   })
 })
 

@@ -1,12 +1,16 @@
 (function () {
   var cfg = window.wproofreaderConfig || {}
   var bundleUrl = cfg.bundleUrl || ''
-  if (!bundleUrl) return
+  if (!bundleUrl) {
+    console.warn('WProofreader: no bundle URL configured, spellchecker disabled')
+    return
+  }
 
   var bundleOrigin
   try {
     bundleOrigin = new URL(bundleUrl)
   } catch (e) {
+    console.error('WProofreader: invalid bundle URL "' + bundleUrl + '"', e)
     return
   }
   window.wproofreaderProtocol = bundleOrigin.protocol.replace(':', '')
@@ -38,7 +42,8 @@
         window.WEBSPELLCHECKER.init(initOptions)
         el.setAttribute('data-wsc-initialised', 'true')
       } catch (e) {
-        // Swallow per-element failures so one bad init can't break the page
+        // Log but swallow per-element failures so one bad init can't break the page
+        console.error('WProofreader: failed to initialise on textarea', e)
       }
     })
   }
@@ -50,10 +55,11 @@
       s.src = bundleUrl
       s.async = true
       s.onload = function () {
+        console.info('WProofreader: bundle loaded successfully from ' + bundleUrl)
         resolve()
       }
       s.onerror = function () {
-        reject(new Error('Failed to load WProofreader bundle'))
+        reject(new Error('Failed to load WProofreader bundle from ' + bundleUrl + ' (check DNS, CSP and network tab)'))
       }
       document.head.appendChild(s)
     })
@@ -69,8 +75,9 @@
         })
         observer.observe(document.body, { childList: true, subtree: true })
       })
-      .catch(function () {
-        // Licence expired etc, fail silently to not cause app errors
+      .catch(function (e) {
+        // Licence expired etc — log but don't rethrow so app errors aren't caused
+        console.error('WProofreader: spellchecker not started', e)
       })
   }
 
