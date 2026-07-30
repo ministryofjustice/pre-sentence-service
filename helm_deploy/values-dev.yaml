@@ -40,5 +40,3 @@ wproofreader:
   ingress:
     host: pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk
     tlsSecretName: court-probation-dev-cert-secret
-
-  allowlist: *app-allowlist
