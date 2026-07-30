@@ -103,8 +103,11 @@ wproofreader:
   replicaCount: 1
 
   image:
-    repository: quay.io/hmpps/pre-sentence-service-wproofreader
-    tag: latest
+    repository: webspellchecker/wproofreader
+    tag: 6.15.0.0
+    port: 8080
+
+  service:
     port: 8081
 
   ingress:
