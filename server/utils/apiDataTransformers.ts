@@ -48,7 +48,7 @@ export function transformAddress(apiAddress?: ApiAddress): Record<string, string
  * Transform API DefendantDetails to application data format
  */
 export function transformDefendantDetails(apiData: DefendantDetails): Record<string, unknown> {
-  logger.debug({ apiData }, 'Transforming defendant details from API')
+  logger.debug({ crn: apiData.crn }, 'Transforming defendant details from API')
 
   return {
     name: transformName(apiData.name),
