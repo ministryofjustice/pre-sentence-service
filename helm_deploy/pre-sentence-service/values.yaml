@@ -98,6 +98,57 @@ gotenberg:
     privileged: false
     runAsNonRoot: true
 
+wproofreader:
+  nameOverride: wproofreader
+  replicaCount: 1
+
+  image:
+    repository: webspellchecker/wproofreader
+    tag: 6.15.0.0
+    port: 8080
+
+  service:
+    port: 8081
+
+  ingress:
+    enabled: true
+    path: /
+
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  livenessProbe:
+    httpGet:
+      path: /wscservice/api?cmd=ver
+    periodSeconds: 30
+    initialDelaySeconds: 60
+    timeoutSeconds: 20
+    failureThreshold: 10
+
+  readinessProbe:
+    httpGet:
+      path: /wscservice/api?cmd=ver
+    periodSeconds: 20
+    initialDelaySeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 15
+
+  podSecurityContext:
+    fsGroup: 2000
+
+  securityContext:
+    runAsUser: 2000
+    runAsNonRoot: true
+
+  namespace_secrets:
+    pre-sentence-service-wproofreader:
+      WPR_LICENSE_TICKET_ID: "WPROOFREADER_LICENCE_KEY"
+
 #generic-prometheus-alerts:
 #  targetApplication: pre-sentence-service
 #  alertSeverity: prepare-a-case

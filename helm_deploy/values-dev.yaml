@@ -20,15 +20,23 @@ generic-service:
     NDELIUS_URL: "https://ndelius.test.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
     FEATURE_RICH_TEXT_EDITOR: true
+    WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
-  allowlist:
+  allowlist: &app-allowlist
     delius-test-1: "35.176.126.163/32"
     delius-test-2: "35.178.162.73/32"
     delius-test-3: "52.56.195.113/32"
     groups:
       - internal
+      - mod-platform-non-live
 
   # TODO: add generic-prometheus-alerts
 
 gotenberg:
   replicaCount: 1
+
+wproofreader:
+
+  ingress:
+    host: pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk
+    tlsSecretName: court-probation-dev-cert-secret
