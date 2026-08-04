@@ -1,8 +1,7 @@
-version: '3.1'
+version: "3.1"
 services:
-
   redis:
-    image: 'bitnamilegacy/redis:7.0.5'
+    image: "bitnamilegacy/redis:7.0.5"
     networks:
       - hmpps
     container_name: redis
@@ -32,7 +31,7 @@ services:
     ports:
       - "9090:8080"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/auth/health" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
@@ -64,7 +63,7 @@ services:
       - "--uno-listener-restart-threshold=0" #disables uno listener
     restart: always
     healthcheck:
-      test: [ 'CMD', 'curl', '-f', 'http://localhost:3001/health' ]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
 
   localstack:
     image: localstack/localstack:1.2.0
@@ -84,7 +83,7 @@ services:
       - DEFAULT_REGION=eu-west-2
       - HOSTNAME_EXTERNAL=${HOSTNAME_EXTERNAL-localstack}
     volumes:
-      - './.localstack:/tmp/localstack'
+      - "./.localstack:/tmp/localstack"
       - $PWD/localstack:/docker-entrypoint-initaws.d
 
   community-api:
@@ -95,7 +94,7 @@ services:
     ports:
       - "8096:8080"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
@@ -105,7 +104,8 @@ services:
     networks:
       - hmpps
     container_name: pre-sentence-service
-    depends_on: [ hmpps-auth, redis, postgres, gotenberg, localstack, community-api ]
+    depends_on:
+      [hmpps-auth, redis, postgres, gotenberg, localstack, community-api]
     ports:
       - "3000:3000"
     environment:
@@ -130,6 +130,28 @@ services:
       - AWS_ENDPOINT=http://localstack:4566
       - ACCESS_KEY_ID=pre-sentence-service
       - SECRET_ACCESS_KEY=pre-sentence-service
+      - FEATURE_RICH_TEXT_EDITOR=true
+      # Browser-facing URL, so localhost (the host machine), not the service name
+      - WPROOFREADER_BUNDLE_URL=http://localhost:8081/wscservice/wscbundle/wscbundle.js
+
+  wproofreader:
+    image: webspellchecker/wproofreader:latest
+    networks:
+      - hmpps
+    container_name: wproofreader
+    environment:
+      - WPR_LICENSE_TICKET_ID=${WPROOFREADER_LICENCE_KEY}
+    ports:
+      - "8081:8080"
+    healthcheck:
+      # The image has no curl/wget, so use bash's built-in /dev/tcp
+      test:
+        [
+          "CMD",
+          "bash",
+          "-c",
+          "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /wscservice/api?cmd=ver HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '200 OK' <&3",
+        ]
 
 networks:
   hmpps:

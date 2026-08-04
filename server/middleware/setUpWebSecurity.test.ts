@@ -7,9 +7,8 @@ jest.mock('../config', () => ({
     nonce: 'test-nonce',
     features: { richTextEditor: true },
     wproofreader: {
-      licenceKey: 'k',
-      bundleUrl: 'https://svc.webspellchecker.net/bundle.js',
-      host: 'svc.webspellchecker.net',
+      bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
+      host: 'spellcheck.example.com',
     },
   },
 }))
@@ -38,8 +37,8 @@ describe('setUpWebSecurity CSP gating', () => {
     ;(config as any).features.richTextEditor = true
     const res = await request(buildApp()).get('/')
     const csp = res.headers['content-security-policy'] || ''
-    expect(csp).toContain('svc.webspellchecker.net')
-    expect(csp).toContain('wss://svc.webspellchecker.net')
+    expect(csp).toContain('spellcheck.example.com')
+    expect(csp).toContain('wss://spellcheck.example.com')
   })
 
   it('omits the WProofreader host from CSP when the flag is OFF', async () => {
@@ -47,7 +46,7 @@ describe('setUpWebSecurity CSP gating', () => {
     ;(config as any).features.richTextEditor = false
     const res = await request(buildApp()).get('/')
     const csp = res.headers['content-security-policy'] || ''
-    expect(csp).not.toContain('svc.webspellchecker.net')
+    expect(csp).not.toContain('spellcheck.example.com')
     expect(csp).not.toContain('wss://')
   })
 })

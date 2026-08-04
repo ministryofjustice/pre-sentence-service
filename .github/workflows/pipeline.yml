@@ -67,7 +67,7 @@ jobs:
       environment: ${{ matrix.environments }}
   build:
     name: Build docker image from hmpps-github-actions
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
       - node_integration_tests
@@ -81,7 +81,7 @@ jobs:
       docker_multiplatform: false
   deploy_dev:
     name: Deploy to the dev environment
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     needs:
     - build
     - helm_lint
@@ -92,6 +92,7 @@ jobs:
       app_version: '${{ needs.build.outputs.app_version }}'
   deploy_preprod:
     name: Deploy to the preprod environment
+    if: github.ref == 'refs/heads/main'
     needs:
     - build
     - helm_lint

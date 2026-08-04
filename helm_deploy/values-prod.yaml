@@ -18,9 +18,10 @@ generic-service:
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius.probation.service.justice.gov.uk"
     FEATURE_RICH_TEXT_EDITOR: false
+    WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
 #  TODO: update the allow list to use the groups.internal, same as dev and preprod, once tested.
-  allowlist:
+  allowlist: &app-allowlist
     office: "217.33.148.210/32"
     health-kick: "35.177.252.195/32"
     mojvpn: "81.134.202.29/32"
@@ -58,3 +59,11 @@ generic-service:
     moj-official-azure-landing-zone-public-egress-2: "20.49.214.228/32"
     moj-official-azure-landing-zone-public-egress-3: "20.26.11.71/32"
     moj-official-azure-landing-zone-public-egress-4: "20.26.11.108/32"
+
+wproofreader:
+
+  ingress:
+    host: pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk
+    tlsSecretName: court-probation-cert-secret
+
+  allowlist: *app-allowlist
