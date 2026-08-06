@@ -19,7 +19,7 @@ generic-service:
     DIGITAL_CASE_SYSTEM_URL: "https://crowncourtdcs.caselines.co.uk/"
     NDELIUS_URL: "https://ndelius-preprod.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
-    FEATURE_RICH_TEXT_EDITOR: true
+    FEATURE_RICH_TEXT_EDITOR: false
     WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
   allowlist: &app-allowlist
