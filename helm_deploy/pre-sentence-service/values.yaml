@@ -99,6 +99,7 @@ gotenberg:
     runAsNonRoot: true
 
 wproofreader:
+  enabled: true
   nameOverride: wproofreader
   replicaCount: 1
 
