@@ -62,8 +62,12 @@ generic-service:
 
 wproofreader:
 
+  enabled: false
+
   ingress:
     host: pre-sentence-service-wproofreader.hmpps.service.justice.gov.uk
     tlsSecretName: court-probation-cert-secret
 
   allowlist: *app-allowlist
+
+  namespace_secrets: null
