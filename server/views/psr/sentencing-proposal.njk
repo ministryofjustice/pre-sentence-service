@@ -47,7 +47,7 @@
         whatToInclude: proposedSentenceHelp,
         whatToIncludeTitle: "Help with proposing a community sentence",
         errorMessage: {
-            text: "Enter the proposed sentence"
+            text: formValidation.errors.proposedSentence
         } if 'proposedSentence' in elementsWithError
     }) }}
 
@@ -69,7 +69,7 @@
         whatToInclude: proposedSentenceRationaleHelp,
         whatToIncludeTitle: "Help with explaining your rationale",
         errorMessage: {
-            text: "Explain your rationale for the proposed sentence"
+            text: formValidation.errors.proposedSentenceRationale
         } if 'proposedSentenceRationale' in elementsWithError
     }) }}
 
@@ -89,7 +89,7 @@
         longText: true,
         value: data.alternativeSentencingOptions,
         errorMessage: {
-            text: "Outline alternative sentencing options"
+            text: formValidation.errors.alternativeSentencingOptions
         } if 'alternativeSentencingOptions' in elementsWithError
     }) }}
 
@@ -127,7 +127,7 @@
                         longText: true,
                         value: data.custodialSentenceImpact,
                         errorMessage: {
-                            text: "Explain the impact of a custodial sentence"
+                            text: formValidation.errors.custodialSentenceImpact
                         } if 'custodialSentenceImpact' in elementsWithError
                     }) }}
                 </div>

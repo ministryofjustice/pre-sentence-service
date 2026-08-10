@@ -128,7 +128,7 @@
     whatToInclude: riskPredictorsHelp,
     whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
     errorMessage: {
-      text: "Confirm risk predictors and assess the likelihood of reoffending"
+      text: formValidation.errors.riskPredictors
     } if 'riskPredictors' in elementsWithError
   }) }}
 
@@ -156,7 +156,7 @@
     longText: true,
     value: data.riskAndHarmFactors,
     errorMessage: {
-      text: "Analyse relevant risks of harm and protective factors"
+      text: formValidation.errors.riskAndHarmFactors
     } if 'riskAndHarmFactors' in elementsWithError
   }) }}
 
