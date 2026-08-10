@@ -46,7 +46,9 @@
     const isWarning = length >= max * WARNING_THRESHOLD && length <= max
     const isError = length > max
 
-    counter.classList.remove('pic-character-count--warning', 'pic-character-count--error')
+    // Default to hint styling, switch to error only when over limit
+    counter.classList.remove('govuk-error-message')
+    counter.classList.add('govuk-hint')
 
     if (!isWarning && !isError) {
       counter.hidden = true
@@ -55,15 +57,14 @@
       const overBy = length - max
       counter.hidden = false
       counter.textContent = `You have ${overBy.toLocaleString()} characters too many.`
-      counter.classList.add('pic-character-count--error')
+      counter.classList.remove('govuk-hint')
+      counter.classList.add('govuk-error-message')
     } else if (isAtLimit) {
       counter.hidden = false
       counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot save and continue if you enter any more characters.`
-      counter.classList.add('pic-character-count--warning')
     } else {
       counter.hidden = false
       counter.textContent = `You have ${remaining.toLocaleString()} characters remaining.`
-      counter.classList.add('pic-character-count--warning')
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.setFieldOverLimit) {
