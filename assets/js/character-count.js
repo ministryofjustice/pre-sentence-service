@@ -54,7 +54,7 @@
     } else if (isError) {
       const overBy = length - max
       counter.hidden = false
-      counter.textContent = `You have ${overBy.toLocaleString()} character${overBy === 1 ? '' : 's'} too many. You will not be able to save until you reduce this.`
+      counter.textContent = `You have ${overBy.toLocaleString()} characters too many.`
       counter.classList.add('pic-character-count--error')
     } else if (isAtLimit) {
       counter.hidden = false
@@ -62,7 +62,7 @@
       counter.classList.add('pic-character-count--warning')
     } else {
       counter.hidden = false
-      counter.textContent = `You have ${remaining.toLocaleString()} character${remaining === 1 ? '' : 's'} remaining. You will not be able to save if you go over ${max.toLocaleString()} characters.`
+      counter.textContent = `You have ${remaining.toLocaleString()} characters remaining.`
       counter.classList.add('pic-character-count--warning')
     }
 
