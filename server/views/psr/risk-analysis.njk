@@ -61,7 +61,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to children from OASys"
+      text: formValidation.errors.riskToChildren
     } if 'riskToChildren' in elementsWithError,
     items: riskOptions,
     value: data.riskToChildren
@@ -75,7 +75,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to the public from OASys"
+      text: formValidation.errors.riskToPublic
     } if 'riskToPublic' in elementsWithError,
     items: riskOptions,
     value: data.riskToPublic
@@ -89,7 +89,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to known adults from OASys"
+      text: formValidation.errors.riskToKnownAdults
     } if 'riskToKnownAdults' in elementsWithError,
     items: riskOptions,
     value: data.riskToKnownAdults
@@ -103,7 +103,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to staff from OASys"
+      text: formValidation.errors.riskToStaff
     } if 'riskToStaff' in elementsWithError,
     items: riskOptions,
     value: data.riskToStaff
