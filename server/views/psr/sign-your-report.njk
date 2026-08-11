@@ -27,12 +27,13 @@
             "text": "Submitting your report will lock the PSR and you will no longer be able to make any further edits.",
             "iconFallbackText": "Warning"
         }) }}
-        {{ picTextEditor({
+        {{ govukInput({
                 hint: {
                 text: "Enter your full name",
                 classes: "govuk-hint govuk-!-margin-bottom-2"
                 },
                 name: "signReportName",
+                type: "text",
                 id: "signReportName",
                 rows: "1",
                 value: data.signReportName,
