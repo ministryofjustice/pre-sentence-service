@@ -55,12 +55,12 @@
     } else if (isError) {
       const overBy = length - max
       counter.hidden = false
-      counter.textContent = `You have ${overBy.toLocaleString()} characters too many.`
+      counter.textContent = `You have ${overBy.toLocaleString()} characters too many`
       counter.classList.remove('govuk-hint')
       counter.classList.add('govuk-error-message')
     } else {
       counter.hidden = false
-      counter.textContent = `You have ${remaining.toLocaleString()} characters remaining.`
+      counter.textContent = `You have ${remaining.toLocaleString()} characters remaining`
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.setFieldOverLimit) {
