@@ -42,7 +42,6 @@
 
     const length = getLength(field)
     const remaining = max - length
-    const isAtLimit = length === max
     const isWarning = length >= max * WARNING_THRESHOLD && length <= max
     const isError = length > max
 
@@ -59,9 +58,6 @@
       counter.textContent = `You have ${overBy.toLocaleString()} characters too many.`
       counter.classList.remove('govuk-hint')
       counter.classList.add('govuk-error-message')
-    } else if (isAtLimit) {
-      counter.hidden = false
-      counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot save and continue if you enter any more characters.`
     } else {
       counter.hidden = false
       counter.textContent = `You have ${remaining.toLocaleString()} characters remaining.`
