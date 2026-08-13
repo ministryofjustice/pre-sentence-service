@@ -43,7 +43,7 @@ export default class ApiController {
     }
   }
 
-  getReportById = async (req: Request, res: Response): Promise<void> => {
+  getReportById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const reportId = req.params.id
 
@@ -63,7 +63,7 @@ export default class ApiController {
     }
   }
 
-  getPdfById = async (req: Request, res: Response): Promise<void> => {
+  getPdfById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
     try {
       const reportId = req.params.id
 
@@ -80,7 +80,7 @@ export default class ApiController {
     }
   }
 
-  getAllReportsByType = async (req: Request, res: Response): Promise<void> => {
+  getAllReportsByType = async (req: Request<{ reportType: string }>, res: Response): Promise<void> => {
     try {
       const reportType = req.params.reportType
       const results = await this.reportService.getAllReportsByType(reportType)
