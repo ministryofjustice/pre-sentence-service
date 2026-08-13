@@ -1,6 +1,11 @@
 .govuk-main-wrapper
   min-height: 600px
 
+  textarea
+    field-sizing: content
+    resize: none
+    min-height: 214px
+
 .key-details-header
   font-weight: 300
   font-size: 27px
@@ -31,12 +36,6 @@
 
 .psr-complete-card .govuk-body
   color: #ffffff
-
-.psr-complete-links
-  padding-left: govuk-spacing(5)
-
-  li::marker, a
-    color: govuk-colour("blue")
 
 .psr-review-task-list
   margin-left: 0
@@ -75,3 +74,8 @@
   display: inline-block
   background-color: #F3F2F1
   padding: 6px 10px
+
++govuk-media-query($from: tablet)
+  .psr-side-nav
+    position: sticky
+    top: govuk-spacing(4)
