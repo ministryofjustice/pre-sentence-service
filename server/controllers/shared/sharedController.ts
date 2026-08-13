@@ -22,6 +22,7 @@ import { Session, SessionData } from 'express-session'
 import * as z from 'zod'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'
+import { htmlToPlainText } from '../../utils/htmlToPlainText'
 
 enum RiskLevel {
   Low = 'low',
@@ -360,11 +361,17 @@ export default class SharedController {
         sourcesOfInformation,
         data: {
           ...this.data,
-          ...req.body,
+          ...this.normaliseBodyForRender(req.body),
         },
         formValidation: validatedForm,
       })
     }
+  }
+
+  private normaliseBodyForRender = (body: Record<string, unknown>): Record<string, unknown> => {
+    return Object.fromEntries(
+      Object.entries(body).map(([key, value]) => [key, typeof value === 'string' ? htmlToPlainText(value) : value])
+    )
   }
 
   private persistOnInvalid = async (req: Request, reportId: string): Promise<void> => {

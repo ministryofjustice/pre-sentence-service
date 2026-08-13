@@ -59,6 +59,38 @@ describe('OffenceAnalysisController — persist-on-invalid (bug fix)', () => {
     expect(res.render).toHaveBeenCalled()
   })
 
+  it('re-renders rich text answers as plain text after validation failure (whitespace bug)', async () => {
+    req.body = {
+      offencesUnderConsideration: '<p>test</p>',
+      offencesPattern: '',
+    }
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/offence-analysis',
+      expect.objectContaining({
+        data: expect.objectContaining({ offencesUnderConsideration: 'test' }),
+      })
+    )
+  })
+
+  it('re-renders multi-paragraph rich text as plain text with blank-line separators', async () => {
+    req.body = {
+      offencesUnderConsideration: '<p>first</p><p>second</p>',
+      offencesPattern: '',
+    }
+
+    await controller.post(req, res)
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/offence-analysis',
+      expect.objectContaining({
+        data: expect.objectContaining({ offencesUnderConsideration: 'first\n\nsecond' }),
+      })
+    )
+  })
+
   it('does not persist when validation passes (the existing happy path still works)', async () => {
     req.body = {
       offencesUnderConsideration: 'Analysis',

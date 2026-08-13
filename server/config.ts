@@ -32,16 +32,12 @@ export interface ApiConfig {
   agent: AgentConfig
 }
 
-const wproofreaderBundleUrl = get(
-  'WPROOFREADER_BUNDLE_URL',
-  'https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js'
-)
+const wproofreaderBundleUrl = get('WPROOFREADER_BUNDLE_URL', 'http://localhost:8081/wscservice/wscbundle/wscbundle.js')
 let wproofreaderHost = ''
 try {
-  wproofreaderHost = new URL(wproofreaderBundleUrl).hostname
+  wproofreaderHost = new URL(wproofreaderBundleUrl).host
 } catch {
   console.log('Could not init wproofreader, incorrect URL')
-  // Failing will just cause wproof reader to not init
 }
 
 export default {
@@ -49,7 +45,6 @@ export default {
   https: production,
   staticResourceCacheDuration: 20,
   wproofreader: {
-    licenceKey: get('WPROOFREADER_LICENCE_KEY', 'default-licence-key'),
     bundleUrl: wproofreaderBundleUrl,
     host: wproofreaderHost,
   },

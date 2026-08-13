@@ -11,7 +11,7 @@
 
   <main class="app-container govuk-body">
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-third">
+      <div class="govuk-grid-column-one-third psr-side-nav">
 
         {% block sideNavigation%}
         {% endblock %}
@@ -62,9 +62,16 @@
       (function () {
         window.csrfToken = '{{ csrfToken }}';
         window.wproofreaderConfig = {
-          serviceId: '{{ wproofreaderLicenceKey }}',
           bundleUrl: '{{ wproofreaderBundleUrl }}'
         };
+        try {
+          var wpUrl = new URL(window.wproofreaderConfig.bundleUrl);
+          window.wproofreaderProtocol = wpUrl.protocol.replace(':', '');
+          window.wproofreaderHost = wpUrl.hostname;
+          window.wproofreaderPort = wpUrl.port || (wpUrl.protocol === 'https:' ? '443' : '80');
+        } catch (e) {
+          console.error("Wproofreader failed to load: ", e)
+        }
       })()
     </script>
     <script src="/assets/ckeditor.js"></script>

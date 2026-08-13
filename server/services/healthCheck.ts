@@ -1,7 +1,6 @@
 import promClient from 'prom-client'
 import { serviceCheckFactory } from '../data/healthCheck'
-import config from '../config'
-import type { AgentConfig } from '../config'
+import config, { AgentConfig } from '../config'
 
 const healthCheckGauge = new promClient.Gauge({
   name: 'upstream_healthcheck',
@@ -68,9 +67,23 @@ const apiChecks = [
     : []),
 ]
 
-export default function healthCheck(callback: HealthCheckCallback, checks = apiChecks): void {
-  Promise.all(checks.map(fn => fn())).then(checkResults => {
-    const allOk = checkResults.every(item => item.status === 'ok')
+const informationalChecks = config.features.richTextEditor
+  ? [
+      service(
+        'wproofreader',
+        config.wproofreader.bundleUrl.replace(/wscbundle\/wscbundle\.js$/, 'api?cmd=ver'),
+        new AgentConfig()
+      ),
+    ]
+  : []
+
+export default function healthCheck(
+  callback: HealthCheckCallback,
+  checks = apiChecks,
+  infoChecks = informationalChecks
+): void {
+  Promise.all([...checks, ...infoChecks].map(fn => fn())).then(checkResults => {
+    const allOk = checkResults.slice(0, checks.length).every(item => item.status === 'ok')
 
     const result = {
       healthy: allOk,
