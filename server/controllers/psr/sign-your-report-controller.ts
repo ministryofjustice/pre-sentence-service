@@ -71,17 +71,18 @@ export default class SignYourReportController extends BaseController {
     }
   }
 
-  override post = async (req: Request, res: Response): Promise<void> => {
+  override post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
     const reportId = req.params.reportId
-    const username = res.locals?.user?.username || 'system'
+    const username = (res.locals?.user?.username as string | undefined) || 'system'
+    const redirectPath = req.query?.redirectPath as string | undefined
 
     logger.info('Sign and lock report request initiated', {
       reportId,
       username,
-      hasRedirectPath: !!req.query?.redirectPath,
+      hasRedirectPath: !!redirectPath,
     })
 
-    if (req.query?.redirectPath) {
+    if (redirectPath) {
       logger.info('Delegating to super.post due to redirectPath', { reportId })
       await super.post(req, res)
       return
