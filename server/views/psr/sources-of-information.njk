@@ -17,15 +17,14 @@
           </h1>
         </legend>
 
-        {% if isEditing %}
-          <p class="govuk-body">
-            Add or remove sources of information from your list
-          </p>
-        {% else %}
-          <div id="sourcesOfInformation-hint" class="govuk-hint">
-            Select all sources used to inform this report.
-          </div>
-        {% endif %}
+
+        <p class="govuk-body">
+          Add or remove sources of information from your list
+        </p>
+        <div id="sourcesOfInformation-hint" class="govuk-hint">
+          Select all sources used to inform this report.
+        </div>
+
 
         {% if 'sourcesOfInformation' in elementsWithError %}
           <p id="sourcesOfInformation-error" class="govuk-error-message">
@@ -58,43 +57,39 @@
       </fieldset>
     </div>
 
-    {% if isEditing %}
-      {{ govukInput({
-        label: { text: "Add source of information" },
-        hint: { text: "Enter the name of the additional source of information" },
-        name: "source"
-      }) }}
 
-      {{ govukButton({
-        text: "Add",
-        classes: "govuk-button--secondary",
-        attributes: { name: "action", value: "add-source" }
-      }) }}
-    {% endif %}
+    <div>
+      <div class="govuk-form-group govuk-!-margin-bottom-8">
+        <div class="govuk-label-wrapper">
+          <label class="govuk-heading-m govuk-!-margin-bottom-3" for="add-new-source">
+            Add another source of information
+          </label>
+        </div>
+
+        <input
+          class="govuk-input govuk-!-width-two-thirds govuk-!-display-inline-block"
+          id="add-new-source"
+          name="add-new-source"
+          type="text"
+        >
+        
+        <button
+          type="submit"
+          class="govuk-button govuk-button--secondary add-source-btn"
+          value="add-new-source"
+          data-module="govuk-button"
+        >
+          Add to list
+        </button>
+      </div>
+
+
+    </div> 
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
     <input type="hidden" name="pageName" value="{{ pageName }}">
 
-    {% if isEditing %}
-      <div class="govuk-button-group">
-        {{ govukButton({
-          text: "Save list and continue",
-          attributes: { name: "action", value: "save-list" }
-        }) }}
-
-        <a class="govuk-link govuk-link--no-visited-state" href="/psr/{{ reportId }}/sources-of-information">Cancel</a>
-      </div>
-    {% else %}
-      <div class="govuk-!-margin-bottom-3">
-        {{ govukButton({
-          text: "Add other",
-          classes: "govuk-button--secondary",
-          href: "/psr/" + reportId + "/sources-of-information/edit"
-        }) }}
-      </div>
-
-      {{ govukButton({ text: "Save and continue" }) }}
-    {% endif %}
+    {{ govukButton({ text: "Save and continue" }) }}
   </form>
 {% endblock %}

@@ -1,0 +1,10 @@
+.add-source-btn {
+    display: inline-block;
+    @include govuk-responsive-margin(2, "top");
+    @include govuk-responsive-margin(0, "bottom");
+
+    @include govuk-media-query($from: tablet) {
+        @include govuk-responsive-margin(0, "top");
+        @include govuk-responsive-margin(2, "left");
+    }
+}
