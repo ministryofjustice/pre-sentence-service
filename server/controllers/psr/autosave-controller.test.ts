@@ -31,7 +31,7 @@ const mockReportDetails: ReportDetails = {
 describe('AutosaveController', () => {
   let controller: AutosaveController
   let reportService: ReportService
-  let req: Request
+  let req: Request<{ reportId: string }>
   let res: Response
   let statusJson: jest.Mock
   let status: jest.Mock
@@ -59,7 +59,7 @@ describe('AutosaveController', () => {
       params: { reportId: '123' },
       query: {},
       headers: {},
-    } as unknown as Request
+    } as unknown as Request<{ reportId: string }>
 
     res = {
       status,
