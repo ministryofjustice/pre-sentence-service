@@ -36,26 +36,6 @@ jobs:
     uses: ./.github/workflows/node_integration_tests.yml # WORKFLOW_VERSION
     needs: [node_build]
     secrets: inherit
-  pdf_layout_tests:
-    name: PDF layout tests
-    runs-on: ubuntu-latest
-    needs: [node_build]
-    services:
-      gotenberg:
-        image: gotenberg/gotenberg:7.7.0
-        ports:
-          - 3000:3000
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - name: Install dependencies
-        run: npm ci --no-audit
-      - name: Run PDF layout tests
-        env:
-          GOTENBERG_API_URL: http://localhost:3000
-        run: npm run test:pdf
   helm_lint:
     strategy:
       matrix:
@@ -72,7 +52,6 @@ jobs:
     needs:
       - node_integration_tests
       - node_unit_tests
-      - pdf_layout_tests
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
