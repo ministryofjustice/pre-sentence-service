@@ -206,7 +206,7 @@ describe('OffenceAnalysisController', () => {
           formValidation: expect.objectContaining({
             isValid: false,
             errors: expect.objectContaining({
-              offencesUnderConsideration: 'Offences under consideration must be 20,000 characters or fewer',
+              offencesUnderConsideration: 'Offences under consideration must be 20,000 characters or less',
             }),
           }),
         })

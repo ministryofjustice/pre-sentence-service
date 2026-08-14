@@ -4,7 +4,7 @@ import { PROPOSED_SENTENCE_MAX, longText } from '../utils/validation'
 export const sentencingProposalModel = z
   .object({
     proposedSentence: longText({
-      label: 'Proposed sentence',
+      label: 'Sentencing proposal',
       requiredMessage: 'Enter the proposed sentence',
       max: PROPOSED_SENTENCE_MAX,
     }),
