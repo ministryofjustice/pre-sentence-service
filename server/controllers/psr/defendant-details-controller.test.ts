@@ -87,7 +87,7 @@ describe('DefendantDetailsController', () => {
   it('fetches defendant details from the API and flattens them into the template data', async () => {
     mockPreSentenceToDeliusService.getDefendantDetails.mockResolvedValue(mockApiDefendantDetails)
 
-    await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
     expect(mockResponse.render).toHaveBeenCalledWith(
@@ -113,7 +113,7 @@ describe('DefendantDetailsController', () => {
   it('marks defendant details unavailable when the API call fails', async () => {
     mockPreSentenceToDeliusService.getDefendantDetails.mockRejectedValue(new Error('API Error'))
 
-    await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockPreSentenceToDeliusService.getDefendantDetails).toHaveBeenCalledWith('report-123')
     expect(mockResponse.render).toHaveBeenCalledWith(
@@ -130,7 +130,7 @@ describe('DefendantDetailsController', () => {
   it('renders with defendant details unavailable when no API service is injected', async () => {
     const controllerWithoutService = new DefendantDetailsController(mockReportService)
 
-    await controllerWithoutService.get(mockRequest as Request, mockResponse as Response)
+    await controllerWithoutService.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockResponse.render).toHaveBeenCalledWith(
       expect.any(String),
