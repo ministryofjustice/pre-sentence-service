@@ -65,13 +65,6 @@ export default function Index(
     return new SourcesOfInformationController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
-  get('/:reportId/sources-of-information/edit', (req, res) => {
-    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).get(req, res)
-  })
-  post('/:reportId/sources-of-information/edit', (req, res) => {
-    return new SourcesOfInformationController(reportService, preSentenceToDeliusService).post(req, res)
-  })
-
   get('/:reportId/defendant-behaviour', (req, res) => {
     return new DefendantBehaviourController(reportService, preSentenceToDeliusService).get(req, res)
   })

@@ -46,7 +46,7 @@
                 {{ source.value }}
               </label>
               {% if source.isCustom %}
-                <a href="/psr/{{ reportId }}/sources-of-information/edit?remove={{ source.key }}"
+                <a href="/psr/{{ reportId }}/sources-of-information?remove={{ source.key }}"
                    class="govuk-link govuk-link--no-visited-state checkbox-action">
                   Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
                 </a>
@@ -61,22 +61,24 @@
     <div>
       <div class="govuk-form-group govuk-!-margin-bottom-8">
         <div class="govuk-label-wrapper">
-          <label class="govuk-heading-m govuk-!-margin-bottom-3" for="add-new-source">
+          <label class="govuk-heading-m govuk-!-margin-bottom-3" for="source">
             Add another source of information
           </label>
         </div>
 
         <input
           class="govuk-input govuk-!-width-two-thirds govuk-!-display-inline-block"
-          id="add-new-source"
-          name="add-new-source"
+          id="source"
+          name="source"
           type="text"
+          maxlength="80"
         >
         
         <button
           type="submit"
+          name="action"
+          value="add-source"
           class="govuk-button govuk-button--secondary add-source-btn"
-          value="add-new-source"
           data-module="govuk-button"
         >
           Add to list
@@ -90,6 +92,9 @@
     <input type="hidden" name="reportId" value="{{ reportId }}">
     <input type="hidden" name="pageName" value="{{ pageName }}">
 
-    {{ govukButton({ text: "Save and continue" }) }}
+    {{ govukButton({
+      text: "Save and continue",
+      attributes: { name: "action", value: "save-list" }
+    }) }}
   </form>
 {% endblock %}

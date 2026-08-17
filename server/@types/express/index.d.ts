@@ -1,4 +1,4 @@
-import { IFieldValue, PendingChanges, ReportId } from '../../services/reportService'
+import { IFieldValue } from '../../services/reportService'
 
 export default {}
 
@@ -10,7 +10,6 @@ declare module 'express-session' {
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
     userDetails: UserDetails
-    pendingChanges?: Record<ReportId, PendingChanges>
   }
 }
 

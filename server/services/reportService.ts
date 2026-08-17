@@ -1,7 +1,7 @@
 import PersonDetailsService from './personDetailsService'
 import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetailsService'
 import SourcesOfInformationService from './sourcesOfInformationService'
-import { CustomSource, SourceKey, SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
+import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
@@ -75,18 +75,16 @@ export default class ReportService {
     return this.sourcesOfInformationService.getSourcesOfInformation(reportId)
   }
 
-  public async saveCustomSourcesOfInformation(
+  public async addCustomSourceOfInformation(
     reportId: string,
-    addedSources: CustomSource[],
-    removedSources: SourceKey[],
+    value: string,
     createdBy: string
   ): Promise<void> {
-    return this.sourcesOfInformationService.saveCustomSourcesOfInformation(
-      reportId,
-      addedSources,
-      removedSources,
-      createdBy
-    )
+    return this.sourcesOfInformationService.addCustomSourceOfInformation(reportId, value, createdBy)
+  }
+
+  public async removeCustomSourceOfInformation(reportId: string, key: string): Promise<void> {
+    return this.sourcesOfInformationService.removeCustomSourceOfInformation(reportId, key)
   }
 
   public async getAllReportsByType(type: string): Promise<ReportDetails[]> {
