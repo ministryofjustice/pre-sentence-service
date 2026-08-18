@@ -15,6 +15,19 @@ export interface ISourcesOfInformation {
 }
 
 export default class SourcesOfInformationService {
+  public async sourceExistsForReport(reportId: string, value: string): Promise<boolean> {
+    const normalizedValue = value.trim().toLocaleLowerCase()
+
+    const sources = await this.getSourcesOfInformation(reportId)
+
+    return sources.some(source => {
+      return (
+        source.key.trim().toLocaleLowerCase() === normalizedValue ||
+        source.value.trim().toLocaleLowerCase() === normalizedValue
+      )
+    })
+  }
+
   public async addCustomSourceOfInformation(
     reportId: string,
     value: string,

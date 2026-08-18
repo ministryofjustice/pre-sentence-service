@@ -14,11 +14,11 @@ import {
   SourceOfInformation,
   SourceOfInformationActions,
 } from '../../utils/sourcesOfInformationHelpers'
-import { Session, SessionData } from 'express-session'
 import * as z from 'zod'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'
 import { htmlToPlainText } from '../../utils/htmlToPlainText'
+import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
 
 enum RiskLevel {
   Low = 'low',
@@ -51,6 +51,7 @@ export interface TemplateValues<T> {
   formValidation?: ValidatedForm<T>
   riskOptions?: { value: string; text: string }[]
   sourcesOfInformation?: SourceOfInformation[]
+  addedSourcesOfInformation?: SourceOfInformation[]
 }
 
 interface InclusionExclusion {
@@ -113,11 +114,15 @@ export default class SharedController {
     }
 
     if (this.templatePath === 'sources-of-information') {
-      templateValues.sourcesOfInformation = buildSourcesOfInformation(
+      const sources = buildSourcesOfInformation(
         templateValues.sourcesOfInformation!,
         this.data['sourcesOfInformation'] as string | undefined
       )
+
+      templateValues.sourcesOfInformation = sources.filter(source => !source.isCustom)
+      templateValues.addedSourcesOfInformation = sources.filter(source => source.isCustom)
     }
+
     res.render(`${this.path}/${this.templatePath}`, { ...templateValues, pageName: this.templatePath })
   }
 
@@ -298,6 +303,17 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
+  private includeAddedSources = async (req: Request, reportId: string): Promise<void> => {
+    if (this.templatePath !== 'sources-of-information') return
+
+    const selectedSources = normalizeSourcesToArray(req.body.sourcesOfInformation)
+    const allSources = await this.reportService.getSourcesOfInformation(reportId)
+
+    const addedSources = allSources.filter(source => source.isCustom).map(source => source.key)
+
+    req.body.sourcesOfInformation = [...new Set([...selectedSources, ...addedSources])]
+  }
+
   public async post(req: Request, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
@@ -305,8 +321,12 @@ export default class SharedController {
     const username = res.locals?.user?.username || 'system'
 
     if (isSourceAction(action)) {
-      const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, source, username)
-      return res.redirect(redirectUrl)
+      const actionValidation = validateForm(req.body, this.model)
+
+      if (actionValidation.isValid) {
+        const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, source, username)
+        return res.redirect(redirectUrl)
+      }
     }
 
     const rep = await this.reportService.getReportById(reportId)
@@ -314,7 +334,10 @@ export default class SharedController {
       this.report = rep
     }
 
+    await this.includeAddedSources(req, reportId)
+
     const validatedForm: ValidatedForm<z.infer<typeof this.model>> = validateForm(req.body, this.model)
+
     if (validatedForm.isValid || req.query?.redirectPath) {
       await this.updateReportActions(req)
 
@@ -385,6 +408,10 @@ export default class SharedController {
     return [...drop]
   }
 
+  protected async validateAction(_req: Request): Promise<Record<string, string> | undefined> {
+    return undefined
+  }
+
   private async handleSourceActions(
     action: SourceOfInformationActions | undefined,
     reportIdParam: string,
@@ -402,7 +429,7 @@ export default class SharedController {
           await this.reportService.addCustomSourceOfInformation(reportId, value, username)
         }
 
-        return path
+        return `${path}`
       }
 
       default:

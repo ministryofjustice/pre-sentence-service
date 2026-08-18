@@ -83,6 +83,10 @@ export default class ReportService {
     return this.sourcesOfInformationService.addCustomSourceOfInformation(reportId, value, createdBy)
   }
 
+  public async sourceExistsForReport(reportId: string, value: string): Promise<boolean> {
+    return this.sourcesOfInformationService.sourceExistsForReport(reportId, value)
+  }
+
   public async removeCustomSourceOfInformation(reportId: string, key: string): Promise<void> {
     return this.sourcesOfInformationService.removeCustomSourceOfInformation(reportId, key)
   }

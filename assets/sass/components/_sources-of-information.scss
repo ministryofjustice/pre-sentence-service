@@ -8,3 +8,19 @@
         @include govuk-responsive-margin(2, "left");
     }
 }
+
+.added-source-wrapper {
+    @include govuk-responsive-margin(7, "bottom");
+}
+
+.added-source {
+    display: flex;
+    justify-content: space-between;
+    max-width: 39rem;
+    padding: govuk-spacing(3) 0;
+    border-bottom: 1px solid govuk-colour("mid-grey");
+
+    & > a {
+        align-content: center;
+    }
+}
