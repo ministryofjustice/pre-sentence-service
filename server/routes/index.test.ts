@@ -22,7 +22,13 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  jest.resetAllMocks()
+  jest.clearAllMocks()
+})
+
+describe('GET /extend-session', () => {
+  it('returns 204 so the timeout warning can keep the session alive', () => {
+    return request(app).get('/extend-session').expect(204)
+  })
 })
 
 describe('GET /', () => {
@@ -32,6 +38,18 @@ describe('GET /', () => {
       .expect('Content-Type', /html/)
       .expect(res => {
         expect(res.text).toContain('Create a new Pre-Sentence report')
+      })
+  })
+
+  it('renders the timeout warning with timing derived from the session expiry', () => {
+    return request(app)
+      .get('/')
+      .expect(res => {
+        expect(res.text).toContain('data-module="govuk-timeout-warning"')
+        expect(res.text).toContain('data-minutes-idle-timeout="118"')
+        expect(res.text).toContain('data-minutes-modal-visible="2"')
+        expect(res.text).toContain('You are about to be signed out')
+        expect(res.text).toContain('Stay signed in')
       })
   })
 })

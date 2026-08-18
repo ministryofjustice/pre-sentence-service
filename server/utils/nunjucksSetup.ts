@@ -4,6 +4,7 @@ import * as pathModule from 'path'
 import { LONG_TEXT_MAX } from './validation'
 import config from '../config'
 import { htmlToPlainText } from './htmlToPlainText'
+import formatDuration from './formatDuration'
 import { plainTextToEditorHtml } from './plainTextToEditorHtml'
 
 const production = process.env.NODE_ENV === 'production'
@@ -17,6 +18,11 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.longTextMax = LONG_TEXT_MAX
   app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
   app.locals.featureRichTextEditor = config.features.richTextEditor
+  app.locals.sessionTimeout = {
+    idleMinutes: config.session.expiryMinutes - config.session.warningMinutes,
+    warningMinutes: config.session.warningMinutes,
+    durationText: formatDuration(config.session.expiryMinutes),
+  }
 
   // Cachebusting version string
   if (production) {

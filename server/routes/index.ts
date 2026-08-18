@@ -7,6 +7,10 @@ export default function routes(router: Router): Router {
   const reportService = new ReportService()
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
+  get('/extend-session', async (req, res) => {
+    res.status(204).end()
+  })
+
   get('/', async (req, res, next) => {
     const page = parseInt(req.query.page as string) || 1
     const limit = 20

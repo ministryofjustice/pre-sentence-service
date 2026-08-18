@@ -7,6 +7,7 @@ jest.mock('../config', () => ({
   default: {
     nonce: 'test-nonce',
     features: { richTextEditor: true },
+    session: { expiryMinutes: 120 },
     wproofreader: {
       bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
       host: 'spellcheck.example.com',
