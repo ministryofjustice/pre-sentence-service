@@ -47,11 +47,11 @@
         whatToInclude: proposedSentenceHelp,
         whatToIncludeTitle: "Help with proposing a community sentence",
         errorMessage: {
-            text: "Enter the proposed sentence"
+            text: formValidation.errors.proposedSentence
         } if 'proposedSentence' in elementsWithError
     }) }}
 
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     {{ picTextEditor({
         label: {
@@ -69,11 +69,11 @@
         whatToInclude: proposedSentenceRationaleHelp,
         whatToIncludeTitle: "Help with explaining your rationale",
         errorMessage: {
-            text: "Explain your rationale for the proposed sentence"
+            text: formValidation.errors.proposedSentenceRationale
         } if 'proposedSentenceRationale' in elementsWithError
     }) }}
 
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     {{ picTextEditor({
         label: {
@@ -89,11 +89,11 @@
         longText: true,
         value: data.alternativeSentencingOptions,
         errorMessage: {
-            text: "Outline alternative sentencing options"
+            text: formValidation.errors.alternativeSentencingOptions
         } if 'alternativeSentencingOptions' in elementsWithError
     }) }}
 
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     <div class="govuk-form-group{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
         <fieldset class="govuk-fieldset">
@@ -112,7 +112,7 @@
                         A custodial sentence is possible or expected
                     </label>
                 </div>
-                <div id="custodial-conditional-content" class="govuk-!-margin-left-4{% if data.custodialSentenceConsideration != 'possible' %} govuk-!-display-none{% endif %}">
+                <div id="custodial-conditional-content" class="govuk-!-margin-left-4 govuk-!-margin-bottom-4{% if data.custodialSentenceConsideration != 'possible' %} govuk-!-display-none{% endif %}">
                     {{ picTextEditor({
                         label: {
                             text: "",
@@ -127,7 +127,7 @@
                         longText: true,
                         value: data.custodialSentenceImpact,
                         errorMessage: {
-                            text: "Explain the impact of a custodial sentence"
+                            text: formValidation.errors.custodialSentenceImpact
                         } if 'custodialSentenceImpact' in elementsWithError
                     }) }}
                 </div>

@@ -9,9 +9,9 @@ const lastPathSegment = (path: string): string => {
   return lastSlash === -1 ? trimmed : trimmed.slice(lastSlash + 1)
 }
 
-export default function lockedReportMiddleware(reportService: ReportService): RequestHandler {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const { reportId } = req.params
+export default function lockedReportMiddleware(reportService: ReportService): RequestHandler<{ reportId: string }> {
+  return (req: Request<{ reportId: string }>, res: Response, next: NextFunction): void => {
+    const reportId = req.params.reportId
     if (!reportId) {
       next()
       return

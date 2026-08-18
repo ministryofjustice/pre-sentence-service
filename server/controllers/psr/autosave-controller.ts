@@ -4,7 +4,7 @@ import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { HttpError } from '../../@types/httpError'
 
 export default class AutosaveController extends BaseController {
-  public post = async (req: Request, res: Response): Promise<void> => {
+  public post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
     try {
       const reportId = req.params.reportId
       const report = await this.reportService.getReportById(reportId)
@@ -20,10 +20,21 @@ export default class AutosaveController extends BaseController {
         await this.reportService.updateReport(reportId, {})
       }
 
-      let pageName = req.body.pageName || req.query.pageName
+      const firstString = (value: string | string[] | undefined): string | undefined =>
+        Array.isArray(value) ? value[0] : value
 
-      if (!pageName && req.headers.referer) {
-        const urlMatch = req.headers.referer.match(/\/psr\/[^/]+\/([^/?]+)/)
+      const bodyPageNameRaw = req.body.pageName as string | string[] | undefined
+      const queryPageNameRaw = req.query.pageName as string | string[] | undefined
+      const refererRaw = req.headers.referer
+
+      const bodyPageName = firstString(bodyPageNameRaw)
+      const queryPageName = firstString(queryPageNameRaw)
+      const referer = firstString(refererRaw)
+
+      let pageName = bodyPageName || queryPageName
+
+      if (!pageName && referer) {
+        const urlMatch = referer.match(/\/psr\/[^/]+\/([^/?]+)/)
         if (urlMatch) {
           const urlPageName = urlMatch[1]
           if (urlPageName === 'defendant-details' || urlPageName === 'defendant-behaviour') {

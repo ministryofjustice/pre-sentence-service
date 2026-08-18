@@ -61,7 +61,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to children from OASys"
+      text: formValidation.errors.riskToChildren
     } if 'riskToChildren' in elementsWithError,
     items: riskOptions,
     value: data.riskToChildren
@@ -75,7 +75,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to the public from OASys"
+      text: formValidation.errors.riskToPublic
     } if 'riskToPublic' in elementsWithError,
     items: riskOptions,
     value: data.riskToPublic
@@ -89,7 +89,7 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to known adults from OASys"
+      text: formValidation.errors.riskToKnownAdults
     } if 'riskToKnownAdults' in elementsWithError,
     items: riskOptions,
     value: data.riskToKnownAdults
@@ -103,13 +103,13 @@
       classes: "govuk-label--m"
     },
     errorMessage: {
-      text: "Select the level of risk to staff from OASys"
+      text: formValidation.errors.riskToStaff
     } if 'riskToStaff' in elementsWithError,
     items: riskOptions,
     value: data.riskToStaff
   }) }}
 
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
   {{ picTextEditor({
     label: {
@@ -128,11 +128,11 @@
     whatToInclude: riskPredictorsHelp,
     whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
     errorMessage: {
-      text: "Confirm risk predictors and assess the likelihood of reoffending"
+      text: formValidation.errors.riskPredictors
     } if 'riskPredictors' in elementsWithError
   }) }}
 
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
   {{ picTextEditor({
     label: {
@@ -156,7 +156,7 @@
     longText: true,
     value: data.riskAndHarmFactors,
     errorMessage: {
-      text: "Analyse relevant risks of harm and protective factors"
+      text: formValidation.errors.riskAndHarmFactors
     } if 'riskAndHarmFactors' in elementsWithError
   }) }}
 
