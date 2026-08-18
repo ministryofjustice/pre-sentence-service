@@ -75,11 +75,7 @@ export default class ReportService {
     return this.sourcesOfInformationService.getSourcesOfInformation(reportId)
   }
 
-  public async addCustomSourceOfInformation(
-    reportId: string,
-    value: string,
-    createdBy: string
-  ): Promise<void> {
+  public async addCustomSourceOfInformation(reportId: string, value: string, createdBy: string): Promise<void> {
     return this.sourcesOfInformationService.addCustomSourceOfInformation(reportId, value, createdBy)
   }
 

@@ -1,4 +1,4 @@
-import { getConnection, In } from 'typeorm'
+import { getConnection } from 'typeorm'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
@@ -28,11 +28,7 @@ export default class SourcesOfInformationService {
     })
   }
 
-  public async addCustomSourceOfInformation(
-    reportId: string,
-    value: string,
-    createdBy: string
-  ): Promise<void> {
+  public async addCustomSourceOfInformation(reportId: string, value: string, createdBy: string): Promise<void> {
     const sourceRepo = getConnection().getRepository(SourcesOfInformation)
     const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
 
