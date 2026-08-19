@@ -28,7 +28,6 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
     riskToPublic: 'Medium TOKEN_ROSH',
     riskToKnownAdults: 'Low',
     riskToStaff: 'Low',
-    riskToPrisoners: 'Low',
     riskPredictors: `TOKEN_PREDICTORS ${sentences(3)}`,
     riskAndHarmFactors: `TOKEN_HARM_FACTORS ${sentences(3)}`,
     proposedSentence: `TOKEN_PROPSTART ${sentences(3)} TOKEN_PROPEND`,
