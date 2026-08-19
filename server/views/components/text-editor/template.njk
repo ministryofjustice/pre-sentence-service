@@ -64,7 +64,7 @@
   {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value | editorValue | safe }}</textarea>
 
   {% if maxLength %}
-    <div class="pic-character-count" data-character-count-for="{{ params.id }}" id="{{ params.id }}-info" aria-live="polite" hidden></div>
+    <div class="govuk-hint govuk-character-count__message" data-character-count-for="{{ params.id }}" id="{{ params.id }}-info" aria-live="polite" hidden></div>
   {% endif %}
 
 </div>

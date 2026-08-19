@@ -26,7 +26,7 @@ describe('sentencingProposalModel', () => {
 
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Proposed sentence must be 4,000 characters or fewer')
+      expect(result.error.issues[0].message).toBe('Sentencing proposal must be 4,000 characters or less')
     }
   })
 })

@@ -67,7 +67,7 @@ describe('LandingPageController', () => {
       status: ReportStatus.NOT_STARTED,
     })
 
-    await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockResponse.render).toHaveBeenCalledWith(
       'psr/psr-start',
@@ -84,7 +84,7 @@ describe('LandingPageController', () => {
       status: ReportStatus.STARTED,
     })
 
-    await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockResponse.redirect).toHaveBeenCalledWith('/psr/report-123/defendant-details')
     expect(mockResponse.render).not.toHaveBeenCalled()
@@ -93,7 +93,7 @@ describe('LandingPageController', () => {
   it('redirects to not found when the report does not exist', async () => {
     mockReportService.getReportById = jest.fn().mockResolvedValue(null)
 
-    await controller.get(mockRequest as Request, mockResponse as Response)
+    await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
     expect(mockResponse.redirect).toHaveBeenCalledWith('/psr/report-123/not-found')
     expect(mockResponse.render).not.toHaveBeenCalled()
