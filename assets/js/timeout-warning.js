@@ -33,9 +33,10 @@ TimeoutWarning.prototype.init = function() {
 }
 
 TimeoutWarning.prototype.countIdleTime = function() {
-  var debounce
   var idleTime
+  var lastKeepAlive = 0
   var milliSecondsBeforeTimeOut = this.idleMinutesBeforeTimeOut * 60000
+  var milliSecondsBetweenKeepAlives = 60000
   var boundResetIdleTime = resetIdleTime.bind(this)
 
   window.addEventListener('load', boundResetIdleTime)
@@ -48,14 +49,12 @@ TimeoutWarning.prototype.countIdleTime = function() {
   function resetIdleTime() {
     if (!this.isDialogOpen()) {
       clearTimeout(idleTime)
-      clearTimeout(debounce)
+      idleTime = setTimeout(this.openDialog.bind(this), milliSecondsBeforeTimeOut)
 
-      function idleTimer() {
+      if (Date.now() - lastKeepAlive >= milliSecondsBetweenKeepAlives) {
+        lastKeepAlive = Date.now()
         this.extendTimeOnServer()
-        idleTime = setTimeout(this.openDialog.bind(this), milliSecondsBeforeTimeOut)
       }
-
-      debounce = setTimeout(idleTimer.bind(this), 3000)
     }
   }
 
