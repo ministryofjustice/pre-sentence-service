@@ -3,7 +3,12 @@ import config from '../config'
 import formatDuration from '../utils/formatDuration'
 
 function safeReturnTo(returnTo: unknown): string {
-  if (typeof returnTo === 'string' && returnTo.startsWith('/') && !returnTo.startsWith('//')) {
+  if (
+    typeof returnTo === 'string' &&
+    returnTo.startsWith('/') &&
+    !returnTo.startsWith('//') &&
+    !returnTo.includes('\\')
+  ) {
     return returnTo
   }
   return '/'
