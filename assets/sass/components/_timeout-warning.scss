@@ -12,6 +12,7 @@ $govuk-dialogue-width: 640px;
 
 .govuk-modal-dialogue {
   display: none;
+  z-index: 100;
 }
 
 .govuk-modal-dialogue--open {
