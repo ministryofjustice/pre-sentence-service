@@ -30,7 +30,7 @@
 
   function getLength(field) {
     const text = getEditableContent(field)
-    return normaliseForLength(text).length
+    return normaliseForLength(text).trim().length
   }
 
   function updateCounter(field) {
