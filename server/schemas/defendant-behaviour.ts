@@ -3,7 +3,7 @@ import { longText } from '../utils/validation'
 
 export const defendantBehaviourModel = z.object({
   defendantBehaviour: longText({
-    label: "Assessment of defendant's behaviour and lifestyle",
+    label: 'Defendant Behaviour',
     requiredMessage: "Assess the defendant's behaviour and lifestyle",
   }),
 })

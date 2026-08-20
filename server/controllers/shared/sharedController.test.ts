@@ -43,7 +43,7 @@ describe('Route Handlers - Shared Controller', () => {
   } as unknown as jest.Mocked<PreSentenceToDeliusService>
 
   let handler: SharedController
-  let req: Request
+  let req: Request<{ reportId: string }>
   let res: Response
 
   beforeAll(() => {
@@ -63,7 +63,7 @@ describe('Route Handlers - Shared Controller', () => {
       session: {},
       path: '',
       query: {},
-    } as unknown as Request
+    } as unknown as Request<{ reportId: string }>
     res = {
       render: jest.fn(),
       redirect: jest.fn(),

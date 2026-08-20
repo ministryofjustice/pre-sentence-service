@@ -8,7 +8,7 @@ const INVISIBLE_NON_COUNTING_CHARS =
   /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
 export const maxLengthMessage = (label: string, max: number) =>
-  `${label} must be ${max.toLocaleString()} characters or fewer`
+  `${label} must be ${max.toLocaleString()} characters or less`
 
 export function normaliseForLength(value: string): string {
   return (value || '')

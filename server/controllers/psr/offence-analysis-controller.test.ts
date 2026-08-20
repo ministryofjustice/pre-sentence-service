@@ -106,7 +106,7 @@ describe('OffenceAnalysisController', () => {
     it('should fetch offence details from API and transform data', async () => {
       mockPreSentenceToDeliusService.getOffences.mockResolvedValue(mockApiOffenceDetails)
 
-      await controller.get(mockRequest as Request, mockResponse as Response)
+      await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
       expect(mockResponse.render).toHaveBeenCalledWith(
@@ -144,7 +144,7 @@ describe('OffenceAnalysisController', () => {
     it('should handle API errors gracefully', async () => {
       mockPreSentenceToDeliusService.getOffences.mockRejectedValue(new Error('API Error'))
 
-      await controller.get(mockRequest as Request, mockResponse as Response)
+      await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
       expect(mockResponse.render).toHaveBeenCalledWith(
@@ -160,7 +160,7 @@ describe('OffenceAnalysisController', () => {
     it('should work without PreSentenceToDeliusService injected', async () => {
       const controllerWithoutService = new OffenceAnalysisController(mockReportService)
 
-      await controllerWithoutService.get(mockRequest as Request, mockResponse as Response)
+      await controllerWithoutService.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockResponse.render).toHaveBeenCalled()
     })
@@ -173,7 +173,7 @@ describe('OffenceAnalysisController', () => {
         offencesPattern: 'Pattern analysis',
       }
 
-      await controller.post(mockRequest as Request, mockResponse as Response)
+      await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockRequest.body.noPreviousOffences).toBe('false')
     })
@@ -185,7 +185,7 @@ describe('OffenceAnalysisController', () => {
         noPreviousOffences: 'true',
       }
 
-      await controller.post(mockRequest as Request, mockResponse as Response)
+      await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockRequest.body.noPreviousOffences).toBe('true')
     })
@@ -197,7 +197,7 @@ describe('OffenceAnalysisController', () => {
         noPreviousOffences: 'true',
       }
 
-      await controller.post(mockRequest as Request, mockResponse as Response)
+      await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
       expect(mockResponse.redirect).not.toHaveBeenCalled()
       expect(mockResponse.render).toHaveBeenCalledWith(
@@ -206,7 +206,7 @@ describe('OffenceAnalysisController', () => {
           formValidation: expect.objectContaining({
             isValid: false,
             errors: expect.objectContaining({
-              offencesUnderConsideration: 'Offences under consideration must be 20,000 characters or fewer',
+              offencesUnderConsideration: 'Offences under consideration must be 20,000 characters or less',
             }),
           }),
         })

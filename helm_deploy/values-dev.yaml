@@ -19,7 +19,7 @@ generic-service:
     DIGITAL_CASE_SYSTEM_URL: "https://dummy.case.system.url/"
     NDELIUS_URL: "https://ndelius.test.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
-    FEATURE_RICH_TEXT_EDITOR: false
+    FEATURE_RICH_TEXT_EDITOR: true
     WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
   allowlist: &app-allowlist

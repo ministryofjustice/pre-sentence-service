@@ -35,7 +35,7 @@ const mockReportDetails: ReportDetails = {
 
 describe('Route Handlers - API Controller', () => {
   let handler: APIController
-  let req: Request
+  let req: Request<{ id: string }>
   let res: Response
   let mockedReportService: ReportService
   let mockedEventService: EventService
@@ -67,7 +67,7 @@ describe('Route Handlers - API Controller', () => {
         id: '123',
       },
       session: {},
-    } as unknown as Request
+    } as unknown as Request<{ id: string }>
 
     res = {
       json: jest.fn(),

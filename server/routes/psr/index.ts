@@ -28,10 +28,14 @@ export default function Index(
   const router = Router()
   const routePrefix = (path: string) => `/${new BaseController(reportService).path}${path}`
   const lockGuard = lockedReportMiddleware(reportService)
-  const get = (path: string, handler: RequestHandler) =>
-    router.get(routePrefix(path), lockGuard, asyncMiddleware(handler))
-  const post = (path: string, handler: RequestHandler) =>
-    router.post(routePrefix(path), lockGuard, asyncMiddleware(handler))
+
+  type ReportParams = { reportId: string }
+
+  const get = (path: string, handler: RequestHandler<ReportParams>) =>
+    router.get<ReportParams>(routePrefix(path), lockGuard, asyncMiddleware(handler))
+
+  const post = (path: string, handler: RequestHandler<ReportParams>) =>
+    router.post<ReportParams>(routePrefix(path), lockGuard, asyncMiddleware(handler))
 
   get('/:reportId', (req, res) => {
     return new LandingPageController(reportService, preSentenceToDeliusService).get(req, res)

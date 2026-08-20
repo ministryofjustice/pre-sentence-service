@@ -30,7 +30,7 @@
 
   function getLength(field) {
     const text = getEditableContent(field)
-    return normaliseForLength(text).length
+    return normaliseForLength(text).trim().length
   }
 
   function updateCounter(field) {
@@ -43,11 +43,12 @@
 
     const length = getLength(field)
     const remaining = max - length
-    const isAtLimit = length === max
     const isWarning = length >= max * WARNING_THRESHOLD && length <= max
     const isError = length > max
 
-    counter.classList.remove('pic-character-count--warning', 'pic-character-count--error')
+    // Default to hint styling, switch to error only when over limit
+    counter.classList.remove('govuk-error-message')
+    counter.classList.add('govuk-hint')
 
     if (errorsOnly && !isError) {
       counter.hidden = true
@@ -58,16 +59,12 @@
     } else if (isError) {
       const overBy = length - max
       counter.hidden = false
-      counter.textContent = `You have ${overBy.toLocaleString()} character${overBy === 1 ? '' : 's'} too many. You will not be able to save until you reduce this.`
-      counter.classList.add('pic-character-count--error')
-    } else if (isAtLimit) {
-      counter.hidden = false
-      counter.textContent = `You have reached the ${max.toLocaleString()} character limit. You cannot save and continue if you enter any more characters.`
-      counter.classList.add('pic-character-count--warning')
+      counter.textContent = `You have ${overBy.toLocaleString()} characters too many`
+      counter.classList.remove('govuk-hint')
+      counter.classList.add('govuk-error-message')
     } else {
       counter.hidden = false
-      counter.textContent = `You have ${remaining.toLocaleString()} character${remaining === 1 ? '' : 's'} remaining. You will not be able to save if you go over ${max.toLocaleString()} characters.`
-      counter.classList.add('pic-character-count--warning')
+      counter.textContent = `You have ${remaining.toLocaleString()} characters remaining`
     }
 
     if (window.reportStoreInstance && window.reportStoreInstance.setFieldOverLimit) {
