@@ -82,27 +82,6 @@ describe('sourcesOfInformationModel', () => {
     expect(result.success).toBe(true)
   })
 
-  it('reports the correct number of excess characters', () => {
-    const result = sourcesOfInformationModel.safeParse({
-      action: 'add-source',
-      sourcesOfInformation: ['cps_summary'],
-      source: 'a'.repeat(85),
-    })
-
-    expect(result.success).toBe(false)
-
-    if (!result.success) {
-      expect(result.error.issues).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            path: ['source'],
-            message: 'You have 5 characters too many',
-          }),
-        ])
-      )
-    }
-  })
-
   it('rejects adding a new source that is too long, when clicking "Add to list"', () => {
     const source = 'a'.repeat(81)
 
@@ -119,14 +98,14 @@ describe('sourcesOfInformationModel', () => {
         expect.arrayContaining([
           expect.objectContaining({
             path: ['source'],
-            message: 'You have 1 character too many',
+            message: 'Source must be 80 characters or less',
           }),
         ])
       )
     }
   })
 
-  it('rejects adding a new source that is too long, when clicking "Save and continue"', () => {
+  it('asks the user to add the source when clicking "Save and continue" with text in the source field', () => {
     const result = sourcesOfInformationModel.safeParse({
       action: 'save-list',
       sourcesOfInformation: ['cps_summary'],
@@ -140,7 +119,7 @@ describe('sourcesOfInformationModel', () => {
         expect.arrayContaining([
           expect.objectContaining({
             path: ['source'],
-            message: 'Source must be 80 characters or less',
+            message: 'Add this source to the list',
           }),
         ])
       )
