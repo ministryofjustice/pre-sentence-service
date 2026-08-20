@@ -320,13 +320,23 @@ export default class SharedController {
     const { action, source } = req.body
     const username = (res.locals?.user?.username as string | undefined) || 'system'
     const redirectPath = req.query?.redirectPath as string | undefined
+    let actionValidation: ValidatedForm<z.infer<typeof this.model>> | undefined
 
     if (isSourceAction(action)) {
-      const actionValidation = validateForm(req.body, this.model)
+      actionValidation = validateForm(req.body, this.model)
 
       if (actionValidation.isValid) {
-        const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, source, username)
-        return res.redirect(redirectUrl)
+        const actionErrors = await this.validateAction(req)
+
+        if (!actionErrors) {
+          const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, source, username)
+          return res.redirect(redirectUrl)
+        }
+
+        actionValidation = {
+          isValid: false,
+          errors: actionErrors,
+        }
       }
     }
 
@@ -337,7 +347,8 @@ export default class SharedController {
 
     await this.includeAddedSources(req, reportId)
 
-    const validatedForm: ValidatedForm<z.infer<typeof this.model>> = validateForm(req.body, this.model)
+    const validatedForm: ValidatedForm<z.infer<typeof this.model>> =
+      actionValidation ?? validateForm(req.body, this.model)
 
     if (validatedForm.isValid || redirectPath) {
       await this.updateReportActions(req)

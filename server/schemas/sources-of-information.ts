@@ -35,29 +35,28 @@ export const sourcesOfInformationModel = z
       return
     }
 
-    if (data.source && data.source.length > 80) {
-      const overBy = data.source.length - 80
-      const message =
-        data.action === 'save-list'
-          ? 'Source must be 80 characters or less'
-          : `You have ${overBy} character${overBy === 1 ? '' : 's'} too many`
-
-      context.addIssue({
-        code: 'custom',
-        path: ['source'],
-        message,
-      })
-
-      return
-    }
-
     if (data.action === 'save-list' && data.source?.trim()) {
       context.addIssue({
         code: 'custom',
         path: ['source'],
         message: 'Add this source to the list',
       })
+
+      return
     }
+
+    if (data.source && data.source.length > 80) {
+      context.addIssue({
+        code: 'custom',
+        path: ['source'],
+        message: 'Source must be 80 characters or less',
+      })
+
+      return
+    }
+
+    // Duplicate source validation is handled in SourcesOfInformationController.validateAction,
+    // so it can reuse the existing report-specific duplicate check in ReportService.
   })
 
 export const isSourcesOfInformationComplete = (data: Record<string, unknown>): boolean => {

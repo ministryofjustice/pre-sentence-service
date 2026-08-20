@@ -61,22 +61,20 @@
       <div id="added-sources" class="added-source-wrapper">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Added sources</h2>
 
-        <div class="added-sources">
-          {% for source in addedSourcesOfInformation %}
-            <div class="added-source">
-              <span>{{ source.value }}</span>
+        {% for source in addedSourcesOfInformation %}
+          <div class="added-source">
+            <span>{{ source.value }}</span>
 
-              <a href="/psr/{{ reportId }}/sources-of-information?remove={{ source.key }}"
-                class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5">
-                Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
-              </a>
-            </div>
-          {% endfor %}
-        </div>
+            <a href="/psr/{{ reportId }}/sources-of-information?remove={{ source.key }}"
+              class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5">
+              Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
+            </a>
+          </div>
+        {% endfor %}
       </div>
     {% endif %}
 
-    <div class="govuk-form-group govuk-!-margin-bottom-8{% if 'source' in elementsWithError %} govuk-form-group--error{% endif %}">
+    <div class="govuk-form-group govuk-!-margin-bottom-8 {% if 'source' in elementsWithError %} govuk-form-group--error{% endif %}">
       <div class="govuk-label-wrapper">
         <label class="govuk-heading-m govuk-!-margin-bottom-3" for="source">
           Add another source of information
@@ -91,7 +89,7 @@
       {% endif %}
 
       <input
-        class="govuk-input govuk-!-width-two-thirds govuk-!-display-inline-block"
+        class="govuk-input govuk-!-width-two-thirds"
         id="source"
         name="source"
         type="text"
@@ -100,14 +98,6 @@
         data-character-count-errors-only
         aria-describedby="{% if 'source' in elementsWithError %}source-error {% endif %}source-info"
       >
-
-      <div
-        class="pic-character-count"
-        data-character-count-for="source"
-        id="source-info"
-        aria-live="polite"
-        hidden
-      ></div>
 
       <button
         type="submit"
@@ -118,6 +108,15 @@
       >
         Add to list
       </button>
+
+
+      <div
+        class="govuk-!-margin-top-2 govuk-!-margin-top-2"
+        data-character-count-for="source"
+        id="source-info"
+        aria-live="polite"
+        hidden
+      ></div>
     </div>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">

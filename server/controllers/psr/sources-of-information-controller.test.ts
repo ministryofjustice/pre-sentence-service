@@ -19,6 +19,7 @@ describe('Sources of Information Controller', () => {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
     addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
+    sourceExistsForReport: jest.fn().mockResolvedValue(false),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
@@ -48,7 +49,7 @@ describe('Sources of Information Controller', () => {
   } as unknown as PreSentenceToDeliusService
 
   let controller: SourcesOfInformationController
-  let req: Request
+  let req: Request<{ reportId: string }>
   let res: Response
 
   beforeEach(() => {
@@ -67,7 +68,7 @@ describe('Sources of Information Controller', () => {
       },
       session: {},
       query: {},
-    } as unknown as Request
+    } as unknown as Request<{ reportId: string }>
 
     res = {
       render: jest.fn(),
@@ -125,6 +126,38 @@ describe('Sources of Information Controller', () => {
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information')
   })
 
+  it('renders an error when "Add to list" is clicked with a source over 80 characters', async () => {
+    req.body = {
+      action: 'add-source',
+      sourcesOfInformation: ['cps_summary'],
+      source: 'A'.repeat(81),
+    }
+
+    await controller.post(req, res)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+
+    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
+
+    expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sources-of-information',
+      expect.objectContaining({
+        reportId: '123',
+        formValidation: expect.objectContaining({
+          isValid: false,
+          errors: expect.objectContaining({
+            source: 'Source must be 80 characters or less',
+          }),
+        }),
+        data: expect.objectContaining({
+          source: 'A'.repeat(81),
+        }),
+      })
+    )
+  })
+
   it('renders an error when "Add to list" is clicked with a blank source', async () => {
     req.body = {
       action: 'add-source',
@@ -138,6 +171,8 @@ describe('Sources of Information Controller', () => {
 
     expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
 
+    expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
+
     expect(res.render).toHaveBeenCalledWith(
       'psr/sources-of-information',
       expect.objectContaining({
@@ -150,6 +185,40 @@ describe('Sources of Information Controller', () => {
         }),
         data: expect.objectContaining({
           source: '',
+        }),
+      })
+    )
+  })
+
+  it('renders an error when "Add to list" is clicked with a duplicate source', async () => {
+    ;(mockedReportService.sourceExistsForReport as jest.Mock).mockResolvedValue(true)
+
+    req.body = {
+      action: 'add-source',
+      sourcesOfInformation: ['cps_summary'],
+      source: 'CPS summary',
+    }
+
+    await controller.post(req, res)
+
+    expect(mockedReportService.sourceExistsForReport).toHaveBeenCalledWith('123', 'CPS summary')
+
+    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
+
+    expect(res.redirect).not.toHaveBeenCalled()
+
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sources-of-information',
+      expect.objectContaining({
+        reportId: '123',
+        formValidation: expect.objectContaining({
+          isValid: false,
+          errors: expect.objectContaining({
+            source: 'This source already exists',
+          }),
+        }),
+        data: expect.objectContaining({
+          source: 'CPS summary',
         }),
       })
     )
