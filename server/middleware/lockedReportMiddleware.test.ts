@@ -2,11 +2,13 @@ import { Request, Response, NextFunction } from 'express'
 import lockedReportMiddleware from './lockedReportMiddleware'
 import ReportService from '../services/reportService'
 
-const makeReq = (path: string, reportId = 'r1'): Request =>
+type ReportRequest = Request<{ reportId: string }>
+
+const makeReq = (path: string, reportId = 'r1'): ReportRequest =>
   ({
     path,
     params: { reportId },
-  }) as unknown as Request
+  }) as unknown as ReportRequest
 
 const makeRes = (): Response =>
   ({

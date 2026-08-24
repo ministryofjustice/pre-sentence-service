@@ -12,7 +12,7 @@ describe('SignYourReportController', () => {
   let reportService: ReportService
   let eventService: EventService
   let preSentenceToDeliusService: jest.Mocked<PreSentenceToDeliusService>
-  let req: Request
+  let req: Request<{ reportId: string }>
   let res: Response
 
   const mockApiDefendantDetails: DefendantDetailsApiResponse = {
@@ -95,7 +95,7 @@ describe('SignYourReportController', () => {
         isDangerousReport: 'no',
       },
       query: {},
-    } as unknown as Request
+    } as unknown as Request<{ reportId: string }>
 
     res = {
       render: jest.fn(),

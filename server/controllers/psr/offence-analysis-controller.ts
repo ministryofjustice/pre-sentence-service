@@ -23,7 +23,7 @@ export default class OffenceAnalysisController extends BaseController {
     super(reportService, preSentenceToDeliusService)
   }
 
-  protected override async beforeRender(req: Request, _res: Response): Promise<void> {
+  protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
     const reportId = req.params.reportId
 
     if (this.preSentenceToDeliusService && reportId && this.report) {
@@ -50,7 +50,7 @@ export default class OffenceAnalysisController extends BaseController {
     }
   }
 
-  public async post(req: Request, res: Response): Promise<void> {
+  public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
     const body = req.body as Record<string, string>
 
     if (!('noPreviousOffences' in body)) {
