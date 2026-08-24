@@ -1,0 +1,12 @@
+{% extends "./partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - You have been signed out" %}
+{% set hideTimeoutWarning = true %}
+
+{% block beforeContent %}{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">You have been signed out</h1>
+  <p class="govuk-body">You have been signed out due to {{ inactivityDuration }} of inactivity. Your work has been saved but you will need to sign back in to resume your report.</p>
+  <a class="govuk-button" data-module="govuk-button" role="button" draggable="false" data-qa="sign-in" href="{{ signInUrl }}">Sign in</a>
+{% endblock %}
