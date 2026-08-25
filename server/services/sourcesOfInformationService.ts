@@ -64,35 +64,30 @@ export default class SourcesOfInformationService {
     const sourceRepo = getConnection().getRepository(SourcesOfInformation)
     const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
 
-    // Find the custom source by key (name) and ensure it's not a default source
-    const source = await sourceRepo.findOne({
-      where: {
-        name: key,
-        isDefault: false,
-        isDeleted: false,
-      },
-    })
-
-    if (!source?.id) return
-
-    // Soft delete the link between the report and the source
+    // Find this report's own link to a custom source with the given name
     const link = await reportSourceRepo.findOne({
       where: {
         reportId,
-        sourcesOfInformationId: source.id,
         isDeleted: false,
+        sourcesOfInformation: {
+          name: key,
+          isDefault: false,
+          isDeleted: false,
+        },
       },
+      relations: ['sourcesOfInformation'],
     })
 
-    // Soft delete the link and the source itself
-    if (link) {
-      await reportSourceRepo.update(link.id, {
-        isDeleted: true,
-        lastUpdatedAt: new Date(),
-      })
-    }
+    if (!link) return
 
-    await sourceRepo.update(source.id, {
+    // Soft delete the report's link to this source
+    await reportSourceRepo.update(link.id, {
+      isDeleted: true,
+      lastUpdatedAt: new Date(),
+    })
+
+    // Soft delete the custom source itself
+    await sourceRepo.update(link.sourcesOfInformationId, {
       isDeleted: true,
     })
   }
@@ -108,7 +103,7 @@ export default class SourcesOfInformationService {
         },
       })
 
-    // Get custom sources linked to this report
+    // Get sources linked to this report
     const reportSources = await getConnection()
       .getRepository(ReportSourcesOfInformation)
       .find({
@@ -119,14 +114,16 @@ export default class SourcesOfInformationService {
         relations: ['sourcesOfInformation'],
       })
 
-    // Combine and map to SourceOfInformation format
+    // Only treat report-linked rows as custom if they aren't actually a default source
+    const customReportSources = reportSources.filter(rs => rs.sourcesOfInformation?.isDefault === false)
+
     const allSources: SourceOfInformation[] = [
       ...defaultSources.map(s => ({
         key: s.name,
         value: s.value,
         isCustom: false,
       })),
-      ...reportSources.map(rs => ({
+      ...customReportSources.map(rs => ({
         key: rs.sourcesOfInformation.name,
         value: rs.sourcesOfInformation.value,
         isCustom: true,
