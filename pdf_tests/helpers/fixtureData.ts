@@ -43,6 +43,10 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
   }
 }
 
+export function unbrokenString(n: number, alphabet = 'abcdefghij0123456789'): string {
+  return alphabet.repeat(Math.ceil(n / alphabet.length)).slice(0, n)
+}
+
 export function pageFittingProposal(): string {
   const body = sentences(30)
   return `TOKEN_PROPSTART ${body}`.slice(0, 1980) + ' TOKEN_PROPEND'
