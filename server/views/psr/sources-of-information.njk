@@ -45,12 +45,6 @@
               <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
                 {{ source.value }}
               </label>
-              {% if source.isCustom %}
-                <a href="/psr/{{ reportId }}/sources-of-information?remove={{ source.key }}"
-                   class="govuk-link govuk-link--no-visited-state checkbox-action">
-                  Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
-                </a>
-              {% endif %}
             </div>
           {% endfor %}
         </div>
@@ -65,10 +59,10 @@
           <div class="added-source">
             <span>{{ source.value }}</span>
 
-            <a href="/psr/{{ reportId }}/sources-of-information?remove={{ source.key }}"
-              class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5">
-              Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
-            </a>
+            <button type="submit" name="removeSource" value="{{ source.key }}"
+                  class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5 remove-link-button">
+            Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
+            </button>
           </div>
         {% endfor %}
       </div>

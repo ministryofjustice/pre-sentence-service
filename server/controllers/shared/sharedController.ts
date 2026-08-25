@@ -219,12 +219,6 @@ export default class SharedController {
   public get = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
-    const removeKey = (req.query.remove as string | undefined)?.trim()
-
-    if (removeKey) {
-      await this.reportService.removeCustomSourceOfInformation(reportId, removeKey)
-      return res.redirect(`/${this.path}/${reportIdParam}/sources-of-information`)
-    }
 
     const rep = await this.reportService.getReportById(reportId)
     if (rep) {
@@ -317,6 +311,13 @@ export default class SharedController {
   public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
+
+    const removeSourceKey = typeof req.body.removeSource === 'string' ? req.body.removeSource.trim() : ''
+    if (removeSourceKey) {
+      await this.reportService.removeCustomSourceOfInformation(reportId, removeSourceKey)
+      return res.redirect(`/${this.path}/${reportIdParam}/sources-of-information`)
+    }
+
     const { action, source } = req.body
     const username = (res.locals?.user?.username as string | undefined) || 'system'
     const redirectPath = req.query?.redirectPath as string | undefined
@@ -433,19 +434,13 @@ export default class SharedController {
   ): Promise<string> {
     const path = `/${this.path}/${reportIdParam}/sources-of-information`
 
-    switch (action) {
-      case 'add-source': {
-        const value = customSource?.trim()
-
-        if (value) {
-          await this.reportService.addCustomSourceOfInformation(reportId, value, username)
-        }
-
-        return `${path}`
+    if (action === 'add-source') {
+      const value = customSource?.trim()
+      if (value) {
+        await this.reportService.addCustomSourceOfInformation(reportId, value, username)
       }
-
-      default:
-        return `${path}`
     }
+
+    return path
   }
 }

@@ -20,23 +20,21 @@ export default class SourcesOfInformationController extends BaseController {
     return {}
   }
 
+  // Override the validateAction method to check for duplicate sources
   protected override async validateAction(
     req: Request<{ reportId: string }>
   ): Promise<Record<string, string> | undefined> {
-    const source = typeof req.body.source === 'string' ? req.body.source.trim() : ''
-
-    if (!source) {
+    if (req.body.action !== 'add-source') {
       return undefined
     }
 
+    const source = typeof req.body.source === 'string' ? req.body.source.trim() : ''
+    if (!source) return undefined
+
     const sourceExists = await this.reportService.sourceExistsForReport(req.params.reportId, source)
-
     if (sourceExists) {
-      return {
-        source: 'This source already exists',
-      }
+      return { source: 'This source already exists' }
     }
-
     return undefined
   }
 }
