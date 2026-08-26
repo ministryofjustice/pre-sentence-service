@@ -1,4 +1,5 @@
 import { IFieldValue } from '../../services/reportService'
+import type ReportDetails from '../../repositories/entities/reportDetails'
 
 export default {}
 
@@ -33,6 +34,10 @@ export declare global {
         pageData: Record<string, unknown>,
         options?: { filename: string; pdfOptions: PdfOptions }
       ): void
+    }
+
+    interface Locals {
+      report?: ReportDetails
     }
   }
 }

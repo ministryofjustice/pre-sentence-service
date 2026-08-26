@@ -324,13 +324,20 @@ export default class SharedController {
     let actionValidation: ValidatedForm<z.infer<typeof this.model>> | undefined
 
     if (isSourceAction(action)) {
+      // Ensure report is loaded before any action handling or field persistence
+      const report = res.locals.report ?? (await this.reportService.getReportById(reportId))
+      if (!report) {
+        return res.redirect(`/${this.path}/${reportIdParam}/not-found`)
+      }
+      this.report = report
+
       actionValidation = validateForm(req.body, this.model)
 
       if (actionValidation.isValid) {
         const actionErrors = await this.validateAction(req)
 
         if (!actionErrors) {
-          const redirectUrl = await this.handleSourceActions(action, reportIdParam, reportId, source, username)
+          const redirectUrl = await this.handleSourceActions(req, action, reportIdParam, reportId, source, username)
           return res.redirect(redirectUrl)
         }
 
@@ -339,11 +346,6 @@ export default class SharedController {
           errors: actionErrors,
         }
       }
-    }
-
-    const rep = await this.reportService.getReportById(reportId)
-    if (rep) {
-      this.report = rep
     }
 
     await this.includeAddedSources(req, reportId)
@@ -426,6 +428,7 @@ export default class SharedController {
   }
 
   private async handleSourceActions(
+    req: Request,
     action: SourceOfInformationActions | undefined,
     reportIdParam: string,
     reportId: string,
@@ -439,8 +442,10 @@ export default class SharedController {
       if (value) {
         await this.reportService.addCustomSourceOfInformation(reportId, value, username)
       }
-    }
 
+      await this.includeAddedSources(req, reportId)
+      await this.updateReportActions(req)
+    }
     return path
   }
 }
