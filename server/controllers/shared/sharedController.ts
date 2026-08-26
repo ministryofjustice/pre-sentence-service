@@ -308,13 +308,45 @@ export default class SharedController {
     req.body.sourcesOfInformation = [...new Set([...selectedSources, ...addedSources])]
   }
 
+  private async ensureReportLoaded(
+    res: Response,
+    reportId: string,
+    reportIdParam: string
+  ): Promise<boolean> {
+    const report = res.locals.report ?? (await this.reportService.getReportById(reportId))
+    if (!report) {
+      res.redirect(`/${this.path}/${reportIdParam}/not-found`)
+      return false
+    }
+    this.report = report
+    return true
+  }
+
+  private async persistSourcesSelection(
+    req: Request,
+    reportId: string,
+    options: { includeAddedSources?: boolean } = {}
+  ): Promise<void> {
+    if (options.includeAddedSources !== false) {
+      await this.includeAddedSources(req, reportId)
+    }
+    await this.updateReportActions(req)
+  }
+
   public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
 
+    if (!this.report?.id) {
+      if (!(await this.ensureReportLoaded(res, reportId, reportIdParam))) return
+    }
+
     const removeSourceKey = typeof req.body.removeSource === 'string' ? req.body.removeSource.trim() : ''
     if (removeSourceKey) {
       await this.reportService.removeCustomSourceOfInformation(reportId, removeSourceKey)
+
+      await this.persistSourcesSelection(req, reportId)
+
       return res.redirect(`/${this.path}/${reportIdParam}/sources-of-information`)
     }
 
@@ -324,13 +356,6 @@ export default class SharedController {
     let actionValidation: ValidatedForm<z.infer<typeof this.model>> | undefined
 
     if (isSourceAction(action)) {
-      // Ensure report is loaded before any action handling or field persistence
-      const report = res.locals.report ?? (await this.reportService.getReportById(reportId))
-      if (!report) {
-        return res.redirect(`/${this.path}/${reportIdParam}/not-found`)
-      }
-      this.report = report
-
       actionValidation = validateForm(req.body, this.model)
 
       if (actionValidation.isValid) {
@@ -354,7 +379,11 @@ export default class SharedController {
       actionValidation ?? validateForm(req.body, this.model)
 
     if (validatedForm.isValid || redirectPath) {
-      await this.updateReportActions(req)
+      if (this.templatePath === 'sources-of-information') {
+        await this.persistSourcesSelection(req, reportId, { includeAddedSources: false })
+      } else {
+        await this.updateReportActions(req)
+      }
 
       if (this.additionalPostAction) {
         await this.fetchDefendantDetails(reportIdParam)
@@ -443,8 +472,7 @@ export default class SharedController {
         await this.reportService.addCustomSourceOfInformation(reportId, value, username)
       }
 
-      await this.includeAddedSources(req, reportId)
-      await this.updateReportActions(req)
+      await this.persistSourcesSelection(req, reportId)
     }
     return path
   }
