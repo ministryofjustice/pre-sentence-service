@@ -8,12 +8,7 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import { transformDefendantDetails } from '../../utils/apiDataTransformers'
 import logger from '../../../logger'
 
-import {
-  buildSourcesOfInformation,
-  isSourceAction,
-  SourceOfInformation,
-  SourceOfInformationActions,
-} from '../../utils/sourcesOfInformationHelpers'
+import { buildSourcesOfInformation, isSourceAction, SourceOfInformation } from '../../utils/sourcesOfInformationHelpers'
 import * as z from 'zod'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'

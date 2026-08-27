@@ -134,10 +134,7 @@ describe('Sources of Information Controller', () => {
 
     await controller.post(req, res)
 
-    expect(mockedReportService.removeCustomSourceOfInformation).toHaveBeenCalledWith(
-      '123',
-      'custom-source-key'
-    )
+    expect(mockedReportService.removeCustomSourceOfInformation).toHaveBeenCalledWith('123', 'custom-source-key')
 
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information#added-sources')
   })

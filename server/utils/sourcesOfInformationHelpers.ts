@@ -9,10 +9,7 @@ export const buildSourcesOfInformation = (
   sourcesOfInformation: SourceOfInformation[],
   selectedSources?: string | string[]
 ): SourceOfInformation[] => {
-  const selectedValues =
-    typeof selectedSources === 'string'
-      ? selectedSources.split(',')
-      : selectedSources ?? []
+  const selectedValues = typeof selectedSources === 'string' ? selectedSources.split(',') : (selectedSources ?? [])
 
   const selected = new Set(selectedValues)
 
