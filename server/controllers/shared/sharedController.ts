@@ -114,9 +114,11 @@ export default class SharedController {
     }
 
     if (this.templatePath === 'sources-of-information') {
+      const selectedSources = templateValues.data?.sourcesOfInformation ?? this.data['sourcesOfInformation']
+
       const sources = buildSourcesOfInformation(
         templateValues.sourcesOfInformation!,
-        this.data['sourcesOfInformation'] as string | undefined
+        selectedSources as string | string[] | undefined
       )
 
       templateValues.sourcesOfInformation = sources.filter(source => !source.isCustom)
@@ -308,16 +310,14 @@ export default class SharedController {
     req.body.sourcesOfInformation = [...new Set([...selectedSources, ...addedSources])]
   }
 
-  private async ensureReportLoaded(
-    res: Response,
-    reportId: string,
-    reportIdParam: string
-  ): Promise<boolean> {
+  private async ensureReportLoaded(res: Response, reportId: string, reportIdParam: string): Promise<boolean> {
     const report = res.locals.report ?? (await this.reportService.getReportById(reportId))
+
     if (!report) {
       res.redirect(`/${this.path}/${reportIdParam}/not-found`)
       return false
     }
+
     this.report = report
     return true
   }
@@ -333,25 +333,49 @@ export default class SharedController {
     await this.updateReportActions(req)
   }
 
+  private async addSource(
+    req: Request,
+    reportIdParam: string,
+    reportId: string,
+    source: string | undefined,
+    username: string
+  ): Promise<string> {
+    const value = source?.trim()
+
+    if (value) {
+      await this.reportService.addCustomSourceOfInformation(reportId, value, username)
+    }
+
+    await this.persistSourcesSelection(req, reportId)
+    return `/${this.path}/${reportIdParam}/sources-of-information#added-sources`
+  }
+
+  private async removeSource(
+    req: Request,
+    reportIdParam: string,
+    reportId: string,
+    sourceKey: string
+  ): Promise<string> {
+    await this.reportService.removeCustomSourceOfInformation(reportId, sourceKey)
+    await this.persistSourcesSelection(req, reportId)
+    return `/${this.path}/${reportIdParam}/sources-of-information#added-sources`
+  }
+
   public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
 
-    if (!this.report?.id) {
-      if (!(await this.ensureReportLoaded(res, reportId, reportIdParam))) return
-    }
-
-    const removeSourceKey = typeof req.body.removeSource === 'string' ? req.body.removeSource.trim() : ''
-    if (removeSourceKey) {
-      await this.reportService.removeCustomSourceOfInformation(reportId, removeSourceKey)
-
-      await this.persistSourcesSelection(req, reportId)
-
-      return res.redirect(`/${this.path}/${reportIdParam}/sources-of-information`)
-    }
+    if (!(await this.ensureReportLoaded(res, reportId, reportIdParam))) return
 
     const { action, source } = req.body
     const username = (res.locals?.user?.username as string | undefined) || 'system'
+    const removeSourceKey = typeof req.body.removeSource === 'string' ? req.body.removeSource.trim() : ''
+
+    if (removeSourceKey) {
+      const redirectUrl = await this.removeSource(req, reportIdParam, reportId, removeSourceKey)
+      return res.redirect(redirectUrl)
+    }
+
     const redirectPath = req.query?.redirectPath as string | undefined
     let actionValidation: ValidatedForm<z.infer<typeof this.model>> | undefined
 
@@ -362,7 +386,7 @@ export default class SharedController {
         const actionErrors = await this.validateAction(req)
 
         if (!actionErrors) {
-          const redirectUrl = await this.handleSourceActions(req, action, reportIdParam, reportId, source, username)
+          const redirectUrl = await this.addSource(req, reportIdParam, reportId, source, username)
           return res.redirect(redirectUrl)
         }
 
@@ -373,14 +397,12 @@ export default class SharedController {
       }
     }
 
-    await this.includeAddedSources(req, reportId)
-
     const validatedForm: ValidatedForm<z.infer<typeof this.model>> =
       actionValidation ?? validateForm(req.body, this.model)
 
     if (validatedForm.isValid || redirectPath) {
       if (this.templatePath === 'sources-of-information') {
-        await this.persistSourcesSelection(req, reportId, { includeAddedSources: false })
+        await this.persistSourcesSelection(req, reportId)
       } else {
         await this.updateReportActions(req)
       }
@@ -391,7 +413,9 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
-      await this.persistOnInvalid(req, reportId)
+      if (this.templatePath !== 'sources-of-information') {
+        await this.persistOnInvalid(req, reportId)
+      }
 
       let sourcesOfInformation: SourceOfInformation[] | undefined
       if (this.templatePath === 'sources-of-information') {
@@ -454,26 +478,5 @@ export default class SharedController {
 
   protected async validateAction(_req: Request): Promise<Record<string, string> | undefined> {
     return undefined
-  }
-
-  private async handleSourceActions(
-    req: Request,
-    action: SourceOfInformationActions | undefined,
-    reportIdParam: string,
-    reportId: string,
-    customSource?: string,
-    username = 'system'
-  ): Promise<string> {
-    const path = `/${this.path}/${reportIdParam}/sources-of-information`
-
-    if (action === 'add-source') {
-      const value = customSource?.trim()
-      if (value) {
-        await this.reportService.addCustomSourceOfInformation(reportId, value, username)
-      }
-
-      await this.persistSourcesSelection(req, reportId)
-    }
-    return path
   }
 }

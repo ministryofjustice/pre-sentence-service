@@ -7,9 +7,14 @@ export interface SourceOfInformation {
 
 export const buildSourcesOfInformation = (
   sourcesOfInformation: SourceOfInformation[],
-  selectedSources?: string
+  selectedSources?: string | string[]
 ): SourceOfInformation[] => {
-  const selected = new Set<string>(selectedSources ? selectedSources.split(',') : [])
+  const selectedValues =
+    typeof selectedSources === 'string'
+      ? selectedSources.split(',')
+      : selectedSources ?? []
+
+  const selected = new Set(selectedValues)
 
   return sourcesOfInformation.map(source => ({
     ...source,
