@@ -123,3 +123,8 @@
     }) }}
   </form>
 {% endblock %}
+
+{% block additionalScripts %}
+  {{ super() }}
+  <script src="/assets/sources-of-information.js"></script>
+{% endblock %}
