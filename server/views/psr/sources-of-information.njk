@@ -6,8 +6,13 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
-  <form method="post" data-autosave="true" novalidate>
-    <div class="govuk-form-group {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
+  <form
+    method="post"
+    action="/{{ reportPath }}/{{ reportId }}/sources-of-information"
+    data-autosave="true"
+    novalidate
+  >
+    <div class="govuk-form-group govuk-!-margin-top-7 {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
       <fieldset class="govuk-fieldset"
         aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
         
