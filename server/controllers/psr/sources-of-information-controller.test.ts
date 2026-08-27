@@ -123,7 +123,23 @@ describe('Sources of Information Controller', () => {
 
     expect(mockedReportService.addCustomSourceOfInformation).toHaveBeenCalledWith('123', 'A new source', 'testuser')
 
-    expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information')
+    expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information#added-sources')
+  })
+
+  it('removes the source and redirects to the added sources list', async () => {
+    req.body = {
+      removeSource: 'custom-source-key',
+      sourcesOfInformation: ['cps_summary'],
+    }
+
+    await controller.post(req, res)
+
+    expect(mockedReportService.removeCustomSourceOfInformation).toHaveBeenCalledWith(
+      '123',
+      'custom-source-key'
+    )
+
+    expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information#added-sources')
   })
 
   it('renders an error when "Add to list" is clicked with a source over 80 characters', async () => {
@@ -151,6 +167,12 @@ describe('Sources of Information Controller', () => {
             source: 'Source must be 80 characters or less',
           }),
         }),
+        sourcesOfInformation: expect.arrayContaining([
+          expect.objectContaining({
+            key: 'cps_summary',
+            checked: true,
+          }),
+        ]),
         data: expect.objectContaining({
           source: 'A'.repeat(81),
         }),
@@ -183,6 +205,12 @@ describe('Sources of Information Controller', () => {
             source: 'You cannot add a blank source to the list',
           }),
         }),
+        sourcesOfInformation: expect.arrayContaining([
+          expect.objectContaining({
+            key: 'cps_summary',
+            checked: true,
+          }),
+        ]),
         data: expect.objectContaining({
           source: '',
         }),
@@ -217,8 +245,15 @@ describe('Sources of Information Controller', () => {
             source: 'This source already exists',
           }),
         }),
+        sourcesOfInformation: expect.arrayContaining([
+          expect.objectContaining({
+            key: 'cps_summary',
+            checked: true,
+          }),
+        ]),
         data: expect.objectContaining({
           source: 'CPS summary',
+          sourcesOfInformation: ['cps_summary'],
         }),
       })
     )
