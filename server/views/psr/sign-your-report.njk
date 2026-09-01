@@ -1,12 +1,6 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "components/text-editor/macro.njk" import picTextEditor %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% set currentPage = "Sign and lock your report" %}
@@ -90,6 +84,7 @@
         <input type="hidden" name="pageName" value="{{ pageName }}">
         <button class="govuk-button govuk-!-margin-top-6">Submit</button>
     </form>
+
     <div class="govuk-modal" id="confirm-modal" hidden>
         <div class="govuk-modal__overlay"></div>
         <div class="govuk-modal__content govuk-width-container"
@@ -100,8 +95,17 @@
             <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
             <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
             <div class="govuk-button-group">
-                <button class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6" id="confirm-submit">Sign and lock</button>
-                <a href="#" id="cancel-submit">Cancel</a>
+                <button
+                    id="confirm-submit"
+                    type="button"
+                    class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6"
+                >
+                    Sign and lock
+                </button>
+
+                <button type="button" id="cancel-submit" class="govuk-link">
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
