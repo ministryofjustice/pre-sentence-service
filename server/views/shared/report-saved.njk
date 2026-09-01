@@ -19,15 +19,21 @@
       <p class="govuk-body">You cannot edit or change this report</p>
 
       <p class="govuk-body">
-        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf" target="_blank">View a read-only PDF of this report to download or print</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf" target="_blank" rel="noopener noreferrer">
+          View a read-only PDF of this report to download or print
+        </a>
       </p>
     {% else %}
       <p class="govuk-body">Review and print your '{{ preSentenceType }}'<br>
-        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf" target="_blank">View your draft PDF report</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportId }}/pdf" target="_blank" rel="noopener noreferrer">
+          View your draft PDF report
+        </a>
       </p>
 
       <p class="govuk-body">Check or edit your report again<br>
-        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportPath }}/{{ reportId }}/check-report">Select a section to update or change</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="/{{ reportPath }}/{{ reportId }}/check-report">
+          Select a section to update or change
+        </a>
       </p>
     {% endif %}
 
