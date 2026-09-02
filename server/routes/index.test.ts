@@ -49,6 +49,7 @@ describe('GET /', () => {
         expect(res.text).toContain('data-minutes-idle-timeout="118"')
         expect(res.text).toContain('data-minutes-modal-visible="2"')
         expect(res.text).toContain('You are about to be signed out')
+        expect(res.text).toContain('govuk-modal-dialogue__header')
         expect(res.text).toContain('Stay signed in')
       })
   })
