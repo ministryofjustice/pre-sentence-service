@@ -248,10 +248,8 @@ export default class SharedController {
         req.session.isAllowedAccess = true
       }
 
-      let sourcesOfInformation: SourceOfInformation[] | undefined
-      if (this.templatePath === 'sources-of-information') {
-        sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
-      }
+      const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+      
       if (this.updateReport) {
         this.updateReport()
       }
@@ -260,7 +258,7 @@ export default class SharedController {
         ...this.report,
         ...this.data,
       }
-      const reportProgress = getReportProgress(data)
+      const reportProgress = getReportProgress(data, sourcesOfInformation)
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: reportIdParam,
@@ -294,15 +292,22 @@ export default class SharedController {
     await this.updateFields(req.body)
   }
 
-  private includeAddedSources = async (req: Request, reportId: string): Promise<void> => {
-    if (this.templatePath !== 'sources-of-information') return
+  private async saveSources(
+    reportId: string,
+    selectedSourceKeys: string[],
+    username: string,
+    sourceToAdd?: string,
+    sourceToRemove?: string
+  ): Promise<string> {
+    await this.reportService.saveSourcesOfInformation({
+      reportId,
+      selectedSourceKeys,
+      sourceToAdd,
+      sourceToRemove,
+      username,
+    })
 
-    const selectedSources = normalizeSourcesToArray(req.body.sourcesOfInformation)
-    const allSources = await this.reportService.getSourcesOfInformation(reportId)
-
-    const addedSources = allSources.filter(source => source.isCustom).map(source => source.key)
-
-    req.body.sourcesOfInformation = [...new Set([...selectedSources, ...addedSources])]
+    return `/${this.path}/${reportId}/sources-of-information#added-sources`
   }
 
   private async ensureReportLoaded(res: Response, reportId: string, reportIdParam: string): Promise<boolean> {
@@ -317,45 +322,6 @@ export default class SharedController {
     return true
   }
 
-  private async persistSourcesSelection(
-    req: Request,
-    reportId: string,
-    options: { includeAddedSources?: boolean } = {}
-  ): Promise<void> {
-    if (options.includeAddedSources !== false) {
-      await this.includeAddedSources(req, reportId)
-    }
-    await this.updateReportActions(req)
-  }
-
-  private async addSource(
-    req: Request,
-    reportIdParam: string,
-    reportId: string,
-    source: string | undefined,
-    username: string
-  ): Promise<string> {
-    const value = source?.trim()
-
-    if (value) {
-      await this.reportService.addCustomSourceOfInformation(reportId, value, username)
-    }
-
-    await this.persistSourcesSelection(req, reportId)
-    return `/${this.path}/${reportIdParam}/sources-of-information#added-sources`
-  }
-
-  private async removeSource(
-    req: Request,
-    reportIdParam: string,
-    reportId: string,
-    sourceKey: string
-  ): Promise<string> {
-    await this.reportService.removeCustomSourceOfInformation(reportId, sourceKey)
-    await this.persistSourcesSelection(req, reportId)
-    return `/${this.path}/${reportIdParam}/sources-of-information#added-sources`
-  }
-
   public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
     const reportIdParam = req.params.reportId
     const reportId = reportIdParam
@@ -367,7 +333,8 @@ export default class SharedController {
     const removeSourceKey = typeof req.body.removeSource === 'string' ? req.body.removeSource.trim() : ''
 
     if (removeSourceKey) {
-      const redirectUrl = await this.removeSource(req, reportIdParam, reportId, removeSourceKey)
+      const selectedSourceKeys = normalizeSourcesToArray(req.body.sourcesOfInformation)
+      const redirectUrl = await this.saveSources(reportId, selectedSourceKeys, username, undefined, removeSourceKey)
       return res.redirect(redirectUrl)
     }
 
@@ -381,7 +348,9 @@ export default class SharedController {
         const actionErrors = await this.validateAction(req)
 
         if (!actionErrors) {
-          const redirectUrl = await this.addSource(req, reportIdParam, reportId, source, username)
+          const selectedSourceKeys = normalizeSourcesToArray(req.body.sourcesOfInformation)
+          const redirectUrl = await this.saveSources(reportId, selectedSourceKeys, username, source?.trim())
+
           return res.redirect(redirectUrl)
         }
 
@@ -397,7 +366,11 @@ export default class SharedController {
 
     if (validatedForm.isValid || redirectPath) {
       if (this.templatePath === 'sources-of-information') {
-        await this.persistSourcesSelection(req, reportId)
+        await this.reportService.saveSourcesOfInformation({
+          reportId,
+          selectedSourceKeys: normalizeSourcesToArray(req.body.sourcesOfInformation),
+          username,
+        })
       } else {
         await this.updateReportActions(req)
       }

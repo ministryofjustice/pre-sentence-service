@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm'
+import { EntityManager, getConnection } from 'typeorm'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
@@ -28,9 +28,14 @@ export default class SourcesOfInformationService {
     })
   }
 
-  public async addCustomSourceOfInformation(reportId: string, value: string, createdBy: string): Promise<void> {
-    const sourceRepo = getConnection().getRepository(SourcesOfInformation)
-    const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
+  public async addCustomSourceOfInformation(
+    reportId: string,
+    value: string,
+    createdBy: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<void> {
+    const sourceRepo = manager.getRepository(SourcesOfInformation)
+    const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
 
     // Create a new custom source
     const source = await sourceRepo.save(
@@ -60,9 +65,13 @@ export default class SourcesOfInformationService {
     )
   }
 
-  public async removeCustomSourceOfInformation(reportId: string, key: string): Promise<void> {
-    const sourceRepo = getConnection().getRepository(SourcesOfInformation)
-    const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
+  public async removeCustomSourceOfInformation(
+    reportId: string,
+    key: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<void> {
+    const sourceRepo = manager.getRepository(SourcesOfInformation)
+    const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
 
     // Find this report's own link to a custom source with the given name
     const link = await reportSourceRepo.findOne({
@@ -92,45 +101,45 @@ export default class SourcesOfInformationService {
     })
   }
 
-  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
+  public async getSourcesOfInformation(
+    reportId: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<SourceOfInformation[]> {
     // Get default sources
-    const defaultSources = await getConnection()
-      .getRepository(SourcesOfInformation)
-      .find({
-        where: {
-          isDefault: true,
-          isDeleted: false,
-        },
-      })
+    const defaultSources = await manager.getRepository(SourcesOfInformation).find({
+      where: {
+        isDefault: true,
+        isDeleted: false,
+      },
+    })
 
     // Get sources linked to this report
-    const reportSources = await getConnection()
-      .getRepository(ReportSourcesOfInformation)
-      .find({
-        where: {
-          reportId,
-          isDeleted: false,
-        },
-        relations: ['sourcesOfInformation'],
-      })
+    const reportSources = await manager.getRepository(ReportSourcesOfInformation).find({
+      where: {
+        reportId,
+        isDeleted: false,
+      },
+      relations: ['sourcesOfInformation'],
+    })
 
     // Only treat report-linked rows as custom if they aren't actually a default source
-    const customReportSources = reportSources.filter(rs => rs.sourcesOfInformation?.isDefault === false)
+    const customReportSources = reportSources.filter(
+      reportSource => reportSource.sourcesOfInformation?.isDefault === false
+    )
 
-    const allSources: SourceOfInformation[] = [
-      ...defaultSources.map(s => ({
-        key: s.name,
-        value: s.value,
+    // Combine default and custom sources into a single list
+    return [
+      ...defaultSources.map(source => ({
+        key: source.name,
+        value: source.value,
         isCustom: false,
       })),
-      ...customReportSources.map(rs => ({
-        key: rs.sourcesOfInformation.name,
-        value: rs.sourcesOfInformation.value,
+      ...customReportSources.map(reportSource => ({
+        key: reportSource.sourcesOfInformation.name,
+        value: reportSource.sourcesOfInformation.value,
         isCustom: true,
       })),
     ]
-
-    return allSources
   }
 
   public async createDefaultSource(sourceData: ISourcesOfInformation): Promise<SourcesOfInformation> {

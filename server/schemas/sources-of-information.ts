@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 
 export const normalizeSourcesToArray = (val: unknown): string[] => {
   if (Array.isArray(val)) return val
@@ -21,7 +22,7 @@ export const sourcesOfInformationModel = z
       context.addIssue({
         code: 'custom',
         path: ['sourcesOfInformation'],
-        message: 'You must select all sources used to inform this report',
+        message: 'You must select one or more sources used to inform this report',
       })
     }
 
@@ -59,11 +60,19 @@ export const sourcesOfInformationModel = z
     // so it can reuse the existing report-specific duplicate check in ReportService.
   })
 
-export const isSourcesOfInformationComplete = (data: Record<string, unknown>): boolean => {
+export const isSourcesOfInformationComplete = (
+  data: Record<string, unknown>,
+  sourcesOfInformation: SourceOfInformation[]
+): boolean => {
   const raw = data.sourcesOfInformation
-  const normalized = typeof raw === 'string' ? raw.split(',').filter(s => s.trim() !== '') : raw
+  const selectedSourceKeys = typeof raw === 'string' ? raw.split(',').filter(key => key.trim() !== '') : raw
+
+  // Only consider default (non-custom) sources when determining section completeness
+  const selectedDefaultSourceKeys = normalizeSourcesToArray(selectedSourceKeys).filter(selectedKey =>
+    sourcesOfInformation.some(source => source.key === selectedKey && !source.isCustom)
+  )
 
   return sourcesOfInformationModel.safeParse({
-    sourcesOfInformation: normalized,
+    sourcesOfInformation: selectedDefaultSourceKeys,
   }).success
 }

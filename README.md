@@ -113,3 +113,15 @@ to `develop`, and from `develop` to `main`.
 1. Commits must be signed
 2. Only developers with write access can merge PRs to `develop` and `main` branches.
 3. Only developers with write access can approve deployments to prod.
+
+---
+
+### Sources of information data
+
+The report answers used by the form, preview and PDF are stored in
+`report_details.pages`.
+
+Custom sources are stored separately:
+
+- `sources_of_information` stores the source details.
+- `report_sources_of_information` links a custom source to a specific report.

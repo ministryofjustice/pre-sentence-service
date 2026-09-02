@@ -7,6 +7,7 @@ import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
 import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
+import { EntityManager, getConnection } from 'typeorm'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -36,6 +37,14 @@ export interface IFieldValue {
   questionId: number
   questionValue: string
   answer: string
+}
+
+export interface SaveSourcesOfInformationInput {
+  reportId: string
+  selectedSourceKeys: string[]
+  sourceToAdd?: string
+  sourceToRemove?: string
+  username: string
 }
 
 export default class ReportService {
@@ -71,36 +80,115 @@ export default class ReportService {
     return this.reportDetailsService.getReportDetailsById(id)
   }
 
-  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
-    return this.sourcesOfInformationService.getSourcesOfInformation(reportId)
+  public async getSourcesOfInformation(reportId: string, manager?: EntityManager): Promise<SourceOfInformation[]> {
+    return this.sourcesOfInformationService.getSourcesOfInformation(reportId, manager)
   }
 
-  public async addCustomSourceOfInformation(reportId: string, value: string, createdBy: string): Promise<void> {
-    return this.sourcesOfInformationService.addCustomSourceOfInformation(reportId, value, createdBy)
+  public async addCustomSourceOfInformation(
+    reportId: string,
+    value: string,
+    createdBy: string,
+    manager?: EntityManager
+  ): Promise<void> {
+    return this.sourcesOfInformationService.addCustomSourceOfInformation(reportId, value, createdBy, manager)
   }
 
+  public async removeCustomSourceOfInformation(reportId: string, key: string, manager?: EntityManager): Promise<void> {
+    return this.sourcesOfInformationService.removeCustomSourceOfInformation(reportId, key, manager)
+  }
+
+  // Saves the selected sources and any custom-source change together for one report.
+  public async saveSourcesOfInformation({
+    reportId,
+    selectedSourceKeys,
+    sourceToAdd,
+    sourceToRemove,
+    username,
+  }: SaveSourcesOfInformationInput): Promise<void> {
+    await getConnection().transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsById(reportId, manager)
+
+      if (!report) {
+        throw new Error(`Report ${reportId} not found when saving sources of information`)
+      }
+
+      if (sourceToAdd) {
+        await this.addCustomSourceOfInformation(reportId, sourceToAdd, username, manager)
+      }
+
+      if (sourceToRemove) {
+        await this.removeCustomSourceOfInformation(reportId, sourceToRemove, manager)
+      }
+
+      const sources = await this.getSourcesOfInformation(reportId, manager)
+      const customSourceKeys = sources.filter(source => source.isCustom).map(source => source.key)
+
+      const fields: IFieldValue[] = [
+        {
+          pageName: 'sources-of-information',
+          questionId: 0,
+          questionValue: 'sourcesOfInformation',
+          answer: [...new Set([...selectedSourceKeys, ...customSourceKeys])].join(','),
+        },
+      ]
+
+      if (report.status === ReportStatus.NOT_STARTED) {
+        const today = new Date()
+
+        await this.updateReport(reportId, { status: ReportStatus.STARTED }, manager)
+
+        fields.push(
+          {
+            pageName: 'sources-of-information',
+            questionId: 1,
+            questionValue: 'startDate-day',
+            answer: `0${today.getDate()}`.slice(-2),
+          },
+          {
+            pageName: 'sources-of-information',
+            questionId: 2,
+            questionValue: 'startDate-month',
+            answer: `0${today.getMonth() + 1}`.slice(-2),
+          },
+          {
+            pageName: 'sources-of-information',
+            questionId: 3,
+            questionValue: 'startDate-year',
+            answer: String(today.getFullYear()),
+          }
+        )
+      }
+
+      await this.updateFieldValues(reportId, fields, manager)
+    })
+  }
   public async sourceExistsForReport(reportId: string, value: string): Promise<boolean> {
     return this.sourcesOfInformationService.sourceExistsForReport(reportId, value)
-  }
-
-  public async removeCustomSourceOfInformation(reportId: string, key: string): Promise<void> {
-    return this.sourcesOfInformationService.removeCustomSourceOfInformation(reportId, key)
   }
 
   public async getAllReportsByType(type: string): Promise<ReportDetails[]> {
     return this.reportDetailsService.getReportDetailsByType(type)
   }
 
-  public async updateReport(id: string, updates: Partial<IReportDetails>): Promise<ReportDetails | null> {
-    return this.reportDetailsService.updateReportDetails(id, updates)
+  public async updateReport(
+    id: string,
+    updates: Partial<IReportDetails>,
+    manager?: EntityManager
+  ): Promise<ReportDetails | null> {
+    return this.reportDetailsService.updateReportDetails(id, updates, manager)
   }
 
   public async deleteReport(id: string): Promise<boolean> {
     return this.reportDetailsService.deleteReportDetails(id)
   }
 
-  public async updateFieldValues(reportId: string, fieldValues: IFieldValue[]): Promise<ReportDetails | null> {
-    const report = await this.reportDetailsService.getReportDetailsById(reportId)
+  public async updateFieldValues(
+    reportId: string,
+    fieldValues: IFieldValue[],
+    manager?: EntityManager
+  ): Promise<ReportDetails | null> {
+    const report = await this.reportDetailsService.getReportDetailsById(reportId, manager)
+
     if (!report) {
       return null
     }
@@ -142,7 +230,7 @@ export default class ReportService {
       }
     }
 
-    return this.reportDetailsService.updateReportPages(reportId, pages)
+    return this.reportDetailsService.updateReportPages(reportId, pages, manager)
   }
 
   public async persistPartialFieldValues(
