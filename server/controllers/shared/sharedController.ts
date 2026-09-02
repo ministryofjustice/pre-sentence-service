@@ -249,7 +249,7 @@ export default class SharedController {
       }
 
       const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
-      
+
       if (this.updateReport) {
         this.updateReport()
       }

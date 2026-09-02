@@ -173,7 +173,7 @@ describe('ReportService.saveSourcesOfInformation', () => {
   const manager = {} as EntityManager
 
   beforeEach(() => {
-    (getConnection as jest.Mock).mockReturnValue({
+    ;(getConnection as jest.Mock).mockReturnValue({
       transaction: async (runInTransaction: (entityManager: EntityManager) => Promise<unknown>) => {
         return runInTransaction(manager)
       },

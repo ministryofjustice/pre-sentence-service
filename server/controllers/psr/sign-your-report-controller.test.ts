@@ -70,9 +70,9 @@ describe('SignYourReportController', () => {
 
     reportService = {
       getReportById: jest.fn(),
-      getSourcesOfInformation: jest.fn().mockResolvedValue([
-        { key: 'cps_summary', value: 'CPS summary', isCustom: false },
-      ]),
+      getSourcesOfInformation: jest
+        .fn()
+        .mockResolvedValue([{ key: 'cps_summary', value: 'CPS summary', isCustom: false }]),
       updateReport: jest.fn().mockResolvedValue(mockedReportData),
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
       persistPartialFieldValues: jest.fn().mockResolvedValue({ persisted: [], dropped: [] }),
