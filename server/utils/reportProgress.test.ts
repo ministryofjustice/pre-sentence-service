@@ -1,6 +1,8 @@
 import { areReviewSectionsComplete, getReportProgress, hasContent } from './reportProgress'
 
 describe('reportProgress', () => {
+  const availableSourcesOfInformation = [{ key: 'cps_summary', value: 'CPS summary', isCustom: false }]
+
   describe('hasContent', () => {
     it('returns false for empty rich text', () => {
       expect(hasContent('<p>&nbsp;</p>')).toBe(false)
@@ -34,7 +36,7 @@ describe('reportProgress', () => {
       sourcesOfInformation: 'cps_summary',
       signReportName: 'Officer Name',
       isDangerousReport: 'no',
-    })
+    }, availableSourcesOfInformation)
 
     expect(progress.defendantDetails.status).toBe('Completed')
     expect(progress.offenceAnalysis.status).toBe('Completed')
@@ -52,7 +54,7 @@ describe('reportProgress', () => {
       name: 'Jane Doe',
       dateOfBirth: '1990-01-01',
       'address-postcode': 'SW1A 1AA',
-    })
+    }, availableSourcesOfInformation)
 
     expect(progress.defendantDetails.status).toBe('Incomplete')
     expect(progress.defendantDetails.name).toBe(false)
@@ -65,7 +67,7 @@ describe('reportProgress', () => {
       apiDefendantDetailsAvailable: true,
       name: 'Jane Doe',
       isDangerousReport: 'yes',
-    })
+    }, availableSourcesOfInformation)
 
     expect(progress.defendantDetails.status).toBe('Incomplete')
     expect(progress.riskAnalysis.status).toBe('Incomplete')
@@ -80,7 +82,7 @@ describe('reportProgress', () => {
       proposedSentenceRationale: 'Rationale',
       alternativeSentencingOptions: 'Alternatives',
       custodialSentenceConsideration: 'not-threshold',
-    })
+    }, availableSourcesOfInformation)
 
     expect(progress.sentencingProposal.sentenceImpact).toBe(true)
     expect(progress.sentencingProposal.status).toBe('Completed')
@@ -93,7 +95,7 @@ describe('reportProgress', () => {
       alternativeSentencingOptions: 'Alternatives',
       custodialSentenceConsideration: 'possible',
       custodialSentenceImpact: '   ',
-    })
+    }, availableSourcesOfInformation)
 
     expect(progress.sentencingProposal.sentenceImpact).toBe(false)
     expect(progress.sentencingProposal.status).toBe('Incomplete')

@@ -16,6 +16,7 @@ describe('Sources of Information Controller', () => {
   ]
 
   const mockedReportService = {
+    saveSourcesOfInformation: jest.fn().mockResolvedValue(undefined),
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
     addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
@@ -103,7 +104,7 @@ describe('Sources of Information Controller', () => {
       })
     )
 
-    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
+    expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
   })
 
   it('redirects when "Save and continue" is clicked with no pending source', async () => {
@@ -113,6 +114,11 @@ describe('Sources of Information Controller', () => {
 
     expect(res.render).not.toHaveBeenCalled()
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/preview-report')
+    expect(mockedReportService.saveSourcesOfInformation).toHaveBeenCalledWith({
+      reportId: '123',
+      selectedSourceKeys: ['cps_summary'],
+      username: 'testuser',
+    })
   })
 
   it('adds the source when Add to list is clicked', async () => {
@@ -121,8 +127,12 @@ describe('Sources of Information Controller', () => {
 
     await controller.post(req, res)
 
-    expect(mockedReportService.addCustomSourceOfInformation).toHaveBeenCalledWith('123', 'A new source', 'testuser')
-
+    expect(mockedReportService.saveSourcesOfInformation).toHaveBeenCalledWith({
+      reportId: '123',
+      selectedSourceKeys: ['cps_summary'],
+      sourceToAdd: 'A new source',
+      username: 'testuser',
+    })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information#added-sources')
   })
 
@@ -134,8 +144,12 @@ describe('Sources of Information Controller', () => {
 
     await controller.post(req, res)
 
-    expect(mockedReportService.removeCustomSourceOfInformation).toHaveBeenCalledWith('123', 'custom-source-key')
-
+    expect(mockedReportService.saveSourcesOfInformation).toHaveBeenCalledWith({
+      reportId: '123',
+      selectedSourceKeys: ['cps_summary'],
+      sourceToRemove: 'custom-source-key',
+      username: 'testuser',
+    })
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/sources-of-information#added-sources')
   })
 
@@ -150,8 +164,7 @@ describe('Sources of Information Controller', () => {
 
     expect(res.redirect).not.toHaveBeenCalled()
 
-    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
-
+    expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
     expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
@@ -188,8 +201,7 @@ describe('Sources of Information Controller', () => {
 
     expect(res.redirect).not.toHaveBeenCalled()
 
-    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
-
+    expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
     expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
@@ -228,8 +240,7 @@ describe('Sources of Information Controller', () => {
 
     expect(mockedReportService.sourceExistsForReport).toHaveBeenCalledWith('123', 'CPS summary')
 
-    expect(mockedReportService.addCustomSourceOfInformation).not.toHaveBeenCalled()
-
+    expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
     expect(res.redirect).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(

@@ -2,7 +2,12 @@ import ReportService from './reportService'
 import ReportDetailsService from './reportDetailsService'
 import EventService from './eventService'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
+import { EntityManager, getConnection } from 'typeorm'
 
+jest.mock('typeorm', () => ({
+  ...jest.requireActual('typeorm'),
+  getConnection: jest.fn(),
+}))
 jest.mock('./reportDetailsService')
 jest.mock('./personDetailsService')
 jest.mock('./sourcesOfInformationService')
@@ -159,5 +164,67 @@ describe('ReportService.updateFieldValues — write chokepoint', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pages = captured.pages as any[]
     expect(pages[0].questions[0].answer).toBe('already plain text')
+  })
+})
+
+// Checks that saving sources of information uses one transaction manager
+// This does not prove rollback in PostgreSQL
+describe('ReportService.saveSourcesOfInformation', () => {
+  const manager = {} as EntityManager
+
+  beforeEach(() => {
+    (getConnection as jest.Mock).mockReturnValue({
+      transaction: async (runInTransaction: (entityManager: EntityManager) => Promise<unknown>) => {
+        return runInTransaction(manager)
+      },
+    })
+  })
+
+  it('uses one transaction manager for adding a source and saving the report answer', async () => {
+    const reportService = new ReportService()
+
+    const getReport = jest.fn().mockResolvedValue({
+      id: 'r1',
+      status: 'STARTED',
+      pages: [],
+    })
+    const addSource = jest.fn().mockResolvedValue(undefined)
+    const getSources = jest.fn().mockResolvedValue([
+      { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+      { key: 'interview', value: 'Interview', isCustom: true },
+    ])
+    const updateFields = jest.fn().mockResolvedValue({ id: 'r1' })
+
+    const reportDetailsService = (reportService as unknown as { reportDetailsService: ReportDetailsService })
+      .reportDetailsService
+
+    // Mock the methods to use the same transaction manager
+    reportDetailsService.getReportDetailsById = getReport
+    reportService.addCustomSourceOfInformation = addSource
+    reportService.getSourcesOfInformation = getSources
+    reportService.updateFieldValues = updateFields
+
+    await reportService.saveSourcesOfInformation({
+      reportId: 'r1',
+      selectedSourceKeys: ['cps_summary'],
+      sourceToAdd: 'Interview',
+      username: 'testuser',
+    })
+
+    expect(getReport).toHaveBeenCalledWith('r1', manager)
+    expect(getSources).toHaveBeenCalledWith('r1', manager)
+    expect(addSource).toHaveBeenCalledWith('r1', 'Interview', 'testuser', manager)
+    expect(updateFields).toHaveBeenCalledWith(
+      'r1',
+      [
+        {
+          pageName: 'sources-of-information',
+          questionId: 0,
+          questionValue: 'sourcesOfInformation',
+          answer: 'cps_summary,interview',
+        },
+      ],
+      manager
+    )
   })
 })

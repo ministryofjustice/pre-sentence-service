@@ -57,18 +57,24 @@ describe('sourcesOfInformationModel', () => {
         expect.arrayContaining([
           expect.objectContaining({
             path: ['sourcesOfInformation'],
-            message: 'You must select all sources used to inform this report',
+            message: 'You must select one or more sources used to inform this report',
           }),
         ])
       )
     }
   })
 
-  it('recognises saved sources when checking section completeness', () => {
+  it('recognises a selected default source when checking section completeness', () => {
     expect(
-      isSourcesOfInformationComplete({
-        sourcesOfInformation: 'cps_summary,interview',
-      })
+      isSourcesOfInformationComplete(
+        {
+          sourcesOfInformation: 'cps_summary,interview',
+        },
+        [
+          { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+          { key: 'interview', value: 'Interview', isCustom: true },
+        ]
+      )
     ).toBe(true)
   })
 
@@ -166,5 +172,19 @@ describe('sourcesOfInformationModel', () => {
         ])
       )
     }
+  })
+
+  it('does not mark the section complete when only a custom source is saved', () => {
+    expect(
+      isSourcesOfInformationComplete(
+        {
+          sourcesOfInformation: 'interview',
+        },
+        [
+          { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+          { key: 'interview', value: 'Interview', isCustom: true },
+        ]
+      )
+    ).toBe(false)
   })
 })
