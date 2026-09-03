@@ -41,6 +41,14 @@ describe('GET /timed-out', () => {
       })
   })
 
+  it('renders the content in a two thirds grid column', () => {
+    return request(app)
+      .get('/timed-out')
+      .expect(res => {
+        expect(res.text).toContain('govuk-grid-column-two-thirds')
+      })
+  })
+
   it('links the sign in button to a local returnTo path', () => {
     return request(app)
       .get('/timed-out?returnTo=%2Freport%2F123%2Fproposal')

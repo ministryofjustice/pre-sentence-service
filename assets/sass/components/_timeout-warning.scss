@@ -51,6 +51,12 @@ $govuk-dialogue-width: 640px;
   }
 }
 
+.govuk-modal-dialogue__header {
+  min-height: 40px;
+  padding-bottom: $govuk-focus-width;
+  background-color: govuk-colour("black");
+}
+
 .govuk-modal-dialogue__content {
   @include govuk-font($size: 19);
   @include govuk-responsive-padding(6);
@@ -96,9 +102,10 @@ $govuk-dialogue-width: 640px;
 }
 
 .countdown {
+  @include govuk-typography-weight-bold;
   white-space: nowrap;
 }
 
 .tabular-numbers {
-  @include govuk-font($size: false, $tabular: true);
+  @include govuk-font-tabular-numbers;
 }
