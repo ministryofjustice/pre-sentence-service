@@ -59,8 +59,12 @@
           <div class="added-source">
             <span>{{ source.value }}</span>
 
-            <button type="submit" name="removeSource" value="{{ source.key }}"
-                  class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5 remove-link-button">
+            <button
+              type="submit"
+              name="removeSource"
+              value="{{ source.key }}"
+              class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5 remove-link-button"
+            >
             Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
             </button>
           </div>
@@ -99,6 +103,7 @@
         value="add-source"
         class="govuk-button govuk-button--secondary add-source-btn"
         data-module="govuk-button"
+        data-prevent-double-click="true"
       >
         Add to list
       </button>
