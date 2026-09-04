@@ -136,7 +136,6 @@
     "jquery": "3.7.1",
     "jwks-rsa": "3.2.0",
     "jwt-decode": "4.0.0",
-    "nhsapp-frontend": "^5.0.3",
     "nocache": "4.0.0",
     "nunjucks": "3.2.4",
     "passport": "0.7.0",
