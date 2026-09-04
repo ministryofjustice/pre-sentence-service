@@ -6,8 +6,13 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
-  <form method="post" data-autosave="true" novalidate>
-    <div class="govuk-form-group {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
+  <form
+    method="post"
+    action="/{{ reportPath }}/{{ reportId }}/sources-of-information"
+    data-autosave="true"
+    novalidate
+  >
+    <div class="govuk-form-group govuk-!-margin-top-7 {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
       <fieldset class="govuk-fieldset"
         aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
         
@@ -17,20 +22,14 @@
           </h1>
         </legend>
 
-        {% if isEditing %}
-          <p class="govuk-body">
-            Add or remove sources of information from your list
-          </p>
-        {% else %}
-          <div id="sourcesOfInformation-hint" class="govuk-hint">
-            Select all sources used to inform this report.
-          </div>
-        {% endif %}
+        <div id="sourcesOfInformation-hint" class="govuk-hint">
+          Select all sources used to inform this report.
+        </div>
 
         {% if 'sourcesOfInformation' in elementsWithError %}
           <p id="sourcesOfInformation-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span>
-            You must select all sources used to inform this report
+            You must select one or more sources used to inform this report
           </p>
         {% endif %}
 
@@ -46,55 +45,91 @@
               <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
                 {{ source.value }}
               </label>
-              {% if source.isCustom %}
-                <a href="/psr/{{ reportId }}/sources-of-information/edit?remove={{ source.key }}"
-                   class="govuk-link govuk-link--no-visited-state checkbox-action">
-                  Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
-                </a>
-              {% endif %}
             </div>
           {% endfor %}
         </div>
       </fieldset>
     </div>
 
-    {% if isEditing %}
-      {{ govukInput({
-        label: { text: "Add source of information" },
-        hint: { text: "Enter the name of the additional source of information" },
-        name: "source"
-      }) }}
+    {% if addedSourcesOfInformation | length %}
+      <div id="added-sources" class="added-source-wrapper">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Added sources</h2>
 
-      {{ govukButton({
-        text: "Add",
-        classes: "govuk-button--secondary",
-        attributes: { name: "action", value: "add-source" }
-      }) }}
+        {% for source in addedSourcesOfInformation %}
+          <div class="added-source">
+            <span>{{ source.value }}</span>
+
+            <button
+              type="submit"
+              name="removeSource"
+              value="{{ source.key }}"
+              class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-5 remove-link-button"
+            >
+            Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
+            </button>
+          </div>
+        {% endfor %}
+      </div>
     {% endif %}
+
+    <div class="govuk-form-group govuk-!-margin-bottom-8 {% if 'source' in elementsWithError %} govuk-form-group--error{% endif %}">
+      <div class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--m govuk-!-margin-bottom-3" for="source">
+          Add another source of information
+        </label>
+      </div>
+
+      {% if 'source' in elementsWithError %}
+        <p id="source-error" class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span>
+          {{ formValidation.errors.source }}
+        </p>
+      {% endif %}
+
+      <input
+        class="govuk-input govuk-!-width-two-thirds"
+        id="source"
+        name="source"
+        type="text"
+        value="{{ data.source or '' }}"
+        data-max-length="80"
+        data-character-count-errors-only
+        aria-describedby="{% if 'source' in elementsWithError %}source-error {% endif %}source-info"
+      >
+
+      <button
+        type="submit"
+        name="action"
+        value="add-source"
+        class="govuk-button govuk-button--secondary add-source-btn"
+        data-module="govuk-button"
+        data-prevent-double-click="true"
+      >
+        Add to list
+      </button>
+
+
+      <div
+        class="govuk-!-margin-top-2"
+        data-character-count-for="source"
+        id="source-info"
+        aria-live="polite"
+        hidden
+      ></div>
+    </div>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
     <input type="hidden" name="pageName" value="{{ pageName }}">
 
-    {% if isEditing %}
-      <div class="govuk-button-group">
-        {{ govukButton({
-          text: "Save list and continue",
-          attributes: { name: "action", value: "save-list" }
-        }) }}
-
-        <a class="govuk-link govuk-link--no-visited-state" href="/psr/{{ reportId }}/sources-of-information">Cancel</a>
-      </div>
-    {% else %}
-      <div class="govuk-!-margin-bottom-3">
-        {{ govukButton({
-          text: "Add other",
-          classes: "govuk-button--secondary",
-          href: "/psr/" + reportId + "/sources-of-information/edit"
-        }) }}
-      </div>
-
-      {{ govukButton({ text: "Save and continue" }) }}
-    {% endif %}
+    {{ govukButton({
+      text: "Save and continue",
+      attributes: { name: "action", value: "save-list" }
+    }) }}
   </form>
+{% endblock %}
+
+{% block additionalScripts %}
+  {{ super() }}
+  <script src="/assets/sources-of-information.js"></script>
 {% endblock %}

@@ -12,6 +12,7 @@ const makeReq = (path: string, reportId = 'r1'): ReportRequest =>
 
 const makeRes = (): Response =>
   ({
+    locals: {},
     redirect: jest.fn(),
   }) as unknown as Response
 

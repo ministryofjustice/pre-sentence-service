@@ -34,6 +34,7 @@
   }
 
   function updateCounter(field) {
+    const errorsOnly = field.hasAttribute('data-character-count-errors-only')
     const max = parseInt(field.getAttribute('data-max-length'), 10)
     if (!Number.isFinite(max) || max <= 0) return
 
@@ -49,7 +50,10 @@
     counter.classList.remove('govuk-error-message')
     counter.classList.add('govuk-hint')
 
-    if (!isWarning && !isError) {
+    if (errorsOnly && !isError) {
+      counter.hidden = true
+      counter.textContent = ''
+    } else if (!isWarning && !isError) {
       counter.hidden = true
       counter.textContent = ''
     } else if (isError) {
