@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
   const cancelBtn = document.getElementById('cancel-submit')
 
   let allowSubmit = false
+  let triggerButton = null
+
+  function openModal(submitter) {
+    triggerButton = submitter
+    modal.hidden = false
+    cancelBtn.focus()
+  }
+
+  function closeModal() {
+    modal.hidden = true
+    triggerButton?.focus()
+  }
 
   // This validation is a bit of a hack due to the way we SSR and validate server side.
   function hasBlockingValidationErrors() {
@@ -74,18 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault()
     clearServerValidationUI(form)
 
-    modal.hidden = false
-
-    setTimeout(() => {
-    document.activeElement.blur()
-  }, 0)
-
+    openModal(e.submitter)
   })
 
   confirmBtn.addEventListener('click', function () {
     allowSubmit = true
-    modal.hidden = true
-
+    closeModal()
+    
     if (typeof form.requestSubmit === 'function') {
       form.requestSubmit()
       return
@@ -94,7 +101,25 @@ document.addEventListener('DOMContentLoaded', function () {
     form.submit()
   })
 
-  cancelBtn.addEventListener('click', function () {
-    modal.hidden = true
+  cancelBtn.addEventListener('click', closeModal)
+
+  document.addEventListener('keydown', function (event) {
+    if (modal.hidden) return
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeModal()
+      return
+    }
+
+    if (event.key !== 'Tab') return
+
+    if (event.shiftKey && document.activeElement === confirmBtn) {
+      event.preventDefault()
+      cancelBtn.focus()
+    } else if (!event.shiftKey && document.activeElement === cancelBtn) {
+      event.preventDefault()
+      confirmBtn.focus()
+    }
   })
 })
