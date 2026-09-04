@@ -1,0 +1,50 @@
+.do-dont__wrap {
+    background-color: #f0f4f5;
+    border: 1px solid #d8dde0;
+}
+
+.do-dont__heading {
+    position: relative;
+    display: inline-block;
+    top: -16px;
+    margin: 0;
+    margin-bottom: 8px;
+    margin-left: -33px;
+    padding: 8px 32px;
+    outline: 1px solid rgba(0, 0, 0, 0);
+    outline-offset: -1px;
+    color: #fff;
+    background-color: #005eb8;
+}
+
+.do-dont__content {
+    padding: 32px;
+    padding-top: 0;
+}
+
+.do-dont__list {
+    position: relative;
+    margin: 0;
+    padding-left: 2.25rem;
+    list-style: none;
+
+    & li {
+        margin-bottom: 8px;
+    }
+
+    & li > svg {
+        position: absolute;
+        left: -0.25rem;
+        width: 2rem;
+        height: 2rem;
+        margin-top: -0.25rem;
+    }
+
+    & li > .tick {
+        fill: #007f3b;
+    }
+
+    & li > .cross {
+        fill: #d5281b;
+    }
+}

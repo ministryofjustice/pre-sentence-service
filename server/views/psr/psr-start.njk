@@ -1,5 +1,5 @@
 {% extends "../partials/layout.njk" %}
-{% from 'do-dont-list/macro.njk' import list %}
+{% from "../components/do-dont-list/macro.njk" import doDontList %}
 
 {% set pageTitle = preSentenceType + " - Home" %}
 
@@ -22,47 +22,27 @@
       </li>
     </ul>
 
-    {{ list({
+    {{ doDontList({
       title: "Do",
       type: "tick",
       items: [
-        {
-          item: "provide an evidence-based assessment using critical analysis"
-        },
-        {
-          item: "use professional curiosity to look beyond the information disclosed at interview and the CPS pack"
-        },
-        {
-          item: "use sentencing guidelines as a basis for your proposal"
-        },
-        {
-          item: "consider issues related to diversity and inclusion so that the PSR is tailored to the needs of the person"
-        },
-        {
-          item: "adhere to child safeguarding and domestic abuse policy expectations"
-        }
-      ],
-      classes: "background-grey"
+        "provide an evidence-based assessment using critical analysis",
+        "use professional curiosity to look beyond the information disclosed at interview and the CPS pack",
+        "use sentencing guidelines as a basis for your proposal",
+        "consider issues related to diversity and inclusion so that the PSR is tailored to the needs of the person",
+        "adhere to child safeguarding and domestic abuse policy expectations"
+      ]
     }) }}
 
-    {{ list({
+    {{ doDontList({
       title: "Don't",
       type: "cross",
       items: [
-        {
-          item: "provide a solely descriptive account"
-        },
-        {
-          item: "accept information disclosed at face value"
-        },
-        {
-          item: "be unrealistic in your proposal or deviate from sentencing guidelines without explaining your rationale"
-        },
-        {
-          item: "disregard any diversity and inclusion issues that may present "
-        }
-      ],
-      classes: "background-grey"
+        "provide a solely descriptive account",
+        "accept information disclosed at face value",
+        "do not be unrealistic in your proposal or deviate from sentencing guidelines without explaining your rationale",
+        "do not disregard any diversity and inclusion issues that may present"
+      ]
     }) }}
 
     <h2 class="govuk-heading-l">Before you finish a PSR</h2>
