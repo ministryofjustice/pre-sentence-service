@@ -5,7 +5,9 @@ import logger from '../../logger'
 import config from '../config'
 import ReportDetails from '../repositories/entities/reportDetails'
 import PreSentenceToDeliusService from './preSentenceToDeliusService'
+import SourcesOfInformationService from './sourcesOfInformationService'
 import type { Address, DefendantDetails } from '../@types/preSentenceToDelius'
+import { buildPdfSourcesOfInformation } from '../utils/sourcesOfInformationHelpers'
 import {
   configureReportData,
   getDraftHeader,
@@ -51,7 +53,10 @@ function capitalise(str: string): string {
 }
 
 export default class PdfGenerationService {
-  constructor(private readonly preSentenceToDeliusService?: PreSentenceToDeliusService) {}
+  constructor(
+    private readonly preSentenceToDeliusService?: PreSentenceToDeliusService,
+    private readonly sourcesOfInformationService: SourcesOfInformationService = new SourcesOfInformationService()
+  ) {}
 
   async generatePdf(report: ReportDetails, res: Response, options: PdfGenerationOptions = {}): Promise<void> {
     const { draft = false } = options
@@ -67,6 +72,12 @@ export default class PdfGenerationService {
 
     const defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
     const offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
+
+    const sources = await this.sourcesOfInformationService.getSourcesOfInformation(reportId)
+    const sourcesOfInformationList = buildPdfSourcesOfInformation(
+      sources,
+      reportData.sourcesOfInformation as string | undefined
+    )
 
     const dob = new Date(defendant.dateOfBirth)
     const now = new Date()
@@ -104,6 +115,7 @@ export default class PdfGenerationService {
       ageInYears,
       impactExplanation,
       offenceData,
+      sourcesOfInformationList,
     }
 
     const { preSentenceUrl } = config.apis.gotenberg
