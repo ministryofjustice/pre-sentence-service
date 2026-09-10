@@ -51,8 +51,6 @@
         } if 'proposedSentence' in elementsWithError
     }) }}
 
-    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
     {{ picTextEditor({
         label: {
             text: "Explain your rationale for the proposed sentence",
@@ -73,8 +71,6 @@
         } if 'proposedSentenceRationale' in elementsWithError
     }) }}
 
-    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
     {{ picTextEditor({
         label: {
             text: "Outline alternative sentencing options",
@@ -92,8 +88,6 @@
             text: formValidation.errors.alternativeSentencingOptions
         } if 'alternativeSentencingOptions' in elementsWithError
     }) }}
-
-    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     <div class="govuk-form-group{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
         <fieldset class="govuk-fieldset">
