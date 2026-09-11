@@ -4,8 +4,11 @@
   textarea
     field-sizing: content
     resize: none
-    margin-bottom: 5px
+    margin-bottom: 20px
     min-height: 214px
+
+  button
+    margin: 0
 
 .address-formatting > p
   margin: 0
@@ -13,6 +16,7 @@
 .soi-hint
   margin-top: -5px
   margin-bottom: 15px
+  color: var(--govuk-text-colour, #0b0c0c)
 
 .checkbox-action
   margin-left: auto
@@ -88,6 +92,8 @@
   font: inherit
   cursor: pointer
   
+.section-wrapper
+  @include govuk-responsive-margin(7, "bottom")
 
 +govuk-media-query($from: tablet)
   .psr-side-nav
