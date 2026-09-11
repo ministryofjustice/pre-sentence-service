@@ -15,127 +15,130 @@
 
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
-  <h2 class="govuk-heading-l govuk-!-margin-bottom-2">Review offences from NDelius</h2>
-  <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it.
-  Any changes you make in NDelius will be updated after you refresh a page in this PSR.</p>
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Review offences from NDelius</h2>
+    <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it.
+    Any changes you make in NDelius will be updated after you refresh a page in this PSR.</p>
 
-  {% if data.apiOffencesAvailable and data.offencesData %}
-    {% set offenceRows = [] %}
+    {% if data.apiOffencesAvailable and data.offencesData %}
+      {% set offenceRows = [] %}
 
-    {# Add main offence #}
-    {% set mainOffenceHtml %}
-      <div class="psr-main-offence">
-        <strong class='govuk-!-font-weight-bold'>{{ data.offencesData.mainOffence.description }}</strong>
-        <br>
-        {{ govukTag({
-          text: "Main offence",
-          classes: "govuk-tag--blue govuk-!-margin-top-2"
-        }) }}
-      </div>
-    {% endset %}
-    {% set offenceRows = (offenceRows.push([
-      { html: mainOffenceHtml, classes: "psr-main-offence-cell" },
-      { text: data.offencesData.mainOffence.date, classes: "psr-main-offence-cell" }
-    ]), offenceRows) %}
-
-    {# Add additional offences #}
-    {% for offence in data.offencesData.additionalOffences %}
-      {% set offenceHtml %}
-        {{ offence.description }}
+      {# Add main offence #}
+      {% set mainOffenceHtml %}
+        <div class="psr-main-offence">
+          <strong class='govuk-!-font-weight-bold'>{{ data.offencesData.mainOffence.description }}</strong>
+          <br>
+          {{ govukTag({
+            text: "Main offence",
+            classes: "govuk-tag--blue govuk-!-margin-top-2"
+          }) }}
+        </div>
       {% endset %}
       {% set offenceRows = (offenceRows.push([
-        { html: offenceHtml },
-        { text: offence.date }
+        { html: mainOffenceHtml, classes: "psr-main-offence-cell" },
+        { text: data.offencesData.mainOffence.date, classes: "psr-main-offence-cell" }
       ]), offenceRows) %}
-    {% endfor %}
 
-    {{ govukTable({
-      head: [
-        { text: "Offence", classes: "govuk-!-width-one-half" },
-        { text: "Date of offence" }
-      ],
-      rows: offenceRows
+      {# Add additional offences #}
+      {% for offence in data.offencesData.additionalOffences %}
+        {% set offenceHtml %}
+          {{ offence.description }}
+        {% endset %}
+        {% set offenceRows = (offenceRows.push([
+          { html: offenceHtml },
+          { text: offence.date }
+        ]), offenceRows) %}
+      {% endfor %}
+
+      {{ govukTable({
+        head: [
+          { text: "Offence", classes: "govuk-!-width-one-half" },
+          { text: "Date of offence" }
+        ],
+        rows: offenceRows
+      }) }}
+    {% else %}
+      {# Fallback to database/hardcoded data if API data not available #}
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-visually-hidden">Warning</span>
+          Unable to fetch offence details from NDelius. Please refresh the page or check NDelius directly.
+        </strong>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Analyse offences under consideration</h2>
+
+    {{ picTextEditor({
+      name: "offencesUnderConsideration",
+      id: "offencesUnderConsideration",
+      value: data.offencesUnderConsideration,
+      rows: "10",
+      longText: true,
+      label: {
+        text: "Analyse offences under consideration",
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        html: "<p>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
+              <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
+                <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
+                <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
+                <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
+                <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
+                <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
+              </ul>"
+      },
+      errorMessage: {
+        text: formValidation.errors.offencesUnderConsideration
+      } if 'offencesUnderConsideration' in elementsWithError
     }) }}
-  {% else %}
-    {# Fallback to database/hardcoded data if API data not available #}
-    <div class="govuk-warning-text">
-      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-      <strong class="govuk-warning-text__text">
-        <span class="govuk-visually-hidden">Warning</span>
-        Unable to fetch offence details from NDelius. Please refresh the page or check NDelius directly.
-      </strong>
-    </div>
-  {% endif %}
+  </section>
 
-  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Analyse previous offending behaviour and response to supervision</h2>
 
-  <h2 class="govuk-heading-l">Analyse offences under consideration</h2>
+    {{ picTextEditor({
+      name: "offencesPattern",
+      id: "offencesPattern",
+      value: data.offencesPattern,
+      rows: "10",
+      longText: true,
+      label: {
+        text: "Analyse previous offending behaviour and response to supervision",
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        html: "<p>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
+              <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
+                <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
+                <li>interventions that may reduce the chances of offending</li>
+                <li>circumstances that may increase the risk of further offending</li>
+              </ul>"
+      },
+      errorMessage: {
+        text: formValidation.errors.offencesPattern
+      } if 'offencesPattern' in elementsWithError
+    }) }}
 
-  {{ picTextEditor({
-    name: "offencesUnderConsideration",
-    id: "offencesUnderConsideration",
-    value: data.offencesUnderConsideration,
-    rows: "10",
-    longText: true,
-    label: {
-      text: ""
-    },
-    hint: {
-      html: "<p>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
-            <ul class='govuk-hint govuk-list govuk-list--bullet'>
-              <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
-              <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
-              <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
-              <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
-              <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
-            </ul>"
-    },
-    errorMessage: {
-      text: formValidation.errors.offencesUnderConsideration
-    } if 'offencesUnderConsideration' in elementsWithError
-  }) }}
-
-  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
-  <h2 class="govuk-heading-l">Analyse previous offending behaviour and response to supervision</h2>
-
-  {{ picTextEditor({
-    name: "offencesPattern",
-    id: "offencesPattern",
-    value: data.offencesPattern,
-    rows: "10",
-    longText: true,
-    label: {
-      text: ""
-    },
-    hint: {
-      html: "<p>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
-            <ul class='govuk-hint govuk-list govuk-list--bullet'>
-              <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
-              <li>interventions that may reduce the chances of offending</li>
-              <li>circumstances that may increase the risk of further offending</li>
-            </ul>"
-    },
-    errorMessage: {
-      text: formValidation.errors.offencesPattern
-    } if 'offencesPattern' in elementsWithError
-  }) }}
-
-  {{ govukCheckboxes({
-    id: "noPreviousOffences",
-    name: "noPreviousOffences",
-    items: [
-      {
-        checked: data.noPreviousOffences === 'true',
-        value: "true",
-        text: "The defendant has no previous offences or experience of supervision"
-      }
-    ],
-    errorMessage: {
-      text: "Check the box if the defendant has no previous offences or experience of supervision"
-    } if 'noPreviousOffences' in elementsWithError
-  }) }}
-
+    {{ govukCheckboxes({
+      id: "noPreviousOffences",
+      name: "noPreviousOffences",
+      items: [
+        {
+          checked: data.noPreviousOffences === 'true',
+          value: "true",
+          text: "The defendant has no previous offences or experience of supervision"
+        }
+      ],
+      errorMessage: {
+        text: "Check the box if the defendant has no previous offences or experience of supervision"
+      } if 'noPreviousOffences' in elementsWithError
+    }) }}
+  </section>
   
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
