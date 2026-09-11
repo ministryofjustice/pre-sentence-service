@@ -17,44 +17,46 @@
           </h1>
         </legend>
 
-        {% if isEditing %}
-          <p class="govuk-body">
-            Add or remove sources of information from your list
-          </p>
-        {% else %}
-          <div id="sourcesOfInformation-hint" class="soi-hint">
-            Select all sources used to inform this report.
-          </div>
-        {% endif %}
-
-        {% if 'sourcesOfInformation' in elementsWithError %}
-          <p id="sourcesOfInformation-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span>
-            You must select all sources used to inform this report
-          </p>
-        {% endif %}
-
-        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-          {% for source in sourcesOfInformation %}
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input"
-                     id="{{ source.key }}"
-                     name="sourcesOfInformation"
-                     type="checkbox"
-                     value="{{ source.key }}"
-                     {% if source.checked %}checked{% endif %}>
-              <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
-                {{ source.value }}
-              </label>
-              {% if source.isCustom %}
-                <a href="/psr/{{ reportId }}/sources-of-information/edit?remove={{ source.key }}"
-                   class="govuk-link govuk-link--no-visited-state checkbox-action">
-                  Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
-                </a>
-              {% endif %}
+        <section class="section-wrapper"> 
+          {% if isEditing %}
+            <p class="govuk-body">
+              Add or remove sources of information from your list
+            </p>
+          {% else %}
+            <div id="sourcesOfInformation-hint" class="govuk-hint soi-hint">
+              Select all sources used to inform this report.
             </div>
-          {% endfor %}
-        </div>
+          {% endif %}
+
+          {% if 'sourcesOfInformation' in elementsWithError %}
+            <p id="sourcesOfInformation-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span>
+              You must select all sources used to inform this report
+            </p>
+          {% endif %}
+
+          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+            {% for source in sourcesOfInformation %}
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input"
+                      id="{{ source.key }}"
+                      name="sourcesOfInformation"
+                      type="checkbox"
+                      value="{{ source.key }}"
+                      {% if source.checked %}checked{% endif %}>
+                <label class="govuk-label govuk-checkboxes__label" for="{{ source.key }}">
+                  {{ source.value }}
+                </label>
+                {% if source.isCustom %}
+                  <a href="/psr/{{ reportId }}/sources-of-information/edit?remove={{ source.key }}"
+                    class="govuk-link govuk-link--no-visited-state checkbox-action">
+                    Remove <span class="govuk-visually-hidden">{{ source.value }}</span>
+                  </a>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </section>
       </fieldset>
     </div>
 

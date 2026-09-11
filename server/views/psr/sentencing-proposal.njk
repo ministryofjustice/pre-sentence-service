@@ -30,122 +30,126 @@
 <form method="post" data-autosave="true" novalidate>
     <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
-    {{ picTextEditor({
-        label: {
-            text: "Enter the proposed sentence",
-            classes: "govuk-label--l"
-        },
-        hint: {
-            html: "Consult the relevant sentencing guidelines and any indication the court has given regarding the sentence. You should use the <strong>Effective Proposal Framework (EPF)</strong> tool to inform your proposal."
-        },
-        name: "proposedSentence",
-        id: "proposedSentence",
-        rows: "10",
-        longText: true,
-        maxLength: 4000,
-        value: data.proposedSentence,
-        whatToInclude: proposedSentenceHelp,
-        whatToIncludeTitle: "Help with proposing a community sentence",
-        errorMessage: {
-            text: formValidation.errors.proposedSentence
-        } if 'proposedSentence' in elementsWithError
-    }) }}
+    <section class="section-wrapper">
+        <p class="govuk-body">The sentencing proposal should be based on the information and analysis contained within the preceding sections of the PSR. It should be consistent with the relevant sentencing guidelines and any indication the court has given regarding the sentence.</p>
+    </section>
 
-    {{ picTextEditor({
-        label: {
-            text: "Explain your rationale for the proposed sentence",
-            classes: "govuk-label--l"
-        },
-        hint: {
-            text: "Your rationale should be consistent with the information and analysis contained within the preceding sections of the PSR."
-        },
-        name: "proposedSentenceRationale",
-        id: "proposedSentenceRationale",
-        rows: "10",
-        longText: true,
-        value: data.proposedSentenceRationale,
-        whatToInclude: proposedSentenceRationaleHelp,
-        whatToIncludeTitle: "Help with explaining your rationale",
-        errorMessage: {
-            text: formValidation.errors.proposedSentenceRationale
-        } if 'proposedSentenceRationale' in elementsWithError
-    }) }}
+    <section class="section-wrapper">
+        {{ picTextEditor({
+            label: {
+                text: "Enter the proposed sentence",
+                classes: "govuk-label--l"
+            },
+            hint: {
+                html: "Consult the relevant sentencing guidelines and any indication the court has given regarding the sentence. You should use the <strong>Effective Proposal Framework (EPF)</strong> tool to inform your proposal."
+            },
+            name: "proposedSentence",
+            id: "proposedSentence",
+            rows: "10",
+            longText: true,
+            maxLength: 4000,
+            value: data.proposedSentence,
+            whatToInclude: proposedSentenceHelp,
+            whatToIncludeTitle: "Help with proposing a community sentence",
+            errorMessage: {
+                text: formValidation.errors.proposedSentence
+            } if 'proposedSentence' in elementsWithError
+        }) }}
+    </section>
 
-    {{ picTextEditor({
-        label: {
-            text: "Outline alternative sentencing options",
-            classes: "govuk-label--l"
-        },
-        hint: {
-            text: "Explain what alternative options have been considered, their suitability and why they were not included in your sentencing proposal."
-        },
-        name: "alternativeSentencingOptions",
-        id: "alternativeSentencingOptions",
-        rows: "10",
-        longText: true,
-        value: data.alternativeSentencingOptions,
-        errorMessage: {
-            text: formValidation.errors.alternativeSentencingOptions
-        } if 'alternativeSentencingOptions' in elementsWithError
-    }) }}
+    <section class="section-wrapper">
+        {{ picTextEditor({
+            label: {
+                text: "Explain your rationale for the proposed sentence",
+                classes: "govuk-label--l"
+            },
+            hint: {
+                text: "Your rationale should be consistent with the information and analysis contained within the preceding sections of the PSR."
+            },
+            name: "proposedSentenceRationale",
+            id: "proposedSentenceRationale",
+            rows: "10",
+            longText: true,
+            value: data.proposedSentenceRationale,
+            whatToInclude: proposedSentenceRationaleHelp,
+            whatToIncludeTitle: "Help with explaining your rationale",
+            errorMessage: {
+                text: formValidation.errors.proposedSentenceRationale
+            } if 'proposedSentenceRationale' in elementsWithError
+        }) }}
+    </section>
 
-    <div class="govuk-form-group{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
-        <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                Explain the impact of a custodial sentence if relevant
-            </legend>
-            {% if 'custodialSentenceConsideration' in elementsWithError %}
-                <p class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Select the button that best describes the possibility of a custodial sentence
-                </p>
-            {% endif %}
-            <div class="govuk-radios">
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="custodial-sentence-possible" name="custodialSentenceConsideration" type="radio" value="possible"{% if data.custodialSentenceConsideration == "possible" %} checked{% endif %}>
-                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-possible">
-                        A custodial sentence is possible or expected
-                    </label>
-                </div>
-                <div id="custodial-conditional-content" class="govuk-!-margin-left-4 govuk-!-margin-bottom-4{% if data.custodialSentenceConsideration != 'possible' %} govuk-!-display-none{% endif %}">
-                    {{ picTextEditor({
-                        label: {
-                            text: "",
-                            classes: "govuk-visually-hidden"
-                        },
-                        hint: {
-                            text: "Alongside any relevant factors you may want to consider the impact on the defendant's family (including dependants) and managing risk. Consider any personal vulnerabilities or risks the defendant may present to themselves."
-                        },
-                        name: "custodialSentenceImpact",
-                        id: "custodialSentenceImpact",
-                        rows: "10",
-                        longText: true,
-                        value: data.custodialSentenceImpact,
-                        errorMessage: {
-                            text: formValidation.errors.custodialSentenceImpact
-                        } if 'custodialSentenceImpact' in elementsWithError
-                    }) }}
-                </div>
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="custodial-sentence-not-threshold" name="custodialSentenceConsideration" type="radio" value="not-threshold"{% if data.custodialSentenceConsideration == "not-threshold" %} checked{% endif %}>
-                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-not-threshold">
-                        A custodial sentence is not being considered as the offence does not meet the custodial threshold
-                    </label>
-                </div>
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="custodial-sentence-court-indicated" name="custodialSentenceConsideration" type="radio" value="court-indicated"{% if data.custodialSentenceConsideration == "court-indicated" %} checked{% endif %}>
-                    <label class="govuk-label govuk-radios__label" for="custodial-sentence-court-indicated">
-                        The court has indicated a custodial sentence is not being considered
-                    </label>
-                </div>
-            </div>
-        </fieldset>
-    </div>
+    <section class="section-wrapper">
+        {{ picTextEditor({
+            label: {
+                text: "Outline alternative sentencing options",
+                classes: "govuk-label--l"
+            },
+            hint: {
+                text: "Explain what alternative options have been considered, their suitability and why they were not included in your sentencing proposal."
+            },
+            name: "alternativeSentencingOptions",
+            id: "alternativeSentencingOptions",
+            rows: "10",
+            longText: true,
+            value: data.alternativeSentencingOptions,
+            errorMessage: {
+                text: formValidation.errors.alternativeSentencingOptions
+            } if 'alternativeSentencingOptions' in elementsWithError
+        }) }}
+    </section>
+
+    <section class="section-wrapper">
+        <div class="{% if 'custodialSentenceConsideration' in elementsWithError %} govuk-form-group--error{% endif %}">
+            {{ govukRadios({
+            idPrefix: "custodialSentenceConsideration",
+            name: "custodialSentenceConsideration",
+            fieldset: {
+                legend: {
+                text: "Explain the impact of a custodial sentence if relevant",
+                classes: "govuk-fieldset__legend--l"
+                }
+            },
+            errorMessage: {
+                text: formValidation.errors.custodialSentenceConsideration
+            } if 'custodialSentenceConsideration' in elementsWithError,
+            items: [
+                {
+                value: "possible",
+                text: "A custodial sentence is possible or expected",
+                checked: data.custodialSentenceConsideration == "possible",
+                conditional: {
+                    html: govukTextarea({
+                    id: "custodialSentenceImpact",
+                    name: "custodialSentenceImpact",
+                    label: {
+                        text: "Explain the impact of a custodial sentence if relevant",
+                        classes: "govuk-visually-hidden"
+                    },
+                    rows: 10,
+                    value: data.custodialSentenceImpact
+                    })
+                }
+                },
+                {
+                value: "not-threshold",
+                text: "A custodial sentence is not being considered as the offence does not meet the custodial threshold",
+                checked: data.custodialSentenceConsideration == "not-threshold"
+                },
+                {
+                value: "court-indicated",
+                text: "The court has indicated a custodial sentence is not being considered",
+                checked: data.custodialSentenceConsideration == "court-indicated"
+                }
+            ]
+            }) }}
+        </div>
+    </section>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
     <input type="hidden" name="pageName" value="{{ pageName }}">
-    <button class="govuk-button govuk-!-margin-top-6">Save and continue</button>
-
+    <button class="govuk-button">Save and continue</button>
 </form>
 
 {% endblock %}

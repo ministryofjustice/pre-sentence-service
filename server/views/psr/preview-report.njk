@@ -28,137 +28,139 @@
     You must complete all sections of the PSR before you can preview your report.
   </p>
 
-  {{ picTaskList({
-    classes: "psr-review-task-list govuk-!-margin-bottom-7",
-    sections: [
-      {
-        heading: {
-          text: "Defendant details",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
-        },
-        items: [
-          {
-            text: "Name",
-            href: "/" + reportPath + "/" + reportId + "/defendant-details",
-            state: "Completed" if progress.defendantDetails.name else "Incomplete"
+  <section class="section-wrapper">
+    {{ picTaskList({
+      classes: "psr-review-task-list",
+      sections: [
+        {
+          heading: {
+            text: "Defendant details",
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
-          {
-            text: "Date of birth",
-            href: "/" + reportPath + "/" + reportId + "/defendant-details",
-            state: "Completed" if progress.defendantDetails.dateOfBirth else "Incomplete"
-          },
-          {
-            text: "Address",
-            href: "/" + reportPath + "/" + reportId + "/defendant-details",
-            state: "Completed" if progress.defendantDetails.address else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Offence analysis",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          items: [
+            {
+              text: "Name",
+              href: "/" + reportPath + "/" + reportId + "/defendant-details",
+              state: "Completed" if progress.defendantDetails.name else "Incomplete"
+            },
+            {
+              text: "Date of birth",
+              href: "/" + reportPath + "/" + reportId + "/defendant-details",
+              state: "Completed" if progress.defendantDetails.dateOfBirth else "Incomplete"
+            },
+            {
+              text: "Address",
+              href: "/" + reportPath + "/" + reportId + "/defendant-details",
+              state: "Completed" if progress.defendantDetails.address else "Incomplete"
+            }
+          ]
         },
-        items: [
-          {
-            text: "Analyse offences under consideration",
-            href: "/" + reportPath + "/" + reportId + "/offence-analysis",
-            state: "Completed" if progress.offenceAnalysis.offencesUnderConsideration else "Incomplete"
+        {
+          heading: {
+            text: "Offence analysis",
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
-          {
-            text: "Analyse the pattern of offending and response to supervision",
-            href: "/" + reportPath + "/" + reportId + "/offence-analysis",
-            state: "Completed" if progress.offenceAnalysis.offencesPattern else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Defendant behaviour and lifestyle assessment",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          items: [
+            {
+              text: "Analyse offences under consideration",
+              href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+              state: "Completed" if progress.offenceAnalysis.offencesUnderConsideration else "Incomplete"
+            },
+            {
+              text: "Analyse the pattern of offending and response to supervision",
+              href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+              state: "Completed" if progress.offenceAnalysis.offencesPattern else "Incomplete"
+            }
+          ]
         },
-        items: [
-          {
+        {
+          heading: {
             text: "Defendant behaviour and lifestyle assessment",
-            href: "/" + reportPath + "/" + reportId + "/defendant-behaviour",
-            state: "Completed" if progress.defendantBehaviour.assessment else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Risk analysis",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          },
+          items: [
+            {
+              text: "Defendant behaviour and lifestyle assessment",
+              href: "/" + reportPath + "/" + reportId + "/defendant-behaviour",
+              state: "Completed" if progress.defendantBehaviour.assessment else "Incomplete"
+            }
+          ]
         },
-        items: [
-          {
-            text: "Risk levels",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-            state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
+        {
+          heading: {
+            text: "Risk analysis",
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
-          {
-            text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-            state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
-          },
-          {
-            text: "Analyse relevant risks of harm and protective factors",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-            state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Sentencing proposal",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          items: [
+            {
+              text: "Risk levels",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+              state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
+            },
+            {
+              text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+              state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
+            },
+            {
+              text: "Analyse relevant risks of harm and protective factors",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
+              state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
+            }
+          ]
         },
-        items: [
-          {
-            text: "Proposed sentence",
-            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
-            state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
+        {
+          heading: {
+            text: "Sentencing proposal",
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
-          {
-            text: "Rationale for proposed sentence",
-            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
-            state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
-          },
-          {
-            text: "Alternative sentencing options",
-            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
-            state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
-          },
-          {
-            text: "Impact of custodial sentence",
-            href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
-            state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Sources of information",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          items: [
+            {
+              text: "Proposed sentence",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
+            },
+            {
+              text: "Rationale for proposed sentence",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
+            },
+            {
+              text: "Alternative sentencing options",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
+            },
+            {
+              text: "Impact of custodial sentence",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
+            }
+          ]
         },
-        items: [
-          {
+        {
+          heading: {
             text: "Sources of information",
-            href: "/" + reportPath + "/" + reportId + "/sources-of-information",
-            state: "Completed" if progress.sourcesOfInformation.sources else "Incomplete"
-          }
-        ]
-      },
-      {
-        heading: {
-          text: "Sign and lock your report",
-          classes: "govuk-heading-l govuk-!-margin-bottom-3"
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          },
+          items: [
+            {
+              text: "Sources of information",
+              href: "/" + reportPath + "/" + reportId + "/sources-of-information",
+              state: "Completed" if progress.sourcesOfInformation.sources else "Incomplete"
+            }
+          ]
         },
-        items: [
-          signAndLockItem
-        ]
-      }
-    ]
-  }) }}
+        {
+          heading: {
+            text: "Sign and lock your report",
+            classes: "govuk-heading-l govuk-!-margin-bottom-3"
+          },
+          items: [
+            signAndLockItem
+          ]
+        }
+      ]
+    }) }}
+  </section>
 
 {% endblock %}

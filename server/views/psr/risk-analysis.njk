@@ -36,125 +36,131 @@
 
   <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
-  <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH).</p>
-  <ol class="govuk-list govuk-list--number">
-    <li>Assign risk levels</li>
-    <li>Confirm risk predictors</li>
-    <li>Assess the likelihood of reoffending</li>
-    <li>Analyse relevant risk and protective factors</li>
-  </ol>
+  <section class="section-wrapper">
+    <p class="govuk-body">Follow this step-by-step process to help you make a decision about whether someone poses low, medium, high or very high Risk of Serious Harm (RoSH).</p>
+    <ol class="govuk-list govuk-list--number">
+      <li>Assign risk levels</li>
+      <li>Confirm risk predictors</li>
+      <li>Assess the likelihood of reoffending</li>
+      <li>Analyse relevant risk and protective factors</li>
+    </ol>
+  </section>
 
-  <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
 
-  {{ govukWarningText({
-    text: "You must complete an OASys Layer 1 Assessment to confirm the risk predictors and inform your wider risk analysis.",
-    iconFallbackText: "Warning"
-  }) }}
+    {{ govukWarningText({
+      text: "You must complete an OASys Layer 1 Assessment to confirm the risk predictors and inform your wider risk analysis.",
+      iconFallbackText: "Warning"
+    }) }}
 
-  <h2 class="govuk-heading-m">Confirm the risk levels from OASys</h2>
+    <h3 class="govuk-heading-m">Confirm the risk levels from OASys</h3>
 
-  {{ govukSelect({
-    id: "risk-to-children",
-    name: "riskToChildren",
-    label: {
-      text: "Risk to children",
-      classes: "govuk-label--m"
-    },
-    errorMessage: {
-      text: formValidation.errors.riskToChildren
-    } if 'riskToChildren' in elementsWithError,
-    items: riskOptions,
-    value: data.riskToChildren
-  }) }}
+    {{ govukSelect({
+      id: "risk-to-children",
+      name: "riskToChildren",
+      label: {
+        text: "Risk to children",
+        classes: "govuk-label--m"
+      },
+      errorMessage: {
+        text: formValidation.errors.riskToChildren
+      } if 'riskToChildren' in elementsWithError,
+      items: riskOptions,
+      value: data.riskToChildren
+    }) }}
 
-  {{ govukSelect({
-    id: "risk-to-public",
-    name: "riskToPublic",
-    label: {
-      text: "Risk to public",
-      classes: "govuk-label--m"
-    },
-    errorMessage: {
-      text: formValidation.errors.riskToPublic
-    } if 'riskToPublic' in elementsWithError,
-    items: riskOptions,
-    value: data.riskToPublic
-  }) }}
+    {{ govukSelect({
+      id: "risk-to-public",
+      name: "riskToPublic",
+      label: {
+        text: "Risk to public",
+        classes: "govuk-label--m"
+      },
+      errorMessage: {
+        text: formValidation.errors.riskToPublic
+      } if 'riskToPublic' in elementsWithError,
+      items: riskOptions,
+      value: data.riskToPublic
+    }) }}
 
-  {{ govukSelect({
-    id: "risk-to-known-adults",
-    name: "riskToKnownAdults",
-    label: {
-      text: "Risk to known adults",
-      classes: "govuk-label--m"
-    },
-    errorMessage: {
-      text: formValidation.errors.riskToKnownAdults
-    } if 'riskToKnownAdults' in elementsWithError,
-    items: riskOptions,
-    value: data.riskToKnownAdults
-  }) }}
+    {{ govukSelect({
+      id: "risk-to-known-adults",
+      name: "riskToKnownAdults",
+      label: {
+        text: "Risk to known adults",
+        classes: "govuk-label--m"
+      },
+      errorMessage: {
+        text: formValidation.errors.riskToKnownAdults
+      } if 'riskToKnownAdults' in elementsWithError,
+      items: riskOptions,
+      value: data.riskToKnownAdults
+    }) }}
 
-  {{ govukSelect({
-    id: "risk-to-staff",
-    name: "riskToStaff",
-    label: {
-      text: "Risk to staff",
-      classes: "govuk-label--m"
-    },
-    errorMessage: {
-      text: formValidation.errors.riskToStaff
-    } if 'riskToStaff' in elementsWithError,
-    items: riskOptions,
-    value: data.riskToStaff
-  }) }}
+    {{ govukSelect({
+      id: "risk-to-staff",
+      name: "riskToStaff",
+      label: {
+        text: "Risk to staff",
+        classes: "govuk-label--m"
+      },
+      errorMessage: {
+        text: formValidation.errors.riskToStaff
+      } if 'riskToStaff' in elementsWithError,
+      items: riskOptions,
+      value: data.riskToStaff
+    }) }}
+  </section>
 
-  {{ picTextEditor({
-    label: {
-      text: "Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending",
-      classes: "govuk-label--l"
-    },
-    hint: {
-      text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
-      and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools."
-    },
-    name: "riskPredictors",
-    id: "risk-predictors",
-    rows: "10",
-    longText: true,
-    value: data.riskPredictors,
-    whatToInclude: riskPredictorsHelp,
-    whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
-    errorMessage: {
-      text: formValidation.errors.riskPredictors
-    } if 'riskPredictors' in elementsWithError
-  }) }}
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l">Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending</h2>
 
-  {{ picTextEditor({
-    label: {
-      text: "Step 4: Analyse relevant risks of harm and protective factors",
-      classes: "govuk-label--l"
-    },
-    hint: {
-      html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
-        <ul class='govuk-list--bullet'>
-          <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
-          <li>the defendant's circumstances (past and present) and how these may influence offending</li>
-          <li>the potential impact on victims</li>
-          <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
-          <li>a dangerousness assessment (if requested by the court)</li>
-        </ul>
-        <p>Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>"
-    },
-    name: "riskAndHarmFactors",
-    id: "risk-riskAndHarmFactors",
-    rows: "10",
-    longText: true,
-    value: data.riskAndHarmFactors,
-    errorMessage: {
-      text: formValidation.errors.riskAndHarmFactors
-    } if 'riskAndHarmFactors' in elementsWithError
-  }) }}
+    {{ picTextEditor({
+      hint: {
+        text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
+        and comment on whether it matches your professional interpretation. You do not need to report percentage scores or explain the meaning of the tools."
+      },
+      name: "riskPredictors",
+      id: "risk-predictors",
+      classes: "govuk-!-margin-bottom-4",
+      rows: "10",
+      longText: true,
+      value: data.riskPredictors,
+      whatToInclude: riskPredictorsHelp,
+      whatToIncludeTitle: "Help with identifying appropriate risk assessment tools",
+      errorMessage: {
+        text: formValidation.errors.riskPredictors
+      } if 'riskPredictors' in elementsWithError
+    }) }}
+  </section>
+
+  <section class="section-wrapper">
+    <h2 class="govuk-heading-l">Step 4: Analyse relevant risks of harm and protective factors</h2>
+
+    {{ picTextEditor({
+      hint: {
+        html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
+          <ul class='govuk-list--bullet'>
+            <li>the longer-term influences (positive and negative) on the defendant's behaviour, and the more recent influences based on the professional assessment</li>
+            <li>the defendant's circumstances (past and present) and how these may influence offending</li>
+            <li>the potential impact on victims</li>
+            <li>your reasoning behind which RoSH (Risk of Serious Harm) level is appropriate</li>
+            <li>a dangerousness assessment (if requested by the court)</li>
+          </ul>
+          <p>Note any issues relating to self-harm and suicide including any concerns which may put other individuals at risk.</p>"
+      },
+      name: "riskAndHarmFactors",
+      id: "risk-riskAndHarmFactors",
+      classes: "govuk-!-margin-bottom-4",
+      rows: "10",
+      longText: true,
+      value: data.riskAndHarmFactors,
+      errorMessage: {
+        text: formValidation.errors.riskAndHarmFactors
+      } if 'riskAndHarmFactors' in elementsWithError
+    }) }}
+  </section>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">
