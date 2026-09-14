@@ -119,6 +119,25 @@
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
+    <h2 class="govuk-heading-m">Sources of information</h2>
+
+    <div class="govuk-!-margin-bottom-4">
+        {% for source in data.sourcesOfInformationList.predefined %}
+            <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+        {% endfor %}
+    </div>
+
+    {% if data.sourcesOfInformationList.custom | length %}
+        <h3 class="govuk-heading-s">Other sources</h3>
+        <div class="govuk-!-margin-bottom-4">
+            {% for source in data.sourcesOfInformationList.custom %}
+                <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
     <h2 class="govuk-heading-m">Completion details</h2>
 
     <h3 class="govuk-heading-s">Report author:</h3>

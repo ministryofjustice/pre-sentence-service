@@ -40,6 +40,28 @@ export const buildSourcesOfInformation = (
   }))
 }
 
+export interface PdfSourceOfInformation {
+  label: string
+  used: boolean
+}
+
+export interface PdfSourcesOfInformation {
+  predefined: PdfSourceOfInformation[]
+  custom: PdfSourceOfInformation[]
+}
+
+export const buildPdfSourcesOfInformation = (
+  sources: SourceOfInformation[],
+  selectedSources?: string
+): PdfSourcesOfInformation => {
+  const resolved = buildSourcesOfInformation(sources, undefined, selectedSources)
+  const toPdf = (s: SourceOfInformation): PdfSourceOfInformation => ({ label: s.value, used: !!s.checked })
+  return {
+    predefined: resolved.filter(s => !s.isCustom).map(toPdf),
+    custom: resolved.filter(s => s.isCustom).map(toPdf),
+  }
+}
+
 export const clearPendingSourcesForReportId = (pendingChanges: Record<ReportId, PendingChanges>, reportId: string) => {
   const bucket = pendingChanges[reportId]
   if (!bucket) return
