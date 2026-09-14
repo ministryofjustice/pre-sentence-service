@@ -7,7 +7,7 @@
 
 {% block content %}
 
-  <main class="app-container govuk-body">
+  <div class="app-container govuk-body">
     <h1 class="govuk-heading-l">{{ applicationName }}</h1>
 
     {% if reports and reports.length > 0 %}
@@ -99,6 +99,6 @@
       <p class="govuk-body">No reports found.</p>
       <p class="govuk-body"><a href="/psr/new" class="govuk-link govuk-link--no-visited-state">Create a new Pre-Sentence report</a></p>
     {% endif %}
-  </main>
+  </div>
 
 {% endblock %}
