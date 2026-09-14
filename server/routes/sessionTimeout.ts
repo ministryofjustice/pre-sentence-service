@@ -27,7 +27,7 @@ export default function sessionTimeoutRoutes(): Router {
     next()
   })
 
-  router.get('/timed-out', (req, res) => {
+  router.get('/timed-out', (req, res, next) => {
     res.locals.nonce = config.nonce
     const returnTo = safeReturnTo(req.query.returnTo)
 
@@ -42,7 +42,11 @@ export default function sessionTimeoutRoutes(): Router {
     const authSignOutUrl = `${config.apis.hmppsAuth.externalUrl}/sign-out?client_id=${config.apis.hmppsAuth.apiClientId}&redirect_uri=${config.domain}`
     const redirect = () => res.redirect(authSignOutUrl)
     if (req.session) {
-      req.session.regenerate(() => {
+      req.session.regenerate(err => {
+        if (err) {
+          next(err)
+          return
+        }
         if (req.session) {
           req.session.timedOut = true
           req.session.returnTo = returnTo

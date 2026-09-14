@@ -8,11 +8,11 @@ import sessionTimeoutRoutes from './sessionTimeout'
 
 const authSignOutUrl = `${config.apis.hmppsAuth.externalUrl}/sign-out?client_id=${config.apis.hmppsAuth.apiClientId}&redirect_uri=${config.domain}`
 
-function appWithSessionTimeoutRoutes(): Express {
+function appWithSessionTimeoutRoutes(store?: session.Store): Express {
   const app = express()
   app.set('view engine', 'njk')
   nunjucksSetup(app, path)
-  app.use(session({ secret: 'test-secret', resave: false, saveUninitialized: false }))
+  app.use(session({ secret: 'test-secret', resave: false, saveUninitialized: false, store }))
   app.get('/set-marker', (req, res) => {
     req.session.nowInMinutes = 12345
     res.status(200).end()
@@ -55,6 +55,14 @@ describe('GET /timed-out', () => {
     const agent = request.agent(app)
     await agent.get('/timed-out?returnTo=%2F%2Fevil.example.com').expect(302)
     await agent.get('/get-marker').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
+  })
+
+  it('forwards session regeneration errors instead of redirecting to auth', async () => {
+    const store = new session.MemoryStore()
+    store.destroy = (sid, callback) => callback?.(new Error('session store failure'))
+    const failingApp = appWithSessionTimeoutRoutes(store)
+    const res = await request(failingApp).get('/timed-out?returnTo=%2Freport%2F123%2Fproposal')
+    expect(res.status).toBe(500)
   })
 })
 

@@ -133,6 +133,35 @@ describe('TimeoutWarning', () => {
     expect(redirectSpy).toHaveBeenCalled()
   })
 
+  it('re-arms the idle countdown when the dialog is closed with Escape', () => {
+    createWarning()
+    jest.advanceTimersByTime(IDLE_MS)
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }))
+    expect(dialogBox().hasAttribute('open')).toBe(false)
+
+    refocusTab()
+
+    expect(redirectSpy).not.toHaveBeenCalled()
+    expect(dialogBox().hasAttribute('open')).toBe(false)
+  })
+
+  it('re-arms the idle countdown when the dialog is closed via the back button', () => {
+    createWarning()
+    jest.advanceTimersByTime(IDLE_MS)
+
+    window.dispatchEvent(new PopStateEvent('popstate'))
+    expect(dialogBox().hasAttribute('open')).toBe(false)
+
+    jest.setSystemTime(Date.now() + WARNING_MS + 1000)
+    refocusTab()
+    expect(redirectSpy).not.toHaveBeenCalled()
+    expect(dialogBox().hasAttribute('open')).toBe(false)
+
+    jest.advanceTimersByTime(IDLE_MS)
+    expect(dialogBox().hasAttribute('open')).toBe(true)
+  })
+
   it('closes the dialog and extends the session when stay signed in is clicked', () => {
     createWarning()
     jest.advanceTimersByTime(IDLE_MS)

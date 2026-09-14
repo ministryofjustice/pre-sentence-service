@@ -9,6 +9,7 @@ function TimeoutWarning($module) {
     onDialogNotSupported: this.dialogFallback.bind(this),
   })
   this.timers = []
+  this.idleTimer = null
   this.idleDeadline = null
   this.warningDeadline = null
   this.$countdown = $module.querySelector('.govuk-timeout-warning__timer')
@@ -37,9 +38,7 @@ TimeoutWarning.prototype.init = function() {
 }
 
 TimeoutWarning.prototype.countIdleTime = function() {
-  var idleTime
   var lastKeepAlive = 0
-  var milliSecondsBeforeTimeOut = this.idleMinutesBeforeTimeOut * 60000
   var milliSecondsBetweenKeepAlives = 60000
   var boundResetIdleTime = resetIdleTime.bind(this)
 
@@ -52,9 +51,7 @@ TimeoutWarning.prototype.countIdleTime = function() {
 
   function resetIdleTime() {
     if (!this.isDialogOpen()) {
-      clearTimeout(idleTime)
-      this.idleDeadline = Date.now() + milliSecondsBeforeTimeOut
-      idleTime = setTimeout(this.openDialog.bind(this), milliSecondsBeforeTimeOut)
+      this.restartIdleCountdown()
 
       if (Date.now() - lastKeepAlive >= milliSecondsBetweenKeepAlives) {
         lastKeepAlive = Date.now()
@@ -64,6 +61,13 @@ TimeoutWarning.prototype.countIdleTime = function() {
   }
 
   boundResetIdleTime()
+}
+
+TimeoutWarning.prototype.restartIdleCountdown = function() {
+  var milliSecondsBeforeTimeOut = this.idleMinutesBeforeTimeOut * 60000
+  clearTimeout(this.idleTimer)
+  this.idleDeadline = Date.now() + milliSecondsBeforeTimeOut
+  this.idleTimer = setTimeout(this.openDialog.bind(this), milliSecondsBeforeTimeOut)
 }
 
 TimeoutWarning.prototype.extendTimeOnServer = function() {
@@ -200,6 +204,7 @@ TimeoutWarning.prototype.dialogClose = function() {
   if (!this.isDialogOpen()) {
     this.warningDeadline = null
     this.clearTimers()
+    this.restartIdleCountdown()
     this.extendTimeOnServer()
   }
 }
