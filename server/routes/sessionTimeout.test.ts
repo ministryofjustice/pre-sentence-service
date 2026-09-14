@@ -64,9 +64,7 @@ describe('GET / after the auth sign-out round trip', () => {
     await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal').expect(302)
     const res = await agent.get('/').expect(302)
     expect(res.headers.location).toBe('/timed-out?signedOut=true&returnTo=%2Freport%2F123%2Fproposal')
-    await agent
-      .get('/get-marker')
-      .expect({ returnTo: '/report/123/proposal', timedOut: null, nowInMinutes: null })
+    await agent.get('/get-marker').expect({ returnTo: '/report/123/proposal', timedOut: null, nowInMinutes: null })
   })
 
   it('passes through to the next handler when the session has not timed out', () => {
