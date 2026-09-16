@@ -27,17 +27,27 @@ kubectl patch secret pre-sentence-service -n court-probation-preprod \
 
 ## 2. Updating Deployment Environment Variables (Temporary Override)
 
-Set an environment variable directly on a deployment (triggers an immediate pod restart):
+Set an environment variable directly on a deployment (triggers an immediate rolling restart):
 
 ```bash
-kubectl set env deployment/pre-sentence-service -n court-probation-preprod WEB_SESSION_TIMEOUT_IN_MINUTES=3
+kubectl set env deployment/pre-sentence-service -n court-probation-dev WEB_SESSION_TIMEOUT_IN_MINUTES=3
 ```
 
 > **Note:** This override is temporary and will be overwritten whenever a new deployment pipeline runs via Helm.
 
 ---
 
-## 3. Inspecting Active Environment Variables
+## 3. Checking Rollout Status
+
+Watch the rolling update progress until the new pod is ready and running:
+
+```bash
+kubectl rollout status deployment/pre-sentence-service -n court-probation-dev
+```
+
+---
+
+## 4. Inspecting Active Environment Variables
 
 Inspect the live environment variables on a running deployment pod without having to decode secrets manually.
 
