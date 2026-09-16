@@ -1,7 +1,7 @@
-import { getConnection, In } from 'typeorm'
+import { EntityManager, getConnection } from 'typeorm'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
-import { SourceOfInformation, CustomSource, SourceKey } from '../utils/sourcesOfInformationHelpers'
+import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 
 export interface ISourcesOfInformation {
   id?: number
@@ -15,122 +15,131 @@ export interface ISourcesOfInformation {
 }
 
 export default class SourcesOfInformationService {
-  public async getSourcesOfInformation(reportId: string): Promise<SourceOfInformation[]> {
+  public async sourceExistsForReport(reportId: string, value: string): Promise<boolean> {
+    const normalizedValue = value.trim().toLocaleLowerCase()
+
+    const sources = await this.getSourcesOfInformation(reportId)
+
+    return sources.some(source => {
+      return (
+        source.key.trim().toLocaleLowerCase() === normalizedValue ||
+        source.value.trim().toLocaleLowerCase() === normalizedValue
+      )
+    })
+  }
+
+  public async addCustomSourceOfInformation(
+    reportId: string,
+    value: string,
+    createdBy: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<void> {
+    const sourceRepo = manager.getRepository(SourcesOfInformation)
+    const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
+
+    // Create a new custom source
+    const source = await sourceRepo.save(
+      sourceRepo.create({
+        name: value,
+        value,
+        isDefault: false,
+        source: 'custom',
+        createdBy,
+        isDeleted: false,
+        version: 1,
+      })
+    )
+
+    // Link the new custom source to the report
+    await reportSourceRepo.save(
+      reportSourceRepo.create({
+        reportId,
+        sourcesOfInformationId: source.id,
+        createdBy,
+        createdAt: new Date(),
+        lastUpdatedAt: new Date(),
+        lastUpdatedBy: createdBy,
+        isDeleted: false,
+        version: 1,
+      })
+    )
+  }
+
+  public async removeCustomSourceOfInformation(
+    reportId: string,
+    key: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<void> {
+    const sourceRepo = manager.getRepository(SourcesOfInformation)
+    const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
+
+    // Find this report's own link to a custom source with the given name
+    const link = await reportSourceRepo.findOne({
+      where: {
+        reportId,
+        isDeleted: false,
+        sourcesOfInformation: {
+          name: key,
+          isDefault: false,
+          isDeleted: false,
+        },
+      },
+      relations: ['sourcesOfInformation'],
+    })
+
+    if (!link) return
+
+    // Soft delete the report's link to this source
+    await reportSourceRepo.update(link.id, {
+      isDeleted: true,
+      lastUpdatedAt: new Date(),
+    })
+
+    // Soft delete the custom source itself
+    await sourceRepo.update(link.sourcesOfInformationId, {
+      isDeleted: true,
+    })
+  }
+
+  public async getSourcesOfInformation(
+    reportId: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<SourceOfInformation[]> {
     // Get default sources
-    const defaultSources = await getConnection()
-      .getRepository(SourcesOfInformation)
-      .find({
-        where: {
-          isDefault: true,
-          isDeleted: false,
-        },
-      })
+    const defaultSources = await manager.getRepository(SourcesOfInformation).find({
+      where: {
+        isDefault: true,
+        isDeleted: false,
+      },
+    })
 
-    // Get custom sources linked to this report
-    const reportSources = await getConnection()
-      .getRepository(ReportSourcesOfInformation)
-      .find({
-        where: {
-          reportId,
-          isDeleted: false,
-        },
-        relations: ['sourcesOfInformation'],
-      })
+    // Get sources linked to this report
+    const reportSources = await manager.getRepository(ReportSourcesOfInformation).find({
+      where: {
+        reportId,
+        isDeleted: false,
+      },
+      relations: ['sourcesOfInformation'],
+    })
 
-    // Combine and map to SourceOfInformation format
-    const allSources: SourceOfInformation[] = [
-      ...defaultSources.map(s => ({
-        key: s.name,
-        value: s.value,
+    // Only treat report-linked rows as custom if they aren't actually a default source
+    const customReportSources = reportSources.filter(
+      reportSource => reportSource.sourcesOfInformation?.isDefault === false
+    )
+
+    // Combine default and custom sources into a single list
+    return [
+      ...defaultSources.map(source => ({
+        key: source.name,
+        value: source.value,
         isCustom: false,
       })),
-      ...reportSources.map(rs => ({
-        key: rs.sourcesOfInformation.name,
-        value: rs.sourcesOfInformation.value,
+      ...customReportSources.map(reportSource => ({
+        key: reportSource.sourcesOfInformation.name,
+        value: reportSource.sourcesOfInformation.value,
         isCustom: true,
       })),
     ]
-
-    return allSources
-  }
-
-  public async saveCustomSourcesOfInformation(
-    reportId: string,
-    addedSources: CustomSource[],
-    removedSources: SourceKey[],
-    createdBy: string
-  ): Promise<void> {
-    const sourceRepo = getConnection().getRepository(SourcesOfInformation)
-    const reportSourceRepo = getConnection().getRepository(ReportSourcesOfInformation)
-
-    // Handle removed sources
-    if (removedSources.length > 0) {
-      // Find the source IDs to remove
-      const sourcesToRemove = await sourceRepo.find({
-        where: {
-          value: In(removedSources),
-          isDefault: false,
-        },
-      })
-
-      const sourceIdsToRemove = sourcesToRemove.map(s => s.id)
-
-      // Soft delete the report-source links
-      if (sourceIdsToRemove.length > 0) {
-        const reportSourceLinks = await reportSourceRepo.find({
-          where: {
-            reportId,
-            sourcesOfInformationId: In(sourceIdsToRemove),
-          },
-        })
-
-        for (const link of reportSourceLinks) {
-          await reportSourceRepo.update(link.id, {
-            isDeleted: true,
-            lastUpdatedAt: new Date(),
-          })
-        }
-
-        // Also soft delete the custom sources themselves
-        for (const sourceId of sourceIdsToRemove) {
-          await sourceRepo.update(sourceId, {
-            isDeleted: true,
-          })
-        }
-      }
-    }
-
-    // Handle added sources
-    if (addedSources.length > 0) {
-      for (const customSource of addedSources) {
-        // Create the custom source
-        const newSource = sourceRepo.create({
-          name: customSource.value,
-          value: customSource.key,
-          isDefault: false,
-          source: 'custom',
-          createdBy,
-          isDeleted: false,
-          version: 1,
-        })
-
-        const savedSource = await sourceRepo.save(newSource)
-
-        // Link it to the report
-        const reportSourceLink = reportSourceRepo.create({
-          reportId,
-          sourcesOfInformationId: savedSource.id,
-          createdBy,
-          createdAt: new Date(),
-          lastUpdatedAt: new Date(),
-          lastUpdatedBy: createdBy,
-          isDeleted: false,
-          version: 1,
-        })
-
-        await reportSourceRepo.save(reportSourceLink)
-      }
-    }
   }
 
   public async createDefaultSource(sourceData: ISourcesOfInformation): Promise<SourcesOfInformation> {

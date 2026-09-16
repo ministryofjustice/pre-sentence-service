@@ -2,7 +2,12 @@ import ReportService from './reportService'
 import ReportDetailsService from './reportDetailsService'
 import EventService from './eventService'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
+import { EntityManager, getConnection } from 'typeorm'
 
+jest.mock('typeorm', () => ({
+  ...jest.requireActual('typeorm'),
+  getConnection: jest.fn(),
+}))
 jest.mock('./reportDetailsService')
 jest.mock('./personDetailsService')
 jest.mock('./sourcesOfInformationService')
@@ -159,5 +164,91 @@ describe('ReportService.updateFieldValues — write chokepoint', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pages = captured.pages as any[]
     expect(pages[0].questions[0].answer).toBe('already plain text')
+  })
+})
+
+// Checks that saving sources of information uses one transaction manager
+// This does not prove rollback in PostgreSQL
+describe('ReportService.saveSourcesOfInformation', () => {
+  const manager = {} as EntityManager
+
+  let reportService: ReportService
+  let getReport: jest.Mock
+  let addSource: jest.Mock
+  let removeSource: jest.Mock
+  let getSources: jest.Mock
+  let updateFields: jest.Mock
+
+  const savedAnswer = () => updateFields.mock.calls[0][1][0].answer
+
+  beforeEach(() => {
+    ;(getConnection as jest.Mock).mockReturnValue({
+      transaction: async (runInTransaction: (entityManager: EntityManager) => Promise<unknown>) => {
+        return runInTransaction(manager)
+      },
+    })
+
+    reportService = new ReportService()
+
+    getReport = jest.fn().mockResolvedValue({ id: 'r1', status: 'STARTED', pages: [] })
+    addSource = jest.fn().mockResolvedValue(undefined)
+    removeSource = jest.fn().mockResolvedValue(undefined)
+    getSources = jest.fn().mockResolvedValue([])
+    updateFields = jest.fn().mockResolvedValue({ id: 'r1' })
+
+    const reportDetailsService = (reportService as unknown as { reportDetailsService: ReportDetailsService })
+      .reportDetailsService
+
+    // All mocks share the transaction manager passed through by saveSourcesOfInformation
+    reportDetailsService.getReportDetailsById = getReport
+    reportService.addCustomSourceOfInformation = addSource
+    reportService.removeCustomSourceOfInformation = removeSource
+    reportService.getSourcesOfInformation = getSources
+    reportService.updateFieldValues = updateFields
+  })
+
+  it('uses one transaction manager for adding a source and saving the report answer', async () => {
+    getSources.mockResolvedValue([
+      { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+      { key: 'a_custom_source', value: 'A custom source', isCustom: true },
+    ])
+
+    await reportService.saveSourcesOfInformation({
+      reportId: 'r1',
+      selectedSourceKeys: ['cps_summary'],
+      sourceToAdd: 'A custom source',
+      username: 'testuser',
+    })
+
+    expect(getReport).toHaveBeenCalledWith('r1', manager)
+    expect(getSources).toHaveBeenCalledWith('r1', manager)
+    expect(addSource).toHaveBeenCalledWith('r1', 'A custom source', 'testuser', manager)
+    expect(updateFields).toHaveBeenCalledWith(
+      'r1',
+      [
+        {
+          pageName: 'sources-of-information',
+          questionId: 0,
+          questionValue: 'sourcesOfInformation',
+          answer: 'cps_summary,a_custom_source',
+        },
+      ],
+      manager
+    )
+  })
+
+  it('drops a removed custom source while keeping posted selections', async () => {
+    // Reflects the post-removal state, since the re-read happens after the delete
+    getSources.mockResolvedValue([{ key: 'cps_summary', value: 'CPS summary', isCustom: false }])
+
+    await reportService.saveSourcesOfInformation({
+      reportId: 'r1',
+      selectedSourceKeys: ['cps_summary'],
+      sourceToRemove: 'a_custom_source',
+      username: 'testuser',
+    })
+
+    expect(removeSource).toHaveBeenCalledWith('r1', 'a_custom_source', manager)
+    expect(savedAnswer()).toBe('cps_summary')
   })
 })

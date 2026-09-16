@@ -21,7 +21,8 @@ describe('Route Handlers - Shared Controller', () => {
   ]
   const mockedReportService = {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
-    saveCustomSourcesOfInformation: jest.fn().mockResolvedValue(undefined),
+    addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
+    removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
@@ -107,7 +108,6 @@ describe('Route Handlers - Shared Controller', () => {
         `${handler.path}/${handler.templatePath}`,
         expect.objectContaining({
           reportId,
-          isEditing: false,
         })
       )
     })
