@@ -27,6 +27,7 @@
     "typecheck": "tsc && tsc -p integration_tests",
     "test": "npx jest --forceExit --detectOpenHandles --testPathPatterns=/server/.*",
     "test:ci": "npx jest --ci --runInBand --forceExit --testPathPatterns=/server/.*",
+    "test:client": "npx jest --testPathPatterns=/assets/.*",
     "test:pdf": "npm run compile-sass && jest --config pdf_tests/jest.config.js --runInBand",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "DB_NAME=pre-sentence-service-int DB_PORT=5432 cypress run --config video=false",
@@ -44,10 +45,13 @@
   "jest": {
     "preset": "ts-jest",
     "transform": {
-      "^.+\\.tsx?$": [
+      "^.+\\.[tj]sx?$": [
         "ts-jest",
         {
-          "isolatedModules": true
+          "isolatedModules": true,
+          "tsconfig": {
+            "allowJs": true
+          }
         }
       ]
     },
@@ -55,7 +59,8 @@
       "server/**/*.{ts,js,jsx,mjs}"
     ],
     "testMatch": [
-      "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
+      "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}",
+      "<rootDir>/assets/js/**/?(*.)(test).{ts,js,mjs}"
     ],
     "testEnvironment": "node",
     "reporters": [
@@ -184,6 +189,7 @@
     "eslint-plugin-prettier": "5.4.0",
     "husky": "9.1.7",
     "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
     "jest-html-reporter": "4.1.0",
     "jest-junit": "16.0.0",
     "jsonwebtoken": "9.0.2",

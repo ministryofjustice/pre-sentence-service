@@ -7,6 +7,7 @@ declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
   export interface SessionData {
     returnTo: string
+    timedOut: boolean
     nowInMinutes: number
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
