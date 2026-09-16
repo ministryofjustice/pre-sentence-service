@@ -13,11 +13,11 @@ function appWithSessionTimeoutRoutes(store?: session.Store): Express {
   app.set('view engine', 'njk')
   nunjucksSetup(app, path)
   app.use(session({ secret: 'test-secret', resave: false, saveUninitialized: false, store }))
-  app.get('/set-marker', (req, res) => {
+  app.get('/set-session-state', (req, res) => {
     req.session.nowInMinutes = 12345
     res.status(200).end()
   })
-  app.get('/get-marker', (req, res) => {
+  app.get('/get-session-state', (req, res) => {
     res.json({
       returnTo: req.session.returnTo || null,
       timedOut: req.session.timedOut || null,
@@ -45,16 +45,16 @@ describe('GET /timed-out', () => {
 
   it('replaces the session and stores the returnTo path with the timed out flag', async () => {
     const agent = request.agent(app)
-    await agent.get('/set-marker').expect(200)
-    await agent.get('/get-marker').expect({ returnTo: null, timedOut: null, nowInMinutes: 12345 })
+    await agent.get('/set-session-state').expect(200)
+    await agent.get('/get-session-state').expect({ returnTo: null, timedOut: null, nowInMinutes: 12345 })
     await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal').expect(302)
-    await agent.get('/get-marker').expect({ returnTo: '/report/123/proposal', timedOut: true, nowInMinutes: null })
+    await agent.get('/get-session-state').expect({ returnTo: '/report/123/proposal', timedOut: true, nowInMinutes: null })
   })
 
   it('stores the service root when returnTo is unsafe', async () => {
     const agent = request.agent(app)
     await agent.get('/timed-out?returnTo=%2F%2Fevil.example.com').expect(302)
-    await agent.get('/get-marker').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
+    await agent.get('/get-session-state').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
   })
 
   it('forwards session regeneration errors instead of redirecting to auth', async () => {
@@ -72,7 +72,7 @@ describe('GET / after the auth sign-out round trip', () => {
     await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal').expect(302)
     const res = await agent.get('/').expect(302)
     expect(res.headers.location).toBe('/timed-out?signedOut=true&returnTo=%2Freport%2F123%2Fproposal')
-    await agent.get('/get-marker').expect({ returnTo: '/report/123/proposal', timedOut: null, nowInMinutes: null })
+    await agent.get('/get-session-state').expect({ returnTo: '/report/123/proposal', timedOut: null, nowInMinutes: null })
   })
 
   it('passes through to the next handler when the session has not timed out', () => {
