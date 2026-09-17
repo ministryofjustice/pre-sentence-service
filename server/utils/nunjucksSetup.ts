@@ -18,6 +18,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.longTextMax = LONG_TEXT_MAX
   app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
   app.locals.featureRichTextEditor = config.features.richTextEditor
+  app.locals.featureSmartSurvey = config.features.smartSurvey
   app.locals.sessionTimeout = {
     idleMinutes: config.session.expiryMinutes - config.session.warningMinutes,
     warningMinutes: config.session.warningMinutes,

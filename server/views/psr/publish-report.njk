@@ -51,3 +51,10 @@
     </div>
   </main>
 {% endblock %}
+
+{% block additionalScripts %}
+  {{ super() }}
+  {% if featureSmartSurvey %}
+    <script id="ss-popup-1851857" type="module" async src="https://embed.smartsurvey.io/index.js?popupCode=X8XUZ7"></script>
+  {% endif %}
+{% endblock %}
