@@ -22,12 +22,13 @@ export function handleSignInCallbackResult(req: Request, res: Response, next: Ne
       return res.redirect('/sign-in')
     }
 
+    const returnTo = req.session.returnTo
     return req.logIn(user, loginErr => {
       if (loginErr) {
         return next(loginErr)
       }
       delete req.session.authRetry
-      return res.redirect(req.session.returnTo || '/')
+      return res.redirect(returnTo || '/')
     })
   }
 }
