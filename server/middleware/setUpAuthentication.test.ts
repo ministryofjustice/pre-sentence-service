@@ -42,7 +42,13 @@ describe('handleSignInCallbackResult', () => {
   let next: NextFunction
 
   beforeEach(() => {
-    req = { session: {}, logIn: jest.fn((user, cb) => cb(null)) } as unknown as Request
+    req = {
+      session: {},
+      logIn: jest.fn((user, cb) => {
+        req.session = {} as typeof req.session
+        cb(null)
+      }),
+    } as unknown as Request
     res = { redirect: jest.fn() } as unknown as Response
     next = jest.fn()
   })
