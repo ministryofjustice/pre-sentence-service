@@ -4,17 +4,19 @@
   textarea
     field-sizing: content
     resize: none
-    margin-bottom: 5px
+    margin-bottom: 20px
     min-height: 214px
 
-.key-details-header
-  font-weight: 300
-  font-size: 27px
-  line-height: 20px
-  margin-bottom: 30px
+  button
+    margin: 0
 
 .address-formatting > p
   margin: 0
+
+.soi-hint
+  margin-top: -5px
+  margin-bottom: 15px
+  color: var(--govuk-text-colour, #0b0c0c)
 
 .checkbox-action
   margin-left: auto
@@ -42,6 +44,12 @@
   margin-left: 0
   padding-left: 0
   list-style: none
+
+  > li
+    margin-bottom: 20px
+
+    &:last-child
+      margin-bottom: 0
 
 .psr-review-task-list .moj-task-list__items
   margin: 0
@@ -84,6 +92,8 @@
   font: inherit
   cursor: pointer
   
+.section-wrapper
+  @include govuk-responsive-margin(7, "bottom")
 
 +govuk-media-query($from: tablet)
   .psr-side-nav
