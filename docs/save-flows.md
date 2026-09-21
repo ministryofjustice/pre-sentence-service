@@ -1,9 +1,5 @@
 # Save Flows
 
-## Save Flow Operations
-
-This guide covers how to verify and troubleshoot report saving in a running environment.
-
 ### Expected behaviour
 
 - Edited fields are autosaved after approximately 15 seconds of inactivity.
