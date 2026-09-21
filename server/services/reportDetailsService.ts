@@ -1,5 +1,5 @@
-import { getConnection } from 'typeorm'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
+import ReportDetailsRepository from '../repositories/reportDetailsRepository'
 
 export interface IReportPage {
   name: string
@@ -24,9 +24,10 @@ export interface IReportDetails {
 }
 
 export default class ReportDetailsService {
+  constructor(private readonly reportDetailsRepository = new ReportDetailsRepository()) {}
+
   public async createReportDetails(reportData: IReportDetails): Promise<ReportDetails> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
-    const report = reportRepository.create({
+    const report = this.reportDetailsRepository.create({
       ...reportData,
       status: reportData.status || ReportStatus.NOT_STARTED,
       origin: reportData.origin || '',
@@ -36,63 +37,23 @@ export default class ReportDetailsService {
       isDeleted: false,
       version: 1,
     })
-    return reportRepository.save(report)
+    return this.reportDetailsRepository.save(report)
   }
 
   public async getReportDetailsById(id: string): Promise<ReportDetails | null> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .findOne({
-        where: {
-          id,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
-  }
-
-  public async getReportDetailsByPersonId(personId: number): Promise<ReportDetails[]> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .find({
-        where: {
-          personId,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
+    return this.reportDetailsRepository.findById(id)
   }
 
   public async getReportDetailsByType(reportType: string): Promise<ReportDetails[]> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .find({
-        where: {
-          reportType,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
+    return this.reportDetailsRepository.findByType(reportType)
   }
 
   public async getAllReportsPaginated(
     page: number = 1,
     limit: number = 20
   ): Promise<{ reports: ReportDetails[]; total: number; totalPages: number }> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
     const skip = (page - 1) * limit
-
-    const [reports, total] = await reportRepository.findAndCount({
-      where: {
-        isDeleted: false,
-      },
-      relations: ['person'],
-      order: {
-        createdAt: 'DESC', // Most recent first
-      },
-      skip,
-      take: limit,
-    })
+    const [reports, total] = await this.reportDetailsRepository.findAndCountPaginated(skip, limit)
 
     return {
       reports,
@@ -102,22 +63,19 @@ export default class ReportDetailsService {
   }
 
   public async updateReportDetails(id: string, reportData: Partial<IReportDetails>): Promise<ReportDetails | null> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
-    const report = await reportRepository.findOne({
-      where: { id, isDeleted: false },
-    })
+    const report = await this.reportDetailsRepository.findById(id)
 
     if (!report) {
       return null
     }
 
-    const updated = reportRepository.merge(report, {
+    const updated = this.reportDetailsRepository.merge(report, {
       ...reportData,
       lastUpdatedBy: new Date(),
       version: (report.version || 1) + 1,
     })
 
-    return reportRepository.save(updated)
+    return this.reportDetailsRepository.save(updated)
   }
 
   public async updateReportStatus(id: string, status: ReportStatus): Promise<ReportDetails | null> {
@@ -129,7 +87,8 @@ export default class ReportDetailsService {
   }
 
   public async getPageData(id: string, pageName: string): Promise<IReportPage | null> {
-    const report = await this.getReportDetailsById(id)
+    const report = await this.reportDetailsRepository.findById(id)
+
     if (!report || !report.pages) {
       return null
     }
@@ -138,7 +97,7 @@ export default class ReportDetailsService {
   }
 
   public async updatePageData(id: string, pageName: string, pageData: IReportPage): Promise<ReportDetails | null> {
-    const report = await this.getReportDetailsById(id)
+    const report = await this.reportDetailsRepository.findById(id)
     if (!report) {
       return null
     }
@@ -156,14 +115,13 @@ export default class ReportDetailsService {
   }
 
   public async deleteReportDetails(id: string): Promise<boolean> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
-    const report = await reportRepository.findOne({ where: { id } })
+    const report = await this.reportDetailsRepository.findByIdIncludingDeleted(id)
 
     if (!report) {
       return false
     }
 
-    await reportRepository.update(id, {
+    await this.reportDetailsRepository.update(id, {
       isDeleted: true,
       lastUpdatedBy: new Date(),
     })
