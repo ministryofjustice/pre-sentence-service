@@ -49,7 +49,7 @@ describe('handleSignInCallbackResult', () => {
         cb(null)
       }),
     } as unknown as Request
-    res = { redirect: jest.fn() } as unknown as Response
+    res = { redirect: jest.fn(), clearCookie: jest.fn() } as unknown as Response
     next = jest.fn()
   })
 

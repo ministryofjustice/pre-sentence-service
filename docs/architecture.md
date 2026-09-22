@@ -13,7 +13,6 @@ flowchart LR
   Ingress --> App[Pre-Sentence Service<br/>Express / TypeScript]
 
   App -->|Unauthenticated user| Auth[HMPPS Auth]
-  Auth -->|Successful sign-in| App
   App -->|Read defendant and offence context| Delius[Delius APIs]
   App -->|Persist reports and form data| Postgres[(PostgreSQL)]
   App -->|Sessions and token cache| Redis[(Redis)]
