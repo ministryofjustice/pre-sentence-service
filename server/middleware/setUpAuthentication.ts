@@ -4,6 +4,7 @@ import passport from 'passport'
 import flash from 'connect-flash'
 import config from '../config'
 import auth from '../authentication/auth'
+import { clearReturnToCookie, readReturnToCookie, safeReturnTo } from '../utils/returnTo'
 
 const router = express.Router()
 
@@ -22,13 +23,14 @@ export function handleSignInCallbackResult(req: Request, res: Response, next: Ne
       return res.redirect('/sign-in')
     }
 
-    const returnTo = req.session.returnTo
+    const returnTo = safeReturnTo(req.session.returnTo || readReturnToCookie(req)?.returnTo)
     return req.logIn(user, loginErr => {
       if (loginErr) {
         return next(loginErr)
       }
       delete req.session.authRetry
-      return res.redirect(returnTo || '/')
+      clearReturnToCookie(res)
+      return res.redirect(returnTo)
     })
   }
 }

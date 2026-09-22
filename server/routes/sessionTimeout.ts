@@ -1,36 +1,19 @@
 import express, { Router } from 'express'
 import config from '../config'
 import formatDuration from '../utils/formatDuration'
-
-const nonContentPaths = ['/autherror', '/timed-out', '/sign-in', '/sign-out']
-
-function isNonContentPath(returnTo: string): boolean {
-  const path = returnTo.toLowerCase()
-  return nonContentPaths.some(
-    prefix => path === prefix || path.startsWith(`${prefix}/`) || path.startsWith(`${prefix}?`)
-  )
-}
-
-function safeReturnTo(returnTo: unknown): string {
-  if (
-    typeof returnTo === 'string' &&
-    returnTo.startsWith('/') &&
-    !returnTo.startsWith('//') &&
-    !returnTo.includes('\\') &&
-    !isNonContentPath(returnTo)
-  ) {
-    return returnTo
-  }
-  return '/'
-}
+import { readReturnToCookie, safeReturnTo, writeReturnToCookie } from '../utils/returnTo'
 
 export default function sessionTimeoutRoutes(): Router {
   const router = express.Router()
 
   router.get('/', (req, res, next) => {
-    if (req.session?.timedOut) {
-      const returnTo = safeReturnTo(req.session.returnTo)
-      delete req.session.timedOut
+    const cookie = readReturnToCookie(req)
+    if (req.session?.timedOut || cookie?.timedOut) {
+      const returnTo = safeReturnTo(req.session?.returnTo || cookie?.returnTo)
+      if (req.session) {
+        delete req.session.timedOut
+      }
+      writeReturnToCookie(res, returnTo)
       res.redirect(`/timed-out?signedOut=true&returnTo=${encodeURIComponent(returnTo)}`)
       return
     }
@@ -50,6 +33,7 @@ export default function sessionTimeoutRoutes(): Router {
     }
 
     const authSignOutUrl = `${config.apis.hmppsAuth.externalUrl}/sign-out?client_id=${config.apis.hmppsAuth.apiClientId}&redirect_uri=${config.domain}`
+    writeReturnToCookie(res, returnTo, { timedOut: true })
     const redirect = () => res.redirect(authSignOutUrl)
     if (req.session) {
       req.session.regenerate(err => {
