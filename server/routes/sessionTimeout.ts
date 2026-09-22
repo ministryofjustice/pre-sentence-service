@@ -2,12 +2,22 @@ import express, { Router } from 'express'
 import config from '../config'
 import formatDuration from '../utils/formatDuration'
 
+const nonContentPaths = ['/autherror', '/timed-out', '/sign-in', '/sign-out']
+
+function isNonContentPath(returnTo: string): boolean {
+  const path = returnTo.toLowerCase()
+  return nonContentPaths.some(
+    prefix => path === prefix || path.startsWith(`${prefix}/`) || path.startsWith(`${prefix}?`)
+  )
+}
+
 function safeReturnTo(returnTo: unknown): string {
   if (
     typeof returnTo === 'string' &&
     returnTo.startsWith('/') &&
     !returnTo.startsWith('//') &&
-    !returnTo.includes('\\')
+    !returnTo.includes('\\') &&
+    !isNonContentPath(returnTo)
   ) {
     return returnTo
   }

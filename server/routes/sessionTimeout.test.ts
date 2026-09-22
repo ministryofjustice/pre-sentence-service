@@ -59,6 +59,12 @@ describe('GET /timed-out', () => {
     await agent.get('/get-session-state').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
   })
 
+  it('stores the service root when returnTo is the autherror page', async () => {
+    const agent = request.agent(app)
+    await agent.get('/timed-out?returnTo=%2Fautherror').expect(302)
+    await agent.get('/get-session-state').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
+  })
+
   it('forwards session regeneration errors instead of redirecting to auth', async () => {
     const store = new session.MemoryStore()
     store.destroy = (sid, callback) => callback?.(new Error('session store failure'))
@@ -131,6 +137,17 @@ describe('GET /timed-out?signedOut=true', () => {
         expect(res.text).toContain('data-qa="sign-in" href="/"')
       })
   })
+
+  it.each(['/autherror', '/authError', '/timed-out', '/sign-in', '/sign-out'])(
+    'falls back to the service root when returnTo is the non-content path %s',
+    path => {
+      return request(app)
+        .get(`/timed-out?signedOut=true&returnTo=${encodeURIComponent(path)}`)
+        .expect(res => {
+          expect(res.text).toContain('data-qa="sign-in" href="/"')
+        })
+    }
+  )
 
   it('falls back to the service root when returnTo is missing', () => {
     return request(app)
