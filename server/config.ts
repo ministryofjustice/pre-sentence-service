@@ -44,6 +44,7 @@ export default {
   nonce: crypto.randomBytes(16).toString('base64'),
   https: production,
   staticResourceCacheDuration: 20,
+  showReportListing: get('SHOW_REPORT_LISTING', 'false') === 'true',
   wproofreader: {
     bundleUrl: wproofreaderBundleUrl,
     host: wproofreaderHost,
