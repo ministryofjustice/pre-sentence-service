@@ -6,6 +6,10 @@ Pre-Sentence Service is a service that allows probation staff to capture and sto
 
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fpre-sentence-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#pre-sentence-service "Link to report")
 
+- [Contributing](CONTRIBUTING.md) - branch, testing, pull request, commit, and review guidance
+- [Save flows](docs/save-flows.md) - autosave, Save and Continue, sign-out persistence, and side-navigation behavior
+- [Kubernetes commands](docs/kubernetes-commands.md) - inspecting deployments and applying temporary or permanent configuration changes
+
 ## Running the app
 Ensure docker images are up-to-date
 
@@ -88,18 +92,6 @@ API documentation is provided via Swagger.
 Once the applicaiton is running you can access the Swagger UI at:
 
 `http://localhost:3000/api/docs`
-
----
-
-## Branching & Deployments
-### Branching
-We use the following branching strategy:
-- `main` - protected branch, deployable to preprod and prod environments
-- `develop` - protected branch, deployable to dev environment on merge
-- Feature branches - created from `develop`, merged back to `develop` when ready
-
-We use a Gitflow process, with pull requests from feature branches
-to `develop`, and from `develop` to `main`.
 
 ### Deployments
 
