@@ -1,5 +1,5 @@
-import { getConnection } from 'typeorm'
 import PersonDetails from '../repositories/entities/personDetails'
+import PersonDetailsRepository from '../repositories/personDetailsRepository'
 
 export interface IPersonDetails {
   id?: number
@@ -10,49 +10,35 @@ export interface IPersonDetails {
 }
 
 export default class PersonDetailsService {
+  constructor(private readonly personDetailsRepository = new PersonDetailsRepository()) {}
+
   public async createPersonDetails(personData: IPersonDetails): Promise<PersonDetails> {
-    const personRepository = getConnection().getRepository(PersonDetails)
-    const person = personRepository.create({
+    const person = this.personDetailsRepository.create({
       ...personData,
       createdAt: new Date(),
       lastUpdatedBy: new Date(),
       isDeleted: false,
       version: 1,
     })
-    return personRepository.save(person)
+    return this.personDetailsRepository.save(person)
   }
 
   public async getPersonDetailsByCrn(crn: string): Promise<PersonDetails | null> {
-    return getConnection()
-      .getRepository(PersonDetails)
-      .findOne({
-        where: {
-          crn: crn.toUpperCase(),
-          isDeleted: false,
-        },
-      })
+    return this.personDetailsRepository.findByCrn(crn.toUpperCase())
   }
 
   public async getPersonDetailsById(id: number): Promise<PersonDetails | null> {
-    return getConnection()
-      .getRepository(PersonDetails)
-      .findOne({
-        where: {
-          id,
-          isDeleted: false,
-        },
-      })
+    return this.personDetailsRepository.findById(id)
   }
 
   public async deletePersonDetails(id: number): Promise<boolean> {
-    const personRepository = getConnection().getRepository(PersonDetails)
-    const person = await personRepository.findOne({ where: { id } })
+    const person = await this.personDetailsRepository.findByIdIncludingDeleted(id)
 
     if (!person) {
       return false
     }
 
-    await personRepository.update(id, {
+    await this.personDetailsRepository.update(id, {
       isDeleted: true,
       lastUpdatedBy: new Date(),
     })
