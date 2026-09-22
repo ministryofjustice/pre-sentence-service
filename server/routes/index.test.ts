@@ -1,6 +1,7 @@
 import type { Express } from 'express'
 import request from 'supertest'
 import appWithAllRoutes from './testutils/appSetup'
+import config from '../config'
 
 jest.mock('../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
@@ -18,6 +19,7 @@ jest.mock('../services/reportService', () => {
 let app: Express
 
 beforeEach(() => {
+  config.showReportListing = true
   app = appWithAllRoutes({})
 })
 
