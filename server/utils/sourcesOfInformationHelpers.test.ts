@@ -1,13 +1,84 @@
-import { buildPdfSourcesOfInformation, SourceOfInformation } from './sourcesOfInformationHelpers'
+import {
+  buildPdfSourcesOfInformation,
+  buildSourcesOfInformation,
+  SourceOfInformation,
+} from './sourcesOfInformationHelpers'
 
-const sources: SourceOfInformation[] = [
-  { key: 'victim_statement', value: 'Victim statement', isCustom: false },
-  { key: 'cps_summary', value: 'CPS summary', isCustom: false },
-  { key: 'interview', value: 'Interview', isCustom: false },
-  { key: 'dwp', value: 'DWP', isCustom: true },
-]
+describe('buildSourcesOfInformation', () => {
+  const sources: SourceOfInformation[] = [
+    {
+      key: 'cps_summary',
+      value: 'CPS summary',
+      isCustom: false,
+    },
+    {
+      key: 'interview',
+      value: 'Interview',
+      isCustom: false,
+    },
+  ]
+
+  it('checks sources selected from submitted checkbox values', () => {
+    expect(buildSourcesOfInformation(sources, ['cps_summary'])).toEqual([
+      expect.objectContaining({
+        key: 'cps_summary',
+        checked: true,
+      }),
+      expect.objectContaining({
+        key: 'interview',
+        checked: false,
+      }),
+    ])
+  })
+
+  it('checks sources selected from a single persisted source value', () => {
+    expect(buildSourcesOfInformation(sources, 'cps_summary')).toEqual([
+      expect.objectContaining({
+        key: 'cps_summary',
+        checked: true,
+      }),
+      expect.objectContaining({
+        key: 'interview',
+        checked: false,
+      }),
+    ])
+  })
+
+  it('checks sources selected from comma-separated persisted source values', () => {
+    expect(buildSourcesOfInformation(sources, 'cps_summary,interview')).toEqual([
+      expect.objectContaining({
+        key: 'cps_summary',
+        checked: true,
+      }),
+      expect.objectContaining({
+        key: 'interview',
+        checked: true,
+      }),
+    ])
+  })
+
+  it('does not check sources when no selected sources are provided', () => {
+    expect(buildSourcesOfInformation(sources)).toEqual([
+      expect.objectContaining({
+        key: 'cps_summary',
+        checked: false,
+      }),
+      expect.objectContaining({
+        key: 'interview',
+        checked: false,
+      }),
+    ])
+  })
+})
 
 describe('buildPdfSourcesOfInformation', () => {
+  const sources: SourceOfInformation[] = [
+    { key: 'victim_statement', value: 'Victim statement', isCustom: false },
+    { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+    { key: 'interview', value: 'Interview', isCustom: false },
+    { key: 'dwp', value: 'DWP', isCustom: true },
+  ]
+
   it('splits sources into predefined and custom lists', () => {
     const result = buildPdfSourcesOfInformation(sources, '')
     expect(result.predefined.map(s => s.label)).toEqual(['CPS summary', 'Interview', 'Victim statement'])
