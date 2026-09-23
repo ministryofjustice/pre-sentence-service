@@ -1,4 +1,5 @@
-import { SourcesOfInformationRepository, ReportSourcesOfInformationRepository } from '../repositories/sourcesOfInformationRepository'
+import { SourcesOfInformationRepository } from '../repositories/sourcesOfInformationRepository'
+import { ReportSourcesOfInformationRepository } from '../repositories/reportSourcesOfInformationRepository'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import { SourceOfInformation, CustomSource, SourceKey } from '../utils/sourcesOfInformationHelpers'
 

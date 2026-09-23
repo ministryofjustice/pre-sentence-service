@@ -1,17 +1,9 @@
-import { getConnection } from 'typeorm'
 import ReportDetails from './entities/reportDetails'
+import BaseRepository from './baseRepository'
 
-export default class ReportDetailsRepository {
-  private repo() {
-    return getConnection().getRepository(ReportDetails)
-  }
-
-  public create(data: Partial<ReportDetails>): ReportDetails {
-    return this.repo().create(data)
-  }
-
-  public save(report: ReportDetails): Promise<ReportDetails> {
-    return this.repo().save(report)
+export default class ReportDetailsRepository extends BaseRepository<ReportDetails> {
+  constructor() {
+    super(ReportDetails)
   }
 
   public findById(id: string): Promise<ReportDetails | null> {
@@ -44,9 +36,5 @@ export default class ReportDetailsRepository {
 
   public merge(report: ReportDetails, data: Partial<ReportDetails>): ReportDetails {
     return this.repo().merge(report, data)
-  }
-
-  public update(id: string, data: Partial<ReportDetails>): Promise<unknown> {
-    return this.repo().update(id, data)
   }
 }
