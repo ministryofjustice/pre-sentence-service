@@ -59,7 +59,10 @@ generic-service:
     moj-official-azure-landing-zone-public-egress-2: "20.49.214.228/32"
     moj-official-azure-landing-zone-public-egress-3: "20.26.11.71/32"
     moj-official-azure-landing-zone-public-egress-4: "20.26.11.108/32"
-
+    mod-platform-live-eu-west-2a-nat: "13.41.38.176/32"
+    mod-platform-live-eu-west-2c-nat: "3.11.197.133/32"
+    mod-platform-live-eu-west-2b-nat: "3.8.81.175/32"
+    
 wproofreader:
 
   enabled: false
