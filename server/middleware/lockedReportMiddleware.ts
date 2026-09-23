@@ -26,10 +26,15 @@ export default function lockedReportMiddleware(reportService: ReportService): Re
     reportService
       .getReportById(reportId)
       .then(report => {
+        if (report) {
+          res.locals.report = report
+        }
+
         if (report?.submittedAt) {
           res.redirect(`/psr/${reportId}/publish-report`)
           return
         }
+
         next()
       })
       .catch(next)
