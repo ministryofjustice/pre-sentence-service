@@ -1,4 +1,5 @@
-import { IFieldValue, PendingChanges, ReportId } from '../../services/reportService'
+import { IFieldValue } from '../../services/reportService'
+import type ReportDetails from '../../repositories/entities/reportDetails'
 
 export default {}
 
@@ -12,7 +13,6 @@ declare module 'express-session' {
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
     userDetails: UserDetails
-    pendingChanges?: Record<ReportId, PendingChanges>
   }
 }
 
@@ -36,6 +36,10 @@ export declare global {
         pageData: Record<string, unknown>,
         options?: { filename: string; pdfOptions: PdfOptions }
       ): void
+    }
+
+    interface Locals {
+      report?: ReportDetails
     }
   }
 }

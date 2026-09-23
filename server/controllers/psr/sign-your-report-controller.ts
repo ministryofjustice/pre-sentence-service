@@ -136,7 +136,10 @@ export default class SignYourReportController extends BaseController {
       ...apiDefendantData,
       ...req.body,
     }
-    const sectionStatuses = getReportProgress(data)
+
+    // Fetch sources of information to determine if all sections are complete before signing and locking
+    const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+    const sectionStatuses = getReportProgress(data, sourcesOfInformation)
 
     logger.info('Report progress calculated', {
       reportId,
