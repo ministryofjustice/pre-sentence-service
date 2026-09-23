@@ -15,6 +15,8 @@
 
   const INVISIBLE_NON_COUNTING_CHARS = /[\u00AD\u034F\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g
 
+  const LINE_BREAK_CHARS = /\r\n|[\r\n\u2028\u2029]/g
+
   function normaliseForLength(value) {
     return (value || '')
       .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '') // strip empty CKEditor paragraph fillers
@@ -25,6 +27,7 @@
       .replace(/&gt;/g, '>')
       .replace(/&#39;|&apos;/g, "'")
       .replace(/&quot;/g, '"')
+      .replace(LINE_BREAK_CHARS, '')
       .replace(INVISIBLE_NON_COUNTING_CHARS, '')
   }
 
@@ -34,6 +37,7 @@
   }
 
   function updateCounter(field) {
+    const errorsOnly = field.hasAttribute('data-character-count-errors-only')
     const max = parseInt(field.getAttribute('data-max-length'), 10)
     if (!Number.isFinite(max) || max <= 0) return
 
@@ -49,7 +53,10 @@
     counter.classList.remove('govuk-error-message')
     counter.classList.add('govuk-hint')
 
-    if (!isWarning && !isError) {
+    if (errorsOnly && !isError) {
+      counter.hidden = true
+      counter.textContent = ''
+    } else if (!isWarning && !isError) {
       counter.hidden = true
       counter.textContent = ''
     } else if (isError) {
