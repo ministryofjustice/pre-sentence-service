@@ -5,7 +5,7 @@
 
 {% block content %}
 
-  <main class="app-container govuk-body">
+  <div class="govuk-body">
     {% from "govuk/components/panel/macro.njk" import govukPanel %}
 
     {{ govukPanel({
@@ -36,7 +36,6 @@
         </a>
       </p>
     {% endif %}
-
-    </div>
+  </div>
 
 {% endblock %}
