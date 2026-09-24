@@ -1,4 +1,4 @@
-import { initAll } from './govuk-frontend-bundle.mjs'
+import { initAll } from '/assets/all.mjs'
 import TimeoutWarning from './timeout-warning.js'
 import './confirm-modal.js'
 
