@@ -14,16 +14,19 @@ export interface ISourcesOfInformation {
   version?: number
 }
 
+const normalizeSourceForDisplay = (value: string): string => value.trim().replace(/\s+/g, ' ')
+const normalizeSourceForComparison = (value: string): string => normalizeSourceForDisplay(value).toLocaleLowerCase()
+
 export default class SourcesOfInformationService {
-  public async sourceExistsForReport(reportId: string, value: string): Promise<boolean> {
-    const normalizedValue = value.trim().toLocaleLowerCase()
+  public async hasDuplicateSourceForReport(reportId: string, value: string): Promise<boolean> {
+    const normalizedValue = normalizeSourceForComparison(value)
 
     const sources = await this.getSourcesOfInformation(reportId)
 
     return sources.some(source => {
       return (
-        source.key.trim().toLocaleLowerCase() === normalizedValue ||
-        source.value.trim().toLocaleLowerCase() === normalizedValue
+        normalizeSourceForComparison(source.key) === normalizedValue ||
+        normalizeSourceForComparison(source.value) === normalizedValue
       )
     })
   }
@@ -38,10 +41,11 @@ export default class SourcesOfInformationService {
     const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
 
     // Create a new custom source
+    const sourceForDisplay = normalizeSourceForDisplay(value)
     const source = await sourceRepo.save(
       sourceRepo.create({
-        name: value,
-        value,
+        name: sourceForDisplay,
+        value: sourceForDisplay,
         isDefault: false,
         source: 'custom',
         createdBy,

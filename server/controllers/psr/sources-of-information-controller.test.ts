@@ -20,7 +20,7 @@ describe('Sources of Information Controller', () => {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
     addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
-    sourceExistsForReport: jest.fn().mockResolvedValue(false),
+    hasDuplicateSourceForReport: jest.fn().mockResolvedValue(false),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
@@ -165,7 +165,7 @@ describe('Sources of Information Controller', () => {
     expect(res.redirect).not.toHaveBeenCalled()
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
-    expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
+    expect(mockedReportService.hasDuplicateSourceForReport).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
       'psr/sources-of-information',
@@ -202,7 +202,7 @@ describe('Sources of Information Controller', () => {
     expect(res.redirect).not.toHaveBeenCalled()
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
-    expect(mockedReportService.sourceExistsForReport).not.toHaveBeenCalled()
+    expect(mockedReportService.hasDuplicateSourceForReport).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
       'psr/sources-of-information',
@@ -228,7 +228,7 @@ describe('Sources of Information Controller', () => {
   })
 
   it('renders an error when "Add to list" is clicked with a duplicate source', async () => {
-    ;(mockedReportService.sourceExistsForReport as jest.Mock).mockResolvedValue(true)
+    ;(mockedReportService.hasDuplicateSourceForReport as jest.Mock).mockResolvedValue(true)
 
     req.body = {
       action: 'add-source',
@@ -238,7 +238,7 @@ describe('Sources of Information Controller', () => {
 
     await controller.post(req, res)
 
-    expect(mockedReportService.sourceExistsForReport).toHaveBeenCalledWith('123', 'CPS summary')
+    expect(mockedReportService.hasDuplicateSourceForReport).toHaveBeenCalledWith('123', 'CPS summary')
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
     expect(res.redirect).not.toHaveBeenCalled()
