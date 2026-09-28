@@ -162,8 +162,8 @@ export default class ReportService {
       await this.updateFieldValues(reportId, fields, manager)
     })
   }
-  public async hasDuplicateSourceForReport(reportId: string, value: string): Promise<boolean> {
-    return this.sourcesOfInformationService.hasDuplicateSourceForReport(reportId, value)
+  public async hasDuplicateSourceOfInformation(reportId: string, value: string): Promise<boolean> {
+    return this.sourcesOfInformationService.hasDuplicateSourceOfInformation(reportId, value)
   }
 
   public async getAllReportsByType(type: string): Promise<ReportDetails[]> {

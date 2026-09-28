@@ -31,7 +31,7 @@ export default class SourcesOfInformationController extends BaseController {
     const source = typeof req.body.source === 'string' ? req.body.source.trim() : ''
     if (!source) return undefined
 
-    const hasDuplicateSource = await this.reportService.hasDuplicateSourceForReport(req.params.reportId, source)
+    const hasDuplicateSource = await this.reportService.hasDuplicateSourceOfInformation(req.params.reportId, source)
     if (hasDuplicateSource) {
       return { source: 'This source already exists' }
     }

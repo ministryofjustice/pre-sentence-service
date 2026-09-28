@@ -4,7 +4,7 @@ import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
 
 describe('SourcesOfInformationService', () => {
-  describe('hasDuplicateSourceForReport', () => {
+  describe('hasDuplicateSourceOfInformation', () => {
     it('treats sources with different casing and repeated whitespace as duplicates', async () => {
       const service = new SourcesOfInformationService()
 
@@ -16,7 +16,7 @@ describe('SourcesOfInformationService', () => {
         },
       ])
 
-      await expect(service.hasDuplicateSourceForReport('123', '  test   test  ')).resolves.toBe(true)
+      await expect(service.hasDuplicateSourceOfInformation('123', '  test   test  ')).resolves.toBe(true)
     })
 
     it('returns false when the source does not already exist for the report', async () => {
@@ -30,7 +30,7 @@ describe('SourcesOfInformationService', () => {
         },
       ])
 
-      await expect(service.hasDuplicateSourceForReport('123', 'interview notes')).resolves.toBe(false)
+      await expect(service.hasDuplicateSourceOfInformation('123', 'interview notes')).resolves.toBe(false)
     })
   })
 

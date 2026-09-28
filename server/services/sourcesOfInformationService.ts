@@ -18,7 +18,7 @@ const normalizeSourceForDisplay = (value: string): string => value.trim().replac
 const normalizeSourceForComparison = (value: string): string => normalizeSourceForDisplay(value).toLocaleLowerCase()
 
 export default class SourcesOfInformationService {
-  public async hasDuplicateSourceForReport(reportId: string, value: string): Promise<boolean> {
+  public async hasDuplicateSourceOfInformation(reportId: string, value: string): Promise<boolean> {
     const normalizedValue = normalizeSourceForComparison(value)
 
     const sources = await this.getSourcesOfInformation(reportId)

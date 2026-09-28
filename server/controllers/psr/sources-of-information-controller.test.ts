@@ -20,7 +20,7 @@ describe('Sources of Information Controller', () => {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
     addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
-    hasDuplicateSourceForReport: jest.fn().mockResolvedValue(false),
+    hasDuplicateSourceOfInformation: jest.fn().mockResolvedValue(false),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
@@ -165,7 +165,7 @@ describe('Sources of Information Controller', () => {
     expect(res.redirect).not.toHaveBeenCalled()
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
-    expect(mockedReportService.hasDuplicateSourceForReport).not.toHaveBeenCalled()
+    expect(mockedReportService.hasDuplicateSourceOfInformation).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
       'psr/sources-of-information',
@@ -202,7 +202,7 @@ describe('Sources of Information Controller', () => {
     expect(res.redirect).not.toHaveBeenCalled()
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
-    expect(mockedReportService.hasDuplicateSourceForReport).not.toHaveBeenCalled()
+    expect(mockedReportService.hasDuplicateSourceOfInformation).not.toHaveBeenCalled()
 
     expect(res.render).toHaveBeenCalledWith(
       'psr/sources-of-information',
@@ -228,7 +228,7 @@ describe('Sources of Information Controller', () => {
   })
 
   it('renders an error when "Add to list" is clicked with a duplicate source', async () => {
-    ;(mockedReportService.hasDuplicateSourceForReport as jest.Mock).mockResolvedValue(true)
+    ;(mockedReportService.hasDuplicateSourceOfInformation as jest.Mock).mockResolvedValue(true)
 
     req.body = {
       action: 'add-source',
