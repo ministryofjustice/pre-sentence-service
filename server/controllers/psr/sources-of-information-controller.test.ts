@@ -238,7 +238,7 @@ describe('Sources of Information Controller', () => {
 
     await controller.post(req, res)
 
-    expect(mockedReportService.hasDuplicateSourceForReport).toHaveBeenCalledWith('123', 'CPS summary')
+    expect(mockedReportService.hasDuplicateSourceOfInformation).toHaveBeenCalledWith('123', 'CPS summary')
 
     expect(mockedReportService.saveSourcesOfInformation).not.toHaveBeenCalled()
     expect(res.redirect).not.toHaveBeenCalled()
