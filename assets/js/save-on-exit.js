@@ -136,13 +136,12 @@
 
   // ---- EVENT HANDLERS/STATE ---- 
 
-  const AUTOSAVE_DEBOUNCE_MS = 15 * 1000
   const INTERNAL_NAV_RESET_MS = 500
   const STORE_READY_RETRY_MS = 100
 
   let isInternalNavigation = false
   let isFormSubmitting = false
-  let timeoutHandle = null
+  let autosaveScheduler = null
 
   function handleSignOut(event) {
     const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
@@ -187,25 +186,9 @@
   }
   
   const queueAutosave = () => {
-    if (timeoutHandle) {
-      clearTimeout(timeoutHandle)
+    if (autosaveScheduler) {
+      autosaveScheduler.markDirty()
     }
-
-    timeoutHandle = setTimeout(() => {
-      if (isAnyFieldOverLimit()) {
-        return
-      }
-
-      persistForm()
-        .then(async response => {
-          const text = await response.text()
-          if (!response.ok) {
-            throw new Error(`Autosave failed (${response.status}): ${text}`)
-          }
-          console.log(`Form persisted: ${text}`)
-        })
-        .catch(e => console.error(`Failed to persist form: ${e.message}`))
-    }, AUTOSAVE_DEBOUNCE_MS)
   }
 
   // ---- LISTENER REGISTRATION ----
@@ -254,8 +237,8 @@
 
         event.preventDefault()
 
-        if (timeoutHandle) {
-          clearTimeout(timeoutHandle)
+        if (autosaveScheduler) {
+          autosaveScheduler.stop()
         }
         isFormSubmitting = true
 
@@ -276,8 +259,8 @@
 
       isFormSubmitting = true
 
-      if (timeoutHandle) {
-        clearTimeout(timeoutHandle)
+      if (autosaveScheduler) {
+        autosaveScheduler.stop()
       }
     })
   }
@@ -308,6 +291,13 @@
     const formElements = getFormElements()
     const form = getForm()
 
+    autosaveScheduler = new window.AutosaveScheduler({
+      save: persistForm,
+      status: window.AutosaveStatus,
+      isBlocked: isAnyFieldOverLimit,
+    })
+    autosaveScheduler.start()
+
     wireAutosaveInputs(formElements)
     wireSubmitState(form)
     wireSideNavSubmit()
@@ -316,7 +306,7 @@
   }
 
   function startAutosaveWhenStoreReady() {
-    if (!window.reportStoreInstance) {
+    if (!window.reportStoreInstance || !window.AutosaveScheduler) {
       setTimeout(startAutosaveWhenStoreReady, STORE_READY_RETRY_MS)
       return
     }

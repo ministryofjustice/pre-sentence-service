@@ -9,6 +9,7 @@ declare module 'express-session' {
     returnTo: string
     authRetry: boolean
     timedOut: boolean
+    connectionLost: boolean
     nowInMinutes: number
     fieldValues: Array<IFieldValue>
     isAllowedAccess: boolean
