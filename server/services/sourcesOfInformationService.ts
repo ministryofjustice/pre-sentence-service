@@ -131,7 +131,7 @@ export default class SourcesOfInformationService {
       reportSource => reportSource.sourcesOfInformation?.isDefault === false
     )
 
-    // Combine default and custom sources into a single list
+    // Combine default and custom sources into a single list, sorted alphabetically for display
     return [
       ...defaultSources.map(source => ({
         key: source.name,
@@ -143,7 +143,7 @@ export default class SourcesOfInformationService {
         value: reportSource.sourcesOfInformation.value,
         isCustom: true,
       })),
-    ]
+    ].sort((a, b) => a.value.localeCompare(b.value, undefined, { sensitivity: 'base' }))
   }
 
   public async createDefaultSource(sourceData: ISourcesOfInformation): Promise<SourcesOfInformation> {

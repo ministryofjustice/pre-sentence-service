@@ -184,6 +184,44 @@ describe('Route Handlers - Shared Controller', () => {
     })
   })
 
+  describe('sources-of-information rendering', () => {
+    const originalTemplatePath = handler?.templatePath
+
+    beforeEach(() => {
+      handler.templatePath = 'sources-of-information'
+      mockedReportService.getSourcesOfInformation = jest.fn().mockResolvedValue([
+        { isCustom: false, key: 'victim_statement', value: 'Victim statement' },
+        { isCustom: true, key: 'witness_notes', value: 'Witness notes' },
+        { isCustom: false, key: 'cps_summary', value: 'CPS summary' },
+        { isCustom: true, key: 'address_enquiries_custom', value: 'Address checks' },
+        { isCustom: false, key: 'interview', value: 'Interview' },
+      ])
+    })
+
+    afterAll(() => {
+      handler.templatePath = originalTemplatePath ?? ''
+    })
+
+    it('renders predefined and added sources alphabetically by value, regardless of fetch order', async () => {
+      await handler.get(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        `${handler.path}/${handler.templatePath}`,
+        expect.objectContaining({
+          sourcesOfInformation: [
+            expect.objectContaining({ key: 'cps_summary' }),
+            expect.objectContaining({ key: 'interview' }),
+            expect.objectContaining({ key: 'victim_statement' }),
+          ],
+          addedSourcesOfInformation: [
+            expect.objectContaining({ key: 'address_enquiries_custom' }),
+            expect.objectContaining({ key: 'witness_notes' }),
+          ],
+        })
+      )
+    })
+  })
+
   describe('POST', () => {
     it('should redirect to the correct view', async () => {
       await handler.post(req, res)
