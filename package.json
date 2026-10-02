@@ -180,7 +180,7 @@
     "@types/supertest": "6.0.3",
     "@types/swagger-ui-express": "4.1.8",
     "@types/uuid": "10.0.0",
-    "concurrently": "10.0.3",
+    "concurrently": "10.0.5",
     "cypress": "^15.0.0",
     "cypress-multi-reporters": "2.0.5",
     "eslint-config-prettier": "10.1.5",
