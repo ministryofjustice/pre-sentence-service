@@ -30,6 +30,8 @@
 <form method="post" data-autosave="true" novalidate>
     <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
 
+    {% include "../partials/autosaveStatus.njk" %}
+
     {{ picTextEditor({
         label: {
             text: "Enter the proposed sentence",
