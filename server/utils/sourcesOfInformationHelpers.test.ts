@@ -95,10 +95,19 @@ describe('buildPdfSourcesOfInformation', () => {
     expect(result.custom).toEqual([{ label: 'DWP', used: true }])
   })
 
-  it('marks all sources as not used when no selection has been saved', () => {
+  it('marks predefined sources as not used when no selection has been saved', () => {
     const result = buildPdfSourcesOfInformation(sources, undefined)
     expect(result.predefined.every(s => !s.used)).toBe(true)
-    expect(result.custom.every(s => !s.used)).toBe(true)
+  })
+
+  it('marks custom sources as used even when missing from the saved selection', () => {
+    const result = buildPdfSourcesOfInformation(sources, 'cps_summary')
+    expect(result.custom).toEqual([{ label: 'DWP', used: true }])
+  })
+
+  it('marks custom sources as used when no selection has been saved', () => {
+    const result = buildPdfSourcesOfInformation(sources, undefined)
+    expect(result.custom).toEqual([{ label: 'DWP', used: true }])
   })
 
   it('sorts labels alphabetically ignoring case', () => {

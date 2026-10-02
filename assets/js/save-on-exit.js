@@ -105,6 +105,8 @@
   }
 
   function sendExitAutosaveBeacon() {
+    if (isFormSubmitting) return
+
     const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
     if (!hasUnsavedChanges || !hasFormOnPage()) return
 
