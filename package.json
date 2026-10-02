@@ -117,7 +117,7 @@
     "@typescript-eslint/parser": "8.33.0",
     "agentkeepalive": "4.6.0",
     "applicationinsights": "3.15.1",
-    "axios": "^1.18.1",
+    "axios": "^1.20.0",
     "body-parser": "2.2.0",
     "bunyan": "1.8.15",
     "bunyan-format": "0.2.1",
