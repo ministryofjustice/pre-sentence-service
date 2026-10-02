@@ -1,4 +1,4 @@
-const version = '5.14.0';
+const version = '6.5.1';
 
 function getBreakpoint(name) {
   const property = `--govuk-breakpoint-${name}`;
@@ -880,6 +880,7 @@ class CharacterCount extends ConfigurableComponent {
     var _ref, _this$config$maxwords;
     super($root, config);
     this.$textarea = void 0;
+    this.count = 0;
     this.$visibleCountMessage = void 0;
     this.$screenReaderCountMessage = void 0;
     this.lastInputTimestamp = null;
@@ -935,15 +936,22 @@ class CharacterCount extends ConfigurableComponent {
     $textareaDescription.classList.add('govuk-visually-hidden');
     this.$textarea.removeAttribute('maxlength');
     this.bindChangeEvents();
-    window.addEventListener('pageshow', () => this.updateCountMessage());
+    window.addEventListener('pageshow', () => {
+      if (this.$textarea.value !== this.$textarea.textContent) {
+        this.updateCount();
+        this.updateCountMessage();
+      }
+    });
+    this.updateCount();
     this.updateCountMessage();
   }
   bindChangeEvents() {
-    this.$textarea.addEventListener('keyup', () => this.handleKeyUp());
+    this.$textarea.addEventListener('input', () => this.handleInput());
     this.$textarea.addEventListener('focus', () => this.handleFocus());
     this.$textarea.addEventListener('blur', () => this.handleBlur());
   }
-  handleKeyUp() {
+  handleInput() {
+    this.updateCount();
     this.updateVisibleCountMessage();
     this.lastInputTimestamp = Date.now();
   }
@@ -970,7 +978,7 @@ class CharacterCount extends ConfigurableComponent {
     this.updateScreenReaderCountMessage();
   }
   updateVisibleCountMessage() {
-    const remainingNumber = this.maxLength - this.count(this.$textarea.value);
+    const remainingNumber = this.maxLength - this.count;
     const isError = remainingNumber < 0;
     this.$visibleCountMessage.classList.toggle('govuk-character-count__message--disabled', !this.isOverThreshold());
     if (!this.$errorMessage) {
@@ -988,16 +996,18 @@ class CharacterCount extends ConfigurableComponent {
     }
     this.$screenReaderCountMessage.textContent = this.getCountMessage();
   }
-  count(text) {
+  updateCount() {
+    const text = this.$textarea.value;
     if (this.config.maxwords) {
       var _text$match;
       const tokens = (_text$match = text.match(/\S+/g)) != null ? _text$match : [];
-      return tokens.length;
+      this.count = tokens.length;
+      return;
     }
-    return text.length;
+    this.count = text.length;
   }
   getCountMessage() {
-    const remainingNumber = this.maxLength - this.count(this.$textarea.value);
+    const remainingNumber = this.maxLength - this.count;
     const countType = this.config.maxwords ? 'words' : 'characters';
     return this.formatCountMessage(remainingNumber, countType);
   }
@@ -1014,7 +1024,7 @@ class CharacterCount extends ConfigurableComponent {
     if (!this.config.threshold) {
       return true;
     }
-    const currentLength = this.count(this.$textarea.value);
+    const currentLength = this.count;
     const maxLength = this.maxLength;
     const thresholdValue = maxLength * this.config.threshold / 100;
     return thresholdValue <= currentLength;
@@ -1573,19 +1583,17 @@ class FileUpload extends ConfigurableComponent {
     this.$input = void 0;
     this.$button = void 0;
     this.$status = void 0;
+    this.$label = void 0;
     this.i18n = void 0;
     this.id = void 0;
     this.$announcements = void 0;
     this.enteredAnotherElement = void 0;
-    const $input = this.$root.querySelector('input');
+    const $input = this.$root.querySelector('input[type="file"]');
     if ($input === null) {
       throw new ElementError({
         component: FileUpload,
         identifier: 'File inputs (`<input type="file">`)'
       });
-    }
-    if ($input.type !== 'file') {
-      throw new ElementError(formatErrorMessage(FileUpload, 'File input (`<input type="file">`) attribute (`type`) is not `file`'));
     }
     this.$input = $input;
     if (!this.$input.id) {
@@ -1602,8 +1610,30 @@ class FileUpload extends ConfigurableComponent {
     if (!$label.id) {
       $label.id = `${this.id}-label`;
     }
+    this.$label = $label;
     this.$input.id = `${this.id}-input`;
-    this.$input.setAttribute('hidden', 'true');
+    this.$input.setAttribute('hidden', 'hidden');
+    this.$status = this.createStatus();
+    this.$button = this.createButton();
+    this.$root.insertAdjacentElement('afterbegin', this.$button);
+    this.$input.addEventListener('change', this.onChange.bind(this));
+    this.updateDisabledState();
+    this.observeDisabledState();
+    this.$announcements = document.createElement('span');
+    this.$announcements.classList.add('govuk-file-upload-announcements');
+    this.$announcements.classList.add('govuk-visually-hidden');
+    this.$announcements.setAttribute('aria-live', 'assertive');
+    this.$root.insertAdjacentElement('afterend', this.$announcements);
+    this.bindDraggingEvents();
+  }
+  createStatus() {
+    const $status = document.createElement('span');
+    $status.className = 'govuk-body govuk-file-upload-button__status';
+    $status.setAttribute('aria-live', 'polite');
+    $status.innerText = this.i18n.t('noFileChosen');
+    return $status;
+  }
+  createButton() {
     const $button = document.createElement('button');
     $button.classList.add('govuk-file-upload-button');
     $button.type = 'button';
@@ -1613,11 +1643,7 @@ class FileUpload extends ConfigurableComponent {
     if (ariaDescribedBy) {
       $button.setAttribute('aria-describedby', ariaDescribedBy);
     }
-    const $status = document.createElement('span');
-    $status.className = 'govuk-body govuk-file-upload-button__status';
-    $status.setAttribute('aria-live', 'polite');
-    $status.innerText = this.i18n.t('noFileChosen');
-    $button.appendChild($status);
+    $button.appendChild(this.$status);
     const commaSpan = document.createElement('span');
     commaSpan.className = 'govuk-visually-hidden';
     commaSpan.innerText = ', ';
@@ -1635,24 +1661,14 @@ class FileUpload extends ConfigurableComponent {
     instructionSpan.innerText = this.i18n.t('dropInstruction');
     containerSpan.appendChild(instructionSpan);
     $button.appendChild(containerSpan);
-    $button.setAttribute('aria-labelledby', `${$label.id} ${commaSpan.id} ${$button.id}`);
+    $button.setAttribute('aria-labelledby', `${this.$label.id} ${commaSpan.id} ${$button.id}`);
     $button.addEventListener('click', this.onClick.bind(this));
     $button.addEventListener('dragover', event => {
       event.preventDefault();
     });
-    this.$root.insertAdjacentElement('afterbegin', $button);
-    this.$input.setAttribute('tabindex', '-1');
-    this.$input.setAttribute('aria-hidden', 'true');
-    this.$button = $button;
-    this.$status = $status;
-    this.$input.addEventListener('change', this.onChange.bind(this));
-    this.updateDisabledState();
-    this.observeDisabledState();
-    this.$announcements = document.createElement('span');
-    this.$announcements.classList.add('govuk-file-upload-announcements');
-    this.$announcements.classList.add('govuk-visually-hidden');
-    this.$announcements.setAttribute('aria-live', 'assertive');
-    this.$root.insertAdjacentElement('afterend', this.$announcements);
+    return $button;
+  }
+  bindDraggingEvents() {
     this.$button.addEventListener('drop', this.onDrop.bind(this));
     document.addEventListener('dragenter', this.updateDropzoneVisibility.bind(this));
     document.addEventListener('dragenter', () => {
@@ -1759,7 +1775,7 @@ class FileUpload extends ConfigurableComponent {
   }
   updateDisabledState() {
     this.$button.disabled = this.$input.disabled;
-    this.$root.classList.toggle('govuk-drop-zone--disabled', this.$button.disabled);
+    this.$root.classList.toggle('govuk-file-upload-wrapper--disabled', this.$button.disabled);
   }
 }
 
@@ -1834,89 +1850,6 @@ function countFileItems(list) {
  * @import { Schema } from '../../common/configuration.mjs'
  * @import { TranslationPluralForms } from '../../i18n.mjs'
  */
-
-/**
- * Header component
- *
- * @preserve
- */
-class Header extends Component {
-  /**
-   * Apply a matchMedia for desktop which will trigger a state sync if the
-   * browser viewport moves between states.
-   *
-   * @param {Element | null} $root - HTML element to use for header
-   */
-  constructor($root) {
-    super($root);
-    this.$menuButton = void 0;
-    this.$menu = void 0;
-    this.menuIsOpen = false;
-    this.mql = null;
-    const $menuButton = this.$root.querySelector('.govuk-js-header-toggle');
-    if (!$menuButton) {
-      return this;
-    }
-    this.$root.classList.add('govuk-header--with-js-navigation');
-    const menuId = $menuButton.getAttribute('aria-controls');
-    if (!menuId) {
-      throw new ElementError({
-        component: Header,
-        identifier: 'Navigation button (`<button class="govuk-js-header-toggle">`) attribute (`aria-controls`)'
-      });
-    }
-    const $menu = document.getElementById(menuId);
-    if (!$menu) {
-      throw new ElementError({
-        component: Header,
-        element: $menu,
-        identifier: `Navigation (\`<ul id="${menuId}">\`)`
-      });
-    }
-    this.$menu = $menu;
-    this.$menuButton = $menuButton;
-    this.setupResponsiveChecks();
-    this.$menuButton.addEventListener('click', () => this.handleMenuButtonClick());
-  }
-  setupResponsiveChecks() {
-    const breakpoint = getBreakpoint('desktop');
-    if (!breakpoint.value) {
-      throw new ElementError({
-        component: Header,
-        identifier: `CSS custom property (\`${breakpoint.property}\`) on pseudo-class \`:root\``
-      });
-    }
-    this.mql = window.matchMedia(`(min-width: ${breakpoint.value})`);
-    if ('addEventListener' in this.mql) {
-      this.mql.addEventListener('change', () => this.checkMode());
-    } else {
-      this.mql.addListener(() => this.checkMode());
-    }
-    this.checkMode();
-  }
-  checkMode() {
-    if (!this.mql || !this.$menu || !this.$menuButton) {
-      return;
-    }
-    if (this.mql.matches) {
-      this.$menu.removeAttribute('hidden');
-      this.$menuButton.setAttribute('hidden', '');
-    } else {
-      this.$menuButton.removeAttribute('hidden');
-      this.$menuButton.setAttribute('aria-expanded', this.menuIsOpen.toString());
-      if (this.menuIsOpen) {
-        this.$menu.removeAttribute('hidden');
-      } else {
-        this.$menu.setAttribute('hidden', '');
-      }
-    }
-  }
-  handleMenuButtonClick() {
-    this.menuIsOpen = !this.menuIsOpen;
-    this.checkMode();
-  }
-}
-Header.moduleName = 'govuk-header';
 
 /**
  * Notification Banner component
@@ -2649,7 +2582,7 @@ function initAll(scopeOrConfig = {}) {
     }
     return;
   }
-  const components = [[Accordion, config.accordion], [Button, config.button], [CharacterCount, config.characterCount], [Checkboxes], [ErrorSummary, config.errorSummary], [ExitThisPage, config.exitThisPage], [FileUpload, config.fileUpload], [Header], [NotificationBanner, config.notificationBanner], [PasswordInput, config.passwordInput], [Radios], [ServiceNavigation], [SkipLink], [Tabs]];
+  const components = [[Accordion, config.accordion], [Button, config.button], [CharacterCount, config.characterCount], [Checkboxes], [ErrorSummary, config.errorSummary], [ExitThisPage, config.exitThisPage], [FileUpload, config.fileUpload], [NotificationBanner, config.notificationBanner], [PasswordInput, config.passwordInput], [Radios], [ServiceNavigation], [SkipLink], [Tabs]];
   components.forEach(([Component, componentConfig]) => {
     createAll(Component, componentConfig, options);
   });
@@ -2773,5 +2706,5 @@ function createAll(Component, config, scopeOrOptions) {
  * @property {OnErrorCallback<ComponentClass>} [onError] - callback function if error throw by component on init
  */
 
-export { Accordion, Button, CharacterCount, Checkboxes, Component, ConfigurableComponent, ErrorSummary, ExitThisPage, FileUpload, Header, NotificationBanner, PasswordInput, Radios, ServiceNavigation, SkipLink, Tabs, createAll, initAll, isSupported, version };
-//# sourceMappingURL=all.bundle.mjs.map
+export { Accordion, Button, CharacterCount, Checkboxes, Component, ConfigurableComponent, ErrorSummary, ExitThisPage, FileUpload, NotificationBanner, PasswordInput, Radios, ServiceNavigation, SkipLink, Tabs, createAll, initAll, isSupported, version };
+//# sourceMappingURL=govuk-frontend-bundle.mjs.map
