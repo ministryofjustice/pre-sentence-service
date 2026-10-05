@@ -31,12 +31,22 @@ function cookieOptions(): CookieOptions {
   return { httpOnly: true, secure: config.https, sameSite: 'lax', path: '/' }
 }
 
-export function writeReturnToCookie(res: Response, returnTo: unknown, options?: { timedOut?: boolean }): void {
-  const value = JSON.stringify({ returnTo: safeReturnTo(returnTo), timedOut: options?.timedOut === true })
+export function writeReturnToCookie(
+  res: Response,
+  returnTo: unknown,
+  options?: { timedOut?: boolean; connectionLost?: boolean }
+): void {
+  const value = JSON.stringify({
+    returnTo: safeReturnTo(returnTo),
+    timedOut: options?.timedOut === true,
+    connectionLost: options?.connectionLost === true,
+  })
   res.cookie(RETURN_TO_COOKIE, value, { ...cookieOptions(), maxAge: cookieMaxAge })
 }
 
-export function readReturnToCookie(req: Request): { returnTo: string; timedOut: boolean } | null {
+export function readReturnToCookie(
+  req: Request
+): { returnTo: string; timedOut: boolean; connectionLost: boolean } | null {
   const header = req.headers?.cookie
   if (!header) {
     return null
@@ -53,7 +63,11 @@ export function readReturnToCookie(req: Request): { returnTo: string; timedOut: 
     if (typeof parsed !== 'object' || parsed === null || typeof parsed.returnTo !== 'string') {
       return null
     }
-    return { returnTo: safeReturnTo(parsed.returnTo), timedOut: parsed.timedOut === true }
+    return {
+      returnTo: safeReturnTo(parsed.returnTo),
+      timedOut: parsed.timedOut === true,
+      connectionLost: parsed.connectionLost === true,
+    }
   } catch {
     return null
   }

@@ -170,9 +170,17 @@ TimeoutWarning.prototype.startUiCountdown = function() {
   })()
 }
 
-TimeoutWarning.prototype.redirect = function() {
+TimeoutWarning.prototype.getRedirectUrl = function() {
   var returnTo = encodeURIComponent(window.location.pathname + window.location.search)
-  window.location.href = this.timeOutRedirectUrl + '?returnTo=' + returnTo
+  var url = this.timeOutRedirectUrl + '?returnTo=' + returnTo
+  if (window.AutosaveStatus && window.AutosaveStatus.hasConnectionFailed()) {
+    url += '&connectionLost=true'
+  }
+  return url
+}
+
+TimeoutWarning.prototype.redirect = function() {
+  window.location.href = this.getRedirectUrl()
 }
 
 TimeoutWarning.prototype.isDialogOpen = function() {
