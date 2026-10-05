@@ -105,6 +105,8 @@
   }
 
   function sendExitAutosaveBeacon() {
+    if (isFormSubmitting) return
+
     const hasUnsavedChanges = window.ReportStore ? window.ReportStore.getHasUnsavedChanges() : false
     if (!hasUnsavedChanges || !hasFormOnPage()) return
 
@@ -287,9 +289,15 @@
     window.addEventListener('beforeunload', onBeforeUnload)
   }
 
+  function initialiseFormLifecycle(form) {
+    wireSubmitState(form)
+    wireSideNavSubmit()
+    wireInternalNavState()
+    wireLeaveWarning()
+  }
+
   function initialiseAutosaveListeners() {
     const formElements = getFormElements()
-    const form = getForm()
 
     autosaveScheduler = new window.AutosaveScheduler({
       save: persistForm,
@@ -299,10 +307,6 @@
     autosaveScheduler.start()
 
     wireAutosaveInputs(formElements)
-    wireSubmitState(form)
-    wireSideNavSubmit()
-    wireInternalNavState()
-    wireLeaveWarning()
   }
 
   function startAutosaveWhenStoreReady() {
@@ -331,7 +335,9 @@
     }
 
     // Initialize autosave only if a form is present on the page
-    if (hasFormOnPage()) {
+    const form = getForm()
+    if (form) {
+      initialiseFormLifecycle(form)
       startAutosaveWhenStoreReady()
     }
   })
