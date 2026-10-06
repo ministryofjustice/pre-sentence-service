@@ -174,3 +174,26 @@ describe('TimeoutWarning', () => {
     expect(redirectSpy).not.toHaveBeenCalled()
   })
 })
+
+describe('redirect URL', () => {
+  afterEach(() => {
+    delete window.AutosaveStatus
+  })
+
+  it('contains only the returnTo path when there is no autosave status on the page', () => {
+    createWarning()
+    expect(warning.getRedirectUrl()).toBe(`/timed-out?returnTo=${encodeURIComponent('/')}`)
+  })
+
+  it('flags the connection as lost when a connection failure occurred on the page', () => {
+    window.AutosaveStatus = { hasConnectionFailed: () => true }
+    createWarning()
+    expect(warning.getRedirectUrl()).toBe(`/timed-out?returnTo=${encodeURIComponent('/')}&connectionLost=true`)
+  })
+
+  it('does not flag the connection when no failure has occurred', () => {
+    window.AutosaveStatus = { hasConnectionFailed: () => false }
+    createWarning()
+    expect(warning.getRedirectUrl()).toBe(`/timed-out?returnTo=${encodeURIComponent('/')}`)
+  })
+})

@@ -10,10 +10,16 @@ export default function sessionTimeoutRoutes(): Router {
     const cookie = readReturnToCookie(req)
     if (req.session?.timedOut || cookie?.timedOut) {
       const returnTo = safeReturnTo(req.session?.returnTo || cookie?.returnTo)
+      const connectionLost = req.session?.connectionLost || cookie?.connectionLost
       if (req.session) {
         delete req.session.timedOut
+        delete req.session.connectionLost
       }
       writeReturnToCookie(res, returnTo)
+      if (connectionLost) {
+        res.redirect(returnTo)
+        return
+      }
       res.redirect(`/timed-out?signedOut=true&returnTo=${encodeURIComponent(returnTo)}`)
       return
     }
@@ -32,8 +38,9 @@ export default function sessionTimeoutRoutes(): Router {
       return
     }
 
+    const connectionLost = req.query.connectionLost === 'true'
     const authSignOutUrl = `${config.apis.hmppsAuth.externalUrl}/sign-out?client_id=${config.apis.hmppsAuth.apiClientId}&redirect_uri=${config.domain}`
-    writeReturnToCookie(res, returnTo, { timedOut: true })
+    writeReturnToCookie(res, returnTo, { timedOut: true, connectionLost })
     const redirect = () => res.redirect(authSignOutUrl)
     if (req.session) {
       req.session.regenerate(err => {
@@ -44,6 +51,9 @@ export default function sessionTimeoutRoutes(): Router {
         if (req.session) {
           req.session.timedOut = true
           req.session.returnTo = returnTo
+          if (connectionLost) {
+            req.session.connectionLost = true
+          }
         }
         redirect()
       })

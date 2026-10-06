@@ -1,0 +1,22 @@
+.psr-autosave-status {
+  margin-bottom: govuk-spacing(6);
+}
+
+.psr-connection-banner {
+  border: 2px solid;
+  padding: govuk-spacing(3);
+  margin-top: govuk-spacing(3);
+
+  &:focus {
+    outline: 3px solid $govuk-focus-colour;
+    outline-offset: 0;
+  }
+}
+
+.psr-connection-banner--error {
+  border-color: $govuk-error-colour;
+}
+
+.psr-connection-banner--success {
+  border-color: govuk-colour("green");
+}

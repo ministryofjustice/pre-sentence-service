@@ -36,7 +36,10 @@ export const buildPdfSourcesOfInformation = (
   const resolved = buildSourcesOfInformation(sources, selectedSources).sort((a, b) =>
     a.value.localeCompare(b.value, undefined, { sensitivity: 'base' })
   )
-  const toPdf = (s: SourceOfInformation): PdfSourceOfInformation => ({ label: s.value, used: !!s.checked })
+  const toPdf = (s: SourceOfInformation): PdfSourceOfInformation => ({
+    label: s.value,
+    used: s.isCustom || !!s.checked,
+  })
   return {
     predefined: resolved.filter(s => !s.isCustom).map(toPdf),
     custom: resolved.filter(s => s.isCustom).map(toPdf),

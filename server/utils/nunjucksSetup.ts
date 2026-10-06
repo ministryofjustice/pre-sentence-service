@@ -117,6 +117,29 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return `${day}/${month}/${year} ${hours}:${minutes}`
   })
 
+  njkEnv.addFilter('formatTime', date => {
+    if (!date) return ''
+
+    let dateObj: Date
+
+    if (date instanceof Date) {
+      dateObj = date
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date)
+    } else {
+      return ''
+    }
+
+    if (Number.isNaN(dateObj.getTime())) return ''
+
+    return new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Europe/London',
+    }).format(dateObj)
+  })
+
   njkEnv.addFilter('calculateAge', dob => {
     if (!dob) return ''
 
