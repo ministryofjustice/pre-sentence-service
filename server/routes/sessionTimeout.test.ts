@@ -21,6 +21,7 @@ function appWithSessionTimeoutRoutes(store?: session.Store): Express {
     res.json({
       returnTo: req.session.returnTo || null,
       timedOut: req.session.timedOut || null,
+      connectionLost: req.session.connectionLost || null,
       nowInMinutes: req.session.nowInMinutes || null,
     })
   })
@@ -46,23 +47,37 @@ describe('GET /timed-out', () => {
   it('replaces the session and stores the returnTo path with the timed out flag', async () => {
     const agent = request.agent(app)
     await agent.get('/set-session-state').expect(200)
-    await agent.get('/get-session-state').expect({ returnTo: null, timedOut: null, nowInMinutes: 12345 })
+    await agent
+      .get('/get-session-state')
+      .expect({ returnTo: null, timedOut: null, connectionLost: null, nowInMinutes: 12345 })
     await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal').expect(302)
     await agent
       .get('/get-session-state')
-      .expect({ returnTo: '/report/123/proposal', timedOut: true, nowInMinutes: null })
+      .expect({ returnTo: '/report/123/proposal', timedOut: true, connectionLost: null, nowInMinutes: null })
   })
 
   it('stores the service root when returnTo is unsafe', async () => {
     const agent = request.agent(app)
     await agent.get('/timed-out?returnTo=%2F%2Fevil.example.com').expect(302)
-    await agent.get('/get-session-state').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
+    await agent
+      .get('/get-session-state')
+      .expect({ returnTo: '/', timedOut: true, connectionLost: null, nowInMinutes: null })
   })
 
   it('stores the service root when returnTo is the autherror page', async () => {
     const agent = request.agent(app)
     await agent.get('/timed-out?returnTo=%2Fautherror').expect(302)
-    await agent.get('/get-session-state').expect({ returnTo: '/', timedOut: true, nowInMinutes: null })
+    await agent
+      .get('/get-session-state')
+      .expect({ returnTo: '/', timedOut: true, connectionLost: null, nowInMinutes: null })
+  })
+
+  it('stores the connectionLost flag alongside the timed out state', async () => {
+    const agent = request.agent(app)
+    await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal&connectionLost=true').expect(302)
+    await agent
+      .get('/get-session-state')
+      .expect({ returnTo: '/report/123/proposal', timedOut: true, connectionLost: true, nowInMinutes: null })
   })
 
   it('forwards session regeneration errors instead of redirecting to auth', async () => {
@@ -82,11 +97,21 @@ describe('GET / after the auth sign-out round trip', () => {
     expect(res.headers.location).toBe('/timed-out?signedOut=true&returnTo=%2Freport%2F123%2Fproposal')
     await agent
       .get('/get-session-state')
-      .expect({ returnTo: '/report/123/proposal', timedOut: null, nowInMinutes: null })
+      .expect({ returnTo: '/report/123/proposal', timedOut: null, connectionLost: null, nowInMinutes: null })
   })
 
   it('passes through to the next handler when the session has not timed out', () => {
     return request(app).get('/').expect(200, 'home')
+  })
+
+  it('redirects straight to the returnTo path when the connection was lost before the timeout', async () => {
+    const agent = request.agent(app)
+    await agent.get('/timed-out?returnTo=%2Freport%2F123%2Fproposal&connectionLost=true').expect(302)
+    const res = await agent.get('/').expect(302)
+    expect(res.headers.location).toBe('/report/123/proposal')
+    await agent
+      .get('/get-session-state')
+      .expect({ returnTo: '/report/123/proposal', timedOut: null, connectionLost: null, nowInMinutes: null })
   })
 })
 

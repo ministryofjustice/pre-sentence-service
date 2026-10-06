@@ -25,6 +25,10 @@
 {% block reportForm %}
   <form method="post" data-autosave="true" novalidate>
 
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+
+    {% include "../partials/autosaveStatus.njk" %}
+
     {% from "components/text-editor/macro.njk" import picTextEditor %}
 
     {{ picTextEditor({
@@ -34,8 +38,7 @@
       longText: true,
       label: {
         text: currentPage,
-        classes: "govuk-label--xl",
-        isPageHeading: true
+        classes: "govuk-visually-hidden"
       },
       hint: {
         html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
