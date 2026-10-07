@@ -1,32 +1,18 @@
 # Stage: base image
-FROM node:24-bookworm-slim as base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine as base
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
 
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 
-ENV TZ=Europe/London
-RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
-
-RUN addgroup --gid 2000 --system appgroup && \
-    adduser --uid 2000 --system appuser --gid 2000
-
 WORKDIR /app
-
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
 
 # Stage: build assets
 FROM base as build
 
 ARG BUILD_NUMBER=1_0_0
 ARG GIT_REF=not-available
-
-RUN apt-get update && \
-    apt-get install -y make python3 g++
 
 COPY package*.json ./
 RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit
