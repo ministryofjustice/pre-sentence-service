@@ -6,6 +6,7 @@ export const riskAnalysisModel = z.object({
   riskToPublic: z.string().min(1, 'Select the level of risk to the public from OASys'),
   riskToKnownAdults: z.string().min(1, 'Select the level of risk to known adults from OASys'),
   riskToStaff: z.string().min(1, 'Select the level of risk to staff from OASys'),
+  riskToPrisoners: z.string().min(1, 'Select the level of risk to prisoners from OASys'),
   riskPredictors: longText({
     label: 'Risk predictors and likelihood of reoffending',
     requiredMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
@@ -29,6 +30,7 @@ const issuesFor = (data: Record<string, unknown>): string[] => {
     riskToPublic: pickString(data.riskToPublic, data.riskOfHarmForPublic),
     riskToKnownAdults: pickString(data.riskToKnownAdults, data.riskOfHarmForKnownAdults),
     riskToStaff: pickString(data.riskToStaff, data.riskOfHarmForStaff),
+    riskToPrisoners: pickString(data.riskToPrisoners, data.riskOfHarmForPrisoners),
     riskPredictors: pickString(data.riskPredictors, data.riskPredictorsAndLikelihoodOfReoffending),
     riskAndHarmFactors: pickString(data.riskAndHarmFactors, data.relevantRisksAndProtectiveFactors),
   })
@@ -36,7 +38,7 @@ const issuesFor = (data: Record<string, unknown>): string[] => {
   return result.error.issues.map(i => String(i.path[0])).filter(Boolean)
 }
 
-const RISK_LEVEL_FIELDS = ['riskToChildren', 'riskToPublic', 'riskToKnownAdults', 'riskToStaff']
+const RISK_LEVEL_FIELDS = ['riskToChildren', 'riskToPublic', 'riskToKnownAdults', 'riskToStaff', 'riskToPrisoners']
 
 export const isRiskLevelsComplete = (data: Record<string, unknown>): boolean => {
   const issues = issuesFor(data)
