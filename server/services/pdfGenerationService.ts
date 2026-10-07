@@ -90,7 +90,7 @@ export default class PdfGenerationService {
     const riskToKnownAdults: string = reportData.riskToKnownAdults as string
     const riskToStaff: string = reportData.riskToStaff as string
     const riskToPrisoners = reportData.riskToPrisoners as string | undefined
-    
+
     let impactExplanation = ''
     switch (reportData.custodialSentenceConsideration as string) {
       case 'possible':
