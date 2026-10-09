@@ -25,10 +25,11 @@ const applicableTemplates = [
   'psr-defendant-behaviour.njk',
   'risk-analysis.njk',
   'sentencing-proposal.njk',
+  'sign-your-report.njk',
   'sources-of-information.njk',
 ]
 
-const excludedTemplates = ['psr-defendant-details.njk', 'preview-report.njk', 'sign-your-report.njk']
+const excludedTemplates = ['psr-defendant-details.njk', 'preview-report.njk']
 
 describe('autosaveStatus.njk partial', () => {
   let env: nunjucks.Environment

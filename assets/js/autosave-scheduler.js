@@ -52,6 +52,7 @@ export default class AutosaveScheduler {
           this.dirty = false
           this.status.updateTimestamp(new Date())
           this.status.showConnectionRestored()
+          response.text().then(text => console.log(`Form persisted: ${text}`))
         }
         return response
       },
