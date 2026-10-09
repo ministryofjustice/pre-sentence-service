@@ -10,7 +10,9 @@
           data-autosave="true"
           data-confirm-submit="true"
           novalidate>
-        <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+
+        {% include "../partials/autosaveStatus.njk" %}
         {% if data.reviewProgressBlocked %}
             <p class="govuk-error-message" id="reviewProgress">
                 <span class="govuk-visually-hidden">Error:</span>
