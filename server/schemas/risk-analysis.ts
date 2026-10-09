@@ -9,7 +9,7 @@ export const riskAnalysisModel = z.object({
   riskToPrisoners: z.string().min(1, 'Select the level of risk to prisoners from OASys'),
   riskPredictors: longText({
     label: 'Risk predictors and likelihood of reoffending',
-    requiredMessage: 'Confirm risk predictors and assess the likelihood of reoffending',
+    requiredMessage: 'Assess the likelihood of reoffending',
   }),
   riskAndHarmFactors: longText({
     label: 'Risks of harm and protective factors',
