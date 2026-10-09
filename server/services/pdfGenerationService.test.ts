@@ -18,10 +18,19 @@ const report = {
         { value: 'riskToChildren', answer: 'low' },
         { value: 'riskToKnownAdults', answer: 'low' },
         { value: 'riskToStaff', answer: 'low' },
+        { value: 'riskToPrisoners', answer: 'low' },
       ],
     },
   ],
 } as unknown as ReportDetails
+
+const legacyReport = {
+  ...report,
+  pages: report.pages!.map(page => ({
+    ...page,
+    questions: page.questions.filter(question => question.value !== 'riskToPrisoners'),
+  })),
+} as ReportDetails
 
 const preSentenceToDeliusService = {
   getDefendantDetails: jest.fn().mockResolvedValue({
@@ -59,6 +68,24 @@ describe('PdfGenerationService', () => {
             ],
             custom: [{ label: 'DWP', used: true }],
           },
+        }),
+      }),
+      expect.anything()
+    )
+  })
+
+  it('generates a PDF when an older report has no prisoner risk value', async () => {
+    const renderPDF = jest.fn()
+    const res = { renderPDF } as unknown as Response
+    const service = new PdfGenerationService(preSentenceToDeliusService, sourcesOfInformationService)
+
+    await service.generatePdf(legacyReport, res)
+
+    expect(renderPDF).toHaveBeenCalledWith(
+      'reports/psr',
+      expect.objectContaining({
+        data: expect.objectContaining({
+          riskToPrisoners: '',
         }),
       }),
       expect.anything()
