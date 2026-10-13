@@ -19,7 +19,11 @@ import nunjucksSetup from '../../utils/nunjucksSetup'
 
 const anchorTargets = [
   { page: 'offence-analysis', text: 'Analyse offences under consideration', id: 'offences-under-consideration' },
-  { page: 'offence-analysis', text: 'Analyse the pattern of offending and response to supervision', id: 'offences-pattern' },
+  {
+    page: 'offence-analysis',
+    text: 'Analyse the pattern of offending and response to supervision',
+    id: 'offences-pattern',
+  },
   { page: 'risk-analysis', text: 'Risk levels', id: 'risk-levels' },
   {
     page: 'risk-analysis',
@@ -112,7 +116,10 @@ describe('Review your progress section anchors', () => {
 
     renderedReviewPage = env.render('psr/preview-report.njk', sharedContext)
     renderedDestinationPages = Object.fromEntries(
-      [...new Set(anchorTargets.map(({ page }) => page))].map(page => [page, env.render(`psr/${page}.njk`, sharedContext)])
+      [...new Set(anchorTargets.map(({ page }) => page))].map(page => [
+        page,
+        env.render(`psr/${page}.njk`, sharedContext),
+      ])
     )
   })
 
