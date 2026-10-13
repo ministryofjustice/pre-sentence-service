@@ -39,6 +39,14 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
     isDangerousReport: 'no',
     signReportName: 'TOKEN_AUTHOR Report Author',
     reportSubmittedAt: '01/07/2026',
+    sourcesOfInformationList: {
+      predefined: [
+        { label: 'CPS summary TOKEN_SOURCES', used: true },
+        { label: 'Interview', used: true },
+        { label: 'Previous convictions', used: false },
+      ],
+      custom: [],
+    },
     ...overrides,
   }
 }

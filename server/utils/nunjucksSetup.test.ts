@@ -99,3 +99,35 @@ describe('editorValue nunjucks filter', () => {
     expect(env.renderString('{{ value | editorValue | safe }}', { value: '' })).toBe('')
   })
 })
+
+describe('formatTime nunjucks filter', () => {
+  let env: nunjucks.Environment
+
+  beforeEach(() => {
+    const app = express()
+    const configureSpy = jest.spyOn(nunjucks, 'configure')
+    nunjucksSetup(app, path)
+    env = configureSpy.mock.results[0].value as nunjucks.Environment
+    configureSpy.mockRestore()
+  })
+
+  it('formats a Date as 24-hour HH:MM in Europe/London (GMT)', () => {
+    const out = env.renderString('{{ value | formatTime }}', { value: new Date('2026-01-15T14:05:00Z') })
+    expect(out).toBe('14:05')
+  })
+
+  it('formats a Date as 24-hour HH:MM in Europe/London (BST)', () => {
+    const out = env.renderString('{{ value | formatTime }}', { value: new Date('2026-07-15T13:05:00Z') })
+    expect(out).toBe('14:05')
+  })
+
+  it('formats an ISO string', () => {
+    const out = env.renderString('{{ value | formatTime }}', { value: '2026-01-15T09:07:00Z' })
+    expect(out).toBe('09:07')
+  })
+
+  it('returns empty string for missing or invalid values', () => {
+    expect(env.renderString('{{ value | formatTime }}', { value: null })).toBe('')
+    expect(env.renderString('{{ value | formatTime }}', { value: 'not-a-date' })).toBe('')
+  })
+})

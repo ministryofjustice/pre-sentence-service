@@ -105,57 +105,13 @@ async function seedTestData() {
     // Seed person details
     await connection.query(`
       INSERT INTO presentenceservice.person_details (
-        crn, names, "dateOfBirth", pnc, address, "mainOffence", "otherOffences", court,
-        "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
+        crn, "createdAt", "createdBy", "lastUpdatedBy", "isDeleted", version
       )
       VALUES
-        (
-          'X320741',
-          '{"foreName": "John", "middleName": "Michael", "surname": "Doe"}'::jsonb,
-          '1979-08-18',
-          '2000/0002697F',
-          '{"buildingName": "Greenfield House", "addressNumber": "32", "streetName": "Scotland Street", "town": "Sheffield", "district": "Sheffield City Centre", "county": "South Yorkshire", "postcode": "S3 7BS"}'::jsonb,
-          'Theft from a shop',
-          '["Common assault", "Criminal damage"]'::jsonb,
-          '{"name": "Sheffield Magistrates Court", "localJusticeArea": "South Yorkshire"}'::jsonb,
-          NOW(),
-          'system',
-          NOW(),
-          false,
-          1
-        ),
-        (
-          'X456789',
-          '{"foreName": "Jane", "middleName": "", "surname": "Smith"}'::jsonb,
-          '1985-03-15',
-          '2010/0003456A',
-          '{"buildingName": "", "addressNumber": "15", "streetName": "High Street", "town": "Manchester", "district": "City Centre", "county": "Greater Manchester", "postcode": "M1 1AB"}'::jsonb,
-          'Burglary of a dwelling',
-          '[]'::jsonb,
-          '{"name": "Manchester Crown Court", "localJusticeArea": "Greater Manchester"}'::jsonb,
-          NOW(),
-          'system',
-          NOW(),
-          false,
-          1
-        ),
-        (
-          'X789012',
-          '{"foreName": "Robert", "middleName": "James", "surname": "Johnson"}'::jsonb,
-          '1992-11-22',
-          '2015/0007890B',
-          '{"buildingName": "The Towers", "addressNumber": "101", "streetName": "Park Lane", "town": "Birmingham", "district": "Edgbaston", "county": "West Midlands", "postcode": "B15 2TT"}'::jsonb,
-          'Possession with intent to supply Class B drugs',
-          '["Possession of Class A drugs"]'::jsonb,
-          '{"name": "Birmingham Crown Court", "localJusticeArea": "West Midlands"}'::jsonb,
-          NOW(),
-          'system',
-          NOW(),
-          false,
-          1
-        );
+        ('X320741', NOW(), 'system', NOW(), false, 1),
+        ('X456789', NOW(), 'system', NOW(), false, 1),
+        ('X789012', NOW(), 'system', NOW(), false, 1);
     `)
-
     console.log('Seeding report details...')
 
     // Seed report details with sample data
@@ -256,39 +212,6 @@ async function seedTestData() {
           1
         )
         RETURNING id INTO report3_id;
-
-        -- Link sources of information to reports
-        -- For report 2 (Jane Smith's PSR)
-        INSERT INTO presentenceservice.report_sources_of_information (
-          "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
-        )
-        SELECT
-          report2_id,
-          id,
-          NOW(),
-          'system',
-          NOW(),
-          'system',
-          false,
-          1
-        FROM presentenceservice.sources_of_information
-        WHERE name IN ('interview', 'previous_convictions', 'cps_summary');
-
-        -- For report 3 (Robert Johnson's PSR)
-        INSERT INTO presentenceservice.report_sources_of_information (
-          "reportId", "sourcesOfInformationId", "createdAt", "createdBy", "lastUpdatedAt", "lastUpdatedBy", "isDeleted", version
-        )
-        SELECT
-          report3_id,
-          id,
-          NOW(),
-          'system',
-          NOW(),
-          'system',
-          false,
-          1
-        FROM presentenceservice.sources_of_information
-        WHERE name IN ('interview', 'previous_convictions', 'cps_summary', 'oasys_assessments', 'substance_misuse_screening_tool');
 
       END $$;
     `)

@@ -20,6 +20,7 @@ generic-service:
     NDELIUS_URL: "https://ndelius-preprod.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
     FEATURE_RICH_TEXT_EDITOR: false
+    SHOW_REPORT_LISTING: "true"
     WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-preprod.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
   allowlist: &app-allowlist

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import BaseController from './baseController'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { HttpError } from '../../@types/httpError'
+import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
 
 export default class AutosaveController extends BaseController {
   public post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
@@ -47,6 +48,13 @@ export default class AutosaveController extends BaseController {
 
       if (!pageName) {
         pageName = 'default'
+      }
+
+      if (req.body.sourcesOfInformation !== undefined) {
+        const sources = await this.reportService.getSourcesOfInformation(reportId)
+        const customSourceKeys = sources.filter(s => s.isCustom).map(s => s.key)
+        const selectedSourceKeys = normalizeSourcesToArray(req.body.sourcesOfInformation)
+        req.body.sourcesOfInformation = [...new Set([...selectedSourceKeys, ...customSourceKeys])]
       }
 
       const result = await this.reportService.persistPartialFieldValues(reportId, req.body, pageName)

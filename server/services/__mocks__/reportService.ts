@@ -105,14 +105,7 @@ export default class ReportService {
     })
   }
 
-  public saveCustomSourcesOfInformation(
-    reportId: number,
-    addedSources: unknown,
-    removedSources: unknown,
-    createdBy: string
-  ) {
-    return new Promise(resolve => {
-      process.nextTick(() => resolve(reportId && addedSources && removedSources && createdBy ? undefined : undefined))
-    })
+  public saveSourcesOfInformation() {
+    return Promise.resolve()
   }
 }

@@ -1,6 +1,8 @@
 import { areReviewSectionsComplete, getReportProgress, hasContent } from './reportProgress'
 
 describe('reportProgress', () => {
+  const availableSourcesOfInformation = [{ key: 'cps_summary', value: 'CPS summary', isCustom: false }]
+
   describe('hasContent', () => {
     it('returns false for empty rich text', () => {
       expect(hasContent('<p>&nbsp;</p>')).toBe(false)
@@ -13,28 +15,31 @@ describe('reportProgress', () => {
   })
 
   it('derives completed statuses from API defendant details and saved answers', () => {
-    const progress = getReportProgress({
-      apiDefendantDetailsAvailable: true,
-      name: 'Jane Doe',
-      dateOfBirth: '1990-01-01',
-      'address-postcode': 'SW1A 1AA',
-      offencesUnderConsideration: 'Details',
-      noPreviousOffences: 'true',
-      defendantBehaviour: 'Assessment',
-      riskToChildren: 'low',
-      riskToPublic: 'medium',
-      riskToKnownAdults: 'low',
-      riskToStaff: 'low',
-      riskPredictors: 'Predictors',
-      riskAndHarmFactors: 'Factors',
-      proposedSentence: 'Community order',
-      proposedSentenceRationale: 'Rationale',
-      alternativeSentencingOptions: 'Alternatives',
-      custodialSentenceConsideration: 'not-threshold',
-      sourcesOfInformation: 'cps_summary',
-      signReportName: 'Officer Name',
-      isDangerousReport: 'no',
-    })
+    const progress = getReportProgress(
+      {
+        apiDefendantDetailsAvailable: true,
+        name: 'Jane Doe',
+        dateOfBirth: '1990-01-01',
+        'address-postcode': 'SW1A 1AA',
+        offencesUnderConsideration: 'Details',
+        noPreviousOffences: 'true',
+        defendantBehaviour: 'Assessment',
+        riskToChildren: 'low',
+        riskToPublic: 'medium',
+        riskToKnownAdults: 'low',
+        riskToStaff: 'low',
+        riskPredictors: 'Predictors',
+        riskAndHarmFactors: 'Factors',
+        proposedSentence: 'Community order',
+        proposedSentenceRationale: 'Rationale',
+        alternativeSentencingOptions: 'Alternatives',
+        custodialSentenceConsideration: 'not-threshold',
+        sourcesOfInformation: 'cps_summary',
+        signReportName: 'Officer Name',
+        isDangerousReport: 'no',
+      },
+      availableSourcesOfInformation
+    )
 
     expect(progress.defendantDetails.status).toBe('Completed')
     expect(progress.offenceAnalysis.status).toBe('Completed')
@@ -47,12 +52,15 @@ describe('reportProgress', () => {
   })
 
   it('keeps defendant details incomplete when the API response is unavailable', () => {
-    const progress = getReportProgress({
-      apiDefendantDetailsAvailable: false,
-      name: 'Jane Doe',
-      dateOfBirth: '1990-01-01',
-      'address-postcode': 'SW1A 1AA',
-    })
+    const progress = getReportProgress(
+      {
+        apiDefendantDetailsAvailable: false,
+        name: 'Jane Doe',
+        dateOfBirth: '1990-01-01',
+        'address-postcode': 'SW1A 1AA',
+      },
+      availableSourcesOfInformation
+    )
 
     expect(progress.defendantDetails.status).toBe('Incomplete')
     expect(progress.defendantDetails.name).toBe(false)
@@ -61,11 +69,14 @@ describe('reportProgress', () => {
   })
 
   it('keeps sections incomplete when required answers are missing', () => {
-    const progress = getReportProgress({
-      apiDefendantDetailsAvailable: true,
-      name: 'Jane Doe',
-      isDangerousReport: 'yes',
-    })
+    const progress = getReportProgress(
+      {
+        apiDefendantDetailsAvailable: true,
+        name: 'Jane Doe',
+        isDangerousReport: 'yes',
+      },
+      availableSourcesOfInformation
+    )
 
     expect(progress.defendantDetails.status).toBe('Incomplete')
     expect(progress.riskAnalysis.status).toBe('Incomplete')
@@ -75,25 +86,31 @@ describe('reportProgress', () => {
   })
 
   it('marks custodial sentence impact as complete when a non-custodial option is selected', () => {
-    const progress = getReportProgress({
-      proposedSentence: 'Community order',
-      proposedSentenceRationale: 'Rationale',
-      alternativeSentencingOptions: 'Alternatives',
-      custodialSentenceConsideration: 'not-threshold',
-    })
+    const progress = getReportProgress(
+      {
+        proposedSentence: 'Community order',
+        proposedSentenceRationale: 'Rationale',
+        alternativeSentencingOptions: 'Alternatives',
+        custodialSentenceConsideration: 'not-threshold',
+      },
+      availableSourcesOfInformation
+    )
 
     expect(progress.sentencingProposal.sentenceImpact).toBe(true)
     expect(progress.sentencingProposal.status).toBe('Completed')
   })
 
   it('keeps custodial sentence impact incomplete when custodial is possible but no explanation is entered', () => {
-    const progress = getReportProgress({
-      proposedSentence: 'Community order',
-      proposedSentenceRationale: 'Rationale',
-      alternativeSentencingOptions: 'Alternatives',
-      custodialSentenceConsideration: 'possible',
-      custodialSentenceImpact: '   ',
-    })
+    const progress = getReportProgress(
+      {
+        proposedSentence: 'Community order',
+        proposedSentenceRationale: 'Rationale',
+        alternativeSentencingOptions: 'Alternatives',
+        custodialSentenceConsideration: 'possible',
+        custodialSentenceImpact: '   ',
+      },
+      availableSourcesOfInformation
+    )
 
     expect(progress.sentencingProposal.sentenceImpact).toBe(false)
     expect(progress.sentencingProposal.status).toBe('Incomplete')
