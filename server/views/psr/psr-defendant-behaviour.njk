@@ -24,74 +24,47 @@
 
 {% block reportForm %}
 <form method="post" data-autosave="true" novalidate>
-    <h1 class="govuk-heading-xl">{{ currentPage }}</h1>
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
 
-    <section class="section-wrapper">
-      {% from "components/text-editor/macro.njk" import picTextEditor %}
+  {% include "../partials/autosaveStatus.njk" %}
 
-      {{ picTextEditor({
-        name: "defendantBehaviour",
-        id: "defendantBehaviour",
-        rows: "10",
-        longText: true,
-        hint: {
-          html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
-            behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.</p>
-            <p class='govuk-body'>Consider the defendant's behaviour and lifestyle by:</p>
-            <ul class='govuk-list govuk-list--bullet'>
-              <li>analysing rehabilitative needs that require intervention, focusing on circumstances relevant to a sentencing decision</li>
-              <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
-              <li>identifying protective factors that may reduce the likelihood of reoffending</li>
-            </ul>"
-        },
-        value: data.defendantBehaviour,
-        whatToInclude: defendantBehaviourHelp,
-        errorMessage: {
-          text: formValidation.errors.defendantBehaviour
-        } if 'defendantBehaviour' in elementsWithError
-      }) }}
-    </section>
+  <section class="section-wrapper">
 
-    <section class="section-wrapper">
-      <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+    {% from "components/text-editor/macro.njk" import picTextEditor %}
 
-      {% include "../partials/autosaveStatus.njk" %}
+    {{ picTextEditor({
+      name: "defendantBehaviour",
+      id: "defendantBehaviour",
+      rows: "10",
+      longText: true,
+      label: {
+        text: currentPage,
+        classes: "govuk-visually-hidden"
+      },
+      hint: {
+        html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
+          behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.</p>
+          <p class='govuk-body'>Consider the defendant's behaviour and lifestyle by:</p>
+          <ul class='govuk-list govuk-list--bullet'>
+            <li>analysing rehabilitative needs that require intervention, focusing on circumstances relevant to a sentencing decision</li>
+            <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
+            <li>identifying protective factors that may reduce the likelihood of reoffending</li>
+          </ul>"
+      },
+      value: data.defendantBehaviour,
+      whatToInclude: defendantBehaviourHelp,
+      whatToIncludeTitle: "Help with defendant behaviour and lifestyle assessment",
+      errorMessage: {
+        text: formValidation.errors.defendantBehaviour
+      } if 'defendantBehaviour' in elementsWithError
+    }) }}
+  </section>
 
-      {% from "components/text-editor/macro.njk" import picTextEditor %}
+  <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+  <input type="hidden" name="reportId" value="{{ reportId }}">
+  <input type="hidden" name="pageName" value="{{ pageName }}">
 
-      {{ picTextEditor({
-        name: "defendantBehaviour",
-        id: "defendantBehaviour",
-        rows: "10",
-        longText: true,
-        label: {
-          text: currentPage,
-          classes: "govuk-visually-hidden"
-        },
-        hint: {
-          html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
-            behaviour. It should demonstrate professional analysis rather than describe a list of circumstances.</p>
-            <p class='govuk-body'>Consider the defendant's behaviour and lifestyle by:</p>
-            <ul class='govuk-list govuk-list--bullet'>
-              <li>analysing rehabilitative needs that require intervention, focusing on circumstances relevant to a sentencing decision</li>
-              <li>assessing the defendant's capacity and motivation to address offending including any barriers to engagement</li>
-              <li>identifying protective factors that may reduce the likelihood of reoffending</li>
-            </ul>"
-        },
-        value: data.defendantBehaviour,
-        whatToInclude: defendantBehaviourHelp,
-        whatToIncludeTitle: "Help with defendant behaviour and lifestyle assessment",
-        errorMessage: {
-          text: formValidation.errors.defendantBehaviour
-        } if 'defendantBehaviour' in elementsWithError
-      }) }}
-    </section>
-
-      <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
-      <input type="hidden" name="reportId" value="{{ reportId }}">
-      <input type="hidden" name="pageName" value="{{ pageName }}">
-
-    <button class="govuk-button">Save and continue</button>
-  </form>
+  <button class="govuk-button">Save and continue</button>
+</form>
 
 {% endblock %}
