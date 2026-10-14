@@ -46,7 +46,7 @@
     <li>Analyse relevant risk and protective factors</li>
   </ol>
 
-  <h2 class="govuk-heading-l">Step 1 : Assign risk levels </h2>
+  <h2 class="govuk-heading-l" id="risk-levels">Step 1 : Assign risk levels </h2>
 
   {{ govukWarningText({
     text: "You must complete an OASys Layer 1 Assessment to confirm the risk predictors and inform your wider risk analysis.",
@@ -116,7 +116,8 @@
   {{ picTextEditor({
     label: {
       text: "Steps 2 and 3: Confirm risk predictors and assess the likelihood of reoffending",
-      classes: "govuk-label--l"
+      classes: "govuk-label--l",
+      attributes: { id: "risk-predictors-heading" }
     },
     hint: {
       text: "Risk predictor tools provide an assessment of proven reoffending over a set time period. Explain the risk predictor outcome 
@@ -139,7 +140,8 @@
   {{ picTextEditor({
     label: {
       text: "Step 4: Analyse relevant risks of harm and protective factors",
-      classes: "govuk-label--l"
+      classes: "govuk-label--l",
+      attributes: { id: "risk-of-harm" }
     },
     hint: {
       html: "<p>Using the risk factors you've identified, create a risk analysis based on:</p>
