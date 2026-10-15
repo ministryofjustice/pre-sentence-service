@@ -17,12 +17,12 @@
     data-autosave="true"
     novalidate
   >
-    <div class="govuk-form-group govuk-!-margin-bottom-0 {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
-      <fieldset class="govuk-fieldset"
-        aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
-        <legend class="govuk-visually-hidden">Sources of information</legend>
+    <section class="section-wrapper"> 
+      <div class="govuk-form-group govuk-!-margin-bottom-0 {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
+        <fieldset class="govuk-fieldset"
+          aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
+          <legend class="govuk-visually-hidden">Sources of information</legend>
 
-        <section class="section-wrapper"> 
 
           <div id="sourcesOfInformation-hint" class="govuk-hint soi-hint">
             Select all sources used to inform this report.
@@ -50,10 +50,10 @@
               </div>
             {% endfor %}
           </div>
-        </section>
-      </fieldset>
-    </div>
-
+        </fieldset>
+      </div>
+    </section>
+      
     {% if addedSourcesOfInformation | length %}
       <div id="added-sources" class="added-source-wrapper">
         <h2 class="govuk-heading-m govuk-!-margin-bottom-3">Added sources</h2>
@@ -90,7 +90,7 @@
       {% endif %}
 
       <input
-        class="govuk-input govuk-!-width-two-thirds"
+        class="govuk-input govuk-!-width-two-thirds{% if 'source' in elementsWithError %} govuk-input--error{% endif %}"
         id="source"
         name="source"
         type="text"

@@ -130,7 +130,10 @@
                             text: "Alongside any relevant factors you may want to consider the impact on the defendant's family (including dependants) and managing risk. Consider any personal vulnerabilities or risks the defendant may present to themselves."
                         },
                         rows: 10,
-                        value: data.custodialSentenceImpact
+                        value: data.custodialSentenceImpact,
+                        errorMessage: {
+                            text: formValidation.errors.custodialSentenceImpact
+                        } if 'custodialSentenceImpact' in elementsWithError
                         })
                     }
                     },
