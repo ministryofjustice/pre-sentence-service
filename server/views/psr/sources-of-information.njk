@@ -6,25 +6,21 @@
 {% set pageTitle = preSentenceType + " - " + currentPage %}
 
 {% block reportForm %}
+  <div class="govuk-!-margin-bottom-7">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+    {% include "../partials/autosaveStatus.njk" %}
+  </div>
+
   <form
     method="post"
     action="/{{ reportPath }}/{{ reportId }}/sources-of-information"
     data-autosave="true"
     novalidate
   >
-    <div class="govuk-form-group {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
+    <div class="govuk-form-group govuk-!-margin-bottom-0 {% if 'sourcesOfInformation' in elementsWithError %}govuk-form-group--error{% endif %}">
       <fieldset class="govuk-fieldset"
         aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
-        
-        <div class="govuk-!-margin-bottom-7">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-            <h1 class="govuk-fieldset__heading">
-              {{ currentPage }}
-            </h1>
-          </legend>
-  
-          {% include "../partials/autosaveStatus.njk" %}
-        </div>
+        <legend class="govuk-visually-hidden">Sources of information</legend>
 
         <section class="section-wrapper"> 
 
@@ -79,7 +75,7 @@
       </div>
     {% endif %}
 
-    <div class="govuk-form-group govuk-!-margin-bottom-8 {% if 'source' in elementsWithError %} govuk-form-group--error{% endif %}">
+    <section class="govuk-form-group govuk-!-margin-bottom-8 {% if 'source' in elementsWithError %} govuk-form-group--error{% endif %}">
       <div class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--m govuk-!-margin-bottom-3" for="source">
           Add another source of information
@@ -123,7 +119,7 @@
         aria-live="polite"
         hidden
       ></div>
-    </div>
+    </section>
 
     <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
     <input type="hidden" name="reportId" value="{{ reportId }}">

@@ -10,10 +10,13 @@
           data-autosave="true"
           data-confirm-submit="true"
           novalidate>
-        <section class="section-wrapper">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
 
+        <div class="govuk-!-margin-bottom-7">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
             {% include "../partials/autosaveStatus.njk" %}
+        </div>
+
+        <section class="section-wrapper">
             {% if data.reviewProgressBlocked %}
                 <p class="govuk-error-message" id="reviewProgress">
                     <span class="govuk-visually-hidden">Error:</span>
@@ -99,10 +102,11 @@
     <div class="govuk-modal" id="confirm-modal" hidden>
         <div class="govuk-modal__overlay"></div>
         <div class="govuk-modal__content govuk-width-container"
-             role="dialog"
-             aria-modal="true"
-             aria-labelledby="confirm-title"
-             aria-describedby="confirm-message">
+            tabindex="-1"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-title"
+            aria-describedby="confirm-message">
             <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
             <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
             <div class="govuk-button-group">
