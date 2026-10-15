@@ -16,14 +16,16 @@
       <fieldset class="govuk-fieldset"
         aria-describedby="sourcesOfInformation-hint {% if 'sourcesOfInformation' in elementsWithError %}sourcesOfInformation-error{% endif %}">
         
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-          <h1 class="govuk-fieldset__heading">
-            {{ currentPage }}
-          </h1>
-        </legend>
+        <div class="govuk-!-margin-bottom-7">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+            <h1 class="govuk-fieldset__heading">
+              {{ currentPage }}
+            </h1>
+          </legend>
+  
+          {% include "../partials/autosaveStatus.njk" %}
+        </div>
 
-        {% include "../partials/autosaveStatus.njk" %}
-        
         <section class="section-wrapper"> 
 
           <div id="sourcesOfInformation-hint" class="govuk-hint soi-hint">

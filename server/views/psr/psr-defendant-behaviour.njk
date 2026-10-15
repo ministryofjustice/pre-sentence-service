@@ -23,11 +23,13 @@
 {% endset %}
 
 {% block reportForm %}
-<form method="post" data-autosave="true" novalidate>
+
+<div class="govuk-!-margin-bottom-7">
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
-
   {% include "../partials/autosaveStatus.njk" %}
+</div>
 
+<form method="post" data-autosave="true" novalidate>
   <section class="section-wrapper">
 
     {% from "components/text-editor/macro.njk" import picTextEditor %}

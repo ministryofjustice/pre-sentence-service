@@ -12,10 +12,10 @@
 {% block reportForm %}
 
 <form method="post" data-autosave="true" novalidate>
-
-  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
-
-  {% include "../partials/autosaveStatus.njk" %}
+  <div class="govuk-!-margin-bottom-7">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+    {% include "../partials/autosaveStatus.njk" %}
+  </div>
 
   <section class="section-wrapper">
     <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Review offences from NDelius</h2>
@@ -85,7 +85,7 @@
         classes: "govuk-visually-hidden"
       },
       hint: {
-        html: "<p>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
+        html: "<p class='govuk-hint'>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
               <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
                 <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
                 <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
@@ -114,7 +114,7 @@
         classes: "govuk-visually-hidden"
       },
       hint: {
-        html: "<p>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
+        html: "<p class='govuk-hint'>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
               <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
                 <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
                 <li>interventions that may reduce the chances of offending</li>
