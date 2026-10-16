@@ -13,10 +13,12 @@ export const buildSourcesOfInformation = (
 
   const selected = new Set(selectedValues)
 
-  return sourcesOfInformation.map(source => ({
-    ...source,
-    checked: selected.has(source.key),
-  }))
+  return sourcesOfInformation
+    .map(source => ({
+      ...source,
+      checked: selected.has(source.key),
+    }))
+    .sort((a, b) => a.value.localeCompare(b.value, undefined, { sensitivity: 'base' }))
 }
 
 export interface PdfSourceOfInformation {
