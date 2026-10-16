@@ -129,6 +129,9 @@
     {{ govukCheckboxes({
       id: "noPreviousOffences",
       name: "noPreviousOffences",
+      formGroup: {
+        classes: "govuk-!-margin-top-7"
+      },
       items: [
         {
           checked: data.noPreviousOffences === 'true',
