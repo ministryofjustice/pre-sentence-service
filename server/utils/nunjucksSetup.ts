@@ -189,9 +189,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addFilter('editableText', (v: string) => (config.features.richTextEditor ? v : htmlToPlainText(v)))
 
-  njkEnv.addFilter('editorValue', (v: unknown) => {
-    if (v === null || v === undefined) return ''
-
-    return config.features.richTextEditor ? plainTextToEditorHtml(v) : escapeHtml(htmlToPlainText(v as string))
-  })
+  njkEnv.addFilter('editorValue', (v: unknown) =>
+    config.features.richTextEditor ? plainTextToEditorHtml(v) : escapeHtml(htmlToPlainText(v as string))
+  )
 }
