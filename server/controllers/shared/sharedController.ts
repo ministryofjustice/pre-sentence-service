@@ -390,11 +390,14 @@ export default class SharedController {
         sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
       }
       await this.fetchDefendantDetails(reportIdParam)
+      const latestReport = await this.reportService.getReportById(reportId)
       this.renderTemplate(res, {
         ...this.templateValues,
         reportId: reportIdParam,
         sourcesOfInformation,
         data: {
+          ...this.defaultTemplateData,
+          ...latestReport,
           ...this.data,
           ...this.normaliseBodyForRender(req.body),
         },
