@@ -1,0 +1,37 @@
+name: Cut preprod
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  cut_preprod:
+    name: Cut preprod branch from main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check no candidate already exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/git/matching-refs/heads/preprod/" --jq '.[].ref' | sed 's|^refs/heads/||')
+          if [ -n "${existing}" ]; then
+            echo "::error::A candidate branch already exists: ${existing}. Run the Release workflow (or delete the branch) before cutting a new candidate."
+            exit 1
+          fi
+      - name: Create candidate branch
+        id: create
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="preprod/$(date -u +%Y-%m-%d-%H%M)"
+          sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/heads/${branch}" -f sha="${sha}"
+          echo "Created ${branch} at ${sha}" >> "$GITHUB_STEP_SUMMARY"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+      - name: Run pipeline on candidate branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pipeline.yml -R "${GITHUB_REPOSITORY}" --ref "${{ steps.create.outputs.branch }}"

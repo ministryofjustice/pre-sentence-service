@@ -5,7 +5,7 @@ import { LONG_TEXT_MAX } from './validation'
 import config from '../config'
 import { htmlToPlainText } from './htmlToPlainText'
 import formatDuration from './formatDuration'
-import { plainTextToEditorHtml } from './plainTextToEditorHtml'
+import { escapeHtml, plainTextToEditorHtml } from './plainTextToEditorHtml'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -43,9 +43,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       'node_modules/govuk-frontend/dist/govuk/components/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
-      'node_modules/nhsuk-frontend/dist',
-      'node_modules/nhsuk-frontend/dist/nhsuk/components',
-      'node_modules/nhsuk-frontend/dist/nhsuk/macros',
     ],
     {
       autoescape: true,
@@ -193,6 +190,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('editableText', (v: string) => (config.features.richTextEditor ? v : htmlToPlainText(v)))
 
   njkEnv.addFilter('editorValue', (v: unknown) =>
-    config.features.richTextEditor ? plainTextToEditorHtml(v) : htmlToPlainText(v as string)
+    config.features.richTextEditor ? plainTextToEditorHtml(v) : escapeHtml(htmlToPlainText(v as string))
   )
 }
