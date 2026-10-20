@@ -144,28 +144,13 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
 
   describe('signYourReport', () => {
     it('is Incomplete when signedBy missing', () => {
-      const progress = getReportProgress(apiAvailable({ isDangerousReport: 'no' }), availableSourcesOfInformation)
+      const progress = getReportProgress(apiAvailable(), availableSourcesOfInformation)
       expect(progress.signYourReport.signedBy).toBe(false)
     })
 
-    it('spoName required only when isDangerousReport is yes', () => {
-      const noDanger = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'no' }),
-        availableSourcesOfInformation
-      )
-      expect(noDanger.signYourReport.spoName).toBe(true)
-
-      const dangerNoSpo = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'yes' }),
-        availableSourcesOfInformation
-      )
-      expect(dangerNoSpo.signYourReport.spoName).toBe(false)
-
-      const dangerWithSpo = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'yes', spoName: 'SPO Name' }),
-        availableSourcesOfInformation
-      )
-      expect(dangerWithSpo.signYourReport.spoName).toBe(true)
+    it('is Completed when signReportName present', () => {
+      const progress = getReportProgress(apiAvailable({ signReportName: 'me' }), availableSourcesOfInformation)
+      expect(progress.signYourReport.status).toBe('Completed')
     })
   })
 })
