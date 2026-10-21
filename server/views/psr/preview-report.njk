@@ -65,12 +65,12 @@
           items: [
             {
               text: "Analyse offences under consideration",
-              href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+              href: "/" + reportPath + "/" + reportId + "/offence-analysis#offences-under-consideration",
               state: "Completed" if progress.offenceAnalysis.offencesUnderConsideration else "Incomplete"
             },
             {
-              text: "Analyse the pattern of offending and response to supervision",
-              href: "/" + reportPath + "/" + reportId + "/offence-analysis",
+              text: "Analyse previous offending behaviour and response to supervision",
+              href: "/" + reportPath + "/" + reportId + "/offence-analysis#previous-offending-behaviour",
               state: "Completed" if progress.offenceAnalysis.offencesPattern else "Incomplete"
             }
           ]
@@ -94,21 +94,21 @@
             classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
           items: [
-            {
-              text: "Risk levels",
-              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-              state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
-            },
-            {
-              text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
-              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-              state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
-            },
-            {
-              text: "Analyse relevant risks of harm and protective factors",
-              href: "/" + reportPath + "/" + reportId + "/risk-analysis",
-              state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
-            }
+          {
+            text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis#assess-reoffending-likelihood",
+            state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
+          },
+          {
+            text: "Analyse relevant risks of harm and protective factors",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis#risks-of-harm",
+            state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
+          },
+          {
+            text: "Risk levels",
+            href: "/" + reportPath + "/" + reportId + "/risk-analysis#risk-levels",
+            state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
+          },
           ]
         },
         {
@@ -119,22 +119,22 @@
           items: [
             {
               text: "Proposed sentence",
-              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#proposed-sentence",
               state: "Completed" if progress.sentencingProposal.proposedSentence else "Incomplete"
             },
             {
               text: "Rationale for proposed sentence",
-              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#rationale-for-proposed-sentence",
               state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
             },
             {
               text: "Alternative sentencing options",
-              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#alternative-sentencing-options",
               state: "Completed" if progress.sentencingProposal.alternativeSentencingOptions else "Incomplete"
             },
             {
               text: "Impact of custodial sentence",
-              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#custodial-sentence-consideration",
               state: "Completed" if progress.sentencingProposal.sentenceImpact else "Incomplete"
             }
           ]
