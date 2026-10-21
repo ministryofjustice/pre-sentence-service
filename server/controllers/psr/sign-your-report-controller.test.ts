@@ -44,8 +44,9 @@ describe('SignYourReportController', () => {
         { id: 1, value: 'riskToPublic', answer: 'low' },
         { id: 2, value: 'riskToKnownAdults', answer: 'low' },
         { id: 3, value: 'riskToStaff', answer: 'low' },
-        { id: 4, value: 'riskPredictors', answer: 'Predictors' },
-        { id: 5, value: 'riskAndHarmFactors', answer: 'Factors' },
+        { id: 4, value: 'riskToPrisoners', answer: 'low' },
+        { id: 5, value: 'riskPredictors', answer: 'Predictors' },
+        { id: 6, value: 'riskAndHarmFactors', answer: 'Factors' },
       ],
     },
     {
@@ -70,6 +71,9 @@ describe('SignYourReportController', () => {
 
     reportService = {
       getReportById: jest.fn(),
+      getSourcesOfInformation: jest
+        .fn()
+        .mockResolvedValue([{ key: 'cps_summary', value: 'CPS summary', isCustom: false }]),
       updateReport: jest.fn().mockResolvedValue(mockedReportData),
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
       persistPartialFieldValues: jest.fn().mockResolvedValue({ persisted: [], dropped: [] }),

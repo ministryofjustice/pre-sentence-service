@@ -1,11 +1,39 @@
-import type { Router } from 'express'
+import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
 import passport from 'passport'
 import flash from 'connect-flash'
 import config from '../config'
 import auth from '../authentication/auth'
+import { clearReturnToCookie, readReturnToCookie, safeReturnTo } from '../utils/returnTo'
 
 const router = express.Router()
+
+export function handleSignInCallbackResult(req: Request, res: Response, next: NextFunction) {
+  return (err: Error | null, user?: Express.User | false) => {
+    if (err) {
+      return next(err)
+    }
+
+    if (!user) {
+      if (req.session.authRetry) {
+        delete req.session.authRetry
+        return res.redirect('/autherror')
+      }
+      req.session.authRetry = true
+      return res.redirect('/sign-in')
+    }
+
+    const returnTo = safeReturnTo(req.session.returnTo || readReturnToCookie(req)?.returnTo)
+    return req.logIn(user, loginErr => {
+      if (loginErr) {
+        return next(loginErr)
+      }
+      delete req.session.authRetry
+      clearReturnToCookie(res)
+      return res.redirect(returnTo)
+    })
+  }
+}
 
 export default function setUpAuth(): Router {
   auth.init()
@@ -22,10 +50,7 @@ export default function setUpAuth(): Router {
   router.get('/sign-in', passport.authenticate('oauth2'))
 
   router.get('/sign-in/callback', (req, res, next) =>
-    passport.authenticate('oauth2', {
-      successReturnToOrRedirect: req.session.returnTo || '/',
-      failureRedirect: '/autherror',
-    })(req, res, next)
+    passport.authenticate('oauth2', handleSignInCallbackResult(req, res, next))(req, res, next)
   )
 
   const authUrl = config.apis.hmppsAuth.externalUrl

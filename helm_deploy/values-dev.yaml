@@ -21,6 +21,7 @@ generic-service:
     DB_RUN_MIGRATIONS: true
     FEATURE_RICH_TEXT_EDITOR: false
     FEATURE_SMART_SURVEY: true
+    SHOW_REPORT_LISTING: "true"
     WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-dev.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
 
   allowlist: &app-allowlist

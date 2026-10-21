@@ -5,7 +5,9 @@ import logger from '../../logger'
 import config from '../config'
 import ReportDetails from '../repositories/entities/reportDetails'
 import PreSentenceToDeliusService from './preSentenceToDeliusService'
+import SourcesOfInformationService from './sourcesOfInformationService'
 import type { Address, DefendantDetails } from '../@types/preSentenceToDelius'
+import { buildPdfSourcesOfInformation } from '../utils/sourcesOfInformationHelpers'
 import {
   configureReportData,
   getDraftHeader,
@@ -51,7 +53,10 @@ function capitalise(str: string): string {
 }
 
 export default class PdfGenerationService {
-  constructor(private readonly preSentenceToDeliusService?: PreSentenceToDeliusService) {}
+  constructor(
+    private readonly preSentenceToDeliusService?: PreSentenceToDeliusService,
+    private readonly sourcesOfInformationService: SourcesOfInformationService = new SourcesOfInformationService()
+  ) {}
 
   async generatePdf(report: ReportDetails, res: Response, options: PdfGenerationOptions = {}): Promise<void> {
     const { draft = false } = options
@@ -68,6 +73,12 @@ export default class PdfGenerationService {
     const defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
     const offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
 
+    const sources = await this.sourcesOfInformationService.getSourcesOfInformation(reportId)
+    const sourcesOfInformationList = buildPdfSourcesOfInformation(
+      sources,
+      reportData.sourcesOfInformation as string | undefined
+    )
+
     const dob = new Date(defendant.dateOfBirth)
     const now = new Date()
     const birthdayThisYear = new Date(now.getFullYear(), dob.getMonth(), dob.getDate())
@@ -78,6 +89,8 @@ export default class PdfGenerationService {
     const riskToChildren: string = reportData.riskToChildren as string
     const riskToKnownAdults: string = reportData.riskToKnownAdults as string
     const riskToStaff: string = reportData.riskToStaff as string
+    const riskToPrisoners = reportData.riskToPrisoners as string | undefined
+
     let impactExplanation = ''
     switch (reportData.custodialSentenceConsideration as string) {
       case 'possible':
@@ -101,9 +114,11 @@ export default class PdfGenerationService {
       riskToChildren: capitalise(riskToChildren.replace('_', ' ')),
       riskToKnownAdults: capitalise(riskToKnownAdults.replace('_', ' ')),
       riskToStaff: capitalise(riskToStaff.replace('_', ' ')),
+      riskToPrisoners: riskToPrisoners ? capitalise(riskToPrisoners.replace('_', ' ')) : '',
       ageInYears,
       impactExplanation,
       offenceData,
+      sourcesOfInformationList,
     }
 
     const { preSentenceUrl } = config.apis.gotenberg

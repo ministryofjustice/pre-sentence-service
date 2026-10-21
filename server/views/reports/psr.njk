@@ -80,6 +80,7 @@
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Public:</strong> {{ data.riskToPublic }}</p>
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Known adults:</strong> {{ data.riskToKnownAdults }}</p>
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Staff:</strong> {{ data.riskToStaff }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Prisoners:</strong> {{ data.riskToPrisoners }}</p>
     </div>
 
     <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
@@ -115,6 +116,25 @@
 
     {% if data.custodialSentenceConsideration === 'possible' %}
         <p class="govuk-body-s keep-newlines"> {{ data.custodialSentenceImpact }}</p>
+    {% endif %}
+
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">Sources of information</h2>
+
+    <div class="govuk-!-margin-bottom-4">
+        {% for source in data.sourcesOfInformationList.predefined %}
+            <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+        {% endfor %}
+    </div>
+
+    {% if data.sourcesOfInformationList.custom | length %}
+        <h3 class="govuk-heading-s">Other sources</h3>
+        <div class="govuk-!-margin-bottom-4">
+            {% for source in data.sourcesOfInformationList.custom %}
+                <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+            {% endfor %}
+        </div>
     {% endif %}
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">

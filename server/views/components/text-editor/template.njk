@@ -3,7 +3,7 @@
 {% from "govuk/components/label/macro.njk" import govukLabel %}
 
 {% set describedBy = params.describedBy if params.describedBy else "" %}
-<div data-editor="ClassicEditor" data-collaboration="false" class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
+<div data-editor="ClassicEditor" data-collaboration="false" class="{%- if params.errorMessage %} govuk-form-group--error{% endif %} {%- if params.formGroup.classes %} {{ params.formGroup.classes }}{% endif %}">
 {{ govukLabel({
     html: params.label.html,
     text: params.label.text,
@@ -20,7 +20,7 @@
     {% set describedBy = describedBy + ' ' + hintId if describedBy else hintId %}
     {{ govukHint({
       id: hintId,
-      classes: params.hint.classes,
+      classes: (params.hint.classes if params.hint.classes else '') + ' govuk-!-margin-bottom-4',
       attributes: params.hint.attributes,
       html: params.hint.html,
       text: params.hint.text
@@ -33,7 +33,7 @@
     {{ govukDetails({
       summaryText: params.whatToIncludeTitle if params.whatToIncludeTitle else "What to include",
       text: params.whatToInclude | safe,
-      classes: "govuk-!-margin-bottom-2"
+      classes: "govuk-!-margin-bottom-4"
     }) }}
   {% endif %}
 
@@ -57,11 +57,11 @@
   {% set isMultiline = effectiveRows | int > 1 %}
 
   <textarea hidden class="govuk-textarea {%- if params.errorMessage %} govuk-textarea--error{% endif %}{%- if isMultiline and featureRichTextEditor %} app-apply-ckeditor5{% endif %}" id="{{ params.id }}" name="{{ params.name }}" rows="{%if params.rows %} {{- params.rows -}} {% else %}5{%endif %}"
-  {%- if (params.spellcheck === false) or (params.spellcheck === true) %} spellcheck="{{ params.spellcheck }}"{% endif %}
+            spellcheck="{{ false if params.spellcheck === false else true }}"
     {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
     {%- if params.autocomplete %} autocomplete="{{ params.autocomplete}}"{% endif %}
     {%- if maxLength %} data-max-length="{{ maxLength }}"{% endif %}
-  {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value | editorValue | safe }}</textarea>
+  {%- for attribute, value in params.attributes %} {{attribute}}="{{value}}"{% endfor %}>{{ params.value | editorValue | safe }} </textarea>
 
   {% if maxLength %}
     <div class="govuk-hint govuk-character-count__message" data-character-count-for="{{ params.id }}" id="{{ params.id }}-info" aria-live="polite" hidden></div>

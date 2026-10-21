@@ -1,0 +1,50 @@
+name: Cut preprod
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Commit SHA to cut from (defaults to the head of main)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  cut_preprod:
+    name: Cut preprod branch from main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete existing candidate branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/git/matching-refs/heads/preprod/" --jq '.[].ref' | sed 's|^refs/heads/||')
+          for branch in ${existing}; do
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+            echo "Deleted existing candidate branch ${branch}" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - name: Create candidate branch
+        id: create
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          if [ -n "${COMMIT}" ]; then
+            sha=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${COMMIT}" --jq '.sha') || {
+              echo "::error::Commit ${COMMIT} not found in ${GITHUB_REPOSITORY}."
+              exit 1
+            }
+          else
+            sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq '.object.sha')
+          fi
+          branch="preprod/$(date -u +%Y-%m-%d-%H%M)"
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/heads/${branch}" -f sha="${sha}"
+          echo "Created ${branch} at ${sha}" >> "$GITHUB_STEP_SUMMARY"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+      - name: Run pipeline on candidate branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pipeline.yml -R "${GITHUB_REPOSITORY}" --ref "${{ steps.create.outputs.branch }}"

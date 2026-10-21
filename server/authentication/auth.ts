@@ -5,6 +5,7 @@ import type { RequestHandler } from 'express'
 import config from '../config'
 import generateOauthClientToken from './clientCredentials'
 import type { TokenVerifier } from '../data/tokenVerification'
+import { writeReturnToCookie } from '../utils/returnTo'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -27,6 +28,7 @@ const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
       return next()
     }
     req.session.returnTo = req.originalUrl
+    writeReturnToCookie(res, req.originalUrl)
     return res.redirect('/sign-in')
   }
 }

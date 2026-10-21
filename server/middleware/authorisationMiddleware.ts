@@ -3,6 +3,7 @@ import type { RequestHandler } from 'express'
 
 import logger from '../../logger'
 import asyncMiddleware from './asyncMiddleware'
+import { writeReturnToCookie } from '../utils/returnTo'
 
 export default function authorisationMiddleware(authorisedRoles: string[] = []): RequestHandler {
   return asyncMiddleware((req, res, next) => {
@@ -21,6 +22,7 @@ export default function authorisationMiddleware(authorisedRoles: string[] = []):
     }
 
     req.session.returnTo = req.originalUrl
+    writeReturnToCookie(res, req.originalUrl)
     return res.redirect('/sign-in')
   })
 }
