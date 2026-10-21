@@ -94,21 +94,21 @@
             classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
           items: [
-          {
-            text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis#assess-reoffending-likelihood",
-            state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
-          },
-          {
-            text: "Analyse relevant risks of harm and protective factors",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis#risks-of-harm",
-            state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
-          },
-          {
-            text: "Risk levels",
-            href: "/" + reportPath + "/" + reportId + "/risk-analysis#risk-levels",
-            state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
-          },
+            {
+              text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis#assess-reoffending-likelihood",
+              state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
+            },
+            {
+              text: "Analyse relevant risks of harm and protective factors",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis#risks-of-harm",
+              state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
+            },
+            {
+              text: "Risk levels",
+              href: "/" + reportPath + "/" + reportId + "/risk-analysis#risk-levels",
+              state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
+            }
           ]
         },
         {
@@ -124,7 +124,7 @@
             },
             {
               text: "Rationale for proposed sentence",
-              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#rationale-for-proposed-sentence",
+              href: "/" + reportPath + "/" + reportId + "/sentencing-proposal#proposed-sentence-rationale",
               state: "Completed" if progress.sentencingProposal.proposedSentenceRationale else "Incomplete"
             },
             {

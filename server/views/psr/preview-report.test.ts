@@ -21,35 +21,35 @@ const anchorTargets = [
   { page: 'offence-analysis', text: 'Analyse offences under consideration', id: 'offences-under-consideration' },
   {
     page: 'offence-analysis',
-    text: 'Analyse the pattern of offending and response to supervision',
-    id: 'offences-pattern',
+    text: 'Analyse previous offending behaviour and response to supervision',
+    id: 'previous-offending-behaviour',
   },
   { page: 'risk-analysis', text: 'Risk levels', id: 'risk-levels' },
   {
     page: 'risk-analysis',
     text: 'Confirm risk predictors and assess the immediacy and likelihood of reoffending',
-    id: 'risk-predictors-heading',
+    id: 'assess-reoffending-likelihood',
   },
   {
     page: 'risk-analysis',
     text: 'Analyse relevant risks of harm and protective factors',
-    id: 'risk-of-harm',
+    id: 'risks-of-harm',
   },
-  { page: 'sentencing-proposal', text: 'Proposed sentence', id: 'proposed-sentence-heading' },
+  { page: 'sentencing-proposal', text: 'Proposed sentence', id: 'proposed-sentence' },
   {
     page: 'sentencing-proposal',
     text: 'Rationale for proposed sentence',
-    id: 'proposed-sentence-rationale-heading',
+    id: 'proposed-sentence-rationale',
   },
   {
     page: 'sentencing-proposal',
     text: 'Alternative sentencing options',
-    id: 'alternative-sentencing-options-heading',
+    id: 'alternative-sentencing-options',
   },
   {
     page: 'sentencing-proposal',
     text: 'Impact of custodial sentence',
-    id: 'custodial-sentence-impact-heading',
+    id: 'custodial-sentence-consideration',
   },
 ]
 
