@@ -6,7 +6,7 @@ const HTML_ESCAPE: Record<string, string> = {
   "'": '&#39;',
 }
 
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, ch => HTML_ESCAPE[ch])
 }
 

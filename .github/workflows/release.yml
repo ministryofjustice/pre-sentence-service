@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      cut_next:
+        description: Cut the next preprod branch from main after releasing
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  prepare:
+    name: Identify preprod branch and tested version
+    runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.preprod_branch.outputs.branch }}
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.version.outputs.sha }}
+    steps:
+      - name: Find the preprod branch
+        id: preprod_branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branches=$(gh api "repos/${GITHUB_REPOSITORY}/git/matching-refs/heads/preprod/" --jq '.[].ref' | sed 's|^refs/heads/||')
+          count=$(echo -n "${branches}" | grep -c . || true)
+          if [ "${count}" -ne 1 ]; then
+            echo "::error::Expected exactly one preprod/* branch, found ${count}: ${branches}"
+            exit 1
+          fi
+          echo "branch=${branches}" >> "$GITHUB_OUTPUT"
+      - name: Read the version deployed in preprod
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREPROD_BRANCH: ${{ steps.preprod_branch.outputs.branch }}
+        run: |
+          version=$(curl -s https://pre-sentence-service-preprod.hmpps.service.justice.gov.uk/health | jq -r '.build.buildNumber // .version // empty')
+          if [ -z "${version}" ]; then
+            echo "::error::Could not read the build number from the preprod /health endpoint"
+            exit 1
+          fi
+          short_sha="${version##*.}"
+          deployed_sha=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${short_sha}" --jq '.sha')
+          branch_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${PREPROD_BRANCH}" --jq '.object.sha')
+          if [ "${deployed_sha}" != "${branch_sha}" ]; then
+            echo "::error::Preprod is running ${version} (${deployed_sha}) but ${PREPROD_BRANCH} is at ${branch_sha}. Wait for the preprod deploy to catch up, or investigate, then re-run."
+            exit 1
+          fi
+          echo "Releasing ${version} from ${PREPROD_BRANCH}" >> "$GITHUB_STEP_SUMMARY"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "sha=${deployed_sha}" >> "$GITHUB_OUTPUT"
+  helm_lint:
+    name: helm lint
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: 'prod'
+  deploy_prod:
+    name: Deploy to the prod environment
+    needs:
+      - prepare
+      - helm_lint
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2 # WORKFLOW_VERSION
+    secrets: inherit
+    with:
+      environment: 'prod'
+      app_version: ${{ needs.prepare.outputs.version }}
+  finalise:
+    name: Tag release, delete preprod branch, cut next
+    needs:
+      - prepare
+      - deploy_prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag the released commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/release/${{ needs.prepare.outputs.version }}" \
+            -f sha="${{ needs.prepare.outputs.sha }}"
+      - name: Delete the preprod branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${{ needs.prepare.outputs.branch }}"
+      - name: Cut the next preprod branch
+        if: ${{ inputs.cut_next }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run cut_preprod.yml -R "${GITHUB_REPOSITORY}" --ref main

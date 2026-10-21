@@ -23,11 +23,14 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" data-autosave="true" novalidate>
 
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+<div class="govuk-!-margin-bottom-7">
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+  {% include "../partials/autosaveStatus.njk" %}
+</div>
 
-    {% include "../partials/autosaveStatus.njk" %}
+<form method="post" data-autosave="true" novalidate>
+  <section class="section-wrapper">
 
     {% from "components/text-editor/macro.njk" import picTextEditor %}
 
@@ -57,12 +60,13 @@
         text: formValidation.errors.defendantBehaviour
       } if 'defendantBehaviour' in elementsWithError
     }) }}
+  </section>
 
-    <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
-    <input type="hidden" name="reportId" value="{{ reportId }}">
-    <input type="hidden" name="pageName" value="{{ pageName }}">
+  <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+  <input type="hidden" name="reportId" value="{{ reportId }}">
+  <input type="hidden" name="pageName" value="{{ pageName }}">
 
-    <button class="govuk-button">Save and continue</button>
-  </form>
+  <button class="govuk-button">Save and continue</button>
+</form>
 
 {% endblock %}

@@ -97,6 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return cfg
   }
 
+  function applySpellcheck($el, editor) {
+    var spellcheck = $el.getAttribute('spellcheck')
+    if (spellcheck === null) return
+
+    editor.editing.view.change(function (writer) {
+      writer.setAttribute('spellcheck', spellcheck, editor.editing.view.document.getRoot())
+    })
+  }
+
   var targets = new Set()
   document.querySelectorAll('.app-apply-ckeditor5').forEach(function ($el) {
     targets.add($el)
@@ -140,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wproofreaderBundleUrl) {
           Editor.create($el, { toolbar: { items: ['undo', 'redo'] } })
             .then(editor => {
+              applySpellcheck($el, editor)
               wireEditorToStore($el, editor)
               forcePastePlainText(editor)
             })
