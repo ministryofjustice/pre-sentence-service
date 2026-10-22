@@ -5,7 +5,7 @@ jest.mock('../config', () => ({
   __esModule: true,
   default: {
     nonce: 'test-nonce',
-    features: { richTextEditor: true },
+    features: { richTextEditor: true, smartSurvey: true },
     wproofreader: {
       bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
       host: 'spellcheck.example.com',
@@ -30,6 +30,8 @@ describe('setUpWebSecurity CSP gating', () => {
     // restore defaults between tests
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(config as any).features.richTextEditor = true
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.smartSurvey = true
   })
 
   it('includes the WProofreader host in CSP when the flag is ON', async () => {
@@ -48,5 +50,32 @@ describe('setUpWebSecurity CSP gating', () => {
     const csp = res.headers['content-security-policy'] || ''
     expect(csp).not.toContain('spellcheck.example.com')
     expect(csp).not.toContain('wss://')
+  })
+
+  it('includes the Smart Survey hosts in CSP when the flag is ON', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.smartSurvey = true
+    const res = await request(buildApp()).get('/')
+    const csp = res.headers['content-security-policy'] || ''
+    expect(csp).toContain('embed.smartsurvey.io')
+    expect(csp).toContain('*.smartsurvey.io')
+    expect(csp).toContain('*.smartsurvey.co.uk')
+    expect(csp).toMatch(/script-src[^;]*embed\.smartsurvey\.io/)
+    expect(csp).toMatch(/connect-src[^;]*embed\.smartsurvey\.io/)
+    expect(csp).toMatch(/frame-src[^;]*embed\.smartsurvey\.io/)
+    expect(csp).toMatch(/style-src[^;]*'sha256-fPBTCSndKQxWSUpU6A4z70gy4rG8mdMa52QT9ig6z5g='/)
+    expect(csp).toMatch(/style-src[^;]*fonts\.googleapis\.com/)
+    expect(csp).toMatch(/font-src[^;]*fonts\.gstatic\.com/)
+  })
+
+  it('omits the Smart Survey hosts from CSP when the flag is OFF', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.smartSurvey = false
+    const res = await request(buildApp()).get('/')
+    const csp = res.headers['content-security-policy'] || ''
+    expect(csp).not.toContain('smartsurvey')
+    expect(csp).not.toContain('sha256-fPBTCSndKQxWSUpU6A4z70gy4rG8mdMa52QT9ig6z5g=')
+    expect(csp).not.toContain('fonts.googleapis.com')
+    expect(csp).not.toContain('fonts.gstatic.com')
   })
 })
