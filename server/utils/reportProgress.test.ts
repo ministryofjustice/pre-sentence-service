@@ -37,7 +37,6 @@ describe('reportProgress', () => {
         custodialSentenceConsideration: 'not-threshold',
         sourcesOfInformation: 'cps_summary',
         signReportName: 'Officer Name',
-        isDangerousReport: 'no',
       },
       availableSourcesOfInformation
     )
@@ -74,7 +73,6 @@ describe('reportProgress', () => {
       {
         apiDefendantDetailsAvailable: true,
         name: 'Jane Doe',
-        isDangerousReport: 'yes',
       },
       availableSourcesOfInformation
     )
@@ -82,7 +80,6 @@ describe('reportProgress', () => {
     expect(progress.defendantDetails.status).toBe('Incomplete')
     expect(progress.riskAnalysis.status).toBe('Incomplete')
     expect(progress.signYourReport.status).toBe('Incomplete')
-    expect(progress.signYourReport.spoName).toBe(false)
     expect(areReviewSectionsComplete(progress)).toBe(false)
   })
 

@@ -1,7 +1,6 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% set currentPage = "Sign and lock your report" %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
@@ -42,54 +41,6 @@
                 errorMessage: {
                 text: formValidation.errors.signReportName
                 } if 'signReportName' in elementsWithError
-            }) }}
-
-            {% set spoNameHtml %}
-            {{ govukInput({
-                id: "spoName",
-                name: "spoName",
-                type: "text",
-                value: data.spoName,
-                autocomplete: "name",
-                classes: "govuk-!-width-one-third",
-                label: {
-                    text: "Please enter the name of the SPO who has reviewed the report"
-                },
-                errorMessage: {
-                    text: formValidation.errors.spoName
-                } if 'spoName' in elementsWithError
-            }) }}
-            {% endset %}
-        </section>
-
-        <section class="section-wrapper">
-            {{ govukRadios({
-                idPrefix: "isDangerousReport",
-                name: "isDangerousReport",
-                fieldset: {
-                    legend: {
-                        text: "Is this a dangerousness report?",
-                        classes: "govuk-fieldset__legend--m"
-                    }
-                },
-                errorMessage: {
-                    text: formValidation.errors.isDangerousReport
-                } if 'isDangerousReport' in elementsWithError,
-                items: [
-                    {
-                        value: "yes",
-                        text: "Yes",
-                        checked: data.isDangerousReport == "yes",
-                        conditional: {
-                        html: spoNameHtml
-                    }
-                },
-                {
-                    value: "no",
-                    text: "No",
-                    checked: data.isDangerousReport == "no"
-                }
-                ]
             }) }}
         </section>
 
