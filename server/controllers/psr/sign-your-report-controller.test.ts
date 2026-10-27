@@ -96,7 +96,6 @@ describe('SignYourReportController', () => {
       session: {},
       body: {
         signReportName: 'Officer Name',
-        isDangerousReport: 'no',
       },
       query: {},
     } as unknown as Request<{ reportId: string }>
@@ -210,34 +209,6 @@ describe('SignYourReportController', () => {
           isValid: false,
           errors: expect.objectContaining({
             submission: expect.stringContaining("We couldn't submit your report right now"),
-          }),
-        }),
-      })
-    )
-    expect(res.redirect).not.toHaveBeenCalled()
-  })
-
-  it('does not allow dangerous reports to be submitted without an SPO name', async () => {
-    req.body = {
-      signReportName: 'Officer Name',
-      isDangerousReport: 'yes',
-      spoName: '   ',
-    }
-    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
-      ...mockedReportData,
-      pages: completePages,
-    })
-
-    await controller.post(req, res)
-
-    expect(res.render).toHaveBeenCalledWith(
-      'psr/sign-your-report',
-      expect.objectContaining({
-        reportId: '123',
-        formValidation: expect.objectContaining({
-          isValid: false,
-          errors: expect.objectContaining({
-            spoName: 'Enter the name of the SPO who reviewed the report',
           }),
         }),
       })

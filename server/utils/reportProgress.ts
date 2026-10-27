@@ -8,7 +8,7 @@ import {
   isSentenceImpactComplete,
 } from '../schemas/sentencing-proposal'
 import { isSourcesOfInformationComplete } from '../schemas/sources-of-information'
-import { isSignedByComplete, isDangerousnessReportComplete, isSpoNameComplete } from '../schemas/sign-your-report'
+import { isSignedByComplete } from '../schemas/sign-your-report'
 import { SourceOfInformation } from './sourcesOfInformationHelpers'
 
 export type CompletionStatus = 'Completed' | 'Incomplete'
@@ -51,8 +51,6 @@ export interface ReportProgress {
   signYourReport: {
     status: CompletionStatus
     signedBy: boolean
-    dangerousnessReport: boolean
-    spoName: boolean
   }
 }
 
@@ -139,8 +137,6 @@ export const getReportProgress = (
 
   const signYourReport = {
     signedBy: isSignedByComplete(data),
-    dangerousnessReport: isDangerousnessReportComplete(data),
-    spoName: isSpoNameComplete(data),
   }
 
   return {
