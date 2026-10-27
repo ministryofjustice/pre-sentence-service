@@ -120,9 +120,8 @@ describe('Route Handlers - Shared Controller', () => {
             name: 'offence-analysis',
             questions: [
               { id: 0, value: 'offencesUnderConsideration', answer: 'Some analysis' },
-              { id: 1, value: 'noPreviousOffences', answer: 'true' },
-            ],
-          },
+              { id: 1, value: 'offencesPattern', answer: 'Previous offending analysis' },
+            ],          },
         ],
       })
 
@@ -134,7 +133,6 @@ describe('Route Handlers - Shared Controller', () => {
           data: expect.objectContaining({
             name: 'Jane Doe',
             offencesUnderConsideration: 'Some analysis',
-            noPreviousOffences: 'true',
             sectionStatuses: expect.objectContaining({
               defendantDetails: expect.objectContaining({
                 status: 'Completed',
@@ -281,7 +279,6 @@ describe('Route Handlers - Shared Controller', () => {
         req.body = {
           offencesUnderConsideration: 'valid analysis',
           offencesPattern: '',
-          noPreviousOffences: '',
         }
 
         await handler.post(req, res)

@@ -22,7 +22,7 @@ describe('reportProgress', () => {
         dateOfBirth: '1990-01-01',
         'address-postcode': 'SW1A 1AA',
         offencesUnderConsideration: 'Details',
-        noPreviousOffences: 'true',
+        offencesPattern: 'Previous offending analysis',
         defendantBehaviour: 'Assessment',
         riskToChildren: 'low',
         riskToPublic: 'medium',

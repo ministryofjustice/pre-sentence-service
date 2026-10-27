@@ -167,34 +167,10 @@ describe('OffenceAnalysisController', () => {
   })
 
   describe('post method', () => {
-    it('should set noPreviousOffences to false if not provided', async () => {
-      mockRequest.body = {
-        offencesUnderConsideration: 'Some analysis',
-        offencesPattern: 'Pattern analysis',
-      }
-
-      await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
-
-      expect(mockRequest.body.noPreviousOffences).toBe('false')
-    })
-
-    it('should not modify noPreviousOffences if already provided', async () => {
-      mockRequest.body = {
-        offencesUnderConsideration: 'Some analysis',
-        offencesPattern: 'Pattern analysis',
-        noPreviousOffences: 'true',
-      }
-
-      await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
-
-      expect(mockRequest.body.noPreviousOffences).toBe('true')
-    })
-
     it('should re-render with validation errors when offencesUnderConsideration exceeds 20,000 characters', async () => {
       mockRequest.body = {
         offencesUnderConsideration: 'a'.repeat(20_001),
         offencesPattern: 'Pattern analysis',
-        noPreviousOffences: 'true',
       }
 
       await controller.post(mockRequest as Request<{ reportId: string }>, mockResponse as Response)

@@ -14,28 +14,20 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
   describe('offenceAnalysis', () => {
     it('is Incomplete when offencesUnderConsideration is empty', () => {
       const progress = getReportProgress(
-        apiAvailable({ offencesUnderConsideration: '', offencesPattern: 'pattern', noPreviousOffences: 'false' }),
+        apiAvailable({ offencesUnderConsideration: '', offencesPattern: 'pattern' }),
         availableSourcesOfInformation
       )
       expect(progress.offenceAnalysis.status).toBe('Incomplete')
       expect(progress.offenceAnalysis.offencesUnderConsideration).toBe(false)
     })
 
-    it('is Incomplete when both offencesPattern and noPreviousOffences are empty', () => {
+    it('is Incomplete when previous offences pattern is empty', () => {
       const progress = getReportProgress(
-        apiAvailable({ offencesUnderConsideration: 'analysis', offencesPattern: '', noPreviousOffences: '' }),
+        apiAvailable({ offencesUnderConsideration: 'analysis', offencesPattern: '' }),
         availableSourcesOfInformation
       )
       expect(progress.offenceAnalysis.status).toBe('Incomplete')
       expect(progress.offenceAnalysis.offencesPattern).toBe(false)
-    })
-
-    it('is Completed when noPreviousOffences ticked alone', () => {
-      const progress = getReportProgress(
-        apiAvailable({ offencesUnderConsideration: 'analysis', offencesPattern: '', noPreviousOffences: 'true' }),
-        availableSourcesOfInformation
-      )
-      expect(progress.offenceAnalysis.status).toBe('Completed')
     })
   })
 
