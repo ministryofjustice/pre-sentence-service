@@ -121,7 +121,8 @@ describe('Route Handlers - Shared Controller', () => {
             questions: [
               { id: 0, value: 'offencesUnderConsideration', answer: 'Some analysis' },
               { id: 1, value: 'offencesPattern', answer: 'Previous offending analysis' },
-            ],          },
+            ],
+          },
         ],
       })
 
