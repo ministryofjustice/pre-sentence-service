@@ -5,7 +5,7 @@ import { transformOffenceDetails } from '../../utils/apiDataTransformers'
 import { offenceAnalysisModel } from '../../schemas/offence-analysis'
 import logger from '../../../logger'
 
-export const pageFields: Array<string> = ['pnc', 'offencesUnderConsideration', 'offencesPattern', 'noPreviousOffences']
+export const pageFields: Array<string> = ['pnc', 'offencesUnderConsideration', 'offencesPattern']
 
 export default class OffenceAnalysisController extends BaseController {
   override templatePath = 'offence-analysis'
@@ -48,15 +48,5 @@ export default class OffenceAnalysisController extends BaseController {
         }
       }
     }
-  }
-
-  public async post(req: Request<{ reportId: string }>, res: Response): Promise<void> {
-    const body = req.body as Record<string, string>
-
-    if (!('noPreviousOffences' in body)) {
-      body.noPreviousOffences = 'false'
-    }
-
-    await super.post(req, res)
   }
 }
