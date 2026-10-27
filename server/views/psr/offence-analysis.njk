@@ -72,9 +72,13 @@
   </section>
 
   <section class="section-wrapper">
-    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Analyse offences under consideration</h2>
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6" id="offences-under-consideration">Analyse offences under consideration</h2>
 
     {{ picTextEditor({
+      label: {
+        text: "Analyse offences under consideration",
+        classes: "govuk-visually-hidden"
+      },
       name: "offencesUnderConsideration",
       id: "offencesUnderConsideration",
       value: data.offencesUnderConsideration,
@@ -101,18 +105,18 @@
   </section>
 
   <section class="section-wrapper">
-    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Analyse previous offending behaviour and response to supervision</h2>
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6" id="previous-offending-behaviour">Analyse previous offending behaviour and response to supervision</h2>
 
     {{ picTextEditor({
+      label: {
+        text: "Analyse previous offending behaviour and response to supervision",
+        classes: "govuk-visually-hidden"
+      },
       name: "offencesPattern",
       id: "offencesPattern",
       value: data.offencesPattern,
       rows: "10",
       longText: true,
-      label: {
-        text: "Analyse previous offending behaviour and response to supervision",
-        classes: "govuk-visually-hidden"
-      },
       hint: {
         html: "<p class='govuk-hint'>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
               <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>

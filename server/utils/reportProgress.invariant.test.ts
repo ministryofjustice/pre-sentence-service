@@ -60,17 +60,22 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
       riskToPublic: 'low',
       riskToKnownAdults: 'low',
       riskToStaff: 'low',
+      riskToPrisoners: 'low',
       riskPredictors: 'predictors text',
       riskAndHarmFactors: 'factors text',
     }
 
-    it('is Incomplete when any risk level missing', () => {
-      const progress = getReportProgress(
-        apiAvailable({ ...allRisks, riskToChildren: '' }),
-        availableSourcesOfInformation
-      )
-      expect(progress.riskAnalysis.riskLevels).toBe(false)
-    })
+    it.each(['riskToChildren', 'riskToPublic', 'riskToKnownAdults', 'riskToStaff', 'riskToPrisoners'])(
+      'is Incomplete when %s is missing',
+      riskField => {
+        const progress = getReportProgress(
+          apiAvailable({ ...allRisks, [riskField]: '' }),
+          availableSourcesOfInformation
+        )
+
+        expect(progress.riskAnalysis.riskLevels).toBe(false)
+      }
+    )
 
     it('is Incomplete when riskPredictors empty', () => {
       const progress = getReportProgress(
