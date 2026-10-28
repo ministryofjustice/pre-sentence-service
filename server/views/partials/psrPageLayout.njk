@@ -36,18 +36,14 @@
     text: 'Review your progress',
     href: '/psr/' + reportId + '/preview-report',
     active: currentPage === 'Review your progress'
-  }
+  },
+  {
+    text: 'Sign and lock your report',
+    href: '/psr/' + reportId + '/sign-your-report',
+    active: currentPage === 'Sign and lock your report'
+  } if data.reviewSectionsComplete
 ] %}
 
-{% if data.reviewSectionsComplete and currentPage == "Review your progress" %}
-  {% set navItems = navItems.concat([
-    {
-      text: 'Sign and lock your report',
-      href: '/psr/' + reportId + '/sign-your-report',
-      active: currentPage === 'Sign and lock your report'
-    }
-  ]) %}
-{% endif %}
 
 {% block sideNavigation %}
 
