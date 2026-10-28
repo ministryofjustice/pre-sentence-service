@@ -149,28 +149,24 @@ describe('reportProgress invariant: Zod schemas and section completeness agree',
 
   describe('signYourReport', () => {
     it('is Incomplete when signedBy missing', () => {
-      const progress = getReportProgress(apiAvailable({ isDangerousReport: 'no' }), availableSourcesOfInformation)
+      const progress = getReportProgress(apiAvailable({ signReportName: '' }), availableSourcesOfInformation)
       expect(progress.signYourReport.signedBy).toBe(false)
     })
 
-    it('spoName required only when isDangerousReport is yes', () => {
-      const noDanger = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'no' }),
+    it('is Incomplete when professional status missing', () => {
+      const progress = getReportProgress(
+        apiAvailable({ signReportName: 'Jane', professionalStatus: '' }),
         availableSourcesOfInformation
       )
-      expect(noDanger.signYourReport.spoName).toBe(true)
+      expect(progress.signYourReport.professionalStatus).toBe(false)
+    })
 
-      const dangerNoSpo = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'yes' }),
+    it('is Completed when author and professionalStatus are present', () => {
+      const progress = getReportProgress(
+        apiAvailable({ professionalStatus: 'probation service officer', signReportName: 'Jane' }),
         availableSourcesOfInformation
       )
-      expect(dangerNoSpo.signYourReport.spoName).toBe(false)
-
-      const dangerWithSpo = getReportProgress(
-        apiAvailable({ signReportName: 'me', isDangerousReport: 'yes', spoName: 'SPO Name' }),
-        availableSourcesOfInformation
-      )
-      expect(dangerWithSpo.signYourReport.spoName).toBe(true)
+      expect(progress.signYourReport.status).toBe('Completed')
     })
   })
 })

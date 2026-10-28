@@ -43,51 +43,37 @@
                 text: formValidation.errors.signReportName
                 } if 'signReportName' in elementsWithError
             }) }}
-
-            {% set spoNameHtml %}
-            {{ govukInput({
-                id: "spoName",
-                name: "spoName",
-                type: "text",
-                value: data.spoName,
-                autocomplete: "name",
-                classes: "govuk-!-width-one-third",
-                label: {
-                    text: "Please enter the name of the SPO who has reviewed the report"
-                },
-                errorMessage: {
-                    text: formValidation.errors.spoName
-                } if 'spoName' in elementsWithError
-            }) }}
-            {% endset %}
         </section>
 
         <section class="section-wrapper">
             {{ govukRadios({
-                idPrefix: "isDangerousReport",
-                name: "isDangerousReport",
+                idPrefix: "professionalStatus",
+                name: "professionalStatus",
                 fieldset: {
                     legend: {
-                        text: "Is this a dangerousness report?",
+                        text: "What is your professional status?",
                         classes: "govuk-fieldset__legend--m"
                     }
                 },
                 errorMessage: {
-                    text: formValidation.errors.isDangerousReport
-                } if 'isDangerousReport' in elementsWithError,
+                    text: formValidation.errors.professionalStatus
+                } if 'professionalStatus' in elementsWithError,
                 items: [
                     {
-                        value: "yes",
-                        text: "Yes",
-                        checked: data.isDangerousReport == "yes",
-                        conditional: {
-                        html: spoNameHtml
-                    }
-                },
-                {
-                    value: "no",
-                    text: "No",
-                    checked: data.isDangerousReport == "no"
+                        value: "registered probation officer",
+                        text: "Registered Probation Officer",
+                        checked: data.professionalStatus == "registered probation officer"
+                    },
+
+                    {
+                    value: "registered probation service officer",
+                    text: "Registered Probation Service Officer",
+                    checked: data.professionalStatus == "registered probation service officer"
+                    },
+                 {
+                    value: "probation service officer",
+                    text: "Probation Service Officer",
+                    checked: data.professionalStatus == "probation service officer"
                 }
                 ]
             }) }}
