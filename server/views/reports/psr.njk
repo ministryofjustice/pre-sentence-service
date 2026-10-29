@@ -56,12 +56,8 @@
     <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
 
     <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
-
-    {% if data.noPreviousOffences === 'true' %}
-        <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
-    {% else %}
-        <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
-    {% endif %}
+    
+    <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 

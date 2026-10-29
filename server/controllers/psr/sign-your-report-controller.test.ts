@@ -30,7 +30,7 @@ describe('SignYourReportController', () => {
       name: 'offence-analysis',
       questions: [
         { id: 0, value: 'offencesUnderConsideration', answer: 'Analysis' },
-        { id: 1, value: 'noPreviousOffences', answer: 'true' },
+        { id: 1, value: 'offencesPattern', answer: 'Previous offending analysis' },
       ],
     },
     {

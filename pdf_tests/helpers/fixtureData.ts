@@ -21,7 +21,6 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
       additionalOffences: [],
     },
     offencesUnderConsideration: `TOKEN_OFFENCES_ANALYSIS ${sentences(3)}`,
-    noPreviousOffences: 'false',
     offencesPattern: `TOKEN_OFFENCES_PATTERN ${sentences(3)}`,
     defendantBehaviour: `TOKEN_BEHAVIOUR ${sentences(3)}`,
     riskToChildren: 'Low',
