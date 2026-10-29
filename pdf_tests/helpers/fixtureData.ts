@@ -35,7 +35,7 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
     custodialSentenceConsideration: 'possible',
     impactExplanation: `TOKEN_IMPACT ${sentences(3)}`,
     custodialSentenceImpact: `TOKEN_CUSTODIAL_IMPACT ${sentences(3)}`,
-    isDangerousReport: 'no',
+    professionalStatus: 'registered probation officer',
     signReportName: 'TOKEN_AUTHOR Report Author',
     reportSubmittedAt: '01/07/2026',
     sourcesOfInformationList: {

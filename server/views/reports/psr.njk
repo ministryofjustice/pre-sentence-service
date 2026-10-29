@@ -137,15 +137,8 @@
 
     <h2 class="govuk-heading-m">Completion details</h2>
 
-    <h3 class="govuk-heading-s">Report author:</h3>
-    <p class="govuk-body-s"> {{ data.signReportName }}</p>
-
-    {% if data.isDangerousReport == "yes" %}
-        <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
-        {% if data.spoName %}
-            <p class="govuk-body-s"> {{ data.spoName }}</p>
-        {% endif %}
-    {% endif %}
+    <h3 class="govuk-heading-s">Report author and professional status:</h3>
+    <p class="govuk-body-s"> {{ data.signReportName }}, {{ data.professionalStatus }}</p>
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
     {% if data.reportSubmittedAt %}
