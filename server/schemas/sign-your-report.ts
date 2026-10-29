@@ -2,7 +2,12 @@ import * as z from 'zod'
 
 export const signYourReportModel = z.object({
   signReportName: z.string().min(1, 'You must sign your report before you submit'),
-  professionalStatus: z.preprocess(val => val ?? '', z.string().min(1, 'Professional status is mandatory')),
+  professionalStatus: z.preprocess(
+    val => val ?? '',
+    z.enum(['registered probation officer', 'registered probation service officer', 'probation service officer'], {
+      error: 'Select your professional status',
+    })
+  ),
 })
 
 const issuesFor = (data: Record<string, unknown>): string[] => {

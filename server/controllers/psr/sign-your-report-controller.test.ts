@@ -186,7 +186,7 @@ describe('SignYourReportController', () => {
         formValidation: expect.objectContaining({
           isValid: false,
           errors: expect.objectContaining({
-            professionalStatus: 'Professional status is mandatory',
+            professionalStatus: 'Select your professional status',
           }),
         }),
       })

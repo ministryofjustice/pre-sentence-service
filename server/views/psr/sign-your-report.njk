@@ -55,8 +55,15 @@
                         classes: "govuk-fieldset__legend--m"
                     }
                 },
+                 hint: {
+                            html: "This could be different from your job title. If you are a trainee <br/>
+                                   probation officer on the PQiP programme you should select your current professional <br/>
+                                   status.",
+                                   classes: "govuk-!-margin-bottom-6"
+                          },
                 errorMessage: {
-                    text: formValidation.errors.professionalStatus
+                    text: formValidation.errors.professionalStatus,
+                    classes: "govuk-!-margin-bottom-6"
                 } if 'professionalStatus' in elementsWithError,
                 items: [
                     {
