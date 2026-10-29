@@ -6,12 +6,9 @@ export const offenceAnalysisModel = z
     pnc: z.string().optional(),
     offencesUnderConsideration: longText({ label: 'Offences under consideration' }),
     offencesPattern: longText({ label: 'Pattern of offending' }),
-    noPreviousOffences: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     const offencesPatternEmpty = data.offencesPattern.trim() === ''
-    const noPreviousOffences = data.noPreviousOffences ?? ''
-    const noPreviousOffencesEmpty = noPreviousOffences.trim() === '' || noPreviousOffences.trim() === 'false'
 
     if (data.offencesUnderConsideration.trim() === '') {
       ctx.addIssue({
@@ -21,17 +18,12 @@ export const offenceAnalysisModel = z
       })
     }
 
-    if (offencesPatternEmpty && noPreviousOffencesEmpty) {
+    if (offencesPatternEmpty) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Analyse the pattern of offending and response to supervision',
+        message:
+          'Analyse previous offending behaviour and response to supervision or briefly explain why this does not apply',
         path: ['offencesPattern'],
-      })
-
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Check the box if the defendant has no previous offences or experience of supervision',
-        path: ['noPreviousOffences'],
       })
     }
   })
@@ -43,9 +35,8 @@ const issuesFor = (data: Record<string, unknown>): string[] => {
     ''
   const offencesPattern =
     (data.offencesPattern as string | undefined) ?? (data.offencePattern as string | undefined) ?? ''
-  const noPreviousOffences = (data.noPreviousOffences as string | undefined) ?? ''
 
-  const result = offenceAnalysisModel.safeParse({ offencesUnderConsideration, offencesPattern, noPreviousOffences })
+  const result = offenceAnalysisModel.safeParse({ offencesUnderConsideration, offencesPattern })
   if (result.success) return []
   return result.error.issues.map(i => String(i.path[0])).filter(Boolean)
 }
@@ -55,5 +46,5 @@ export const isOffencesUnderConsiderationComplete = (data: Record<string, unknow
 
 export const isOffencesPatternComplete = (data: Record<string, unknown>): boolean => {
   const issues = issuesFor(data)
-  return !issues.includes('offencesPattern') && !issues.includes('noPreviousOffences')
+  return !issues.includes('offencesPattern')
 }
