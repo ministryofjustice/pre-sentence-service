@@ -19,7 +19,7 @@ export function getHeader(armsB64: string, purpleB64: string): string {
   return `
     <div style="width: 100%; box-sizing: border-box;">
       <span id="qa-official" style="${headerFooterStyle}">
-        <span style="margin: 0 auto;">OFFICIAL</span>
+        <span style="margin: 0 auto;">OFFICIAL-SENSITIVE</span>
       </span>
 
       <div style="${headerRowStyle}">
