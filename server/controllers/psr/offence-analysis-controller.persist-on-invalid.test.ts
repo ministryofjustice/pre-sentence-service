@@ -95,7 +95,6 @@ describe('OffenceAnalysisController — persist-on-invalid (bug fix)', () => {
     req.body = {
       offencesUnderConsideration: 'Analysis',
       offencesPattern: 'Pattern of offending',
-      noPreviousOffences: 'false',
     }
 
     await controller.post(req, res)
