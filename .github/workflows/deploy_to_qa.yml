@@ -56,7 +56,6 @@ jobs:
       # additional_docker_tag: qa
       push: true
       docker_multiplatform: false
-      download_build_artifacts: true
   deploy_qa:
     name: Deploy to QA
     needs:
