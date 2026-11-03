@@ -10,6 +10,7 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import EventService from '../../services/eventService'
 import DefendantDetailsController from '../../controllers/psr/defendant-details-controller'
 import OffenceAnalysisController from '../../controllers/psr/offence-analysis-controller'
+import EditOffencesController from '../../controllers/psr/edit-offences-controller'
 import RiskAnalysisController from '../../controllers/psr/risk-analysis-controller'
 import DefendantBehaviourController from '../../controllers/psr/defendant-behaviour-controller'
 import SentencingProposalController from '../../controllers/psr/sentencing-proposal-controller'
@@ -53,6 +54,13 @@ export default function Index(
   })
   post('/:reportId/offence-analysis', (req, res) => {
     return new OffenceAnalysisController(reportService, preSentenceToDeliusService).post(req, res)
+  })
+
+  get('/:reportId/edit-offences', (req, res) => {
+    return new EditOffencesController(reportService, preSentenceToDeliusService).get(req, res)
+  })
+  post('/:reportId/edit-offences', (req, res) => {
+    return new EditOffencesController(reportService, preSentenceToDeliusService).post(req, res)
   })
 
   get('/:reportId/risk-analysis', (req, res) => {

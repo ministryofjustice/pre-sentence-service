@@ -1,9 +1,7 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "components/text-editor/macro.njk" import picTextEditor %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 
 {% set currentPage = 'Offence analysis' %}
@@ -18,49 +16,40 @@
   </div>
 
   <section class="section-wrapper">
-    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Review offences from NDelius</h2>
-    <p class="govuk-body">If any of this information is incorrect you will need to go to NDelius to update it.
-    Any changes you make in NDelius will be updated after you refresh a page in this PSR.</p>
+    <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Review offences</h2>
+    <p class="govuk-body">You can edit offences in this PSR but your changes will not be shown in NDelius.
+    Any further changes to offences in NDelius will not be shown in this report.</p>
 
-    {% if data.apiOffencesAvailable and data.offencesData %}
-      {% set offenceRows = [] %}
-
-      {# Add main offence #}
-      {% set mainOffenceHtml %}
-        <div class="psr-main-offence">
-          <strong class='govuk-!-font-weight-bold'>{{ data.offencesData.mainOffence.description }}</strong>
-          <br>
-          {{ govukTag({
-            text: "Main offence",
-            classes: "govuk-tag--blue govuk-!-margin-top-2"
-          }) }}
-        </div>
+    {% if data.offencesAvailable %}
+      {% set additionalOffencesHtml %}
+        {% if data.offences.additionalOffences | length %}
+          {% for offence in data.offences.additionalOffences %}
+            <p class="govuk-body govuk-!-margin-bottom-1">{{ offence }}</p>
+          {% endfor %}
+        {% else %}
+          No additional offences
+        {% endif %}
       {% endset %}
-      {% set offenceRows = (offenceRows.push([
-        { html: mainOffenceHtml, classes: "psr-main-offence-cell" },
-        { text: data.offencesData.mainOffence.date, classes: "psr-main-offence-cell" }
-      ]), offenceRows) %}
 
-      {# Add additional offences #}
-      {% for offence in data.offencesData.additionalOffences %}
-        {% set offenceHtml %}
-          {{ offence.description }}
-        {% endset %}
-        {% set offenceRows = (offenceRows.push([
-          { html: offenceHtml },
-          { text: offence.date }
-        ]), offenceRows) %}
-      {% endfor %}
-
-      {{ govukTable({
-        head: [
-          { text: "Offence", classes: "govuk-!-width-one-half" },
-          { text: "Date of offence" }
-        ],
-        rows: offenceRows
+      {{ govukSummaryList({
+        card: {
+          title: { text: "Offence details" },
+          actions: {
+            items: [
+              {
+                href: "/" + reportPath + "/" + reportId + "/edit-offences",
+                text: "Edit offences",
+                visuallyHiddenText: "offence details"
+              }
+            ]
+          }
+        },
+        rows: [
+          { key: { text: "Main offence" }, value: { text: data.offences.mainOffence } },
+          { key: { text: "Additional offences" }, value: { html: additionalOffencesHtml } }
+        ]
       }) }}
     {% else %}
-      {# Fallback to database/hardcoded data if API data not available #}
       <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
         <strong class="govuk-warning-text__text">

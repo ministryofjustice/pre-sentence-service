@@ -17,7 +17,7 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
       postcode: 'TE1 1ST',
     },
     offenceData: {
-      mainOffence: { subCategory: { description: 'Test main offence' }, date: '01/01/2026' },
+      mainOffence: 'Test main offence - 01/01/2026',
       additionalOffences: [],
     },
     offencesUnderConsideration: `TOKEN_OFFENCES_ANALYSIS ${sentences(3)}`,

@@ -81,6 +81,8 @@ export default class SharedController {
 
   pageFields: Array<string> = []
 
+  persistOnValidationFailure = true
+
   templateValues: TemplateValues<z.infer<typeof this.model>> = {
     reportId: '',
     reportPath: '',
@@ -381,7 +383,7 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
-      if (this.templatePath !== 'sources-of-information') {
+      if (this.templatePath !== 'sources-of-information' && this.persistOnValidationFailure) {
         await this.persistOnInvalid(req, reportId)
       }
 
