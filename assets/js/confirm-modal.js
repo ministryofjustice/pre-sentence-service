@@ -25,14 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // This validation is a bit of a hack due to the way we SSR and validate server side.
   function hasBlockingValidationErrors() {
     const signReportName = document.getElementById('signReportName')
-    const dangerousReport = form.querySelector('input[name="isDangerousReport"]:checked')
-    const spoName = document.getElementById('spoName')
+    const professionalStatus = form.querySelector('input[name="professionalStatus"]:checked')
 
     if (!signReportName?.value.trim()) return true
-    if (!dangerousReport?.value) return true
-    if (dangerousReport.value === 'yes' && !spoName?.value.trim()) return true
+    return !professionalStatus?.value;
 
-    return false
   }
 
   // This is required when errors are cleared and the page is now valid

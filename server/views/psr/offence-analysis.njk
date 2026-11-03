@@ -84,19 +84,8 @@
       value: data.offencesUnderConsideration,
       rows: "10",
       longText: true,
-      label: {
-        text: "Analyse offences under consideration",
-        classes: "govuk-visually-hidden"
-      },
       hint: {
-        html: "<p class='govuk-hint'>Give a comprehensive analysis of the offences relevant to this report, considering:</p>
-              <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
-                <li>offence details that provide suitable context rather than repeating the case summary from the CPS pack</li>
-                <li>whether the defendant pled guilty or was convicted after trial as a factor in determining their level of responsibility</li>
-                <li>victim impact, harm and consequences of an offence and the defendant's understanding of this</li>
-                <li>the factors relating to the offence including the defendant's lifestyle considerations</li>
-                <li>diversity factors, protected characteristics or other factors where they are relevant to explaining elements of your analysis</li>
-              </ul>"
+        text: "State how the defendant pleaded and where relevant, whether the court has accepted a basis of plea. Explain the key circumstances and motivations linked to the offences, taking into account the defendant’s lived experience and understanding of victim considerations. Include evidence of offences becoming more serious or frequent, planning and premeditation, or behaviours similar to previous offending. "
       },
       errorMessage: {
         text: formValidation.errors.offencesUnderConsideration
@@ -118,34 +107,11 @@
       rows: "10",
       longText: true,
       hint: {
-        html: "<p class='govuk-hint'>Take into consideration the type of offences, any patterns in offending and factors linked to this behaviour. You should also highlight:</p>
-              <ul class='govuk-hint govuk-list govuk-list--bullet govuk-!-margin-bottom-4'>
-                <li>any previous responses to supervision, considering levels of compliance and associated reasons for this</li>
-                <li>interventions that may reduce the chances of offending</li>
-                <li>circumstances that may increase the risk of further offending</li>
-              </ul>"
+        text: "Identify patterns in previous offending, factors linked to this behaviour and protective factors which could explain gaps in offending. Highlight any previous responses to supervision, considering levels of compliance and reasons for this, such as relevant lived experience."
       },
       errorMessage: {
         text: formValidation.errors.offencesPattern
       } if 'offencesPattern' in elementsWithError
-    }) }}
-
-    {{ govukCheckboxes({
-      id: "noPreviousOffences",
-      name: "noPreviousOffences",
-      formGroup: {
-        classes: "govuk-!-margin-top-7"
-      },
-      items: [
-        {
-          checked: data.noPreviousOffences === 'true',
-          value: "true",
-          text: "The defendant has no previous offences or experience of supervision"
-        }
-      ],
-      errorMessage: {
-        text: "Check the box if the defendant has no previous offences or experience of supervision"
-      } if 'noPreviousOffences' in elementsWithError
     }) }}
   </section>
   

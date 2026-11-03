@@ -78,7 +78,6 @@ const reportViewData = {
   custodialSentenceConsideration: '',
   offencesUnderConsideration: '',
   offencesPattern: '',
-  noPreviousOffences: '',
   apiOffencesAvailable: false,
   offencesData: null,
   riskToChildren: '',
