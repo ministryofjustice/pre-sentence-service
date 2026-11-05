@@ -20,7 +20,7 @@ export const createRedisClient = ({ legacyMode }: { legacyMode: boolean }): Redi
       reconnectStrategy: (attempts: number) => {
         // Exponential back off: 20ms, 40ms, 80ms..., capped to retry every 30 seconds
         const nextDelay = Math.min(2 ** attempts * 20, 30000)
-        logger.warn(
+        logger.debug(
           {
             event: LogEvent.DependencyRetry,
             dependency: LogDependency.Redis,
