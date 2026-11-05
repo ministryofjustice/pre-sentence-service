@@ -1,6 +1,7 @@
 import { SNSClient, PublishCommand, PublishCommandOutput } from '@aws-sdk/client-sns'
 import { fromTokenFile } from '@aws-sdk/credential-provider-web-identity'
 import logger from '../../logger'
+import { LogDependency, LogEvent, LogOperation } from '../utils/logging'
 import config from '../config'
 
 export interface IReportEventData {
@@ -38,17 +39,20 @@ export default class EventService {
   private snsClient: SNSClient
 
   constructor() {
-    logger.info('EventService: Initializing service', {
-      region: config.aws.sns.region,
-      hasTopicArn: !!config.aws.sns.topicArn,
-      topicArn: config.aws.sns.topicArn || 'NOT_SET',
-      hasEndpoint: !!config.aws.sns.endpoint,
-      endpoint: config.aws.sns.endpoint || 'not set (using AWS default)',
-      eventVersion: config.aws.sns.eventVersion,
-      hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
-      awsRoleArn: process.env.AWS_ROLE_ARN || 'NOT_SET',
-      awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE || 'NOT_SET',
-    })
+    logger.info(
+      {
+        region: config.aws.sns.region,
+        hasTopicArn: !!config.aws.sns.topicArn,
+        topicArn: config.aws.sns.topicArn || 'NOT_SET',
+        hasEndpoint: !!config.aws.sns.endpoint,
+        endpoint: config.aws.sns.endpoint || 'not set (using AWS default)',
+        eventVersion: config.aws.sns.eventVersion,
+        hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
+        awsRoleArn: process.env.AWS_ROLE_ARN || 'NOT_SET',
+        awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE || 'NOT_SET',
+      },
+      'EventService: Initializing service'
+    )
 
     const snsConfig: {
       region: string
@@ -61,9 +65,12 @@ export default class EventService {
     // Only set endpoint for local development
     if (config.aws.sns.endpoint) {
       snsConfig.endpoint = config.aws.sns.endpoint
-      logger.info('EventService: Using custom SNS endpoint', {
-        endpoint: snsConfig.endpoint,
-      })
+      logger.info(
+        {
+          endpoint: snsConfig.endpoint,
+        },
+        'EventService: Using custom SNS endpoint'
+      )
     }
 
     // Use IRSA credentials if available (for Cloud Platform)
@@ -72,9 +79,12 @@ export default class EventService {
         roleArn: process.env.AWS_ROLE_ARN,
         webIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE,
       })
-      logger.info('EventService: Using IRSA credentials', {
-        roleArn: process.env.AWS_ROLE_ARN,
-      })
+      logger.info(
+        {
+          roleArn: process.env.AWS_ROLE_ARN,
+        },
+        'EventService: Using IRSA credentials'
+      )
     }
 
     this.snsClient = new SNSClient(snsConfig)
@@ -82,14 +92,17 @@ export default class EventService {
   }
 
   public sendReportEvent = async (reportEventData: IReportEventData): Promise<PublishCommandOutput> => {
-    logger.info('EventService: Building domain event', {
-      reportId: reportEventData.reportId,
-      eventNumber: reportEventData.eventNumber,
-      crn: reportEventData.crn,
-      reportStatus: reportEventData.reportStatus,
-      hasPdfUrl: !!reportEventData.pdfUrl,
-      pdfUrl: reportEventData.pdfUrl || 'NOT_PROVIDED',
-    })
+    logger.info(
+      {
+        reportId: reportEventData.reportId,
+        eventNumber: reportEventData.eventNumber,
+        crn: reportEventData.crn,
+        reportStatus: reportEventData.reportStatus,
+        hasPdfUrl: !!reportEventData.pdfUrl,
+        pdfUrl: reportEventData.pdfUrl || 'NOT_PROVIDED',
+      },
+      'EventService: Building domain event'
+    )
 
     const domainEvent: IDomainEvent = {
       eventType: `pre-sentence.report.${reportEventData.reportStatus}`,
@@ -106,27 +119,33 @@ export default class EventService {
       personReference: { identifiers: [{ type: 'CRN', value: reportEventData.crn }] },
     }
 
-    logger.info('EventService: Domain event structure created', {
-      eventType: domainEvent.eventType,
-      version: domainEvent.version,
-      detailUrl: domainEvent.detailUrl,
-      reportId: reportEventData.reportId,
-      crn: reportEventData.crn,
-      occurredAt: domainEvent.occurredAt,
-    })
+    logger.info(
+      {
+        eventType: domainEvent.eventType,
+        version: domainEvent.version,
+        detailUrl: domainEvent.detailUrl,
+        reportId: reportEventData.reportId,
+        crn: reportEventData.crn,
+        occurredAt: domainEvent.occurredAt,
+      },
+      'EventService: Domain event structure created'
+    )
 
     let result!: PublishCommandOutput
 
     try {
-      logger.info('EventService: Preparing SNS message', {
-        topicArn: config.aws.sns.topicArn,
-        region: config.aws.sns.region,
-        hasEndpoint: !!config.aws.sns.endpoint,
-        endpoint: config.aws.sns.endpoint || 'default',
-        messageSize: JSON.stringify(domainEvent).length,
-        hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
-        eventType: domainEvent.eventType,
-      })
+      logger.info(
+        {
+          topicArn: config.aws.sns.topicArn,
+          region: config.aws.sns.region,
+          hasEndpoint: !!config.aws.sns.endpoint,
+          endpoint: config.aws.sns.endpoint || 'default',
+          messageSize: JSON.stringify(domainEvent).length,
+          hasIRSACredentials: !!(process.env.AWS_ROLE_ARN && process.env.AWS_WEB_IDENTITY_TOKEN_FILE),
+          eventType: domainEvent.eventType,
+        },
+        'EventService: Preparing SNS message'
+      )
 
       const command = new PublishCommand({
         Message: JSON.stringify(domainEvent),
@@ -139,32 +158,42 @@ export default class EventService {
         TopicArn: config.aws.sns.topicArn,
       })
 
-      logger.info('EventService: Sending message to SNS', {
-        reportId: reportEventData.reportId,
-        eventType: domainEvent.eventType,
-      })
+      logger.info(
+        {
+          reportId: reportEventData.reportId,
+          eventType: domainEvent.eventType,
+        },
+        'EventService: Sending message to SNS'
+      )
 
       result = await this.snsClient.send(command)
 
-      logger.info('EventService: Domain event published successfully to SNS', {
-        eventType: domainEvent.eventType,
-        reportId: reportEventData.reportId,
-        crn: reportEventData.crn,
-        messageId: result.MessageId,
-        topicArn: config.aws.sns.topicArn,
-      })
+      logger.info(
+        {
+          dependency: LogDependency.Sns,
+          operation: LogOperation.Publish,
+          eventType: domainEvent.eventType,
+          reportId: reportEventData.reportId,
+          crn: reportEventData.crn,
+          messageId: result.MessageId,
+          topicArn: config.aws.sns.topicArn,
+        },
+        'EventService: Domain event published successfully to SNS'
+      )
     } catch (e) {
-      logger.error('EventService: Failed to publish domain event to SNS', {
-        eventType: domainEvent.eventType,
-        reportId: reportEventData.reportId,
-        crn: reportEventData.crn,
-        topicArn: config.aws.sns.topicArn,
-        error: e instanceof Error ? e.message : String(e),
-        stack: e instanceof Error ? e.stack : undefined,
-        errorType: e?.constructor?.name,
-        errorCode: e && typeof e === 'object' && 'code' in e ? e.code : undefined,
-        errorName: e && typeof e === 'object' && 'name' in e ? e.name : undefined,
-      })
+      logger.error(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: LogDependency.Sns,
+          operation: LogOperation.Publish,
+          eventType: domainEvent.eventType,
+          errorName: e instanceof Error ? e.name : undefined,
+          errorCode:
+            e !== null && typeof e === 'object' && 'code' in e && typeof e.code === 'string' ? e.code : undefined,
+        },
+        'Failed to publish domain event to SNS'
+      )
+
       throw e
     }
 

@@ -5,10 +5,23 @@ import express, { Router } from 'express'
 import { createRedisClient } from '../data/redisClient'
 import config from '../config'
 import logger from '../../logger'
+import { LogDependency, LogEvent, LogOperation } from '../utils/logging'
 
 export default function setUpWebSession(): Router {
   const client = createRedisClient({ legacyMode: false })
-  client.connect().catch((err: Error) => logger.error(`Error connecting to Redis`, err))
+  client.connect().catch((error: Error) => {
+    client.connect().catch((error: Error) => {
+      logger.error(
+        {
+          err: error,
+          event: LogEvent.DependencyFailed,
+          dependency: LogDependency.Redis,
+          operation: LogOperation.Connect,
+        },
+        'Error connecting to Redis'
+      )
+    })
+  })
 
   const store = new RedisStore({
     client: client,

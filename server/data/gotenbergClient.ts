@@ -1,5 +1,6 @@
 import superagent from 'superagent'
 import logger from '../../logger'
+import { LogDependency, LogEvent, LogOperation, LogHttpMethod } from '../utils/logging'
 
 export type PdfOptions = {
   headerHtml?: string
@@ -43,7 +44,21 @@ export default class GotenbergClient {
       const response = await request
       return response.body
     } catch (err) {
-      logger.error(`Error POST to gotenberg:/forms/chromium/convert/html - {}`, err)
+      logger.error(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: LogDependency.Gotenberg,
+          operation: LogOperation.RenderPdf,
+          httpMethod: LogHttpMethod.Post,
+          errorName: err instanceof Error ? err.name : undefined,
+          statusCode:
+            err !== null && typeof err === 'object' && 'status' in err && typeof err.status === 'number'
+              ? err.status
+              : undefined,
+        },
+        'Failed to generate PDF using Gotenberg'
+      )
+
       throw new Error(`Error POST to gotenberg:/forms/chromium/convert/html - {${err}}`)
     }
   }

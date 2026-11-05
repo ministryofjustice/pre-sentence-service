@@ -4,6 +4,7 @@ import type { RequestHandler } from 'express'
 import logger from '../../logger'
 import asyncMiddleware from './asyncMiddleware'
 import { writeReturnToCookie } from '../utils/returnTo'
+import { AccessDeniedReason, LogEvent } from '../utils/logging'
 
 export default function authorisationMiddleware(authorisedRoles: string[] = []): RequestHandler {
   return asyncMiddleware((req, res, next) => {
@@ -14,7 +15,11 @@ export default function authorisationMiddleware(authorisedRoles: string[] = []):
       }
 
       if (authSource !== 'delius' || (authorisedRoles.length && !roles.some(role => authorisedRoles.includes(role)))) {
-        logger.error('User is not authorised to access this')
+        logger.warn(
+          { event: LogEvent.AccessDenied, reason: AccessDeniedReason.AuthSourceOrRoleNotAllowed },
+          'User is not authorised to access this service'
+        )
+
         return res.redirect('/authError')
       }
 
