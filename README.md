@@ -1,6 +1,6 @@
 # Pre-sentence Service
 
-Pre-Sentence Service is a service that allows probation staff to capture and store pre-sentence data. 
+Pre-Sentence Service allows probation staff to capture and store pre-sentence data.
 
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://pre-sentence-service-dev.hmpps.service.justice.gov.uk/api/docs)
 
@@ -8,107 +8,144 @@ Pre-Sentence Service is a service that allows probation staff to capture and sto
 
 - [Contributing](CONTRIBUTING.md) - branch, testing, pull request, commit, and review guidance
 - [Save flows](docs/save-flows.md) - autosave, Save and Continue, sign-out persistence, and side-navigation behavior
+- [Deployments and releases](docs/deployments.md) - environments, release candidates and production promotion
 - [Kubernetes commands](docs/kubernetes-commands.md) - inspecting deployments and applying temporary or permanent configuration changes
+- [Telemetry and logging](docs/telemetry.md) - Application Insights configuration, troubleshooting and logging conventions
 
 ## Running the app
-Ensure docker images are up-to-date
 
-`docker-compose pull`
+Ensure Docker images are up to date:
 
-The easiest way to run the app is to use docker compose to create the service and all dependencies.
+```sh
+docker-compose pull
+```
 
-`docker-compose up`
+The easiest way to run the app and its dependencies is:
+
+```sh
+docker-compose up
+```
 
 ### Dependencies
+
 The app requires:
-* hmpps-auth - for authentication
-* redis - session store and token caching
-* postgres - database
-* gotenberg - PDF generator
-* localstack - Cloud service emulator
 
-### Runing the app for development
+- hmpps-auth - authentication
+- Redis - session store and token caching
+- PostgreSQL - database
+- Gotenberg - PDF generator
+- LocalStack - cloud service emulator
 
-Ensure docker images are up-to-date
+### Running the app for development
 
-`docker-compose pull`
+Use Node.js 24 LTS.
 
-To start the main services excluding the typescript app: 
+Ensure Docker images are up to date, then start the supporting services without the application container:
 
-`docker-compose up --scale app=0`
+```sh
+docker-compose pull
+docker-compose up --scale app=0
+```
 
-Now in a separate terminal window or tab, at the project root.
+In a separate terminal, at the project root, install dependencies:
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v24.0.0` LTS
+```sh
+npm install
+```
 
-And then, to build the assets and start the app with nodemon:
+Build the assets and start the app with automatic reloading:
 
-`AWS_ENDPOINT=http://localhost:4566 npm run start:dev`
+```sh
+AWS_ENDPOINT=http://localhost:4566 npm run start:dev
+```
 
-Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
+`AWS_ENDPOINT` is only set for use with LocalStack during local development.
 
-You can now access the service at `http://localhost:3000`
+Access the service at <http://localhost:3000>.
 
 ### Run linter
 
-`npm run lint`
+```sh
+npm run lint
+```
 
 ### Run tests
 
-`npm run test`
+```sh
+npm run test
+```
 
 ### Running integration tests
 
-For local running, start a test db, redis, and wiremock instance by:
+Start the test database, Redis and WireMock:
 
-`docker-compose -f docker-compose-test.yml up`
+```sh
+docker-compose -f docker-compose-test.yml up
+```
 
-Then, in a separate terminal window or tab, at the project root; run the server in test mode by:
+In a separate terminal at the project root, start the application in test mode:
 
-`AWS_ENDPOINT=http://localhost:4566 npm run start-feature` (or `AWS_ENDPOINT=http://localhost:4566 npm run start-feature:dev` to run with nodemon)
+```sh
+AWS_ENDPOINT=http://localhost:4566 npm run start-feature
+```
 
-Note: AWS_ENDPOINT is only set for correct use with _localstack_ during local development.
+Alternatively, use automatic reloading:
 
-And then either, run tests in headless mode with:
+```sh
+AWS_ENDPOINT=http://localhost:4566 npm run start-feature:dev
+```
 
-`npm run int-test`
- 
-Or run tests with the cypress UI:
+`AWS_ENDPOINT` is only set for use with LocalStack during local development.
 
-`npm run int-test-ui`
+Run the integration tests headlessly:
+
+```sh
+npm run int-test
+```
+
+Or open the Cypress UI:
+
+```sh
+npm run int-test-ui
+```
 
 ### Clean database
 
-In order to clean the database you can use:
+```sh
+npm run clean-db
+```
 
-`npm run clean-db`
+This removes all database tables. Restart the application afterwards to run migrations and recreate the database structure.
 
-This will remove all database tables, you must then restart the service in order to run the migrations and reset the database. 
+## Application Insights and logging
 
-## API Documentation
+The application uses `@ministryofjustice/hmpps-azure-telemetry` to export
+request traces, HTTP dependency telemetry and Bunyan logs to Azure Application Insights.
 
-API documentation is provided via Swagger.
+See [Telemetry and logging](docs/telemetry.md) for configuration, local debugging,
+Azure queries and structured logging conventions.
 
-Once the applicaiton is running you can access the Swagger UI at:
+## API documentation
 
-`http://localhost:3000/api/docs`
+API documentation is provided through Swagger.
 
-### Deployments
+When the application is running, access it at:
 
-| Env     | Branch  | Trigger   | Approval | Examples                                    |
-|---------|---------|-----------|----------|---------------------------------------------|
-| dev     | develop | Automatic | None     | When PR is merged to develop branch         |
-| preprod | main    | Automatic | None     | When PR is merged to main                   |
-| prod    | main    | Automatic | Manual   | When deployment is manually approved in GHA |
+<http://localhost:3000/api/docs>
 
-**Additional protections:**
-1. Commits must be signed
-2. Only developers with write access can merge PRs to `develop` and `main` branches.
-3. Only developers with write access can approve deployments to prod.
+## Deployments
 
----
+Changes merged into `main` deploy automatically to dev. Preprod runs a fixed
+`preprod/*` release candidate, whose image is promoted to production through
+the manually triggered Release workflow.
 
-### Sources of information data
+After a successful production release, the workflow normally cuts the next
+preprod candidate from the latest `main`.
+
+See [Deployments and releases](docs/deployments.md) for environments,
+approval controls and the release process.
+
+## Sources of information data
 
 The report answers used by the form, preview and PDF are stored in
 `report_details.pages`.
