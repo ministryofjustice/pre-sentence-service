@@ -1,6 +1,4 @@
 import type { RedisClient } from './redisClient'
-import logger from '../../logger'
-import { LogDependency, LogEvent } from '../utils/logging'
 
 export default class TokenStore {
   private readonly prefix = 'systemToken:'
