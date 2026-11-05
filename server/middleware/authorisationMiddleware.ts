@@ -17,7 +17,7 @@ export default function authorisationMiddleware(authorisedRoles: string[] = []):
       if (authSource !== 'delius' || (authorisedRoles.length && !roles.some(role => authorisedRoles.includes(role)))) {
         logger.warn(
           { event: LogEvent.AccessDenied, reason: AccessDeniedReason.AuthSourceOrRoleNotAllowed },
-          'User is not authorised to access this service'
+          'Access denied: user is not signed in through Delius or does not have a required role. User is not authorised to access this service'
         )
 
         return res.redirect('/authError')
