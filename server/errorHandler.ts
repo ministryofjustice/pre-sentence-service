@@ -11,18 +11,19 @@ export default function createErrorHandler(production: boolean) {
         event: LogEvent.RequestFailed,
         httpMethod: req.method,
         statusCode: error.status || 500,
+        originalUrl: req.originalUrl,
       },
       'Request handling failed'
     )
 
     if (error.status === 401 || error.status === 403) {
-      logger.warn(
+      logger.info(
         {
           event: LogEvent.AccessDenied,
           statusCode: error.status,
           action: 'redirect_to_sign_out',
         },
-        'Access failure caused sign-out'
+        'Redirecting to sign-out after a 401 or 403 response'
       )
 
       return res.redirect('/sign-out')
