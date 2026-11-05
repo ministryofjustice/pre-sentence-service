@@ -10,17 +10,15 @@ import { LogDependency, LogEvent, LogOperation } from '../utils/logging'
 export default function setUpWebSession(): Router {
   const client = createRedisClient({ legacyMode: false })
   client.connect().catch((error: Error) => {
-    client.connect().catch((error: Error) => {
-      logger.error(
-        {
-          err: error,
-          event: LogEvent.DependencyFailed,
-          dependency: LogDependency.Redis,
-          operation: LogOperation.Connect,
-        },
-        'Error connecting to Redis'
-      )
-    })
+    logger.error(
+      {
+        err: error,
+        event: LogEvent.DependencyFailed,
+        dependency: LogDependency.Redis,
+        operation: LogOperation.Connect,
+      },
+      'Error connecting to Redis'
+    )
   })
 
   const store = new RedisStore({
