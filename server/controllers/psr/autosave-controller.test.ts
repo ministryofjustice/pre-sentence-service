@@ -163,6 +163,51 @@ describe('AutosaveController', () => {
     expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith('123', req.body, 'psr-defendant-behaviour')
   })
 
+  it('unions custom source keys into sourcesOfInformation before persisting', async () => {
+    jest.spyOn(reportService, 'getSourcesOfInformation').mockResolvedValue([
+      { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+      { key: 'interview', value: 'Interview', isCustom: false },
+      { key: 'dwp', value: 'DWP', isCustom: true },
+    ])
+
+    req.body = { sourcesOfInformation: ['cps_summary', 'dwp'], pageName: 'sources-of-information' }
+
+    await controller.post(req, res)
+
+    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith(
+      '123',
+      expect.objectContaining({ sourcesOfInformation: ['cps_summary', 'dwp'] }),
+      'sources-of-information'
+    )
+  })
+
+  it('restores custom source keys stripped from a sourcesOfInformation autosave', async () => {
+    jest.spyOn(reportService, 'getSourcesOfInformation').mockResolvedValue([
+      { key: 'cps_summary', value: 'CPS summary', isCustom: false },
+      { key: 'dwp', value: 'DWP', isCustom: true },
+    ])
+
+    req.body = { sourcesOfInformation: 'cps_summary', pageName: 'sources-of-information' }
+
+    await controller.post(req, res)
+
+    expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith(
+      '123',
+      expect.objectContaining({ sourcesOfInformation: ['cps_summary', 'dwp'] }),
+      'sources-of-information'
+    )
+  })
+
+  it('does not look up sources when the body has no sourcesOfInformation field', async () => {
+    const getSourcesSpy = jest.spyOn(reportService, 'getSourcesOfInformation')
+
+    req.body = { someField: 'value', pageName: 'offence-analysis' }
+
+    await controller.post(req, res)
+
+    expect(getSourcesSpy).not.toHaveBeenCalled()
+  })
+
   it('calls updateReport with empty object when report is already STARTED', async () => {
     getReportByIdSpy.mockResolvedValueOnce({
       ...mockReportDetails,

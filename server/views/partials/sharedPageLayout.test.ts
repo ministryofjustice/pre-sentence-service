@@ -23,4 +23,11 @@ describe('sharedPageLayout.njk', () => {
     expect(afterFeatureBlock).toContain('/assets/character-count.js')
     expect(afterFeatureBlock).toContain('/assets/save-on-exit.js')
   })
+
+  it('loads the autosave status module before save-on-exit', () => {
+    const statusIndex = source.indexOf('/assets/autosave-status.js')
+    const saveOnExitIndex = source.indexOf('/assets/save-on-exit.js')
+    expect(statusIndex).toBeGreaterThan(-1)
+    expect(statusIndex).toBeLessThan(saveOnExitIndex)
+  })
 })

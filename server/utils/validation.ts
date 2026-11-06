@@ -12,6 +12,7 @@ export const maxLengthMessage = (label: string, max: number) =>
 
 export function normaliseForLength(value: string): string {
   return (value || '')
+    .replace(/<p>\s*(?:&nbsp;|&#160;)\s*<\/p>/gi, '')
     .replace(/<[^>]*>/g, '')
     .replace(/&nbsp;|&#160;/gi, ' ')
     .replace(/&amp;/g, '&')

@@ -79,4 +79,14 @@ describe('authorisationMiddleware', () => {
     expect(next).not.toHaveBeenCalled()
     expect(res.redirect).toHaveBeenCalledWith('/authError')
   })
+
+  it('should stash the original url and redirect to sign in when there is no user token', async () => {
+    const reqWithSession = { originalUrl: '/report/1/proposal', session: {} } as unknown as Request
+    const res = { locals: {}, redirect: jest.fn(), cookie: jest.fn() } as unknown as Response
+
+    await authorisationMiddleware()(reqWithSession, res, next)
+
+    expect(reqWithSession.session.returnTo).toBe('/report/1/proposal')
+    expect(res.redirect).toHaveBeenCalledWith('/sign-in')
+  })
 })

@@ -12,7 +12,7 @@ import { signYourReportModel } from '../../schemas/sign-your-report'
 
 export { signYourReportModel } from '../../schemas/sign-your-report'
 
-export const pageFields: Array<string> = ['signReportName', 'isDangerousReport', 'spoName']
+export const pageFields: Array<string> = ['signReportName', 'professionalStatus']
 
 export default class SignYourReportController extends BaseController {
   override templatePath = 'sign-your-report'
@@ -32,18 +32,6 @@ export default class SignYourReportController extends BaseController {
   ) {
     super(reportService, preSentenceToDeliusService)
     this.eventService = eventService
-  }
-
-  override correctFormData = (req: Request) => {
-    const elementsWithError: string[] = []
-
-    if (!req.body.isDangerousReport) {
-      elementsWithError.push('isDangerousReport')
-    }
-    if (req.body.isDangerousReport === 'yes' && !req.body.spoName?.trim()) {
-      elementsWithError.push('spoName')
-    }
-    return { elementsWithError }
   }
 
   private getSavedAnswers = () => {
@@ -119,13 +107,8 @@ export default class SignYourReportController extends BaseController {
     logger.info('Form validation successful', {
       reportId,
       signReportName: req.body.signReportName,
-      isDangerousReport: req.body.isDangerousReport,
+      professionalStatus: req.body.professionalStatus,
     })
-
-    req.body = {
-      ...req.body,
-      ...this.correctFormData(req),
-    }
 
     logger.info('Building report data for progress check', { reportId })
     const apiDefendantData = await this.fetchApiDefendantData(reportId)
@@ -136,7 +119,10 @@ export default class SignYourReportController extends BaseController {
       ...apiDefendantData,
       ...req.body,
     }
-    const sectionStatuses = getReportProgress(data)
+
+    // Fetch sources of information to determine if all sections are complete before signing and locking
+    const sourcesOfInformation = await this.reportService.getSourcesOfInformation(reportId)
+    const sectionStatuses = getReportProgress(data, sourcesOfInformation)
 
     logger.info('Report progress calculated', {
       reportId,

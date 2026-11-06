@@ -44,6 +44,7 @@ export default {
   nonce: crypto.randomBytes(16).toString('base64'),
   https: production,
   staticResourceCacheDuration: 20,
+  showReportListing: get('SHOW_REPORT_LISTING', 'false') === 'true',
   wproofreader: {
     bundleUrl: wproofreaderBundleUrl,
     host: wproofreaderHost,
@@ -57,6 +58,7 @@ export default {
   session: {
     secret: get('SESSION_SECRET', 'app-insecure-default-session', requiredInProduction),
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
+    warningMinutes: Number(get('WEB_SESSION_TIMEOUT_WARNING_IN_MINUTES', 2)),
   },
   apis: {
     hmppsAuth: {
@@ -134,6 +136,7 @@ export default {
   },
   features: {
     richTextEditor: get('FEATURE_RICH_TEXT_EDITOR', 'false') === 'true',
+    smartSurvey: get('FEATURE_SMART_SURVEY', 'false') === 'true',
   },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',

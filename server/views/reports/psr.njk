@@ -56,12 +56,8 @@
     <p class="govuk-body-s keep-newlines">{{ data.offencesUnderConsideration }}</p>
 
     <h3 class="govuk-heading-s">Pattern of offending and response to supervision</h3>
-
-    {% if data.noPreviousOffences === 'true' %}
-        <p class="govuk-body-s">The defendant has no previous offences or experience of supervision</p>
-    {% else %}
-        <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
-    {% endif %}
+    
+    <p class="govuk-body-s keep-newlines">{{ data.offencesPattern }}</p>
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
@@ -80,6 +76,7 @@
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Public:</strong> {{ data.riskToPublic }}</p>
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Known adults:</strong> {{ data.riskToKnownAdults }}</p>
         <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Staff:</strong> {{ data.riskToStaff }}</p>
+        <p class="govuk-body-s govuk-!-margin-bottom-0 "><strong>Prisoners:</strong> {{ data.riskToPrisoners }}</p>
     </div>
 
     <h3 class="govuk-heading-s">Risk predictors and likelihood of reoffending</h3>
@@ -119,17 +116,29 @@
 
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
+    <h2 class="govuk-heading-m">Sources of information</h2>
+
+    <div class="govuk-!-margin-bottom-4">
+        {% for source in data.sourcesOfInformationList.predefined %}
+            <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+        {% endfor %}
+    </div>
+
+    {% if data.sourcesOfInformationList.custom | length %}
+        <h3 class="govuk-heading-s">Other sources</h3>
+        <div class="govuk-!-margin-bottom-4">
+            {% for source in data.sourcesOfInformationList.custom %}
+                <p class="govuk-body-s govuk-!-margin-bottom-0">{{ source.label }} <strong>({{ "Yes" if source.used else "No" }})</strong></p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
     <h2 class="govuk-heading-m">Completion details</h2>
 
-    <h3 class="govuk-heading-s">Report author:</h3>
-    <p class="govuk-body-s"> {{ data.signReportName }}</p>
-
-    {% if data.isDangerousReport == "yes" %}
-        <h3 class="govuk-heading-s">Dangerousness report counter signature (if required):</h3>
-        {% if data.spoName %}
-            <p class="govuk-body-s"> {{ data.spoName }}</p>
-        {% endif %}
-    {% endif %}
+    <h3 class="govuk-heading-s">Report author and professional status:</h3>
+    <p class="govuk-body-s"> {{ data.signReportName }}, {{ data.professionalStatus }}</p>
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
     {% if data.reportSubmittedAt %}

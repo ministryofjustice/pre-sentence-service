@@ -21,7 +21,8 @@ describe('Route Handlers - Shared Controller', () => {
   ]
   const mockedReportService = {
     getSourcesOfInformation: jest.fn().mockResolvedValue(sourcesOfInformation),
-    saveCustomSourcesOfInformation: jest.fn().mockResolvedValue(undefined),
+    addCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
+    removeCustomSourceOfInformation: jest.fn().mockResolvedValue(undefined),
     getReportById: jest.fn().mockResolvedValue(mockedReportData),
     updateReport: jest.fn().mockResolvedValue(mockedReportData),
     updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
@@ -107,7 +108,6 @@ describe('Route Handlers - Shared Controller', () => {
         `${handler.path}/${handler.templatePath}`,
         expect.objectContaining({
           reportId,
-          isEditing: false,
         })
       )
     })
@@ -120,7 +120,7 @@ describe('Route Handlers - Shared Controller', () => {
             name: 'offence-analysis',
             questions: [
               { id: 0, value: 'offencesUnderConsideration', answer: 'Some analysis' },
-              { id: 1, value: 'noPreviousOffences', answer: 'true' },
+              { id: 1, value: 'offencesPattern', answer: 'Previous offending analysis' },
             ],
           },
         ],
@@ -134,7 +134,6 @@ describe('Route Handlers - Shared Controller', () => {
           data: expect.objectContaining({
             name: 'Jane Doe',
             offencesUnderConsideration: 'Some analysis',
-            noPreviousOffences: 'true',
             sectionStatuses: expect.objectContaining({
               defendantDetails: expect.objectContaining({
                 status: 'Completed',
@@ -179,6 +178,44 @@ describe('Route Handlers - Shared Controller', () => {
               }),
             }),
           }),
+        })
+      )
+    })
+  })
+
+  describe('sources-of-information rendering', () => {
+    const originalTemplatePath = handler?.templatePath
+
+    beforeEach(() => {
+      handler.templatePath = 'sources-of-information'
+      mockedReportService.getSourcesOfInformation = jest.fn().mockResolvedValue([
+        { isCustom: false, key: 'victim_statement', value: 'Victim statement' },
+        { isCustom: true, key: 'witness_notes', value: 'Witness notes' },
+        { isCustom: false, key: 'cps_summary', value: 'CPS summary' },
+        { isCustom: true, key: 'address_enquiries_custom', value: 'Address checks' },
+        { isCustom: false, key: 'interview', value: 'Interview' },
+      ])
+    })
+
+    afterAll(() => {
+      handler.templatePath = originalTemplatePath ?? ''
+    })
+
+    it('renders predefined and added sources alphabetically by value, regardless of fetch order', async () => {
+      await handler.get(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        `${handler.path}/${handler.templatePath}`,
+        expect.objectContaining({
+          sourcesOfInformation: [
+            expect.objectContaining({ key: 'cps_summary' }),
+            expect.objectContaining({ key: 'interview' }),
+            expect.objectContaining({ key: 'victim_statement' }),
+          ],
+          addedSourcesOfInformation: [
+            expect.objectContaining({ key: 'address_enquiries_custom' }),
+            expect.objectContaining({ key: 'witness_notes' }),
+          ],
         })
       )
     })
@@ -243,7 +280,6 @@ describe('Route Handlers - Shared Controller', () => {
         req.body = {
           offencesUnderConsideration: 'valid analysis',
           offencesPattern: '',
-          noPreviousOffences: '',
         }
 
         await handler.post(req, res)

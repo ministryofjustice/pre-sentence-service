@@ -2,12 +2,22 @@ import type { RequestHandler, Router } from 'express'
 
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import ReportService from '../services/reportService'
+import config from '../config'
 
 export default function routes(router: Router): Router {
   const reportService = new ReportService()
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
+  get('/extend-session', async (req, res) => {
+    res.status(204).end()
+  })
+
   get('/', async (req, res, next) => {
+    if (!config.showReportListing) {
+      res.render('pages/landing')
+      return
+    }
+
     const page = parseInt(req.query.page as string) || 1
     const limit = 20
 

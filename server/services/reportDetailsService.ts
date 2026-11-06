@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm'
+import { EntityManager, getConnection } from 'typeorm'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 
 export interface IReportPage {
@@ -39,16 +39,17 @@ export default class ReportDetailsService {
     return reportRepository.save(report)
   }
 
-  public async getReportDetailsById(id: string): Promise<ReportDetails | null> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .findOne({
-        where: {
-          id,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
+  public async getReportDetailsById(
+    id: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<ReportDetails | null> {
+    return manager.getRepository(ReportDetails).findOne({
+      where: {
+        id,
+        isDeleted: false,
+      },
+      relations: ['person'],
+    })
   }
 
   public async getReportDetailsByPersonId(personId: number): Promise<ReportDetails[]> {
@@ -101,8 +102,12 @@ export default class ReportDetailsService {
     }
   }
 
-  public async updateReportDetails(id: string, reportData: Partial<IReportDetails>): Promise<ReportDetails | null> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
+  public async updateReportDetails(
+    id: string,
+    reportData: Partial<IReportDetails>,
+    manager: EntityManager = getConnection().manager
+  ): Promise<ReportDetails | null> {
+    const reportRepository = manager.getRepository(ReportDetails)
     const report = await reportRepository.findOne({
       where: { id, isDeleted: false },
     })
@@ -124,8 +129,12 @@ export default class ReportDetailsService {
     return this.updateReportDetails(id, { status })
   }
 
-  public async updateReportPages(id: string, pages: IReportPage[]): Promise<ReportDetails | null> {
-    return this.updateReportDetails(id, { pages })
+  public async updateReportPages(
+    id: string,
+    pages: IReportPage[],
+    manager: EntityManager = getConnection().manager
+  ): Promise<ReportDetails | null> {
+    return this.updateReportDetails(id, { pages }, manager)
   }
 
   public async getPageData(id: string, pageName: string): Promise<IReportPage | null> {

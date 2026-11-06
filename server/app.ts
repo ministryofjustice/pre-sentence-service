@@ -7,6 +7,7 @@ import swaggerDocument from './controllers/api/swagger.json'
 import 'reflect-metadata'
 
 import indexRoutes from './routes'
+import sessionTimeoutRoutes from './routes/sessionTimeout'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import apiRouter from './routes/apiRouter'
@@ -52,6 +53,7 @@ export default function createApplication(userService: UserService): Application
 
   // Web routes - require session-based authentication
   app.use(setUpWebSession())
+  app.use(sessionTimeoutRoutes())
   app.use('/', indexRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

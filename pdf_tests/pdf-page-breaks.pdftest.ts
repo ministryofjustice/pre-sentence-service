@@ -1,6 +1,6 @@
 import { renderPsrHtml, convertToPdf, assertGotenbergUp } from './helpers/renderPdf'
 import { extractPages, pageOf } from './helpers/pdfPages'
-import { buildReportData, pageFittingProposal, sentences } from './helpers/fixtureData'
+import { buildReportData, pageFittingProposal, sentences, unbrokenString } from './helpers/fixtureData'
 
 beforeAll(async () => {
   await assertGotenbergUp()
@@ -43,6 +43,29 @@ describe('sentencing proposal box', () => {
       opts
     )
     expect(pageOf(pages, 'TOKEN_PROPEND')).toBe(pageOf(pages, 'TOKEN_PROPSTART'))
+  })
+})
+
+describe('long unbroken text wraps instead of clipping at the page edge', () => {
+  it('proposal and rationale without spaces render in full', async () => {
+    // Content with no break opportunities (e.g. pasted references) must wrap
+    // like it does in the on-screen textarea, not overflow and get clipped.
+    const proposal = unbrokenString(2000)
+    const rationale = unbrokenString(2000, 'KLMNOPQRST9876543210')
+    const pages = await pagesFor(
+      buildReportData({
+        proposedSentence: proposal,
+        proposedSentenceRationale: rationale,
+      })
+    )
+    // Page headers/footers ("OFFICIAL", "Page N of M") land mid-paragraph when
+    // a field spans a page break, so strip them before matching.
+    const documentText = pages
+      .join('')
+      .replace(/\s+/g, '')
+      .replace(/OFFICIALPage\d+of\d+/g, '')
+    expect(documentText).toContain(proposal)
+    expect(documentText).toContain(rationale)
   })
 })
 

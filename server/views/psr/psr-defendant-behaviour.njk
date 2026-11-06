@@ -23,7 +23,14 @@
 {% endset %}
 
 {% block reportForm %}
-  <form method="post" data-autosave="true" novalidate>
+
+<div class="govuk-!-margin-bottom-7">
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ currentPage }}</h1>
+  {% include "../partials/autosaveStatus.njk" %}
+</div>
+
+<form method="post" data-autosave="true" novalidate>
+  <section class="section-wrapper">
 
     {% from "components/text-editor/macro.njk" import picTextEditor %}
 
@@ -34,8 +41,7 @@
       longText: true,
       label: {
         text: currentPage,
-        classes: "govuk-label--xl",
-        isPageHeading: true
+        classes: "govuk-visually-hidden"
       },
       hint: {
         html: "<p class='govuk-body'>A good assessment will provide an analysis of the defendant's circumstances and needs, particularly where relevant to offending 
@@ -54,12 +60,13 @@
         text: formValidation.errors.defendantBehaviour
       } if 'defendantBehaviour' in elementsWithError
     }) }}
+  </section>
 
-    <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
-    <input type="hidden" name="reportId" value="{{ reportId }}">
-    <input type="hidden" name="pageName" value="{{ pageName }}">
+  <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+  <input type="hidden" name="reportId" value="{{ reportId }}">
+  <input type="hidden" name="pageName" value="{{ pageName }}">
 
-    <button class="govuk-button">Save and continue</button>
-  </form>
+  <button class="govuk-button">Save and continue</button>
+</form>
 
 {% endblock %}

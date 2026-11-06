@@ -21,7 +21,6 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
       additionalOffences: [],
     },
     offencesUnderConsideration: `TOKEN_OFFENCES_ANALYSIS ${sentences(3)}`,
-    noPreviousOffences: 'false',
     offencesPattern: `TOKEN_OFFENCES_PATTERN ${sentences(3)}`,
     defendantBehaviour: `TOKEN_BEHAVIOUR ${sentences(3)}`,
     riskToChildren: 'Low',
@@ -36,11 +35,23 @@ export function buildReportData(overrides: Record<string, unknown> = {}): Record
     custodialSentenceConsideration: 'possible',
     impactExplanation: `TOKEN_IMPACT ${sentences(3)}`,
     custodialSentenceImpact: `TOKEN_CUSTODIAL_IMPACT ${sentences(3)}`,
-    isDangerousReport: 'no',
+    professionalStatus: 'registered probation officer',
     signReportName: 'TOKEN_AUTHOR Report Author',
     reportSubmittedAt: '01/07/2026',
+    sourcesOfInformationList: {
+      predefined: [
+        { label: 'CPS summary TOKEN_SOURCES', used: true },
+        { label: 'Interview', used: true },
+        { label: 'Previous convictions', used: false },
+      ],
+      custom: [],
+    },
     ...overrides,
   }
+}
+
+export function unbrokenString(n: number, alphabet = 'abcdefghij0123456789'): string {
+  return alphabet.repeat(Math.ceil(n / alphabet.length)).slice(0, n)
 }
 
 export function pageFittingProposal(): string {

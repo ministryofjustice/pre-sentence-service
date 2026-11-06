@@ -8,7 +8,8 @@ import {
   isSentenceImpactComplete,
 } from '../schemas/sentencing-proposal'
 import { isSourcesOfInformationComplete } from '../schemas/sources-of-information'
-import { isSignedByComplete, isDangerousnessReportComplete, isSpoNameComplete } from '../schemas/sign-your-report'
+import { isSignedByComplete, isProfessionalStatusComplete } from '../schemas/sign-your-report'
+import { SourceOfInformation } from './sourcesOfInformationHelpers'
 
 export type CompletionStatus = 'Completed' | 'Incomplete'
 
@@ -50,8 +51,7 @@ export interface ReportProgress {
   signYourReport: {
     status: CompletionStatus
     signedBy: boolean
-    dangerousnessReport: boolean
-    spoName: boolean
+    professionalStatus: boolean
   }
 }
 
@@ -91,7 +91,10 @@ export const hasContent = (value: unknown): boolean => {
 
 const getStatus = (isComplete: boolean): CompletionStatus => (isComplete ? 'Completed' : 'Incomplete')
 
-export const getReportProgress = (data: ReportData): ReportProgress => {
+export const getReportProgress = (
+  data: ReportData,
+  availableSourcesOfInformation: SourceOfInformation[]
+): ReportProgress => {
   const apiDefendantAvailable = data.apiDefendantDetailsAvailable === true
   const defendantDetails = {
     name: apiDefendantAvailable && hasContent(data.name),
@@ -130,13 +133,12 @@ export const getReportProgress = (data: ReportData): ReportProgress => {
   }
 
   const sourcesOfInformation = {
-    sources: isSourcesOfInformationComplete(data),
+    sources: isSourcesOfInformationComplete(data, availableSourcesOfInformation),
   }
 
   const signYourReport = {
     signedBy: isSignedByComplete(data),
-    dangerousnessReport: isDangerousnessReportComplete(data),
-    spoName: isSpoNameComplete(data),
+    professionalStatus: isProfessionalStatusComplete(data),
   }
 
   return {

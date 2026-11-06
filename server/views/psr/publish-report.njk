@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-  <main class="app-container govuk-body">
+  <main class="govuk-body">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <section class="psr-complete-card">
@@ -50,4 +50,11 @@
       </div>
     </div>
   </main>
+{% endblock %}
+
+{% block additionalScripts %}
+  {{ super() }}
+  {% if featureSmartSurvey %}
+    <script id="ss-popup-1851857" type="module" async src="https://embed.smartsurvey.io/index.js?popupCode=X8XUZ7"></script>
+  {% endif %}
 {% endblock %}

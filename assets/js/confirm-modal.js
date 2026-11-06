@@ -6,55 +6,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const confirmBtn = document.getElementById('confirm-submit')
   const cancelBtn = document.getElementById('cancel-submit')
+  const modalContent = modal.querySelector('.govuk-modal__content')
 
   let allowSubmit = false
+  let triggerButton = null
+
+  function openModal(submitter) {
+    triggerButton = submitter
+    modal.hidden = false
+    modalContent.focus()
+  }
+
+  function closeModal() {
+    modal.hidden = true
+    triggerButton?.focus()
+  }
 
   // This validation is a bit of a hack due to the way we SSR and validate server side.
   function hasBlockingValidationErrors() {
     const signReportName = document.getElementById('signReportName')
-    const dangerousReport = form.querySelector('input[name="isDangerousReport"]:checked')
-    const spoName = document.getElementById('spoName')
+    const professionalStatus = form.querySelector('input[name="professionalStatus"]:checked')
 
     if (!signReportName?.value.trim()) return true
-    if (!dangerousReport?.value) return true
-    if (dangerousReport.value === 'yes' && !spoName?.value.trim()) return true
+    return !professionalStatus?.value;
 
-    return false
   }
 
   // This is required when errors are cleared and the page is now valid
   // Without this the errors are still rendered in the background despite the page being valid
   function clearServerValidationUI(form) {
-    document
-      .querySelectorAll('.govuk-error-summary')
-      .forEach(summary => summary.remove())
+    document.querySelectorAll('.govuk-error-summary').forEach(summary => summary.remove())
 
-    form
-      .querySelectorAll('.govuk-error-message')
-      .forEach(message => message.remove())
-    
-    form
-      .querySelectorAll(
-        '.govuk-form-group--error, .govuk-textarea--error, .govuk-input--error'
-      )
-      .forEach(el => {
-        el.classList.remove(
-          'govuk-form-group--error',
-          'govuk-textarea--error',
-          'govuk-input--error'
-        )
-      })
+    form.querySelectorAll('.govuk-error-message').forEach(message => message.remove())
 
-    form
-      .querySelectorAll('[aria-invalid="true"]')
-      .forEach(el => {
-        el.removeAttribute('aria-invalid')
+    form.querySelectorAll('.govuk-form-group--error, .govuk-textarea--error, .govuk-input--error').forEach(el => {
+      el.classList.remove('govuk-form-group--error', 'govuk-textarea--error', 'govuk-input--error')
+    })
 
-        const describedBy = el.getAttribute('aria-describedby')
-        if (describedBy && describedBy.endsWith('-error')) {
-          el.removeAttribute('aria-describedby')
-        }
-      })
+    form.querySelectorAll('[aria-invalid="true"]').forEach(el => {
+      el.removeAttribute('aria-invalid')
+
+      const describedBy = el.getAttribute('aria-describedby')
+      if (describedBy && describedBy.endsWith('-error')) {
+        el.removeAttribute('aria-describedby')
+      }
+    })
   }
 
   form.addEventListener('submit', function (e) {
@@ -62,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!e.submitter) {
       return
     }
-    
+
     if (allowSubmit) {
       return
     }
@@ -74,17 +70,12 @@ document.addEventListener('DOMContentLoaded', function () {
     e.preventDefault()
     clearServerValidationUI(form)
 
-    modal.hidden = false
-
-    setTimeout(() => {
-    document.activeElement.blur()
-  }, 0)
-
+    openModal(e.submitter)
   })
 
   confirmBtn.addEventListener('click', function () {
     allowSubmit = true
-    modal.hidden = true
+    closeModal()
 
     if (typeof form.requestSubmit === 'function') {
       form.requestSubmit()
@@ -94,7 +85,26 @@ document.addEventListener('DOMContentLoaded', function () {
     form.submit()
   })
 
-  cancelBtn.addEventListener('click', function () {
-    modal.hidden = true
+  cancelBtn.addEventListener('click', closeModal)
+
+  document.addEventListener('keydown', function (event) {
+    if (modal.hidden) return
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeModal()
+      return
+    }
+
+    if (event.key !== 'Tab') return
+
+    // Trap focus within the modal when tabbing
+    if (event.shiftKey && (document.activeElement === confirmBtn || document.activeElement === modalContent)) {
+      event.preventDefault()
+      cancelBtn.focus()
+    } else if (!event.shiftKey && document.activeElement === cancelBtn) {
+      event.preventDefault()
+      confirmBtn.focus()
+    }
   })
 })

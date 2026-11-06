@@ -30,7 +30,7 @@ describe('SignYourReportController', () => {
       name: 'offence-analysis',
       questions: [
         { id: 0, value: 'offencesUnderConsideration', answer: 'Analysis' },
-        { id: 1, value: 'noPreviousOffences', answer: 'true' },
+        { id: 1, value: 'offencesPattern', answer: 'Previous offending analysis' },
       ],
     },
     {
@@ -44,8 +44,9 @@ describe('SignYourReportController', () => {
         { id: 1, value: 'riskToPublic', answer: 'low' },
         { id: 2, value: 'riskToKnownAdults', answer: 'low' },
         { id: 3, value: 'riskToStaff', answer: 'low' },
-        { id: 4, value: 'riskPredictors', answer: 'Predictors' },
-        { id: 5, value: 'riskAndHarmFactors', answer: 'Factors' },
+        { id: 4, value: 'riskToPrisoners', answer: 'low' },
+        { id: 5, value: 'riskPredictors', answer: 'Predictors' },
+        { id: 6, value: 'riskAndHarmFactors', answer: 'Factors' },
       ],
     },
     {
@@ -70,6 +71,9 @@ describe('SignYourReportController', () => {
 
     reportService = {
       getReportById: jest.fn(),
+      getSourcesOfInformation: jest
+        .fn()
+        .mockResolvedValue([{ key: 'cps_summary', value: 'CPS summary', isCustom: false }]),
       updateReport: jest.fn().mockResolvedValue(mockedReportData),
       updateFieldValues: jest.fn().mockResolvedValue(mockedReportData),
       persistPartialFieldValues: jest.fn().mockResolvedValue({ persisted: [], dropped: [] }),
@@ -92,7 +96,7 @@ describe('SignYourReportController', () => {
       session: {},
       body: {
         signReportName: 'Officer Name',
-        isDangerousReport: 'no',
+        professionalStatus: 'registered probation officer',
       },
       query: {},
     } as unknown as Request<{ reportId: string }>
@@ -164,6 +168,31 @@ describe('SignYourReportController', () => {
     expect(res.redirect).toHaveBeenCalledWith('/psr/123/publish-report')
   })
 
+  it('does not submit the report when professional status is not selected', async () => {
+    req.body = { signReportName: 'Officer Name' }
+    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+      ...mockedReportData,
+      pages: completePages,
+    })
+
+    await controller.post(req, res)
+
+    expect(reportService.submitReport).not.toHaveBeenCalled()
+    expect(eventService.sendReportEvent).not.toHaveBeenCalled()
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(res.render).toHaveBeenCalledWith(
+      'psr/sign-your-report',
+      expect.objectContaining({
+        formValidation: expect.objectContaining({
+          isValid: false,
+          errors: expect.objectContaining({
+            professionalStatus: 'Select your professional status',
+          }),
+        }),
+      })
+    )
+  })
+
   it('publishes domain event when report is signed and locked', async () => {
     ;(reportService.getReportById as jest.Mock).mockResolvedValue({
       ...mockedReportData,
@@ -206,34 +235,6 @@ describe('SignYourReportController', () => {
           isValid: false,
           errors: expect.objectContaining({
             submission: expect.stringContaining("We couldn't submit your report right now"),
-          }),
-        }),
-      })
-    )
-    expect(res.redirect).not.toHaveBeenCalled()
-  })
-
-  it('does not allow dangerous reports to be submitted without an SPO name', async () => {
-    req.body = {
-      signReportName: 'Officer Name',
-      isDangerousReport: 'yes',
-      spoName: '   ',
-    }
-    ;(reportService.getReportById as jest.Mock).mockResolvedValue({
-      ...mockedReportData,
-      pages: completePages,
-    })
-
-    await controller.post(req, res)
-
-    expect(res.render).toHaveBeenCalledWith(
-      'psr/sign-your-report',
-      expect.objectContaining({
-        reportId: '123',
-        formValidation: expect.objectContaining({
-          isValid: false,
-          errors: expect.objectContaining({
-            spoName: 'Enter the name of the SPO who reviewed the report',
           }),
         }),
       })
