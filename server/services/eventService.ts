@@ -181,12 +181,7 @@ export default class EventService {
         'EventService: Domain event published successfully to SNS'
       )
     } catch (e) {
-      let errorCode: string | undefined
-      if (e !== null && typeof e === 'object' && 'code' in e) {
-        if (typeof e.code === 'string') {
-          errorCode = e.code
-        }
-      }
+      const error = e as { code?: string; name?: string } | null | undefined
 
       logger.error(
         {
@@ -194,8 +189,8 @@ export default class EventService {
           dependency: LogDependency.Sns,
           operation: LogOperation.Publish,
           eventType: domainEvent.eventType,
-          errorName: e instanceof Error ? e.name : undefined,
-          errorCode,
+          errorCode: error?.code,
+          errorName: error?.name,
         },
         'Failed to publish domain event to SNS'
       )
