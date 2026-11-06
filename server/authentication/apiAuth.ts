@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 
-import { Algorithm } from 'jsonwebtoken'
+import type { Algorithm } from 'jsonwebtoken'
 import { passportJwtSecret } from 'jwks-rsa'
 
 import passport from 'passport'
