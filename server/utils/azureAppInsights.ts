@@ -1,34 +1,13 @@
-import { config } from 'dotenv'
-import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
+import 'dotenv/config'
+import { initialiseTelemetry, telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import applicationVersion from '../applicationVersion'
 
-function defaultName(): string {
-  const {
-    packageData: { name },
-  } = applicationVersion
-  return name
-}
-
-function version(): string {
-  const { buildNumber } = applicationVersion
-  return buildNumber
-}
-
-export function initialiseAppInsights(): void {
-  // Loads .env file contents into | process.env
-  config()
-  if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-    console.log('Enabling azure application insights')
-
-    setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
-  }
-}
-
-export function buildAppInsightsClient(name = defaultName()): TelemetryClient | null {
-  if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-    defaultClient.context.tags['ai.cloud.role'] = name
-    defaultClient.context.tags['ai.application.ver'] = version()
-    return defaultClient
-  }
-  return null
-}
+initialiseTelemetry({
+  serviceName: applicationVersion.packageData.name,
+  serviceVersion: applicationVersion.buildNumber,
+  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
+  debug: process.env.DEBUG_TELEMETRY === 'true',
+})
+  .addFilter(telemetry.processors.filterSpanWherePath(['/ping', '/assets/*']))
+  .addModifier(telemetry.processors.enrichSpanNameWithHttpRoute())
+  .startRecording()

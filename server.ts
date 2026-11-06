@@ -1,20 +1,14 @@
-/*
- * Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
- * In particular, applicationinsights automatically collects bunyan logs
- */
+// Initialise telemetry before loading modules that need instrumentation.
+import './server/utils/azureAppInsights'
+import { flushTelemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import fs from 'fs'
-import { initialiseAppInsights, buildAppInsightsClient } from './server/utils/azureAppInsights'
-
-initialiseAppInsights()
-buildAppInsightsClient()
-
 import createApplication from './server/index'
 import logger from './logger'
 import config from './server/config'
 
 createApplication()
   .then(app => {
-    app.listen(app.get('port'), () => {
+    const server = app.listen(app.get('port'), () => {
       const data = fs.readFileSync('./assets/banner.txt', 'utf8')
 
       console.log(data.toString())
@@ -32,6 +26,25 @@ createApplication()
         awsWebIdentityTokenFile: process.env.AWS_WEB_IDENTITY_TOKEN_FILE || 'NOT_SET',
       })
     })
+
+    const shutdown = (signal: NodeJS.Signals): void => {
+      logger.info({ signal }, 'Shutting down application')
+
+      server.close(async error => {
+        if (error) {
+          logger.error({ err: error }, 'Failed to close HTTP server')
+        }
+
+        try {
+          await flushTelemetry()
+        } finally {
+          process.exit(error ? 1 : 0)
+        }
+      })
+    }
+
+    process.once('SIGTERM', () => shutdown('SIGTERM'))
+    process.once('SIGINT', () => shutdown('SIGINT'))
   })
   .catch(error => {
     logger.error(`Failed to start application: ${error.message}`)

@@ -9,6 +9,7 @@ import ReportDetails from './entities/reportDetails'
 import SourcesOfInformation from './entities/sourcesOfInformation'
 import ReportAndSourcesOfInformation from './entities/reportSourcesOfInformation'
 import { HttpError } from 'http-errors'
+import { LogDependency, LogEvent, LogOperation } from '../utils/logging'
 
 type ConnectionResult = [Error?, Connection?]
 
@@ -39,7 +40,17 @@ export default async function getDatabaseConnection(): Promise<ConnectionResult>
     return [undefined, connection]
   } catch (e) {
     const error = e as HttpError
-    logger.error(`Failed to get database connection: ${error.message}`)
+
+    logger.error(
+      {
+        err: error,
+        event: LogEvent.DependencyFailed,
+        dependency: LogDependency.Postgres,
+        operation: LogOperation.Connect,
+      },
+      `Failed to get database connection`
+    )
+
     return [error]
   }
 }

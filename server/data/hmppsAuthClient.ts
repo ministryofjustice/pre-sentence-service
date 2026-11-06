@@ -5,6 +5,7 @@ import logger from '../../logger'
 import config from '../config'
 import generateOauthClientToken from '../authentication/clientCredentials'
 import RestClient from './restClient'
+import { LogDependency } from '../utils/logging'
 
 const timeoutSpec = config.apis.hmppsAuth.timeout
 const hmppsAuthUrl = config.apis.hmppsAuth.url
@@ -42,7 +43,7 @@ export default class HmppsAuthClient {
   constructor(private readonly tokenStore: TokenStore) {}
 
   private restClient(token: string): RestClient {
-    return new RestClient('HMPPS Auth Client', config.apis.hmppsAuth, token)
+    return new RestClient(LogDependency.HmppsAuth, config.apis.hmppsAuth, token)
   }
 
   getUser(token: string): Promise<User> {
