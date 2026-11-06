@@ -23,15 +23,13 @@ Request spans use route-based operation names to group requests to the same endp
 
 ## Configuration
 
-| Environment variable | Purpose |
-| --- | --- |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables export to the specified Application Insights resource. |
-| `DEBUG_TELEMETRY` | Set to `true` to output telemetry to the console. Works without a connection string for local debugging. |
+| Environment variable                    | Purpose                                                                                                  |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables export to the specified Application Insights resource.                                           |
+| `DEBUG_TELEMETRY`                       | Set to `true` to output telemetry to the console. Works without a connection string for local debugging. |
 
 With both settings enabled, telemetry is sent to Azure and printed locally.
 With neither configured, telemetry is not initialised.
-
-The application no longer uses `APPINSIGHTS_INSTRUMENTATIONKEY`.
 
 ### Deployed environments
 
@@ -68,30 +66,13 @@ To verify Azure export without deploying:
 
 4. Allow a few minutes for batching and ingestion, then check Azure Logs.
 
-Console output alone does not prove Azure received the telemetry.
-
-### Invalid instrumentation key
-
-If startup fails with `Invalid instrumentation key was provided to the Azure
-Monitor Exporter`, check that the connection string is complete and valid.
-
-Existing shell variables take precedence over values loaded by `dotenv`. To
-remove an overriding shell value before restarting:
-
-```sh
-unset APPLICATIONINSIGHTS_CONNECTION_STRING
-```
-
-Setting `DEBUG_TELEMETRY=true` does not bypass an invalid connection string.
-Remove the connection-string setting to use console-only debugging.
-
 ## Filtering
 
 The following request paths are excluded from span export:
 
-| Path | Reason |
-| --- | --- |
-| `/ping` | Frequent Kubernetes liveness and readiness probes. |
+| Path        | Reason                                                       |
+| ----------- | ------------------------------------------------------------ |
+| `/ping`     | Frequent Kubernetes liveness and readiness probes.           |
 | `/assets/*` | Static resources such as JavaScript, stylesheets and images. |
 
 Matching request spans are excluded whether the request succeeded or failed.
@@ -107,16 +88,15 @@ Use the shared Bunyan [logger](../logger.ts).
 Shared classifications are defined in
 [logging.ts](../server/utils/logging.ts):
 
-| Constant group | Purpose |
-| --- | --- |
-| `LogEvent` | Request failures, access denials, dependency failures and retries. |
-| `LogDependency` | The dependency involved. |
-| `LogOperation` | The operation, such as connecting or publishing. |
-| `AccessDeniedReason` | The reason for an explicit access denial. |
-| `LogHttpMethod` | HTTP methods used in dependency logs. |
+| Constant group       | Purpose                                                            |
+| -------------------- | ------------------------------------------------------------------ |
+| `LogEvent`           | Request failures, access denials, dependency failures and retries. |
+| `LogDependency`      | The dependency involved.                                           |
+| `LogOperation`       | The operation, such as connecting or publishing.                   |
+| `AccessDeniedReason` | The reason for an explicit access denial.                          |
+| `LogHttpMethod`      | HTTP methods used in dependency logs.                              |
 
-These are application conventions, not Azure-defined event types. Existing logs
-are being standardised incrementally; not every log has these fields.
+These are application conventions, not Azure-defined event types.
 
 ### Bunyan argument order
 
@@ -145,14 +125,10 @@ than structured fields.
 
 ### Conventions
 
-- Use shared constants where applicable; not every log needs an event classification.
+- Use shared constants where applicable, not every log needs an event classification.
 - Include operations and reasons only when they are known.
 - `DependencyFailed` means an observed failure, not necessarily a permanent outage.
 - Use `DependencyRetry` only when another attempt is actually being scheduled.
-  A callback that evaluates whether to retry does not establish that a retry occurs.
-- Keep existing log levels appropriate to the outcome: warnings for recoverable
-  issues or access denials, errors for failed operations.
-- Avoid duplicate logs for the same failure across layers.
 - Keep classification values stable because monitoring queries may depend on them.
 - Use actual runtime values for fields such as HTTP status codes.
 - Keep human-readable messages alongside the logging call.
@@ -165,10 +141,6 @@ included where justified by the service's logging policy.
 
 Use `err` for error objects when appropriate, but do not assume arbitrary error
 objects are safe. HTTP errors can contain request or response details.
-
-The existing [sanitisedError.ts](../server/sanitisedError.ts) helper includes
-response headers and bodies. Its name does not guarantee that its output is safe
-to log. Prefer explicitly selected fields when handling such errors.
 
 ## Finding telemetry in Azure
 
@@ -247,21 +219,3 @@ active requests to finish, then calls `flushTelemetry()` before exiting.
 
 There is no application-level shutdown timeout. In Kubernetes, the pod's
 termination grace period remains the upper limit before forced termination.
-
-## Coverage and limitations
-
-The package's default instrumentation covers HTTP, Express and Bunyan. It does
-not automatically provide dedicated PostgreSQL or Redis operation spans.
-
-Application logs provide additional failure context, but:
-
-- A stopped application cannot send a log about its own outage.
-- HTTP redirects can conceal access problems if monitoring only checks for
-  incoming 401/403 responses.
-- Request telemetry does not automatically include response bodies, including
-  the detailed results returned by `/health`.
-- Telemetry collection alone does not configure alerts, external availability
-  checks, incident ownership or response procedures.
-
-Successful ingestion confirms that telemetry reaches Azure. It does not by
-itself establish complete monitoring or fulfil incident-response requirements.
