@@ -80,7 +80,7 @@ describe('hmppsAuthClient', () => {
       const output = await hmppsAuthClient.getApiClientToken(username)
 
       expect(output).toEqual(token.access_token)
-      expect(mockedTokenStore.setToken).toBeCalledWith('Bob', token.access_token, 240)
+      expect(mockedTokenStore.setToken).toHaveBeenCalledWith('Bob', token.access_token, 240)
     })
 
     it('should return system token from HMPPS Auth when requested without username', async () => {
@@ -95,7 +95,7 @@ describe('hmppsAuthClient', () => {
       const output = await hmppsAuthClient.getApiClientToken()
 
       expect(output).toEqual(token.access_token)
-      expect(mockedTokenStore.setToken).toBeCalledWith('%SYSTEM%', token.access_token, 240)
+      expect(mockedTokenStore.setToken).toHaveBeenCalledWith('%SYSTEM%', token.access_token, 240)
     })
   })
 })
