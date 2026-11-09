@@ -6,6 +6,8 @@ import config from '../config'
 import generateOauthClientToken from './clientCredentials'
 import type { TokenVerifier } from '../data/tokenVerification'
 import { writeReturnToCookie } from '../utils/returnTo'
+import logger from '../../logger'
+import { AccessDeniedReason, LogEvent } from '../utils/logging'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -23,10 +25,15 @@ const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
   return async (req, res, next) => {
     if (req.isAuthenticated() && (await verifyToken(req))) {
       if ((req.user as { authSource?: string })?.authSource !== 'delius') {
+        logger.warn(
+          { event: LogEvent.AccessDenied, reason: AccessDeniedReason.AuthSourceNotAllowed },
+          'Access denied: authentication source is not delius'
+        )
         return res.redirect('/authError')
       }
       return next()
     }
+
     req.session.returnTo = req.originalUrl
     writeReturnToCookie(res, req.originalUrl)
     return res.redirect('/sign-in')

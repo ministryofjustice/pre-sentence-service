@@ -6,6 +6,7 @@ import type { DefendantDetails, OffenceDetails } from '../@types/preSentenceToDe
 
 import config from '../config'
 import logger from '../../logger'
+import { LogDependency, LogEvent, LogHttpMethod } from '../utils/logging'
 import sanitise from '../sanitisedError'
 import { HttpError } from 'http-errors'
 
@@ -104,10 +105,18 @@ export default class PreSentenceToDeliusService {
       } catch (e) {
         const error = e as HttpError
         const sanitisedError = sanitise(error)
+
         logger.error(
-          { ...sanitisedError, path, query },
-          'PreSentenceToDeliusService: Error in Client GET using clientId credentials'
+          {
+            event: LogEvent.DependencyFailed,
+            dependency: LogDependency.PreSentenceToDelius,
+            httpMethod: LogHttpMethod.Get,
+            statusCode: sanitisedError.status,
+            errorName: error.name,
+          },
+          'Failed to retrieve data from Pre-Sentence to Delius'
         )
+
         throw sanitisedError
       }
     }
