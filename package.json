@@ -173,7 +173,6 @@
     "@types/superagent": "4.1.16",
     "@types/supertest": "6.0.3",
     "@types/swagger-ui-express": "4.1.8",
-    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^8.33.0",
     "concurrently": "10.0.6",
