@@ -3,6 +3,7 @@ import Agent, { HttpsAgent } from 'agentkeepalive'
 import { Readable } from 'stream'
 
 import logger from '../../logger'
+import { LogEvent, LogHttpMethod } from '../utils/logging'
 import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
@@ -69,7 +70,18 @@ export default class RestClient {
     } catch (e) {
       const error = e as HttpError
       const sanitisedError = sanitiseError(error)
-      logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
+
+      logger.warn(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: this.name,
+          httpMethod: LogHttpMethod.Get,
+          statusCode: sanitisedError.status,
+          errorName: error.name,
+        },
+        'HTTP dependency request failed'
+      )
+
       throw sanitisedError
     }
   }
@@ -100,7 +112,18 @@ export default class RestClient {
     } catch (e) {
       const error = e as HttpError
       const sanitisedError = sanitiseError(error)
-      logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'POST'`)
+
+      logger.warn(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: this.name,
+          httpMethod: LogHttpMethod.Post,
+          statusCode: sanitisedError.status,
+          errorName: error.name,
+        },
+        'HTTP dependency request failed'
+      )
+
       throw sanitisedError
     }
   }
@@ -120,7 +143,17 @@ export default class RestClient {
         .set(headers)
         .end((error, response) => {
           if (error) {
-            logger.warn(sanitiseError(error), `Error calling ${this.name}`)
+            logger.warn(
+              {
+                event: LogEvent.DependencyFailed,
+                dependency: this.name,
+                httpMethod: LogHttpMethod.Get,
+                statusCode: error.status,
+                errorName: error.name,
+              },
+              'HTTP dependency stream request failed'
+            )
+
             reject(error)
           } else if (response) {
             const s = new Readable()

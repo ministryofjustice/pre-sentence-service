@@ -1,6 +1,7 @@
 import { createClient } from 'redis'
 
 import logger from '../../logger'
+import { LogDependency, LogOperation, LogEvent } from '../utils/logging'
 import config from '../config'
 
 export type RedisClient = ReturnType<typeof createClient>
@@ -19,13 +20,31 @@ export const createRedisClient = ({ legacyMode }: { legacyMode: boolean }): Redi
       reconnectStrategy: (attempts: number) => {
         // Exponential back off: 20ms, 40ms, 80ms..., capped to retry every 30 seconds
         const nextDelay = Math.min(2 ** attempts * 20, 30000)
-        logger.info(`Retry Redis connection attempt: ${attempts}, next attempt in: ${nextDelay}ms`)
+        logger.debug(
+          {
+            event: LogEvent.DependencyRetry,
+            dependency: LogDependency.Redis,
+            operation: LogOperation.Connect,
+            attempt: attempts + 1,
+            retryDelayMs: nextDelay,
+          },
+          'Redis reconnection scheduled'
+        )
         return nextDelay
       },
     },
   })
 
-  client.on('error', (e: Error) => logger.error('Redis client error', e))
+  client.on('error', (error: Error) => {
+    logger.error(
+      {
+        err: error,
+        event: LogEvent.DependencyFailed,
+        dependency: LogDependency.Redis,
+      },
+      'Redis client error'
+    )
+  })
 
   return client
 }
