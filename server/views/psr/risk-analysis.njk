@@ -17,14 +17,14 @@
     {% include "../partials/autosaveStatus.njk" %}
   </div>
 
+  {{ govukWarningText({
+    text: "You must complete a dynamic OASys ROSH (risk of serious harm) assessment first, to confirm reoffending predictors and inform your wider risk analysis.",
+    iconFallbackText: "Warning"
+  }) }}
+
   <form method="post" data-autosave="true" novalidate>
     <section class="section-wrapper">
       <h2 class="govuk-heading-l govuk-!-margin-bottom-6" id="assess-reoffending-likelihood">Assess the likelihood of reoffending</h2>
-
-      {{ govukWarningText({
-        text: "You must complete a dynamic OASys ROSH (risk of serious harm) assessment first, to confirm reoffending predictors and inform your wider risk analysis.",
-        iconFallbackText: "Warning"
-      }) }}
 
       {{ picTextEditor({
         label: {
