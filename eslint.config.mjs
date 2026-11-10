@@ -99,7 +99,15 @@ export default defineConfig([
       'import/no-extraneous-dependencies': [
         'error',
         {
-          devDependencies: ['**/*.test.js', '**/*.test.ts', './cypress.config.ts', 'pdf_tests/**'],
+          devDependencies: [
+            '**/*.test.js',
+            '**/*.test.ts',
+            './cypress.config.ts',
+            'pdf_tests/**',
+            'integration_tests/**',
+            'eslint.config.mjs',
+            'eslint.config.mts',
+          ],
         },
       ],
 
