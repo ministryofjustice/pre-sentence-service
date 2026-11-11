@@ -42,12 +42,13 @@ generic-service:
 
   namespace_secrets:
     pre-sentence-service:
-      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
       API_CLIENT_ID: "API_CLIENT_ID"
       API_CLIENT_SECRET: "API_CLIENT_SECRET"
       AUTH_API_CLIENT_ID: "AUTH_API_CLIENT_ID"
       AUTH_API_CLIENT_SECRET: "AUTH_API_CLIENT_SECRET"
       SESSION_SECRET: "SESSION_SECRET"
+    pre-sentence-service-application-insights:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     pac-elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
