@@ -1,6 +1,7 @@
 import type ReportService from '../services/reportService'
 import type PreSentenceToDeliusService from '../services/preSentenceToDeliusService'
 import { TransformedOffence, transformOffenceDetails } from './apiDataTransformers'
+import type { OffenceDetails } from '../@types/preSentenceToDelius'
 import { htmlToPlainText } from './htmlToPlainText'
 import logger from '../../logger'
 
@@ -45,25 +46,27 @@ export async function ensureStoredOffences(
     return null
   }
 
+  let apiData: OffenceDetails
   try {
-    const apiData = await preSentenceToDeliusService.getOffences(reportId)
-    const transformed = transformOffenceDetails(apiData)
-    const mainOffence = formatOffenceLine(transformed.mainOffence)
-    const additionalOffences = splitOffenceLines(transformed.additionalOffences.map(formatOffenceLine).join('\n'))
-
-    await reportService.updateFieldValues(reportId, [
-      { pageName: OFFENCES_PAGE_NAME, questionId: 0, questionValue: 'mainOffence', answer: mainOffence },
-      {
-        pageName: OFFENCES_PAGE_NAME,
-        questionId: 1,
-        questionValue: 'additionalOffences',
-        answer: additionalOffences.join('\n'),
-      },
-    ])
-
-    return { mainOffence, additionalOffences }
+    apiData = await preSentenceToDeliusService.getOffences(reportId)
   } catch (error) {
     logger.warn({ reportId, error }, 'Failed to fetch offence details from Pre-Sentence to Delius API')
     return null
   }
+
+  const transformed = transformOffenceDetails(apiData)
+  const mainOffence = formatOffenceLine(transformed.mainOffence)
+  const additionalOffences = splitOffenceLines(transformed.additionalOffences.map(formatOffenceLine).join('\n'))
+
+  await reportService.updateFieldValues(reportId, [
+    { pageName: OFFENCES_PAGE_NAME, questionId: 0, questionValue: 'mainOffence', answer: mainOffence },
+    {
+      pageName: OFFENCES_PAGE_NAME,
+      questionId: 1,
+      questionValue: 'additionalOffences',
+      answer: additionalOffences.join('\n'),
+    },
+  ])
+
+  return { mainOffence, additionalOffences }
 }

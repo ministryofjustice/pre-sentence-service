@@ -130,6 +130,12 @@ describe('ensureStoredOffences', () => {
     expect(reportService.updateFieldValues).not.toHaveBeenCalled()
   })
 
+  it('propagates the error when persisting fetched offences fails', async () => {
+    reportService.updateFieldValues.mockRejectedValue(new Error('save failed'))
+
+    await expect(ensureStoredOffences({}, 'report-1', reportService, deliusService)).rejects.toThrow('save failed')
+  })
+
   it('returns null when nothing is stored and no API service is provided', async () => {
     expect(await ensureStoredOffences({}, 'report-1', reportService)).toBeNull()
   })
