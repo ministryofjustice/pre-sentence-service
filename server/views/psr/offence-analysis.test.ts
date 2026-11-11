@@ -58,7 +58,7 @@ describe('offence analysis and edit offences views', () => {
     })
 
     expect(html).toContain('Review offences')
-    expect(html).not.toContain('Review offences from NDelius')
+    expect(html).not.toContain('Review offences from nDelius')
     expect(html).toContain('Offence details')
     expect(html).toContain('/psr/123/edit-offences')
     expect(html).toContain('Edit offences')
@@ -86,7 +86,7 @@ describe('offence analysis and edit offences views', () => {
     })
 
     expect(html).toContain('Edit offences')
-    expect(html).toContain('Any edits you make to offences in this PSR will not be shown in NDelius.')
+    expect(html).toContain('Any edits you make to offences in this PSR will not be shown in nDelius.')
     expect(html).not.toContain('data-autosave')
     expect(html).toContain('Main offence')
     expect(html).toContain('Additional offences (if applicable)')
