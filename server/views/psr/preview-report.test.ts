@@ -24,10 +24,10 @@ const anchorTargets = [
     text: 'Analyse previous offending behaviour and response to supervision',
     id: 'previous-offending-behaviour',
   },
-  { page: 'risk-analysis', text: 'Risk levels', id: 'risk-levels' },
+  { page: 'risk-analysis', text: 'Assign risk levels', id: 'risk-levels' },
   {
     page: 'risk-analysis',
-    text: 'Confirm risk predictors and assess the immediacy and likelihood of reoffending',
+    text: 'Assess the likelihood of reoffending',
     id: 'assess-reoffending-likelihood',
   },
   {
