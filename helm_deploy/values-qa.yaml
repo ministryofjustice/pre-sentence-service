@@ -41,4 +41,4 @@ gotenberg:
 wproofreader:
   ingress:
     host: pre-sentence-service-wproofreader-qa.hmpps.service.justice.gov.uk
-    tlsSecretName: court-probation-qa-cert-secret
+    tlsSecretName: court-probation-cert-secret
