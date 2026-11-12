@@ -6,7 +6,7 @@ generic-service:
 
   ingress:
     host: pre-sentence-service-test.hmpps.service.justice.gov.uk
-    tlsSecretName: court-probation-qa-cert-secret
+    tlsSecretName: court-probation-cert-secret
 
   env:
     INGRESS_URL: "https://pre-sentence-service-test.hmpps.service.justice.gov.uk"
