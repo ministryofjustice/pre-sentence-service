@@ -95,7 +95,7 @@
           },
           items: [
             {
-              text: "Confirm risk predictors and assess the immediacy and likelihood of reoffending",
+              text: "Assess the likelihood of reoffending",
               href: "/" + reportPath + "/" + reportId + "/risk-analysis#assess-reoffending-likelihood",
               state: "Completed" if progress.riskAnalysis.riskPredictors else "Incomplete"
             },
@@ -105,7 +105,7 @@
               state: "Completed" if progress.riskAnalysis.riskAndHarmFactors else "Incomplete"
             },
             {
-              text: "Risk levels",
+              text: "Assign risk levels",
               href: "/" + reportPath + "/" + reportId + "/risk-analysis#risk-levels",
               state: "Completed" if progress.riskAnalysis.riskLevels else "Incomplete"
             }
