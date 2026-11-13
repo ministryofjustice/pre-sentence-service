@@ -8,6 +8,7 @@ import PreSentenceToDeliusService from './preSentenceToDeliusService'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import type { Address, DefendantDetails } from '../@types/preSentenceToDelius'
 import { buildPdfSourcesOfInformation } from '../utils/sourcesOfInformationHelpers'
+import { splitOffenceLines } from '../utils/offenceDetails'
 import {
   configureReportData,
   getDraftHeader,
@@ -71,7 +72,6 @@ export default class PdfGenerationService {
     const reportData = configureReportData(report)
 
     const defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
-    const offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
 
     const sources = await this.sourcesOfInformationService.getSourcesOfInformation(reportId)
     const sourcesOfInformationList = buildPdfSourcesOfInformation(
@@ -117,7 +117,10 @@ export default class PdfGenerationService {
       riskToPrisoners: riskToPrisoners ? capitalise(riskToPrisoners.replace('_', ' ')) : '',
       ageInYears,
       impactExplanation,
-      offenceData,
+      offenceData: {
+        mainOffence: typeof reportData.mainOffence === 'string' ? reportData.mainOffence : '',
+        additionalOffences: splitOffenceLines(reportData.additionalOffences),
+      },
       sourcesOfInformationList,
     }
 

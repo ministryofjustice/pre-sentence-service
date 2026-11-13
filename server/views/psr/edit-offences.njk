@@ -1,0 +1,54 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% set currentPage = 'Offence analysis' %}
+{% set pageTitle = preSentenceType + " - Edit offences" %}
+
+{% block reportForm %}
+
+<form method="post" novalidate>
+  <div class="govuk-!-margin-bottom-7">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Edit offences</h1>
+  </div>
+
+  <section class="section-wrapper">
+    <p class="govuk-body">Any edits you make to offences in this PSR will not be shown in nDelius.</p>
+
+    {{ govukInput({
+      label: {
+        text: "Main offence",
+        classes: "govuk-label--s"
+      },
+      name: "mainOffence",
+      id: "mainOffence",
+      value: data.mainOffence,
+      errorMessage: {
+        text: formValidation.errors.mainOffence
+      } if 'mainOffence' in elementsWithError
+    }) }}
+
+    {{ govukTextarea({
+      label: {
+        text: "Additional offences (if applicable)",
+        classes: "govuk-label--s"
+      },
+      name: "additionalOffences",
+      id: "additionalOffences",
+      rows: "5",
+      value: data.additionalOffences
+    }) }}
+  </section>
+
+  <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+  <input type="hidden" name="reportId" value="{{ reportId }}">
+  <input type="hidden" name="pageName" value="{{ pageName }}">
+
+  <div class="govuk-button-group">
+    <button class="govuk-button">Save and continue</button>
+    <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/offence-analysis">Cancel</a>
+  </div>
+</form>
+
+{% endblock %}
