@@ -157,7 +157,7 @@ export default class SignYourReportController extends BaseController {
 
     logger.info('Updating report actions (signing and locking)', { reportId })
     try {
-      await this.updateReportActions(req)
+      await this.updateReportActions(req, username)
       logger.info('Report actions updated successfully', { reportId })
     } catch (error) {
       logger.error('Failed to update report actions', {

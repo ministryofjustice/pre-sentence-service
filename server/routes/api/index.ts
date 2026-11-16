@@ -23,6 +23,15 @@ export default function Index(
   router.post('/v1/report', (req, res) => {
     return new ApiController(reportService, eventService, preSentenceToDeliusService).createReport(req, res)
   })
+  router.put('/v1/report/:id/lock', (req, res) => {
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).lockReport(req, res)
+  })
+  router.put('/v1/report/:id/unlock', (req, res) => {
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).unlockReport(req, res)
+  })
+  router.delete('/v1/report/:id', (req, res) => {
+    return new ApiController(reportService, eventService, preSentenceToDeliusService).deleteReport(req, res)
+  })
 
   return router
 }

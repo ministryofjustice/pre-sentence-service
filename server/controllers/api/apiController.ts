@@ -5,6 +5,8 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import PdfGenerationService from '../../services/pdfGenerationService'
 import { HttpError } from '../../@types/httpError'
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export default class ApiController {
   private pdfGenerationService: PdfGenerationService
 
@@ -99,6 +101,57 @@ export default class ApiController {
     } catch (e) {
       const error = e as HttpError
       res.status(error.status || 500).send(error.message)
+    }
+  }
+
+  lockReport = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const reportId = req.params.id
+    if (!UUID_REGEX.test(reportId)) {
+      res.status(400).json({ message: 'Invalid report id' })
+      return
+    }
+
+    try {
+      const username = res.locals?.user?.username || 'system'
+      await this.reportService.lockReport(reportId, username)
+      res.status(200).json({ id: reportId, status: 'LOCKED' })
+    } catch (e) {
+      const error = e as HttpError
+      res.status(error.status || 500).json({ message: error.message })
+    }
+  }
+
+  unlockReport = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const reportId = req.params.id
+    if (!UUID_REGEX.test(reportId)) {
+      res.status(400).json({ message: 'Invalid report id' })
+      return
+    }
+
+    try {
+      const username = res.locals?.user?.username || 'system'
+      await this.reportService.unlockReport(reportId, username)
+      res.status(200).json({ id: reportId, status: 'COMPLETED' })
+    } catch (e) {
+      const error = e as HttpError
+      res.status(error.status || 500).json({ message: error.message })
+    }
+  }
+
+  deleteReport = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const reportId = req.params.id
+    if (!UUID_REGEX.test(reportId)) {
+      res.status(400).json({ message: 'Invalid report id' })
+      return
+    }
+
+    try {
+      const username = res.locals?.user?.username || 'system'
+      await this.reportService.deleteCompletedReport(reportId, username)
+      res.status(200).json({ id: reportId, status: 'DELETED' })
+    } catch (e) {
+      const error = e as HttpError
+      res.status(error.status || 500).json({ message: error.message })
     }
   }
 }

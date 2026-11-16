@@ -1,13 +1,16 @@
 import PersonDetailsService from './personDetailsService'
 import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetailsService'
 import SourcesOfInformationService from './sourcesOfInformationService'
+import ReportStatusHistoryService, { DELETED_STATUS } from './reportStatusHistoryService'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
+import ReportStatusHistory from '../repositories/entities/reportStatusHistory'
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
 import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
 import { EntityManager, getConnection } from 'typeorm'
+import createError from 'http-errors'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -51,11 +54,13 @@ export default class ReportService {
   private personDetailsService: PersonDetailsService
   private reportDetailsService: ReportDetailsService
   private sourcesOfInformationService: SourcesOfInformationService
+  private reportStatusHistoryService: ReportStatusHistoryService
 
   constructor() {
     this.personDetailsService = new PersonDetailsService()
     this.reportDetailsService = new ReportDetailsService()
     this.sourcesOfInformationService = new SourcesOfInformationService()
+    this.reportStatusHistoryService = new ReportStatusHistoryService()
   }
 
   public async createReport(reportData: IReport, createdBy: string): Promise<ReportDetails> {
@@ -73,11 +78,22 @@ export default class ReportService {
       createdBy,
     })
 
+    await this.reportStatusHistoryService.recordStatusChange({
+      reportId: report.id,
+      previousStatus: null,
+      newStatus: ReportStatus.NOT_STARTED,
+      changedBy: createdBy,
+    })
+
     return report
   }
 
   public async getReportById(id: string): Promise<ReportDetails | null> {
     return this.reportDetailsService.getReportDetailsById(id)
+  }
+
+  public async getReportByIdIncludingDeleted(id: string): Promise<ReportDetails | null> {
+    return this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
   }
 
   public async getSourcesOfInformation(reportId: string, manager?: EntityManager): Promise<SourceOfInformation[]> {
@@ -135,7 +151,7 @@ export default class ReportService {
       if (report.status === ReportStatus.NOT_STARTED) {
         const today = new Date()
 
-        await this.updateReport(reportId, { status: ReportStatus.STARTED }, manager)
+        await this.updateReport(reportId, { status: ReportStatus.STARTED }, manager, username)
 
         fields.push(
           {
@@ -173,13 +189,119 @@ export default class ReportService {
   public async updateReport(
     id: string,
     updates: Partial<IReportDetails>,
-    manager?: EntityManager
+    manager?: EntityManager,
+    username = 'system'
   ): Promise<ReportDetails | null> {
-    return this.reportDetailsService.updateReportDetails(id, updates, manager)
+    let previousStatus: ReportStatus | undefined
+
+    if (updates.status !== undefined) {
+      const currentReport = await this.reportDetailsService.getReportDetailsById(id, manager)
+      previousStatus = currentReport?.status
+    }
+
+    const updated = await this.reportDetailsService.updateReportDetails(id, updates, manager)
+
+    if (updates.status !== undefined && updated && previousStatus !== updates.status) {
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: previousStatus ?? null,
+          newStatus: updates.status,
+          changedBy: username,
+        },
+        manager
+      )
+    }
+
+    return updated
   }
 
-  public async deleteReport(id: string): Promise<boolean> {
-    return this.reportDetailsService.deleteReportDetails(id)
+  public async lockReport(id: string, username: string): Promise<ReportDetails> {
+    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+
+    if (!report || report.isDeleted) {
+      throw createError(404, `Report ${id} not found`)
+    }
+
+    if (report.status !== ReportStatus.COMPLETED) {
+      throw createError(409, `Report ${id} is not in a COMPLETED state`)
+    }
+
+    const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.LOCKED })
+
+    await this.reportStatusHistoryService.recordStatusChange({
+      reportId: id,
+      previousStatus: ReportStatus.COMPLETED,
+      newStatus: ReportStatus.LOCKED,
+      changedBy: username,
+    })
+
+    return updated as ReportDetails
+  }
+
+  public async unlockReport(id: string, username: string): Promise<ReportDetails> {
+    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+
+    if (!report || report.isDeleted) {
+      throw createError(404, `Report ${id} not found`)
+    }
+
+    if (report.status !== ReportStatus.LOCKED) {
+      throw createError(409, `Report ${id} is not in a LOCKED state`)
+    }
+
+    const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.COMPLETED })
+
+    await this.reportStatusHistoryService.recordStatusChange({
+      reportId: id,
+      previousStatus: ReportStatus.LOCKED,
+      newStatus: ReportStatus.COMPLETED,
+      changedBy: username,
+    })
+
+    return updated as ReportDetails
+  }
+
+  public async deleteCompletedReport(id: string, username: string): Promise<void> {
+    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+
+    if (!report || report.isDeleted) {
+      throw createError(404, `Report ${id} not found`)
+    }
+
+    if (report.status !== ReportStatus.COMPLETED) {
+      throw createError(409, `Report ${id} is not in a COMPLETED state`)
+    }
+
+    await this.reportDetailsService.deleteReportDetails(id)
+
+    await this.reportStatusHistoryService.recordStatusChange({
+      reportId: id,
+      previousStatus: ReportStatus.COMPLETED,
+      newStatus: DELETED_STATUS,
+      changedBy: username,
+    })
+  }
+
+  public async deleteReport(id: string, username = 'system'): Promise<boolean> {
+    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+
+    if (!report || report.isDeleted) {
+      return this.reportDetailsService.deleteReportDetails(id)
+    }
+
+    const deleted = await this.reportDetailsService.deleteReportDetails(id)
+
+    if (deleted) {
+      await this.reportStatusHistoryService.recordStatusChange({
+        reportId: id,
+        previousStatus: report.status,
+        newStatus: DELETED_STATUS,
+        changedBy: username,
+      })
+    }
+
+    return deleted
   }
 
   public async updateFieldValues(
@@ -310,15 +432,35 @@ export default class ReportService {
   ): Promise<ReportDetails> {
     const submittedAt = new Date()
 
-    const stamped = await this.reportDetailsService.updateReportDetails(reportId, { submittedAt })
+    const existing = await this.reportDetailsService.getReportDetailsById(reportId)
+    if (!existing) {
+      throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+    }
+    const previousStatus = existing.status
+
+    const stamped = await this.reportDetailsService.updateReportDetails(reportId, {
+      submittedAt,
+      status: ReportStatus.COMPLETED,
+    })
     if (!stamped) {
       throw new Error(`Report ${reportId} not found when stamping submittedAt`)
     }
 
+    let historyRow: ReportStatusHistory | undefined
+
     try {
+      historyRow = await this.reportStatusHistoryService.recordStatusChange({
+        reportId,
+        previousStatus,
+        newStatus: ReportStatus.COMPLETED,
+        changedBy: eventData.username,
+      })
       await this.publishWithRetry(eventService, { ...eventData, reportId })
     } catch (error) {
-      await this.reportDetailsService.updateReportDetails(reportId, { submittedAt: null })
+      await this.reportDetailsService.updateReportDetails(reportId, { submittedAt: null, status: previousStatus })
+      if (historyRow) {
+        await this.reportStatusHistoryService.removeStatusChange(historyRow.id)
+      }
       throw error
     }
 

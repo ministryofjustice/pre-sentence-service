@@ -19,6 +19,8 @@ import SignYourReportController from '../../controllers/psr/sign-your-report-con
 import PdfController from '../../controllers/pdf/pdfController'
 import PublishReportController from '../../controllers/psr/publish-report-controller'
 import AutosaveController from '../../controllers/psr/autosave-controller'
+import LockedReportController from '../../controllers/psr/locked-report-controller'
+import DeletedReportController from '../../controllers/psr/deleted-report-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -114,6 +116,15 @@ export default function Index(
   post('/:reportId/autosave', (req, res) => {
     return new AutosaveController(reportService, preSentenceToDeliusService).post(req, res)
   })
+
+  router.get<ReportParams>(
+    routePrefix('/:reportId/locked'),
+    asyncMiddleware((req, res) => new LockedReportController(reportService).get(req, res))
+  )
+  router.get<ReportParams>(
+    routePrefix('/:reportId/deleted'),
+    asyncMiddleware((req, res) => new DeletedReportController(reportService).get(req, res))
+  )
 
   return router
 }

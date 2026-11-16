@@ -4,6 +4,8 @@ import PersonDetails from './personDetails'
 export enum ReportStatus {
   NOT_STARTED = 'NOT_STARTED',
   STARTED = 'STARTED',
+  COMPLETED = 'COMPLETED',
+  LOCKED = 'LOCKED',
 }
 
 interface Question {

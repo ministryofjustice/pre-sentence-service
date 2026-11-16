@@ -52,6 +52,18 @@ export default class ReportDetailsService {
     })
   }
 
+  public async getReportDetailsByIdIncludingDeleted(
+    id: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<ReportDetails | null> {
+    return manager.getRepository(ReportDetails).findOne({
+      where: {
+        id,
+      },
+      relations: ['person'],
+    })
+  }
+
   public async getReportDetailsByPersonId(personId: number): Promise<ReportDetails[]> {
     return getConnection()
       .getRepository(ReportDetails)

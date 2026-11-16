@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction, RequestHandler } from 'express'
 import ReportService from '../services/reportService'
+import { ReportStatus } from '../repositories/entities/reportDetails'
 
 const ALLOWED_WHEN_LOCKED = new Set(['publish-report', 'pdf'])
 
@@ -18,19 +19,33 @@ export default function lockedReportMiddleware(reportService: ReportService): Re
     }
 
     const action = lastPathSegment(req.path)
-    if (ALLOWED_WHEN_LOCKED.has(action)) {
-      next()
-      return
-    }
 
     reportService
-      .getReportById(reportId)
+      .getReportByIdIncludingDeleted(reportId)
       .then(report => {
-        if (report) {
-          res.locals.report = report
+        if (!report) {
+          next()
+          return
         }
 
-        if (report?.submittedAt) {
+        if (report.isDeleted) {
+          res.redirect(`/psr/${reportId}/deleted`)
+          return
+        }
+
+        if (report.status === ReportStatus.LOCKED) {
+          res.redirect(`/psr/${reportId}/locked`)
+          return
+        }
+
+        res.locals.report = report
+
+        if (ALLOWED_WHEN_LOCKED.has(action)) {
+          next()
+          return
+        }
+
+        if (report.submittedAt) {
           res.redirect(`/psr/${reportId}/publish-report`)
           return
         }

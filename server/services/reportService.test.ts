@@ -1,6 +1,8 @@
 import ReportService from './reportService'
 import ReportDetailsService from './reportDetailsService'
 import EventService from './eventService'
+import ReportStatusHistoryService, { DELETED_STATUS } from './reportStatusHistoryService'
+import { ReportStatus } from '../repositories/entities/reportDetails'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
 import { EntityManager, getConnection } from 'typeorm'
 
@@ -11,10 +13,12 @@ jest.mock('typeorm', () => ({
 jest.mock('./reportDetailsService')
 jest.mock('./personDetailsService')
 jest.mock('./sourcesOfInformationService')
+jest.mock('./reportStatusHistoryService')
 
 describe('ReportService.submitReport', () => {
   let reportService: ReportService
   let reportDetailsService: jest.Mocked<ReportDetailsService>
+  let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>
   let eventService: jest.Mocked<EventService>
 
   const mockStamped = { id: 'r1', submittedAt: new Date() } as never
@@ -23,7 +27,12 @@ describe('ReportService.submitReport', () => {
     reportService = new ReportService()
     reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
       .reportDetailsService
+    reportStatusHistoryService = (
+      reportService as unknown as { reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService> }
+    ).reportStatusHistoryService
+    reportDetailsService.getReportDetailsById = jest.fn().mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED })
     reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue(mockStamped)
+    reportStatusHistoryService.recordStatusChange = jest.fn().mockResolvedValue({ id: 'h1' })
 
     eventService = {
       sendReportEvent: jest.fn(),
@@ -42,10 +51,32 @@ describe('ReportService.submitReport', () => {
 
     expect(reportDetailsService.updateReportDetails).toHaveBeenCalledWith(
       'r1',
-      expect.objectContaining({ submittedAt: expect.any(Date) })
+      expect.objectContaining({ submittedAt: expect.any(Date), status: ReportStatus.COMPLETED })
     )
     expect(eventService.sendReportEvent).toHaveBeenCalledTimes(1)
     expect(result).toBe(mockStamped)
+  })
+
+  it('stamps submittedAt and sets status COMPLETED, recording previous -> COMPLETED history with eventData.username', async () => {
+    eventService.sendReportEvent.mockResolvedValue({} as never)
+
+    await reportService.submitReport('r1', eventService, {
+      eventNumber: 'r1',
+      crn: 'X1',
+      reportStatus: 'created',
+      username: 'u',
+    })
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenCalledWith(
+      'r1',
+      expect.objectContaining({ submittedAt: expect.any(Date), status: ReportStatus.COMPLETED })
+    )
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.STARTED,
+      newStatus: ReportStatus.COMPLETED,
+      changedBy: 'u',
+    })
   })
 
   it('retries publish up to 3 times before giving up', async () => {
@@ -89,14 +120,61 @@ describe('ReportService.submitReport', () => {
     expect(reportDetailsService.updateReportDetails).toHaveBeenNthCalledWith(
       1,
       'r1',
-      expect.objectContaining({ submittedAt: expect.any(Date) })
+      expect.objectContaining({ submittedAt: expect.any(Date), status: ReportStatus.COMPLETED })
     )
-    expect(reportDetailsService.updateReportDetails).toHaveBeenLastCalledWith('r1', { submittedAt: null })
+    expect(reportDetailsService.updateReportDetails).toHaveBeenLastCalledWith('r1', {
+      submittedAt: null,
+      status: ReportStatus.STARTED,
+    })
     jest.useRealTimers()
   })
 
+  it('on publish failure, restores previous status and submittedAt null, and removes the history row', async () => {
+    jest.useFakeTimers()
+    eventService.sendReportEvent.mockRejectedValue(new Error('SNS down'))
+
+    const promise = reportService
+      .submitReport('r1', eventService, {
+        eventNumber: 'r1',
+        crn: 'X1',
+        reportStatus: 'created',
+        username: 'u',
+      })
+      .catch(e => e)
+
+    await jest.runAllTimersAsync()
+    await promise
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenLastCalledWith('r1', {
+      submittedAt: null,
+      status: ReportStatus.STARTED,
+    })
+    expect(reportStatusHistoryService.removeStatusChange).toHaveBeenCalledWith('h1')
+    jest.useRealTimers()
+  })
+
+  it('rolls back the stamp without removing history when recording the history row fails', async () => {
+    reportStatusHistoryService.recordStatusChange = jest.fn().mockRejectedValue(new Error('DB down'))
+
+    await expect(
+      reportService.submitReport('r1', eventService, {
+        eventNumber: 'r1',
+        crn: 'X1',
+        reportStatus: 'created',
+        username: 'u',
+      })
+    ).rejects.toThrow('DB down')
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenLastCalledWith('r1', {
+      submittedAt: null,
+      status: ReportStatus.STARTED,
+    })
+    expect(reportStatusHistoryService.removeStatusChange).not.toHaveBeenCalled()
+    expect(eventService.sendReportEvent).not.toHaveBeenCalled()
+  })
+
   it('throws without publishing if the initial stamp returns null (report not found)', async () => {
-    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue(null)
+    reportDetailsService.getReportDetailsById = jest.fn().mockResolvedValue(null)
 
     await expect(
       reportService.submitReport('missing', eventService, {
@@ -250,5 +328,302 @@ describe('ReportService.saveSourcesOfInformation', () => {
 
     expect(removeSource).toHaveBeenCalledWith('r1', 'a_custom_source', manager)
     expect(savedAnswer()).toBe('cps_summary')
+  })
+})
+
+describe('status history wiring', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+  let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+    reportStatusHistoryService = (
+      reportService as unknown as { reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService> }
+    ).reportStatusHistoryService
+  })
+
+  it('createReport records null -> NOT_STARTED with the creating username', async () => {
+    const personDetailsService = (
+      reportService as unknown as { personDetailsService: { getPersonDetailsByCrn: jest.Mock } }
+    ).personDetailsService
+    personDetailsService.getPersonDetailsByCrn = jest.fn().mockResolvedValue({ id: 1 })
+    reportDetailsService.createReportDetails = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.NOT_STARTED })
+
+    await reportService.createReport({ crn: 'X1' }, 'creator')
+
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: null,
+      newStatus: ReportStatus.NOT_STARTED,
+      changedBy: 'creator',
+    })
+  })
+
+  it('updateReport records a history row when status changes, with the given username', async () => {
+    reportDetailsService.getReportDetailsById = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.NOT_STARTED })
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED })
+
+    await reportService.updateReport('r1', { status: ReportStatus.STARTED }, undefined, 'user1')
+
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith(
+      {
+        reportId: 'r1',
+        previousStatus: ReportStatus.NOT_STARTED,
+        newStatus: ReportStatus.STARTED,
+        changedBy: 'user1',
+      },
+      undefined
+    )
+  })
+
+  it('updateReport does not record history when updates contain no status', async () => {
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED })
+
+    await reportService.updateReport('r1', {}, undefined, 'user1')
+
+    expect(reportDetailsService.getReportDetailsById).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('updateReport does not record history when status is unchanged', async () => {
+    reportDetailsService.getReportDetailsById = jest.fn().mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED })
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED })
+
+    await reportService.updateReport('r1', { status: ReportStatus.STARTED }, undefined, 'user1')
+
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('deleteReport records previousStatus -> DELETED with the given username', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED, isDeleted: false })
+    reportDetailsService.deleteReportDetails = jest.fn().mockResolvedValue(true)
+
+    await reportService.deleteReport('r1', 'user1')
+
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.STARTED,
+      newStatus: DELETED_STATUS,
+      changedBy: 'user1',
+    })
+  })
+
+  it('deleteReport records changedBy system when no username given', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED, isDeleted: false })
+    reportDetailsService.deleteReportDetails = jest.fn().mockResolvedValue(true)
+
+    await reportService.deleteReport('r1')
+
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.STARTED,
+      newStatus: DELETED_STATUS,
+      changedBy: 'system',
+    })
+  })
+})
+
+describe('lockReport', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+  let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+    reportStatusHistoryService = (
+      reportService as unknown as { reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService> }
+    ).reportStatusHistoryService
+  })
+
+  it('locks a COMPLETED report, records history, returns the updated report', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.COMPLETED, isDeleted: false })
+    const updated = { id: 'r1', status: ReportStatus.LOCKED }
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue(updated)
+
+    const result = await reportService.lockReport('r1', 'user1')
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenCalledWith('r1', { status: ReportStatus.LOCKED })
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.COMPLETED,
+      newStatus: ReportStatus.LOCKED,
+      changedBy: 'user1',
+    })
+    expect(result).toBe(updated)
+  })
+
+  it('throws 404 for an unknown id', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest.fn().mockResolvedValue(null)
+
+    await expect(reportService.lockReport('missing', 'user1')).rejects.toMatchObject({
+      status: 404,
+      message: 'Report missing not found',
+    })
+
+    expect(reportDetailsService.updateReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('throws 404 for a soft-deleted report', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.COMPLETED, isDeleted: true })
+
+    await expect(reportService.lockReport('r1', 'user1')).rejects.toMatchObject({
+      status: 404,
+      message: 'Report r1 not found',
+    })
+
+    expect(reportDetailsService.updateReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('throws 409 when the report is not COMPLETED', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED, isDeleted: false })
+
+    await expect(reportService.lockReport('r1', 'user1')).rejects.toMatchObject({
+      status: 409,
+      message: 'Report r1 is not in a COMPLETED state',
+    })
+
+    expect(reportDetailsService.updateReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+})
+
+describe('unlockReport', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+  let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+    reportStatusHistoryService = (
+      reportService as unknown as { reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService> }
+    ).reportStatusHistoryService
+  })
+
+  it('unlocks a LOCKED report back to COMPLETED and records history', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.LOCKED, isDeleted: false })
+    const updated = { id: 'r1', status: ReportStatus.COMPLETED }
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue(updated)
+
+    const result = await reportService.unlockReport('r1', 'user1')
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenCalledWith('r1', { status: ReportStatus.COMPLETED })
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.LOCKED,
+      newStatus: ReportStatus.COMPLETED,
+      changedBy: 'user1',
+    })
+    expect(result).toBe(updated)
+  })
+
+  it('throws 404 for an unknown id', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest.fn().mockResolvedValue(null)
+
+    await expect(reportService.unlockReport('missing', 'user1')).rejects.toMatchObject({
+      status: 404,
+      message: 'Report missing not found',
+    })
+
+    expect(reportDetailsService.updateReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('throws 409 when the report is not LOCKED', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.COMPLETED, isDeleted: false })
+
+    await expect(reportService.unlockReport('r1', 'user1')).rejects.toMatchObject({
+      status: 409,
+      message: 'Report r1 is not in a LOCKED state',
+    })
+
+    expect(reportDetailsService.updateReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+})
+
+describe('deleteCompletedReport', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+  let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+    reportStatusHistoryService = (
+      reportService as unknown as { reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService> }
+    ).reportStatusHistoryService
+  })
+
+  it('soft-deletes a COMPLETED report and records COMPLETED -> DELETED', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.COMPLETED, isDeleted: false })
+    reportDetailsService.deleteReportDetails = jest.fn().mockResolvedValue(true)
+
+    await reportService.deleteCompletedReport('r1', 'user1')
+
+    expect(reportDetailsService.deleteReportDetails).toHaveBeenCalledWith('r1')
+    expect(reportStatusHistoryService.recordStatusChange).toHaveBeenCalledWith({
+      reportId: 'r1',
+      previousStatus: ReportStatus.COMPLETED,
+      newStatus: DELETED_STATUS,
+      changedBy: 'user1',
+    })
+  })
+
+  it('throws 404 for a soft-deleted report', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.COMPLETED, isDeleted: true })
+
+    await expect(reportService.deleteCompletedReport('r1', 'user1')).rejects.toMatchObject({
+      status: 404,
+      message: 'Report r1 not found',
+    })
+
+    expect(reportDetailsService.deleteReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
+  })
+
+  it('throws 409 when the report is not COMPLETED', async () => {
+    reportDetailsService.getReportDetailsByIdIncludingDeleted = jest
+      .fn()
+      .mockResolvedValue({ id: 'r1', status: ReportStatus.STARTED, isDeleted: false })
+
+    await expect(reportService.deleteCompletedReport('r1', 'user1')).rejects.toMatchObject({
+      status: 409,
+      message: 'Report r1 is not in a COMPLETED state',
+    })
+
+    expect(reportDetailsService.deleteReportDetails).not.toHaveBeenCalled()
+    expect(reportStatusHistoryService.recordStatusChange).not.toHaveBeenCalled()
   })
 })
