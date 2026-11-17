@@ -26,4 +26,32 @@ export default class ReportStatusHistoryService {
     const repository = manager.getRepository(ReportStatusHistory)
     await repository.delete(id)
   }
+
+  public async hasEverHadStatus(
+    reportId: string,
+    status: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<boolean> {
+    const repository = manager.getRepository(ReportStatusHistory)
+    const count = await repository.count({
+      where: [
+        { reportId, newStatus: status },
+        { reportId, previousStatus: status },
+      ],
+    })
+    return count > 0
+  }
+
+  public async getLatestStatusChangeTo(
+    reportId: string,
+    newStatus: string,
+    manager: EntityManager = getConnection().manager
+  ): Promise<ReportStatusHistory | null> {
+    const repository = manager.getRepository(ReportStatusHistory)
+    const result = await repository.findOne({
+      where: { reportId, newStatus },
+      order: { changedAt: 'DESC' },
+    })
+    return result ?? null
+  }
 }

@@ -214,6 +214,17 @@ describe('Route Handlers - API', () => {
       })
   })
 
+  it('PUT /v1/report/:id/unlock echoes the restored status when unlock returns STARTED', () => {
+    mockUnlockReport.mockResolvedValue({ id: validUuid, status: 'STARTED' })
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/unlock`)
+      .expect(200)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ id: validUuid, status: 'STARTED' })
+      })
+  })
+
   it('DELETE /v1/report/:id returns 200 { id, status: DELETED }', () => {
     mockDeleteCompletedReport.mockResolvedValue(undefined)
 

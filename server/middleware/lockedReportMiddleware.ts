@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction, RequestHandler } from 'express'
 import ReportService from '../services/reportService'
 import { ReportStatus } from '../repositories/entities/reportDetails'
+import config from '../config'
 
 const ALLOWED_WHEN_LOCKED = new Set(['publish-report', 'pdf'])
 
@@ -46,7 +47,9 @@ export default function lockedReportMiddleware(reportService: ReportService): Re
         }
 
         if (report.submittedAt) {
-          res.redirect(`/psr/${reportId}/publish-report`)
+          res.redirect(
+            config.features.unlockedSigning ? `/psr/${reportId}/edit-completed` : `/psr/${reportId}/publish-report`
+          )
           return
         }
 

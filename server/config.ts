@@ -137,6 +137,7 @@ export default {
   features: {
     richTextEditor: get('FEATURE_RICH_TEXT_EDITOR', 'false') === 'true',
     smartSurvey: get('FEATURE_SMART_SURVEY', 'false') === 'true',
+    unlockedSigning: get('FEATURE_UNLOCKED_SIGNING', 'false') === 'true',
   },
   dev: {
     fakeAdditionalOffences: get('DEV_FAKE_ADDITIONAL_OFFENCES', 'false') === 'true',

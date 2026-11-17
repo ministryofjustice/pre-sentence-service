@@ -19,6 +19,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.locals.wproofreaderBundleUrl = config.wproofreader.bundleUrl
   app.locals.featureRichTextEditor = config.features.richTextEditor
   app.locals.featureSmartSurvey = config.features.smartSurvey
+  app.locals.featureUnlockedSigning = config.features.unlockedSigning
   app.locals.sessionTimeout = {
     idleMinutes: config.session.expiryMinutes - config.session.warningMinutes,
     warningMinutes: config.session.warningMinutes,
@@ -115,7 +116,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return `${day}/${month}/${year} ${hours}:${minutes}`
   })
 
-  njkEnv.addFilter('formatTime', date => {
+  const formatTimeHM = (date: unknown): string => {
     if (!date) return ''
 
     let dateObj: Date
@@ -136,7 +137,34 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       hour12: false,
       timeZone: 'Europe/London',
     }).format(dateObj)
+  }
+
+  njkEnv.addFilter('formatTime', formatTimeHM)
+
+  njkEnv.addFilter('formatDateLong', date => {
+    if (!date) return ''
+
+    let dateObj: Date
+
+    if (date instanceof Date) {
+      dateObj = date
+    } else if (typeof date === 'string') {
+      dateObj = new Date(date)
+    } else {
+      return ''
+    }
+
+    if (Number.isNaN(dateObj.getTime())) return ''
+
+    return new Intl.DateTimeFormat('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'Europe/London',
+    }).format(dateObj)
   })
+
+  njkEnv.addFilter('formatTimeHM', formatTimeHM)
 
   njkEnv.addFilter('calculateAge', dob => {
     if (!dob) return ''

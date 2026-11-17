@@ -6,7 +6,7 @@ jest.mock('../config', () => ({
   __esModule: true,
   default: {
     nonce: 'test-nonce',
-    features: { richTextEditor: true },
+    features: { richTextEditor: true, smartSurvey: false, unlockedSigning: false },
     session: { expiryMinutes: 120, warningMinutes: 2 },
     wproofreader: {
       bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
@@ -17,6 +17,21 @@ jest.mock('../config', () => ({
 
 import config from '../config'
 import nunjucksSetup from './nunjucksSetup'
+
+describe('feature flag app.locals', () => {
+  it('sets app.locals.featureUnlockedSigning from config.features.unlockedSigning', () => {
+    const app = express()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.unlockedSigning = true
+    nunjucksSetup(app, path)
+    expect(app.locals.featureUnlockedSigning).toBe(true)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(config as any).features.unlockedSigning = false
+    nunjucksSetup(app, path)
+    expect(app.locals.featureUnlockedSigning).toBe(false)
+  })
+})
 
 describe('editableText nunjucks filter', () => {
   let env: nunjucks.Environment
@@ -129,5 +144,51 @@ describe('formatTime nunjucks filter', () => {
   it('returns empty string for missing or invalid values', () => {
     expect(env.renderString('{{ value | formatTime }}', { value: null })).toBe('')
     expect(env.renderString('{{ value | formatTime }}', { value: 'not-a-date' })).toBe('')
+  })
+})
+
+describe('formatDateLong nunjucks filter', () => {
+  let env: nunjucks.Environment
+
+  beforeEach(() => {
+    const app = express()
+    const configureSpy = jest.spyOn(nunjucks, 'configure')
+    nunjucksSetup(app, path)
+    env = configureSpy.mock.results[0].value as nunjucks.Environment
+    configureSpy.mockRestore()
+  })
+
+  it('renders 2026-10-28T14:02:00Z as "28 October 2026"', () => {
+    const out = env.renderString('{{ value | formatDateLong }}', { value: '2026-10-28T14:02:00Z' })
+    expect(out).toBe('28 October 2026')
+  })
+
+  it('returns empty string for null/undefined/garbage', () => {
+    expect(env.renderString('{{ value | formatDateLong }}', { value: null })).toBe('')
+    expect(env.renderString('{{ value | formatDateLong }}', { value: undefined })).toBe('')
+    expect(env.renderString('{{ value | formatDateLong }}', { value: 'not-a-date' })).toBe('')
+  })
+})
+
+describe('formatTimeHM nunjucks filter', () => {
+  let env: nunjucks.Environment
+
+  beforeEach(() => {
+    const app = express()
+    const configureSpy = jest.spyOn(nunjucks, 'configure')
+    nunjucksSetup(app, path)
+    env = configureSpy.mock.results[0].value as nunjucks.Environment
+    configureSpy.mockRestore()
+  })
+
+  it('renders 2026-10-28T14:02:00 as "14:02"', () => {
+    const out = env.renderString('{{ value | formatTimeHM }}', { value: '2026-10-28T14:02:00Z' })
+    expect(out).toBe('14:02')
+  })
+
+  it('returns empty string for falsy input', () => {
+    expect(env.renderString('{{ value | formatTimeHM }}', { value: null })).toBe('')
+    expect(env.renderString('{{ value | formatTimeHM }}', { value: undefined })).toBe('')
+    expect(env.renderString('{{ value | formatTimeHM }}', { value: '' })).toBe('')
   })
 })

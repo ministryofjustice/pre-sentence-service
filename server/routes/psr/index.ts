@@ -21,6 +21,7 @@ import PublishReportController from '../../controllers/psr/publish-report-contro
 import AutosaveController from '../../controllers/psr/autosave-controller'
 import LockedReportController from '../../controllers/psr/locked-report-controller'
 import DeletedReportController from '../../controllers/psr/deleted-report-controller'
+import EditCompletedReportController from '../../controllers/psr/edit-completed-report-controller'
 
 export default function Index(
   reportService: ReportService,
@@ -124,6 +125,14 @@ export default function Index(
   router.get<ReportParams>(
     routePrefix('/:reportId/deleted'),
     asyncMiddleware((req, res) => new DeletedReportController(reportService).get(req, res))
+  )
+  router.get<ReportParams>(
+    routePrefix('/:reportId/edit-completed'),
+    asyncMiddleware((req, res) => new EditCompletedReportController(reportService).get(req, res))
+  )
+  router.post<ReportParams>(
+    routePrefix('/:reportId/edit-completed'),
+    asyncMiddleware((req, res) => new EditCompletedReportController(reportService).post(req, res))
   )
 
   return router

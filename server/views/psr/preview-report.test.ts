@@ -2,17 +2,19 @@ import express from 'express'
 import nunjucks from 'nunjucks'
 import path from 'path'
 
+const mockConfig = {
+  nonce: 'test-nonce',
+  features: { richTextEditor: true, unlockedSigning: false },
+  session: { expiryMinutes: 120, warningMinutes: 2 },
+  wproofreader: {
+    bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
+    host: 'spellcheck.example.com',
+  },
+}
+
 jest.mock('../../config', () => ({
   __esModule: true,
-  default: {
-    nonce: 'test-nonce',
-    features: { richTextEditor: true },
-    session: { expiryMinutes: 120, warningMinutes: 2 },
-    wproofreader: {
-      bundleUrl: 'https://spellcheck.example.com/wscservice/wscbundle/wscbundle.js',
-      host: 'spellcheck.example.com',
-    },
-  },
+  default: mockConfig,
 }))
 
 import nunjucksSetup from '../../utils/nunjucksSetup'
@@ -125,5 +127,45 @@ describe('Review your progress section anchors', () => {
   it.each(anchorTargets)('$text links to a matching destination anchor', ({ page, text, id }) => {
     expect(renderedReviewPage).toContain(`href="/psr/123/${page}#${id}">${text}</a>`)
     expect(renderedDestinationPages[page]).toContain(`id="${id}"`)
+  })
+})
+
+describe('Review your progress sign task-list item label', () => {
+  let env: nunjucks.Environment
+
+  const render = () =>
+    env.render('psr/preview-report.njk', {
+      reportId: '123',
+      reportPath: 'psr',
+      preSentenceType: 'Standard PSR',
+      pageName: 'review-progress',
+      csrfToken: 'test-token',
+      nonce: 'test-nonce',
+      riskOptions: [],
+      formValidation: { errors: {} },
+      featureUnlockedSigning: mockConfig.features.unlockedSigning,
+      data: reportViewData,
+    })
+
+  beforeEach(() => {
+    mockConfig.features.unlockedSigning = false
+    const app = express()
+    const configureSpy = jest.spyOn(nunjucks, 'configure')
+    nunjucksSetup(app, path)
+    env = configureSpy.mock.results[0].value as nunjucks.Environment
+    configureSpy.mockRestore()
+  })
+
+  it('reads "Sign and lock your report" when the flag is off', () => {
+    const res = render()
+    expect(res).toContain('Sign and lock your report')
+    expect(res).not.toContain('>Sign your report<')
+  })
+
+  it('reads "Sign your report" when the flag is on', () => {
+    mockConfig.features.unlockedSigning = true
+    const res = render()
+    expect(res).toContain('Sign your report')
+    expect(res).not.toContain('Sign and lock your report')
   })
 })

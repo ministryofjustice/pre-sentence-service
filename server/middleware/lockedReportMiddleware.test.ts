@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import lockedReportMiddleware from './lockedReportMiddleware'
 import ReportService from '../services/reportService'
 import { ReportStatus } from '../repositories/entities/reportDetails'
+import config from '../config'
 
 type ReportRequest = Request<{ reportId: string }>
 
@@ -177,5 +178,88 @@ describe('lockedReportMiddleware', () => {
     expect(next).toHaveBeenCalledTimes(1)
     expect(res.redirect).not.toHaveBeenCalled()
     expect(res.locals.report).toBeUndefined()
+  })
+
+  describe('with unlockedSigning flag on', () => {
+    let originalFlag: boolean
+
+    beforeEach(() => {
+      originalFlag = config.features.unlockedSigning
+      config.features.unlockedSigning = true
+    })
+
+    afterEach(() => {
+      config.features.unlockedSigning = originalFlag
+    })
+
+    it('redirects a submitted report to /psr/r1/edit-completed when the flag is on', async () => {
+      reportService.getReportByIdIncludingDeleted.mockResolvedValue({
+        id: 'r1',
+        isDeleted: false,
+        status: ReportStatus.COMPLETED,
+        submittedAt: new Date(),
+      } as never)
+      const res = makeRes()
+
+      lockedReportMiddleware(reportService)(makeReq('/psr/r1/offence-analysis'), res, next)
+      await new Promise(setImmediate)
+
+      expect(res.redirect).toHaveBeenCalledWith('/psr/r1/edit-completed')
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    it('still allows publish-report and pdf paths for a submitted report when the flag is on', async () => {
+      reportService.getReportByIdIncludingDeleted.mockResolvedValue({
+        id: 'r1',
+        isDeleted: false,
+        status: ReportStatus.COMPLETED,
+        submittedAt: new Date(),
+      } as never)
+
+      const res = makeRes()
+      lockedReportMiddleware(reportService)(makeReq('/psr/r1/publish-report'), res, next)
+      await new Promise(setImmediate)
+      expect(next).toHaveBeenCalledTimes(1)
+      expect(res.redirect).not.toHaveBeenCalled()
+
+      next.mockClear()
+      const res2 = makeRes()
+      lockedReportMiddleware(reportService)(makeReq('/psr/r1/pdf'), res2, next)
+      await new Promise(setImmediate)
+      expect(next).toHaveBeenCalledTimes(1)
+      expect(res2.redirect).not.toHaveBeenCalled()
+    })
+
+    it('leaves in-progress (STARTED, unsubmitted) reports untouched when the flag is on', async () => {
+      reportService.getReportByIdIncludingDeleted.mockResolvedValue({
+        id: 'r1',
+        isDeleted: false,
+        status: ReportStatus.STARTED,
+        submittedAt: null,
+      } as never)
+      const res = makeRes()
+
+      lockedReportMiddleware(reportService)(makeReq('/psr/r1/defendant-details'), res, next)
+      await new Promise(setImmediate)
+
+      expect(next).toHaveBeenCalledTimes(1)
+      expect(res.redirect).not.toHaveBeenCalled()
+    })
+  })
+
+  it('still redirects to /psr/r1/publish-report when the flag is off', async () => {
+    reportService.getReportByIdIncludingDeleted.mockResolvedValue({
+      id: 'r1',
+      isDeleted: false,
+      status: ReportStatus.COMPLETED,
+      submittedAt: new Date(),
+    } as never)
+    const res = makeRes()
+
+    lockedReportMiddleware(reportService)(makeReq('/psr/r1/offence-analysis'), res, next)
+    await new Promise(setImmediate)
+
+    expect(res.redirect).toHaveBeenCalledWith('/psr/r1/publish-report')
+    expect(next).not.toHaveBeenCalled()
   })
 })

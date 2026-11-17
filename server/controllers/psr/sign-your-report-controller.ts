@@ -59,6 +59,18 @@ export default class SignYourReportController extends BaseController {
     }
   }
 
+  protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
+    if (!config.features.unlockedSigning) {
+      return
+    }
+
+    const previouslySigned = await this.reportService.hasReportBeenSigned(req.params.reportId)
+    this.data = {
+      ...this.data,
+      previouslySigned,
+    }
+  }
+
   override post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
     const reportId = req.params.reportId
     const username = (res.locals?.user?.username as string | undefined) || 'system'
@@ -146,7 +158,9 @@ export default class SignYourReportController extends BaseController {
         formValidation: {
           isValid: false,
           errors: {
-            reviewProgress: 'Complete all sections in Review your progress before signing and locking this report',
+            reviewProgress: config.features.unlockedSigning
+              ? 'Complete all sections in Review your progress before signing this report'
+              : 'Complete all sections in Review your progress before signing and locking this report',
           },
         },
       })

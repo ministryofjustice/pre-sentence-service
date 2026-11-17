@@ -130,8 +130,8 @@ export default class ApiController {
 
     try {
       const username = res.locals?.user?.username || 'system'
-      await this.reportService.unlockReport(reportId, username)
-      res.status(200).json({ id: reportId, status: 'COMPLETED' })
+      const report = await this.reportService.unlockReport(reportId, username)
+      res.status(200).json({ id: reportId, status: report.status })
     } catch (e) {
       const error = e as HttpError
       res.status(error.status || 500).json({ message: error.message })

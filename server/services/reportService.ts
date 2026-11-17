@@ -11,6 +11,7 @@ import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from 
 import { htmlToPlainText } from '../utils/htmlToPlainText'
 import { EntityManager, getConnection } from 'typeorm'
 import createError from 'http-errors'
+import config from '../config'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -223,15 +224,25 @@ export default class ReportService {
       throw createError(404, `Report ${id} not found`)
     }
 
+    let previousStatus = report.status
+
     if (report.status !== ReportStatus.COMPLETED) {
-      throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      if (
+        config.features.unlockedSigning &&
+        report.status === ReportStatus.STARTED &&
+        (await this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED))
+      ) {
+        previousStatus = ReportStatus.STARTED
+      } else {
+        throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      }
     }
 
     const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.LOCKED })
 
     await this.reportStatusHistoryService.recordStatusChange({
       reportId: id,
-      previousStatus: ReportStatus.COMPLETED,
+      previousStatus,
       newStatus: ReportStatus.LOCKED,
       changedBy: username,
     })
@@ -250,16 +261,50 @@ export default class ReportService {
       throw createError(409, `Report ${id} is not in a LOCKED state`)
     }
 
-    const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.COMPLETED })
+    let targetStatus = ReportStatus.COMPLETED
+
+    if (config.features.unlockedSigning) {
+      const latestLock = await this.reportStatusHistoryService.getLatestStatusChangeTo(id, ReportStatus.LOCKED)
+      targetStatus = (latestLock?.previousStatus as ReportStatus) ?? ReportStatus.COMPLETED
+    }
+
+    const updated = await this.reportDetailsService.updateReportDetails(id, { status: targetStatus })
 
     await this.reportStatusHistoryService.recordStatusChange({
       reportId: id,
       previousStatus: ReportStatus.LOCKED,
-      newStatus: ReportStatus.COMPLETED,
+      newStatus: targetStatus,
       changedBy: username,
     })
 
     return updated as ReportDetails
+  }
+
+  public async reopenReport(id: string, username: string): Promise<void> {
+    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+
+    if (!report || report.isDeleted) {
+      throw createError(404, `Report ${id} not found`)
+    }
+
+    if (report.status !== ReportStatus.COMPLETED) {
+      throw createError(409, `Report ${id} is not in a COMPLETED state`)
+    }
+
+    const pages = (report.pages || []).map(page => {
+      if (page.name !== 'sign-your-report') {
+        return page
+      }
+
+      return {
+        ...page,
+        questions: page.questions.filter(
+          question => question.value !== 'signReportName' && question.value !== 'professionalStatus'
+        ),
+      }
+    })
+
+    await this.updateReport(id, { status: ReportStatus.STARTED, submittedAt: null, pages }, undefined, username)
   }
 
   public async deleteCompletedReport(id: string, username: string): Promise<void> {
@@ -412,6 +457,10 @@ export default class ReportService {
 
   public async updateReportStatus(reportId: string, status: ReportStatus): Promise<ReportDetails | null> {
     return this.reportDetailsService.updateReportStatus(reportId, status)
+  }
+
+  public async hasReportBeenSigned(id: string): Promise<boolean> {
+    return this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED)
   }
 
   public async getAllReportsPaginated(

@@ -7,16 +7,18 @@
 
 {% set progress = data.sectionStatuses %}
 
+{% set signJourneyLabel = "Sign your report" if featureUnlockedSigning else "Sign and lock your report" %}
+
 {% if data.reviewSectionsComplete %}
   {% set signAndLockItem = {
-      text: "Sign and lock your report",
+      text: signJourneyLabel,
       href: "/" + reportPath + "/" + reportId + "/sign-your-report",
       state: "Ready to view"
     }
   %}
 {% else %}
   {% set signAndLockItem = {
-      text: "Sign and lock your report",
+      text: signJourneyLabel,
       state: "Cannot start yet"
     }
   %}
@@ -154,7 +156,7 @@
         },
         {
           heading: {
-            text: "Sign and lock your report",
+            text: signJourneyLabel,
             classes: "govuk-heading-l govuk-!-margin-bottom-3"
           },
           items: [
