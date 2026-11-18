@@ -1,4 +1,5 @@
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
+import { dataSource } from '../repositories/db'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
 
 export interface IReportPage {
@@ -25,7 +26,7 @@ export interface IReportDetails {
 
 export default class ReportDetailsService {
   public async createReportDetails(reportData: IReportDetails): Promise<ReportDetails> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
+    const reportRepository = dataSource.getRepository(ReportDetails)
     const report = reportRepository.create({
       ...reportData,
       status: reportData.status || ReportStatus.NOT_STARTED,
@@ -41,53 +42,49 @@ export default class ReportDetailsService {
 
   public async getReportDetailsById(
     id: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<ReportDetails | null> {
     return manager.getRepository(ReportDetails).findOne({
       where: {
         id,
         isDeleted: false,
       },
-      relations: ['person'],
+      relations: { person: true },
     })
   }
 
   public async getReportDetailsByPersonId(personId: number): Promise<ReportDetails[]> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .find({
-        where: {
-          personId,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
+    return dataSource.getRepository(ReportDetails).find({
+      where: {
+        personId,
+        isDeleted: false,
+      },
+      relations: { person: true },
+    })
   }
 
   public async getReportDetailsByType(reportType: string): Promise<ReportDetails[]> {
-    return getConnection()
-      .getRepository(ReportDetails)
-      .find({
-        where: {
-          reportType,
-          isDeleted: false,
-        },
-        relations: ['person'],
-      })
+    return dataSource.getRepository(ReportDetails).find({
+      where: {
+        reportType,
+        isDeleted: false,
+      },
+      relations: { person: true },
+    })
   }
 
   public async getAllReportsPaginated(
     page: number = 1,
     limit: number = 20
   ): Promise<{ reports: ReportDetails[]; total: number; totalPages: number }> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
+    const reportRepository = dataSource.getRepository(ReportDetails)
     const skip = (page - 1) * limit
 
     const [reports, total] = await reportRepository.findAndCount({
       where: {
         isDeleted: false,
       },
-      relations: ['person'],
+      relations: { person: true },
       order: {
         createdAt: 'DESC', // Most recent first
       },
@@ -105,7 +102,7 @@ export default class ReportDetailsService {
   public async updateReportDetails(
     id: string,
     reportData: Partial<IReportDetails>,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<ReportDetails | null> {
     const reportRepository = manager.getRepository(ReportDetails)
     const report = await reportRepository.findOne({
@@ -132,7 +129,7 @@ export default class ReportDetailsService {
   public async updateReportPages(
     id: string,
     pages: IReportPage[],
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<ReportDetails | null> {
     return this.updateReportDetails(id, { pages }, manager)
   }
@@ -165,7 +162,7 @@ export default class ReportDetailsService {
   }
 
   public async deleteReportDetails(id: string): Promise<boolean> {
-    const reportRepository = getConnection().getRepository(ReportDetails)
+    const reportRepository = dataSource.getRepository(ReportDetails)
     const report = await reportRepository.findOne({ where: { id } })
 
     if (!report) {

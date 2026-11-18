@@ -1,7 +1,7 @@
 import fs from 'fs'
 import axios from 'axios'
 import * as readline from 'readline'
-import { createConnection, Connection } from 'typeorm'
+import { DataSource } from 'typeorm'
 import config from '../server/config'
 import PersonDetails from '../server/repositories/entities/personDetails'
 import ReportDetails from '../server/repositories/entities/reportDetails'
@@ -139,7 +139,7 @@ async function createReport(
   guid: string,
   defendantDetails: DeliusDefendantDetails,
   offenceDetails: DeliusOffenceDetails | null,
-  connection: Connection,
+  connection: DataSource,
   verbose = false
 ) {
   const reportType = 'short-format' // Assuming all are short-format reports
@@ -346,7 +346,7 @@ async function createReport(
 // Function to process a single GUID
 async function processGUID(
   guid: string,
-  connection: Connection,
+  connection: DataSource,
   stats: MigrationStats,
   verbose = false
 ): Promise<void> {
@@ -406,7 +406,7 @@ async function processGUID(
 // Function to process GUIDs in batches
 async function processBatch(
   guids: string[],
-  connection: Connection,
+  connection: DataSource,
   stats: MigrationStats,
   verbose = false
 ): Promise<void> {
@@ -442,7 +442,7 @@ async function migrateDeliusReports(limit?: number) {
   console.log(`   Schema: ${config.db.schema}`)
   console.log(`   Username: ${config.db.username}`)
 
-  const connection = await createConnection({
+  const connection = await new DataSource({
     type: 'postgres',
     host: String(config.db.server),
     schema: String(config.db.schema),
@@ -494,7 +494,7 @@ async function migrateDeliusReports(limit?: number) {
       )
     }
   } finally {
-    await connection.close()
+    await connection.destroy()
     console.log('\n✓ Database connection closed')
   }
 

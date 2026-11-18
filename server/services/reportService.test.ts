@@ -2,11 +2,13 @@ import ReportService from './reportService'
 import ReportDetailsService from './reportDetailsService'
 import EventService from './eventService'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
+import { dataSource } from '../repositories/db'
 
-jest.mock('typeorm', () => ({
-  ...jest.requireActual('typeorm'),
-  getConnection: jest.fn(),
+jest.mock('../repositories/db', () => ({
+  dataSource: {
+    transaction: jest.fn(),
+  },
 }))
 jest.mock('./reportDetailsService')
 jest.mock('./personDetailsService')
@@ -182,11 +184,11 @@ describe('ReportService.saveSourcesOfInformation', () => {
   const savedAnswer = () => updateFields.mock.calls[0][1][0].answer
 
   beforeEach(() => {
-    ;(getConnection as jest.Mock).mockReturnValue({
-      transaction: async (runInTransaction: (entityManager: EntityManager) => Promise<unknown>) => {
+    ;(dataSource.transaction as jest.Mock).mockImplementation(
+      async (runInTransaction: (entityManager: EntityManager) => Promise<unknown>) => {
         return runInTransaction(manager)
-      },
-    })
+      }
+    )
 
     reportService = new ReportService()
 
