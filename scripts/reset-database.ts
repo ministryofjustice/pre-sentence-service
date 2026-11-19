@@ -1,11 +1,11 @@
-import { createConnection } from 'typeorm'
+import { DataSource } from 'typeorm'
 import config from '../server/config'
 import fs from 'fs'
 
 async function resetDatabase() {
   console.log('Connecting to database...')
 
-  const connection = await createConnection({
+  const connection = await new DataSource({
     type: 'postgres',
     host: String(config.db.server),
     port: Number(config.db.port || 5432),
@@ -21,7 +21,7 @@ async function resetDatabase() {
         : false,
     synchronize: false,
     logging: false,
-  })
+  }).initialize()
 
   try {
     console.log('Terminating active connections to the database...')
@@ -62,7 +62,7 @@ async function resetDatabase() {
     console.error('Error resetting database:', error)
     throw error
   } finally {
-    await connection.close()
+    await connection.destroy()
     console.log('\nDatabase connection closed.')
   }
 }

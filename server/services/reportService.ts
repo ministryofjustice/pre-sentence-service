@@ -7,7 +7,8 @@ import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
 import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
+import { dataSource } from '../repositories/db'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -105,7 +106,7 @@ export default class ReportService {
     sourceToRemove,
     username,
   }: SaveSourcesOfInformationInput): Promise<void> {
-    await getConnection().transaction(async manager => {
+    await dataSource.transaction(async manager => {
       const report = await this.reportDetailsService.getReportDetailsById(reportId, manager)
 
       if (!report) {
