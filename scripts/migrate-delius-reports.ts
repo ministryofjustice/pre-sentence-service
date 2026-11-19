@@ -462,7 +462,7 @@ async function migrateDeliusReports(limit?: number) {
     entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
     synchronize: false,
     logging: false,
-  })
+  }).initialize()
 
   console.log('✓ Database connected successfully\n')
   console.log('='.repeat(80))

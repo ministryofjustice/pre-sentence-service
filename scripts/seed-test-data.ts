@@ -28,7 +28,7 @@ async function seedTestData() {
     entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
     synchronize: false,
     logging: false,
-  })
+  }).initialize()
 
   try {
     console.log('Clearing existing test data...')

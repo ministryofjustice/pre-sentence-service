@@ -21,7 +21,7 @@ async function resetDatabase() {
         : false,
     synchronize: false,
     logging: false,
-  })
+  }).initialize()
 
   try {
     console.log('Terminating active connections to the database...')
