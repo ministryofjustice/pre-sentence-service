@@ -27,29 +27,14 @@
 
     <h2 class="govuk-heading-m">Offence analysis</h2>
 
-    <table class="govuk-table govuk-table--no-borders">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-            <th class="govuk-table__header table-header">Offences under consideration</th>
-            <th class="govuk-table__header table-header">Date of offence</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-            <td class="govuk-table__cell govuk-body-s">
-                <strong>{{ data.offenceData.mainOffence.subCategory.description }}</strong>
-            </td>
-            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
-            </tr>
+    <div class="govuk-body-s govuk-!-margin-bottom-2"><strong>Main offence: </strong>{{ data.offenceData.mainOffence }}</div>
 
-            {% for offence in data.offenceData.additionalOffences %}
-                <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-body-s">{{ offence.subCategory.description }}</td>
-                <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if data.offenceData.additionalOffences | length %}
+        <div class="govuk-body-s govuk-!-margin-bottom-2"><strong>Additional offences:</strong></div>
+        {% for offence in data.offenceData.additionalOffences %}
+            <p class="govuk-body-s govuk-!-margin-bottom-1">{{ offence }}</p>
+        {% endfor %}
+    {% endif %}
 
     <h3 class="govuk-heading-s">Analysis of offences under consideration</h3>
 
