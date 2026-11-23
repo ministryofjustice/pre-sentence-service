@@ -3,6 +3,8 @@ import BaseController from './baseController'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { HttpError } from '../../@types/httpError'
 import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
+import logger from '../../../logger'
+import { LogEvent } from '../../utils/logging'
 
 export default class AutosaveController extends BaseController {
   public post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
@@ -66,6 +68,17 @@ export default class AutosaveController extends BaseController {
       })
     } catch (e) {
       const error = e as HttpError
+
+      logger.error(
+        {
+          event: LogEvent.RequestFailed,
+          endpoint: 'autosave',
+          reportId: req.params.reportId,
+          statusCode: error.status || 500,
+          errorMessage: error.message,
+        },
+        'Autosave operation failed'
+      )
       res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
     }
   }

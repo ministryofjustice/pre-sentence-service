@@ -84,10 +84,21 @@ export default class PreSentenceToDeliusService {
         const result = await superagent
           .get(path)
           .agent(keepaliveAgent)
-          .retry(2, err => {
-            if (err)
-              logger.warn(`PreSentenceToDeliusService: Retry handler found API error with ${err.code} ${err.message}`)
-            return undefined // retry handler only for logging retries, not to influence retry logic
+          .retry(2, (err, retryCount) => {
+            if (err) {
+              logger.warn(
+                {
+                  event: LogEvent.DependencyRetry,
+                  dependency: LogDependency.PreSentenceToDelius,
+                  retryAttempt: retryCount,
+                  errorCode: err.code,
+                  errorMessage: err.message,
+                  path,
+                },
+                `PreSentenceToDeliusService: Retry attempt ${retryCount}`
+              )
+            }
+            return undefined
           })
           .query(query)
           .set('Authorization', `Bearer ${clientToken}`)
@@ -95,7 +106,7 @@ export default class PreSentenceToDeliusService {
           .responseType(responseType)
           .timeout(timeout)
 
-        const durationMillis = Math.ceil(time - new Date().getTime())
+        const durationMillis = Math.ceil(new Date().getTime() - time)
         logger.debug(
           { path, query, durationMillis },
           'PreSentenceToDeliusService: Client GET using clientId credentials'

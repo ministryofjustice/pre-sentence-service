@@ -14,6 +14,7 @@ import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'
 import { htmlToPlainText } from '../../utils/htmlToPlainText'
 import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
+import { LogEvent } from '../../utils/logging'
 
 enum RiskLevel {
   Low = 'low',
@@ -381,6 +382,19 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
+      logger.warn(
+        {
+          event: LogEvent.ValidationFailed,
+          endpoint: this.templatePath,
+          reportId,
+          reportStatus: this.report?.status,
+          action: req.body.action,
+          errorCount: Object.keys(validatedForm.errors ?? {}).length,
+          fieldErrors: validatedForm.errors,
+        },
+        'Form validation failed'
+      )
+
       if (this.templatePath !== 'sources-of-information') {
         await this.persistOnInvalid(req, reportId)
       }

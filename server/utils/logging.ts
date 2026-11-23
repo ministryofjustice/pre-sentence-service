@@ -1,6 +1,7 @@
 // This file is used for defining constants use for log events
 export const LogEvent = {
   RequestFailed: 'request_failed',
+  ValidationFailed: 'validation_failed',
   AccessDenied: 'access_denied',
   DependencyFailed: 'dependency_failed',
   DependencyRetry: 'dependency_retry',
@@ -30,3 +31,17 @@ export const LogHttpMethod = {
   Get: 'GET',
   Post: 'POST',
 } as const
+
+export const ErrorType = {
+  Authentication: 'authentication',
+  ClientError: 'client_error',
+  ServerError: 'server_error',
+  Unknown: 'unknown',
+} as const
+
+export function classifyError(error: { status?: number }): string {
+  if (error.status === 401 || error.status === 403) return ErrorType.Authentication
+  if (error.status && error.status >= 400 && error.status < 500) return ErrorType.ClientError
+  if (error.status && error.status >= 500) return ErrorType.ServerError
+  return ErrorType.Unknown
+}

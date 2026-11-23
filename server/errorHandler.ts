@@ -1,14 +1,17 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { HTTPError } from 'superagent'
 import logger from '../logger'
-import { LogEvent } from './utils/logging'
+import { LogEvent, classifyError } from './utils/logging'
 
 export default function createErrorHandler(production: boolean) {
   return (error: HTTPError, req: Request, res: Response, next: NextFunction): void => {
+    const errorType = classifyError(error)
+
     logger.error(
       {
         err: error,
         event: LogEvent.RequestFailed,
+        errorType,
         httpMethod: req.method,
         statusCode: error.status || 500,
         originalUrl: req.originalUrl,
