@@ -59,16 +59,20 @@ export default class SignYourReportController extends BaseController {
     }
   }
 
-  protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
+  private loadSigningHistory = async (reportId: string): Promise<void> => {
     if (!config.features.unlockedSigning) {
       return
     }
 
-    const previouslySigned = await this.reportService.hasReportBeenSigned(req.params.reportId)
+    const previouslySigned = await this.reportService.hasReportBeenSigned(reportId)
     this.data = {
       ...this.data,
       previouslySigned,
     }
+  }
+
+  protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
+    await this.loadSigningHistory(req.params.reportId)
   }
 
   override post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
@@ -106,6 +110,8 @@ export default class SignYourReportController extends BaseController {
 
     this.report = rep
 
+    await this.loadSigningHistory(reportId)
+
     const validatedForm = validateForm(req.body, this.model)
     if (!validatedForm.isValid) {
       logger.warn('Form validation failed for sign and lock', {
@@ -130,6 +136,7 @@ export default class SignYourReportController extends BaseController {
       ...this.report,
       ...apiDefendantData,
       ...req.body,
+      ...(config.features.unlockedSigning ? { previouslySigned: this.data.previouslySigned } : {}),
     }
 
     // Fetch sources of information to determine if all sections are complete before signing and locking

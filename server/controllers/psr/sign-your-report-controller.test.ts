@@ -317,6 +317,91 @@ describe('SignYourReportController', () => {
     })
   })
 
+  describe('data.previouslySigned on POST error renders', () => {
+    beforeEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = true
+      ;(reportService.hasReportBeenSigned as jest.Mock).mockResolvedValue(true)
+    })
+
+    afterEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+    })
+
+    it('is supplied when review sections are incomplete', async () => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.objectContaining({ reviewProgressBlocked: true, previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is supplied when form validation fails', async () => {
+      req.body = { signReportName: 'Officer Name' }
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        id: '123',
+        pages: completePages,
+      })
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({ isValid: false }),
+          data: expect.objectContaining({ previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is supplied when submitReport fails', async () => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        id: '123',
+        pages: completePages,
+      })
+      ;(reportService.submitReport as jest.Mock).mockRejectedValue(new Error('SNS down'))
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({
+            errors: expect.objectContaining({ submission: expect.any(String) }),
+          }),
+          data: expect.objectContaining({ previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is not supplied on error renders when the flag is off', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+
+      await controller.post(req, res)
+
+      expect(reportService.hasReportBeenSigned).not.toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.not.objectContaining({ previouslySigned: expect.anything() }),
+        })
+      )
+    })
+  })
+
   describe('error copy for incomplete review progress', () => {
     beforeEach(() => {
       ;(reportService.getReportById as jest.Mock).mockResolvedValue({

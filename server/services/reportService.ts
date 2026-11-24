@@ -75,19 +75,27 @@ export default class ReportService {
       })
     }
 
-    const report = await this.reportDetailsService.createReportDetails({
-      personId: person.id!,
-      createdBy,
-    })
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.createReportDetails(
+        {
+          personId: person.id!,
+          createdBy,
+        },
+        manager
+      )
 
-    await this.reportStatusHistoryService.recordStatusChange({
-      reportId: report.id,
-      previousStatus: null,
-      newStatus: ReportStatus.NOT_STARTED,
-      changedBy: createdBy,
-    })
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: report.id,
+          previousStatus: null,
+          newStatus: ReportStatus.NOT_STARTED,
+          changedBy: createdBy,
+        },
+        manager
+      )
 
-    return report
+      return report
+    })
   }
 
   public async getReportById(id: string): Promise<ReportDetails | null> {
@@ -194,6 +202,19 @@ export default class ReportService {
     manager?: EntityManager,
     username = 'system'
   ): Promise<ReportDetails | null> {
+    if (manager) {
+      return this.applyReportUpdate(id, updates, manager, username)
+    }
+
+    return dataSource.transaction(txManager => this.applyReportUpdate(id, updates, txManager, username))
+  }
+
+  private async applyReportUpdate(
+    id: string,
+    updates: Partial<IReportDetails>,
+    manager: EntityManager,
+    username: string
+  ): Promise<ReportDetails | null> {
     let previousStatus: ReportStatus | undefined
 
     if (updates.status !== undefined) {
@@ -219,135 +240,161 @@ export default class ReportService {
   }
 
   public async lockReport(id: string, username: string): Promise<ReportDetails> {
-    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
 
-    if (!report || report.isDeleted) {
-      throw createError(404, `Report ${id} not found`)
-    }
-
-    let previousStatus = report.status
-
-    if (report.status !== ReportStatus.COMPLETED) {
-      if (
-        config.features.unlockedSigning &&
-        report.status === ReportStatus.STARTED &&
-        (await this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED))
-      ) {
-        previousStatus = ReportStatus.STARTED
-      } else {
-        throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
       }
-    }
 
-    const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.LOCKED })
+      let previousStatus = report.status
 
-    await this.reportStatusHistoryService.recordStatusChange({
-      reportId: id,
-      previousStatus,
-      newStatus: ReportStatus.LOCKED,
-      changedBy: username,
+      if (report.status !== ReportStatus.COMPLETED) {
+        if (
+          config.features.unlockedSigning &&
+          report.status === ReportStatus.STARTED &&
+          (await this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED, manager))
+        ) {
+          previousStatus = ReportStatus.STARTED
+        } else {
+          throw createError(409, `Report ${id} is not in a COMPLETED state`)
+        }
+      }
+
+      const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.LOCKED }, manager)
+
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus,
+          newStatus: ReportStatus.LOCKED,
+          changedBy: username,
+        },
+        manager
+      )
+
+      return updated as ReportDetails
     })
-
-    return updated as ReportDetails
   }
 
   public async unlockReport(id: string, username: string): Promise<ReportDetails> {
-    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
 
-    if (!report || report.isDeleted) {
-      throw createError(404, `Report ${id} not found`)
-    }
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
 
-    if (report.status !== ReportStatus.LOCKED) {
-      throw createError(409, `Report ${id} is not in a LOCKED state`)
-    }
+      if (report.status !== ReportStatus.LOCKED) {
+        throw createError(409, `Report ${id} is not in a LOCKED state`)
+      }
 
-    let targetStatus = ReportStatus.COMPLETED
+      let targetStatus = ReportStatus.COMPLETED
 
-    if (config.features.unlockedSigning) {
-      const latestLock = await this.reportStatusHistoryService.getLatestStatusChangeTo(id, ReportStatus.LOCKED)
-      targetStatus = (latestLock?.previousStatus as ReportStatus) ?? ReportStatus.COMPLETED
-    }
+      if (config.features.unlockedSigning) {
+        const latestLock = await this.reportStatusHistoryService.getLatestStatusChangeTo(
+          id,
+          ReportStatus.LOCKED,
+          manager
+        )
+        targetStatus = (latestLock?.previousStatus as ReportStatus) ?? ReportStatus.COMPLETED
+      }
 
-    const updated = await this.reportDetailsService.updateReportDetails(id, { status: targetStatus })
+      const updated = await this.reportDetailsService.updateReportDetails(id, { status: targetStatus }, manager)
 
-    await this.reportStatusHistoryService.recordStatusChange({
-      reportId: id,
-      previousStatus: ReportStatus.LOCKED,
-      newStatus: targetStatus,
-      changedBy: username,
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: ReportStatus.LOCKED,
+          newStatus: targetStatus,
+          changedBy: username,
+        },
+        manager
+      )
+
+      return updated as ReportDetails
     })
-
-    return updated as ReportDetails
   }
 
   public async reopenReport(id: string, username: string): Promise<void> {
-    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+    await dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
 
-    if (!report || report.isDeleted) {
-      throw createError(404, `Report ${id} not found`)
-    }
-
-    if (report.status !== ReportStatus.COMPLETED) {
-      throw createError(409, `Report ${id} is not in a COMPLETED state`)
-    }
-
-    const pages = (report.pages || []).map(page => {
-      if (page.name !== 'sign-your-report') {
-        return page
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
       }
 
-      return {
-        ...page,
-        questions: page.questions.filter(
-          question => question.value !== 'signReportName' && question.value !== 'professionalStatus'
-        ),
+      if (report.status !== ReportStatus.COMPLETED) {
+        throw createError(409, `Report ${id} is not in a COMPLETED state`)
       }
+
+      const pages = (report.pages || []).map(page => {
+        if (page.name !== 'sign-your-report') {
+          return page
+        }
+
+        return {
+          ...page,
+          questions: page.questions.filter(
+            question => question.value !== 'signReportName' && question.value !== 'professionalStatus'
+          ),
+        }
+      })
+
+      await this.updateReport(id, { status: ReportStatus.STARTED, submittedAt: null, pages }, manager, username)
     })
-
-    await this.updateReport(id, { status: ReportStatus.STARTED, submittedAt: null, pages }, undefined, username)
   }
 
   public async deleteCompletedReport(id: string, username: string): Promise<void> {
-    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+    await dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
 
-    if (!report || report.isDeleted) {
-      throw createError(404, `Report ${id} not found`)
-    }
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
 
-    if (report.status !== ReportStatus.COMPLETED) {
-      throw createError(409, `Report ${id} is not in a COMPLETED state`)
-    }
+      if (report.status !== ReportStatus.COMPLETED) {
+        throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      }
 
-    await this.reportDetailsService.deleteReportDetails(id)
+      await this.reportDetailsService.deleteReportDetails(id, manager)
 
-    await this.reportStatusHistoryService.recordStatusChange({
-      reportId: id,
-      previousStatus: ReportStatus.COMPLETED,
-      newStatus: DELETED_STATUS,
-      changedBy: username,
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: ReportStatus.COMPLETED,
+          newStatus: DELETED_STATUS,
+          changedBy: username,
+        },
+        manager
+      )
     })
   }
 
   public async deleteReport(id: string, username = 'system'): Promise<boolean> {
-    const report = await this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
 
-    if (!report || report.isDeleted) {
-      return this.reportDetailsService.deleteReportDetails(id)
-    }
+      if (!report || report.isDeleted) {
+        return this.reportDetailsService.deleteReportDetails(id, manager)
+      }
 
-    const deleted = await this.reportDetailsService.deleteReportDetails(id)
+      const deleted = await this.reportDetailsService.deleteReportDetails(id, manager)
 
-    if (deleted) {
-      await this.reportStatusHistoryService.recordStatusChange({
-        reportId: id,
-        previousStatus: report.status,
-        newStatus: DELETED_STATUS,
-        changedBy: username,
-      })
-    }
+      if (deleted) {
+        await this.reportStatusHistoryService.recordStatusChange(
+          {
+            reportId: id,
+            previousStatus: report.status,
+            newStatus: DELETED_STATUS,
+            changedBy: username,
+          },
+          manager
+        )
+      }
 
-    return deleted
+      return deleted
+    })
   }
 
   public async updateFieldValues(
@@ -482,35 +529,48 @@ export default class ReportService {
   ): Promise<ReportDetails> {
     const submittedAt = new Date()
 
-    const existing = await this.reportDetailsService.getReportDetailsById(reportId)
-    if (!existing) {
-      throw new Error(`Report ${reportId} not found when stamping submittedAt`)
-    }
-    const previousStatus = existing.status
+    const { stamped, previousStatus, historyRow } = await dataSource.transaction(async manager => {
+      const existing = await this.reportDetailsService.getReportDetailsByIdForUpdate(reportId, manager)
+      if (!existing || existing.isDeleted) {
+        throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+      }
 
-    const stamped = await this.reportDetailsService.updateReportDetails(reportId, {
-      submittedAt,
-      status: ReportStatus.COMPLETED,
+      const stampedReport = await this.reportDetailsService.updateReportDetails(
+        reportId,
+        {
+          submittedAt,
+          status: ReportStatus.COMPLETED,
+        },
+        manager
+      )
+      if (!stampedReport) {
+        throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+      }
+
+      const history: ReportStatusHistory = await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId,
+          previousStatus: existing.status,
+          newStatus: ReportStatus.COMPLETED,
+          changedBy: eventData.username,
+        },
+        manager
+      )
+
+      return { stamped: stampedReport, previousStatus: existing.status, historyRow: history }
     })
-    if (!stamped) {
-      throw new Error(`Report ${reportId} not found when stamping submittedAt`)
-    }
-
-    let historyRow: ReportStatusHistory | undefined
 
     try {
-      historyRow = await this.reportStatusHistoryService.recordStatusChange({
-        reportId,
-        previousStatus,
-        newStatus: ReportStatus.COMPLETED,
-        changedBy: eventData.username,
-      })
       await this.publishWithRetry(eventService, { ...eventData, reportId })
     } catch (error) {
-      await this.reportDetailsService.updateReportDetails(reportId, { submittedAt: null, status: previousStatus })
-      if (historyRow) {
-        await this.reportStatusHistoryService.removeStatusChange(historyRow.id)
-      }
+      await dataSource.transaction(async manager => {
+        await this.reportDetailsService.updateReportDetails(
+          reportId,
+          { submittedAt: null, status: previousStatus },
+          manager
+        )
+        await this.reportStatusHistoryService.removeStatusChange(historyRow.id, manager)
+      })
       throw error
     }
 
