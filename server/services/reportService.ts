@@ -1,13 +1,17 @@
 import PersonDetailsService from './personDetailsService'
 import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetailsService'
 import SourcesOfInformationService from './sourcesOfInformationService'
+import ReportStatusHistoryService, { DELETED_STATUS } from './reportStatusHistoryService'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
+import ReportStatusHistory from '../repositories/entities/reportStatusHistory'
 import EventService, { IReportEventData } from './eventService'
 import logger from '../../logger'
 import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from '../utils/validation'
 import { htmlToPlainText } from '../utils/htmlToPlainText'
 import { EntityManager } from 'typeorm'
+import createError from 'http-errors'
+import config from '../config'
 import { dataSource } from '../repositories/db'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
@@ -52,11 +56,13 @@ export default class ReportService {
   private personDetailsService: PersonDetailsService
   private reportDetailsService: ReportDetailsService
   private sourcesOfInformationService: SourcesOfInformationService
+  private reportStatusHistoryService: ReportStatusHistoryService
 
   constructor() {
     this.personDetailsService = new PersonDetailsService()
     this.reportDetailsService = new ReportDetailsService()
     this.sourcesOfInformationService = new SourcesOfInformationService()
+    this.reportStatusHistoryService = new ReportStatusHistoryService()
   }
 
   public async createReport(reportData: IReport, createdBy: string): Promise<ReportDetails> {
@@ -69,16 +75,35 @@ export default class ReportService {
       })
     }
 
-    const report = await this.reportDetailsService.createReportDetails({
-      personId: person.id!,
-      createdBy,
-    })
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.createReportDetails(
+        {
+          personId: person.id!,
+          createdBy,
+        },
+        manager
+      )
 
-    return report
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: report.id,
+          previousStatus: null,
+          newStatus: ReportStatus.NOT_STARTED,
+          changedBy: createdBy,
+        },
+        manager
+      )
+
+      return report
+    })
   }
 
   public async getReportById(id: string): Promise<ReportDetails | null> {
     return this.reportDetailsService.getReportDetailsById(id)
+  }
+
+  public async getReportByIdIncludingDeleted(id: string): Promise<ReportDetails | null> {
+    return this.reportDetailsService.getReportDetailsByIdIncludingDeleted(id)
   }
 
   public async getSourcesOfInformation(reportId: string, manager?: EntityManager): Promise<SourceOfInformation[]> {
@@ -136,7 +161,7 @@ export default class ReportService {
       if (report.status === ReportStatus.NOT_STARTED) {
         const today = new Date()
 
-        await this.updateReport(reportId, { status: ReportStatus.STARTED }, manager)
+        await this.updateReport(reportId, { status: ReportStatus.STARTED }, manager, username)
 
         fields.push(
           {
@@ -174,13 +199,202 @@ export default class ReportService {
   public async updateReport(
     id: string,
     updates: Partial<IReportDetails>,
-    manager?: EntityManager
+    manager?: EntityManager,
+    username = 'system'
   ): Promise<ReportDetails | null> {
-    return this.reportDetailsService.updateReportDetails(id, updates, manager)
+    if (manager) {
+      return this.applyReportUpdate(id, updates, manager, username)
+    }
+
+    return dataSource.transaction(txManager => this.applyReportUpdate(id, updates, txManager, username))
   }
 
-  public async deleteReport(id: string): Promise<boolean> {
-    return this.reportDetailsService.deleteReportDetails(id)
+  private async applyReportUpdate(
+    id: string,
+    updates: Partial<IReportDetails>,
+    manager: EntityManager,
+    username: string
+  ): Promise<ReportDetails | null> {
+    let previousStatus: ReportStatus | undefined
+
+    if (updates.status !== undefined) {
+      const currentReport = await this.reportDetailsService.getReportDetailsById(id, manager)
+      previousStatus = currentReport?.status
+    }
+
+    const updated = await this.reportDetailsService.updateReportDetails(id, updates, manager)
+
+    if (updates.status !== undefined && updated && previousStatus !== updates.status) {
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: previousStatus ?? null,
+          newStatus: updates.status,
+          changedBy: username,
+        },
+        manager
+      )
+    }
+
+    return updated
+  }
+
+  public async lockReport(id: string, username: string): Promise<ReportDetails> {
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
+
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
+
+      let previousStatus = report.status
+
+      if (report.status !== ReportStatus.COMPLETED) {
+        if (
+          config.features.unlockedSigning &&
+          report.status === ReportStatus.STARTED &&
+          (await this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED, manager))
+        ) {
+          previousStatus = ReportStatus.STARTED
+        } else {
+          throw createError(409, `Report ${id} is not in a COMPLETED state`)
+        }
+      }
+
+      const updated = await this.reportDetailsService.updateReportDetails(id, { status: ReportStatus.LOCKED }, manager)
+
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus,
+          newStatus: ReportStatus.LOCKED,
+          changedBy: username,
+        },
+        manager
+      )
+
+      return updated as ReportDetails
+    })
+  }
+
+  public async unlockReport(id: string, username: string): Promise<ReportDetails> {
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
+
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
+
+      if (report.status !== ReportStatus.LOCKED) {
+        throw createError(409, `Report ${id} is not in a LOCKED state`)
+      }
+
+      let targetStatus = ReportStatus.COMPLETED
+
+      if (config.features.unlockedSigning) {
+        const latestLock = await this.reportStatusHistoryService.getLatestStatusChangeTo(
+          id,
+          ReportStatus.LOCKED,
+          manager
+        )
+        targetStatus = (latestLock?.previousStatus as ReportStatus) ?? ReportStatus.COMPLETED
+      }
+
+      const updated = await this.reportDetailsService.updateReportDetails(id, { status: targetStatus }, manager)
+
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: ReportStatus.LOCKED,
+          newStatus: targetStatus,
+          changedBy: username,
+        },
+        manager
+      )
+
+      return updated as ReportDetails
+    })
+  }
+
+  public async reopenReport(id: string, username: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
+
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
+
+      if (report.status !== ReportStatus.COMPLETED) {
+        throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      }
+
+      const pages = (report.pages || []).map(page => {
+        if (page.name !== 'sign-your-report') {
+          return page
+        }
+
+        return {
+          ...page,
+          questions: page.questions.filter(
+            question => question.value !== 'signReportName' && question.value !== 'professionalStatus'
+          ),
+        }
+      })
+
+      await this.updateReport(id, { status: ReportStatus.STARTED, submittedAt: null, pages }, manager, username)
+    })
+  }
+
+  public async deleteCompletedReport(id: string, username: string): Promise<void> {
+    await dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
+
+      if (!report || report.isDeleted) {
+        throw createError(404, `Report ${id} not found`)
+      }
+
+      if (report.status !== ReportStatus.COMPLETED) {
+        throw createError(409, `Report ${id} is not in a COMPLETED state`)
+      }
+
+      await this.reportDetailsService.deleteReportDetails(id, manager)
+
+      await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId: id,
+          previousStatus: ReportStatus.COMPLETED,
+          newStatus: DELETED_STATUS,
+          changedBy: username,
+        },
+        manager
+      )
+    })
+  }
+
+  public async deleteReport(id: string, username = 'system'): Promise<boolean> {
+    return dataSource.transaction(async manager => {
+      const report = await this.reportDetailsService.getReportDetailsByIdForUpdate(id, manager)
+
+      if (!report || report.isDeleted) {
+        return this.reportDetailsService.deleteReportDetails(id, manager)
+      }
+
+      const deleted = await this.reportDetailsService.deleteReportDetails(id, manager)
+
+      if (deleted) {
+        await this.reportStatusHistoryService.recordStatusChange(
+          {
+            reportId: id,
+            previousStatus: report.status,
+            newStatus: DELETED_STATUS,
+            changedBy: username,
+          },
+          manager
+        )
+      }
+
+      return deleted
+    })
   }
 
   public async updateFieldValues(
@@ -293,6 +507,10 @@ export default class ReportService {
     return this.reportDetailsService.updateReportStatus(reportId, status)
   }
 
+  public async hasReportBeenSigned(id: string): Promise<boolean> {
+    return this.reportStatusHistoryService.hasEverHadStatus(id, ReportStatus.COMPLETED)
+  }
+
   public async getAllReportsPaginated(
     page: number = 1,
     limit: number = 20
@@ -311,15 +529,48 @@ export default class ReportService {
   ): Promise<ReportDetails> {
     const submittedAt = new Date()
 
-    const stamped = await this.reportDetailsService.updateReportDetails(reportId, { submittedAt })
-    if (!stamped) {
-      throw new Error(`Report ${reportId} not found when stamping submittedAt`)
-    }
+    const { stamped, previousStatus, historyRow } = await dataSource.transaction(async manager => {
+      const existing = await this.reportDetailsService.getReportDetailsByIdForUpdate(reportId, manager)
+      if (!existing || existing.isDeleted) {
+        throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+      }
+
+      const stampedReport = await this.reportDetailsService.updateReportDetails(
+        reportId,
+        {
+          submittedAt,
+          status: ReportStatus.COMPLETED,
+        },
+        manager
+      )
+      if (!stampedReport) {
+        throw new Error(`Report ${reportId} not found when stamping submittedAt`)
+      }
+
+      const history: ReportStatusHistory = await this.reportStatusHistoryService.recordStatusChange(
+        {
+          reportId,
+          previousStatus: existing.status,
+          newStatus: ReportStatus.COMPLETED,
+          changedBy: eventData.username,
+        },
+        manager
+      )
+
+      return { stamped: stampedReport, previousStatus: existing.status, historyRow: history }
+    })
 
     try {
       await this.publishWithRetry(eventService, { ...eventData, reportId })
     } catch (error) {
-      await this.reportDetailsService.updateReportDetails(reportId, { submittedAt: null })
+      await dataSource.transaction(async manager => {
+        await this.reportDetailsService.updateReportDetails(
+          reportId,
+          { submittedAt: null, status: previousStatus },
+          manager
+        )
+        await this.reportStatusHistoryService.removeStatusChange(historyRow.id, manager)
+      })
       throw error
     }
 

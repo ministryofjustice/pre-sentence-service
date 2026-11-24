@@ -274,7 +274,7 @@ export default class SharedController {
     }
   }
 
-  protected updateReportActions = async (req: Request) => {
+  protected updateReportActions = async (req: Request, username: string) => {
     if (this.correctFormData) {
       req.body = {
         ...req.body,
@@ -283,7 +283,7 @@ export default class SharedController {
     }
 
     if (this.report && this.report.status === ReportStatus.NOT_STARTED) {
-      await this.reportService.updateReport(this.report.id!, { status: ReportStatus.STARTED })
+      await this.reportService.updateReport(this.report.id!, { status: ReportStatus.STARTED }, undefined, username)
       await this.setStartedDate()
     } else if (this.report && this.report.id) {
       await this.reportService.updateReport(this.report.id, {})
@@ -372,7 +372,7 @@ export default class SharedController {
           username,
         })
       } else {
-        await this.updateReportActions(req)
+        await this.updateReportActions(req, username)
       }
 
       if (this.additionalPostAction) {
@@ -382,7 +382,7 @@ export default class SharedController {
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
       if (this.templatePath !== 'sources-of-information') {
-        await this.persistOnInvalid(req, reportId)
+        await this.persistOnInvalid(req, reportId, username)
       }
 
       let sourcesOfInformation: SourceOfInformation[] | undefined
@@ -412,14 +412,14 @@ export default class SharedController {
     )
   }
 
-  private persistOnInvalid = async (req: Request, reportId: string): Promise<void> => {
+  private persistOnInvalid = async (req: Request, reportId: string, username: string): Promise<void> => {
     if (!this.report?.id) return
 
     const body = this.correctFormData ? { ...req.body, ...this.correctFormData(req) } : { ...req.body }
     const dropKeys = this.structurallyInvalidFields(body)
 
     if (this.report.status === ReportStatus.NOT_STARTED) {
-      await this.reportService.updateReport(this.report.id, { status: ReportStatus.STARTED })
+      await this.reportService.updateReport(this.report.id, { status: ReportStatus.STARTED }, undefined, username)
     } else {
       await this.reportService.updateReport(this.report.id, {})
     }

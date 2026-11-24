@@ -1,0 +1,30 @@
+{% extends "../partials/sharedPageLayout.njk" %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% set pageTitle = "Edit a completed pre-sentence report" %}
+
+{% block pageTitle %}
+  {{ pageTitle }}
+{% endblock %}
+
+{% block content %}
+  <main class="govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Edit a completed pre-sentence report</h1>
+        <p class="govuk-body">This PSR was last signed and completed by {{ signedBy }} on {{ signedAt | formatDateLong }} at {{ signedAt | formatTimeHM }}.</p>
+
+        {{ govukWarningText({
+          "text": "Reopening this report will mark it incomplete until you sign it again.",
+          "iconFallbackText": "Warning"
+        }) }}
+
+        <form method="post">
+          <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+          <button class="govuk-button" data-module="govuk-button">Re-open report</button>
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

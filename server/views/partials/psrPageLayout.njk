@@ -1,6 +1,8 @@
 {% extends "./sharedPageLayout.njk" %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% set signJourneyLabel = "Sign your report" if featureUnlockedSigning else "Sign and lock your report" %}
+
 {% set navItems = [
   {
     text: 'Defendant details',
@@ -38,9 +40,9 @@
     active: currentPage === 'Review your progress'
   },
   {
-    text: 'Sign and lock your report',
+    text: signJourneyLabel,
     href: '/psr/' + reportId + '/sign-your-report',
-    active: currentPage === 'Sign and lock your report'
+    active: currentPage === signJourneyLabel
   } if data.reviewSectionsComplete
 ] %}
 

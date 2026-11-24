@@ -4,6 +4,7 @@ import PdfGenerationService from './pdfGenerationService'
 import PreSentenceToDeliusService from './preSentenceToDeliusService'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import ReportDetails from '../repositories/entities/reportDetails'
+import config from '../config'
 
 jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('image'))
 
@@ -90,5 +91,25 @@ describe('PdfGenerationService', () => {
       }),
       expect.anything()
     )
+  })
+
+  it('passes featureUnlockedSigning from config into the render data', async () => {
+    const renderPDF = jest.fn()
+    const res = { renderPDF } as unknown as Response
+    const service = new PdfGenerationService(preSentenceToDeliusService, sourcesOfInformationService)
+    const originalFlag = config.features.unlockedSigning
+
+    try {
+      config.features.unlockedSigning = true
+      await service.generatePdf(report, res)
+
+      expect(renderPDF).toHaveBeenCalledWith(
+        'reports/psr',
+        expect.objectContaining({ featureUnlockedSigning: true }),
+        expect.anything()
+      )
+    } finally {
+      config.features.unlockedSigning = originalFlag
+    }
   })
 })

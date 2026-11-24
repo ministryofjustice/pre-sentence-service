@@ -6,6 +6,7 @@ import config from '../config'
 import LocalAuthorities from './entities/localAuthorities'
 import PersonDetails from './entities/personDetails'
 import ReportDetails from './entities/reportDetails'
+import ReportStatusHistory from './entities/reportStatusHistory'
 import SourcesOfInformation from './entities/sourcesOfInformation'
 import ReportAndSourcesOfInformation from './entities/reportSourcesOfInformation'
 import { HttpError } from 'http-errors'
@@ -28,7 +29,14 @@ const connectionOptions: DataSourceOptions = {
           ca: fs.readFileSync('/app/certs/eu-west-2-bundle.pem').toString(),
         }
       : false,
-  entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
+  entities: [
+    LocalAuthorities,
+    PersonDetails,
+    ReportDetails,
+    ReportStatusHistory,
+    SourcesOfInformation,
+    ReportAndSourcesOfInformation,
+  ],
   migrationsRun: config.db.migrations === 'true',
   migrations: ['dist/db/migrations/*.js'],
   logging: false,
