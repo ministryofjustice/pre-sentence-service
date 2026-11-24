@@ -45,3 +45,12 @@ export function classifyError(error: { status?: number }): string {
   if (error.status && error.status >= 500) return ErrorType.ServerError
   return ErrorType.Unknown
 }
+
+export function extractEnvironment(url?: string): string {
+  const targetUrl = url || process.env.APP_URL || ''
+  if (targetUrl.includes('localhost')) return 'local'
+  if (targetUrl.includes('-dev.')) return 'dev'
+  if (targetUrl.includes('-preprod.')) return 'preprod'
+  if (targetUrl.includes('.hmpps.service.justice.gov.uk')) return 'prod'
+  return 'unknown'
+}

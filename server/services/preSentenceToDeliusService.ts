@@ -92,7 +92,7 @@ export default class PreSentenceToDeliusService {
                   dependency: LogDependency.PreSentenceToDelius,
                   retryAttempt: retryCount,
                   errorCode: err.code,
-                  errorMessage: err.message,
+                  err,
                   path,
                 },
                 `PreSentenceToDeliusService: Retry attempt ${retryCount}`

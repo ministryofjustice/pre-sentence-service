@@ -17,6 +17,7 @@ import {
   pdfOptions,
 } from '../utils/pdfFormat'
 import { LogEvent, LogDependency, LogOperation } from '../utils/logging'
+import { ensureError } from '../utils/errorHandling'
 
 export interface PdfGenerationOptions {
   draft?: boolean
@@ -148,7 +149,7 @@ export default class PdfGenerationService {
         }
       )
     } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error))
+      const err = ensureError(error)
 
       logger.error(
         {
@@ -157,7 +158,7 @@ export default class PdfGenerationService {
           operation: LogOperation.RenderPdf,
           reportId: report.id,
           errorName: err.name,
-          errorMessage: err.message,
+          err,
         },
         'PDF generation failed'
       )

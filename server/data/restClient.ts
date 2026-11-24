@@ -3,7 +3,7 @@ import Agent, { HttpsAgent } from 'agentkeepalive'
 import { Readable } from 'stream'
 
 import logger from '../../logger'
-import { LogEvent, LogHttpMethod } from '../utils/logging'
+import { classifyError, LogEvent, LogHttpMethod } from '../utils/logging'
 import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
@@ -57,7 +57,15 @@ export default class RestClient {
         .get(`${this.apiUrl()}${path}`)
         .agent(this.agent)
         .retry(2, (err, res) => {
-          if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
+          if (err) {
+            logger.info({
+              event: LogEvent.DependencyRetry,
+              dependency: this.name,
+              errorCode: err.code,
+              httpMethod: LogHttpMethod.Get,
+            }, `Retry handler found API error when calling ${this.name}`)
+          }
+
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
         .query(query)
@@ -70,6 +78,7 @@ export default class RestClient {
     } catch (e) {
       const error = e as HttpError
       const sanitisedError = sanitiseError(error)
+      const errorType = classifyError(error)
 
       logger.warn(
         {
@@ -77,7 +86,8 @@ export default class RestClient {
           dependency: this.name,
           httpMethod: LogHttpMethod.Get,
           statusCode: sanitisedError.status,
-          errorName: error.name,
+          errorType,
+          err: error,
         },
         'HTTP dependency request failed'
       )
@@ -100,7 +110,15 @@ export default class RestClient {
         .send(data)
         .agent(this.agent)
         .retry(2, (err, res) => {
-          if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
+          if (err) {
+            logger.info({
+              event: LogEvent.DependencyRetry,
+              dependency: this.name,
+              errorCode: err.code,
+              httpMethod: LogHttpMethod.Post
+            }, `Retry handler found API error when calling ${this.name}`)
+          }
+
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
         .auth(this.token, { type: 'bearer' })

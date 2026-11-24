@@ -9,6 +9,7 @@ import { LONG_TEXT_MAX, PROPOSED_SENTENCE_MAX, exceedsMaxPlainTextLength } from 
 import { htmlToPlainText } from '../utils/htmlToPlainText'
 import { EntityManager } from 'typeorm'
 import { dataSource } from '../repositories/db'
+import { ensureError } from '../utils/errorHandling'
 
 const FIELD_MAX_BY_KEY: Record<string, number> = {
   proposedSentence: PROPOSED_SENTENCE_MAX,
@@ -336,11 +337,13 @@ export default class ReportService {
         return
       } catch (error) {
         lastError = error
+        const err = ensureError(error)
+
         if (attempt < PUBLISH_MAX_ATTEMPTS) {
           logger.warn('Domain event publish attempt failed, retrying', {
             reportId: eventData.reportId,
             attempt,
-            error: error instanceof Error ? error.message : String(error),
+            err,
           })
           await sleep(PUBLISH_BACKOFF_MS[attempt - 1] ?? PUBLISH_BACKOFF_MS[PUBLISH_BACKOFF_MS.length - 1])
         }

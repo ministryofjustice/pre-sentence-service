@@ -9,6 +9,9 @@ import { transformDefendantDetails } from '../../utils/apiDataTransformers'
 import logger from '../../../logger'
 import config from '../../config'
 import { signYourReportModel } from '../../schemas/sign-your-report'
+import { classifyError, LogEvent } from '../../utils/logging'
+import { ensureError } from '../../utils/errorHandling'
+import { HttpError } from '../../@types/httpError'
 
 export { signYourReportModel } from '../../schemas/sign-your-report'
 
@@ -159,14 +162,21 @@ export default class SignYourReportController extends BaseController {
     try {
       await this.updateReportActions(req)
       logger.info('Report actions updated successfully', { reportId })
-    } catch (error) {
-      logger.error('Failed to update report actions', {
-        reportId,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      })
-      throw error
-    }
+    } catch (e) {
+        const error = e as HttpError
+        const errorType = classifyError(error)
+        
+        logger.error({
+          event: LogEvent.RequestFailed,
+          page: 'sign-your-report',
+          reportId,
+          statusCode: error.status || 500,
+          errorType,
+          err: error,
+        }, 'Failed to update report actions')
+        
+        throw error
+      }
 
     if (!this.eventService) {
       logger.error('Domain event service not available, cannot submit report', { reportId })
@@ -183,11 +193,16 @@ export default class SignYourReportController extends BaseController {
         pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
       })
     } catch (error) {
-      logger.error('Failed to submit report after retries, rolled back submittedAt', {
+      const err = ensureError(error)
+
+      logger.error({
+        event: LogEvent.RequestFailed,
+        page: 'sign-your-report',
         reportId,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      })
+        errorType: classifyError(err as HttpError),
+        err,
+      }, 'Failed to submit report after retries, rolled back submittedAt')
+
       this.renderSubmissionFailure(res, reportId, data)
       return
     }
