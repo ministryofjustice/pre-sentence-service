@@ -6,7 +6,7 @@ generic-service:
 
   ingress:
     host: pre-sentence-service-test.hmpps.service.justice.gov.uk
-    tlsSecretName: court-probation-qa-cert-secret
+    tlsSecretName: court-probation-cert-secret
 
   env:
     INGRESS_URL: "https://pre-sentence-service-test.hmpps.service.justice.gov.uk"
@@ -20,7 +20,6 @@ generic-service:
     NDELIUS_URL: "https://ndelius.test.probation.service.justice.gov.uk"
     DB_RUN_MIGRATIONS: true
     FEATURE_RICH_TEXT_EDITOR: false
-    FEATURE_SMART_SURVEY: true
     FEATURE_UNLOCKED_SIGNING: true
     SHOW_REPORT_LISTING: "true"
     WPROOFREADER_BUNDLE_URL: "https://pre-sentence-service-wproofreader-qa.hmpps.service.justice.gov.uk/wscservice/wscbundle/wscbundle.js"
@@ -42,4 +41,4 @@ gotenberg:
 wproofreader:
   ingress:
     host: pre-sentence-service-wproofreader-qa.hmpps.service.justice.gov.uk
-    tlsSecretName: court-probation-qa-cert-secret
+    tlsSecretName: court-probation-cert-secret

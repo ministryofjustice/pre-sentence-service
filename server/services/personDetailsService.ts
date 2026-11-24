@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm'
+import { dataSource } from '../repositories/db'
 import PersonDetails from '../repositories/entities/personDetails'
 
 export interface IPersonDetails {
@@ -11,7 +11,7 @@ export interface IPersonDetails {
 
 export default class PersonDetailsService {
   public async createPersonDetails(personData: IPersonDetails): Promise<PersonDetails> {
-    const personRepository = getConnection().getRepository(PersonDetails)
+    const personRepository = dataSource.getRepository(PersonDetails)
     const person = personRepository.create({
       ...personData,
       createdAt: new Date(),
@@ -23,29 +23,25 @@ export default class PersonDetailsService {
   }
 
   public async getPersonDetailsByCrn(crn: string): Promise<PersonDetails | null> {
-    return getConnection()
-      .getRepository(PersonDetails)
-      .findOne({
-        where: {
-          crn: crn.toUpperCase(),
-          isDeleted: false,
-        },
-      })
+    return dataSource.getRepository(PersonDetails).findOne({
+      where: {
+        crn: crn.toUpperCase(),
+        isDeleted: false,
+      },
+    })
   }
 
   public async getPersonDetailsById(id: number): Promise<PersonDetails | null> {
-    return getConnection()
-      .getRepository(PersonDetails)
-      .findOne({
-        where: {
-          id,
-          isDeleted: false,
-        },
-      })
+    return dataSource.getRepository(PersonDetails).findOne({
+      where: {
+        id,
+        isDeleted: false,
+      },
+    })
   }
 
   public async deletePersonDetails(id: number): Promise<boolean> {
-    const personRepository = getConnection().getRepository(PersonDetails)
+    const personRepository = dataSource.getRepository(PersonDetails)
     const person = await personRepository.findOne({ where: { id } })
 
     if (!person) {

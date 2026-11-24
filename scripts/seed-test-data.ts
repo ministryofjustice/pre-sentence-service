@@ -1,4 +1,4 @@
-import { createConnection } from 'typeorm'
+import { DataSource } from 'typeorm'
 import config from '../server/config'
 import fs from 'fs'
 import LocalAuthorities from '../server/repositories/entities/localAuthorities'
@@ -10,7 +10,7 @@ import ReportAndSourcesOfInformation from '../server/repositories/entities/repor
 async function seedTestData() {
   console.log('Connecting to database...')
 
-  const connection = await createConnection({
+  const connection = await new DataSource({
     type: 'postgres',
     host: String(config.db.server),
     schema: String(config.db.schema),
@@ -28,7 +28,7 @@ async function seedTestData() {
     entities: [LocalAuthorities, PersonDetails, ReportDetails, SourcesOfInformation, ReportAndSourcesOfInformation],
     synchronize: false,
     logging: false,
-  })
+  }).initialize()
 
   try {
     console.log('Clearing existing test data...')
@@ -226,7 +226,7 @@ async function seedTestData() {
     console.error('Error seeding test data:', error)
     throw error
   } finally {
-    await connection.close()
+    await connection.destroy()
     console.log('\nDatabase connection closed.')
   }
 }

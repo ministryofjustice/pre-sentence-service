@@ -1,9 +1,13 @@
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
 import ReportStatusHistoryService from './reportStatusHistoryService'
+import { dataSource } from '../repositories/db'
 
-jest.mock('typeorm', () => ({
-  ...jest.requireActual('typeorm'),
-  getConnection: jest.fn(),
+jest.mock('../repositories/db', () => ({
+  dataSource: {
+    manager: {
+      getRepository: jest.fn(),
+    },
+  },
 }))
 
 describe('ReportStatusHistoryService', () => {
@@ -19,11 +23,7 @@ describe('ReportStatusHistoryService', () => {
       count: jest.fn(),
       findOne: jest.fn(),
     }
-    ;(getConnection as jest.Mock).mockReturnValue({
-      manager: {
-        getRepository: jest.fn().mockReturnValue(repository),
-      },
-    })
+    ;(dataSource.manager.getRepository as jest.Mock).mockReturnValue(repository)
   })
 
   it('recordStatusChange saves a row with the given fields and a changedAt date', async () => {
@@ -64,7 +64,7 @@ describe('ReportStatusHistoryService', () => {
     )
 
     expect(manager.getRepository).toHaveBeenCalled()
-    expect(getConnection).not.toHaveBeenCalled()
+    expect(dataSource.manager.getRepository).not.toHaveBeenCalled()
   })
 
   it('removeStatusChange deletes the row by id', async () => {

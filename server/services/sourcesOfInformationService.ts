@@ -1,4 +1,5 @@
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
+import { dataSource } from '../repositories/db'
 import SourcesOfInformation from '../repositories/entities/sourcesOfInformation'
 import ReportSourcesOfInformation from '../repositories/entities/reportSourcesOfInformation'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
@@ -35,7 +36,7 @@ export default class SourcesOfInformationService {
     reportId: string,
     value: string,
     createdBy: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<void> {
     const sourceRepo = manager.getRepository(SourcesOfInformation)
     const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
@@ -72,7 +73,7 @@ export default class SourcesOfInformationService {
   public async removeCustomSourceOfInformation(
     reportId: string,
     key: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<void> {
     const sourceRepo = manager.getRepository(SourcesOfInformation)
     const reportSourceRepo = manager.getRepository(ReportSourcesOfInformation)
@@ -88,7 +89,7 @@ export default class SourcesOfInformationService {
           isDeleted: false,
         },
       },
-      relations: ['sourcesOfInformation'],
+      relations: { sourcesOfInformation: true },
     })
 
     if (!link) return
@@ -107,7 +108,7 @@ export default class SourcesOfInformationService {
 
   public async getSourcesOfInformation(
     reportId: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<SourceOfInformation[]> {
     // Get default sources
     const defaultSources = await manager.getRepository(SourcesOfInformation).find({
@@ -123,7 +124,7 @@ export default class SourcesOfInformationService {
         reportId,
         isDeleted: false,
       },
-      relations: ['sourcesOfInformation'],
+      relations: { sourcesOfInformation: true },
     })
 
     // Only treat report-linked rows as custom if they aren't actually a default source
@@ -147,7 +148,7 @@ export default class SourcesOfInformationService {
   }
 
   public async createDefaultSource(sourceData: ISourcesOfInformation): Promise<SourcesOfInformation> {
-    const sourceRepository = getConnection().getRepository(SourcesOfInformation)
+    const sourceRepository = dataSource.getRepository(SourcesOfInformation)
     const source = sourceRepository.create({
       ...sourceData,
       isDefault: true,
@@ -158,13 +159,11 @@ export default class SourcesOfInformationService {
   }
 
   public async getAllDefaultSources(): Promise<SourcesOfInformation[]> {
-    return getConnection()
-      .getRepository(SourcesOfInformation)
-      .find({
-        where: {
-          isDefault: true,
-          isDeleted: false,
-        },
-      })
+    return dataSource.getRepository(SourcesOfInformation).find({
+      where: {
+        isDefault: true,
+        isDeleted: false,
+      },
+    })
   }
 }

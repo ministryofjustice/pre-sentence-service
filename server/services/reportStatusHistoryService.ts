@@ -1,4 +1,5 @@
-import { EntityManager, getConnection } from 'typeorm'
+import { EntityManager } from 'typeorm'
+import { dataSource } from '../repositories/db'
 import ReportStatusHistory from '../repositories/entities/reportStatusHistory'
 
 export const DELETED_STATUS = 'DELETED'
@@ -13,7 +14,7 @@ export interface IStatusChange {
 export default class ReportStatusHistoryService {
   public async recordStatusChange(
     change: IStatusChange,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<ReportStatusHistory> {
     const repository = manager.getRepository(ReportStatusHistory)
     return repository.save({
@@ -22,7 +23,7 @@ export default class ReportStatusHistoryService {
     })
   }
 
-  public async removeStatusChange(id: string, manager: EntityManager = getConnection().manager): Promise<void> {
+  public async removeStatusChange(id: string, manager: EntityManager = dataSource.manager): Promise<void> {
     const repository = manager.getRepository(ReportStatusHistory)
     await repository.delete(id)
   }
@@ -30,7 +31,7 @@ export default class ReportStatusHistoryService {
   public async hasEverHadStatus(
     reportId: string,
     status: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<boolean> {
     const repository = manager.getRepository(ReportStatusHistory)
     const count = await repository.count({
@@ -45,7 +46,7 @@ export default class ReportStatusHistoryService {
   public async getLatestStatusChangeTo(
     reportId: string,
     newStatus: string,
-    manager: EntityManager = getConnection().manager
+    manager: EntityManager = dataSource.manager
   ): Promise<ReportStatusHistory | null> {
     const repository = manager.getRepository(ReportStatusHistory)
     const result = await repository.findOne({

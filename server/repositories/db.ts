@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Connection, ConnectionOptions, createConnection } from 'typeorm'
+import { DataSource, DataSourceOptions } from 'typeorm'
 
 import logger from '../../logger'
 import config from '../config'
@@ -12,9 +12,9 @@ import ReportAndSourcesOfInformation from './entities/reportSourcesOfInformation
 import { HttpError } from 'http-errors'
 import { LogDependency, LogEvent, LogOperation } from '../utils/logging'
 
-type ConnectionResult = [Error?, Connection?]
+type ConnectionResult = [Error?, DataSource?]
 
-const connectionOptions: ConnectionOptions = {
+const connectionOptions: DataSourceOptions = {
   type: 'postgres',
   host: String(config.db.server),
   schema: String(config.db.schema),
@@ -42,9 +42,11 @@ const connectionOptions: ConnectionOptions = {
   logging: false,
 }
 
+export const dataSource = new DataSource(connectionOptions)
+
 export default async function getDatabaseConnection(): Promise<ConnectionResult> {
   try {
-    const connection = await createConnection(connectionOptions)
+    const connection = await dataSource.initialize()
     return [undefined, connection]
   } catch (e) {
     const error = e as HttpError
