@@ -184,20 +184,23 @@ export default class SignYourReportController extends BaseController {
       await this.updateReportActions(req, username)
       logger.info('Report actions updated successfully', { reportId })
     } catch (e) {
-        const error = e as HttpError
-        const errorType = classifyError(error)
-        
-        logger.error({
+      const error = e as HttpError
+      const errorType = classifyError(error)
+
+      logger.error(
+        {
           event: LogEvent.RequestFailed,
           page: 'sign-your-report',
           reportId,
           statusCode: error.status || 500,
           errorType,
           err: error,
-        }, 'Failed to update report actions')
-        
-        throw error
-      }
+        },
+        'Failed to update report actions'
+      )
+
+      throw error
+    }
 
     if (!this.eventService) {
       logger.error('Domain event service not available, cannot submit report', { reportId })
@@ -216,13 +219,16 @@ export default class SignYourReportController extends BaseController {
     } catch (error) {
       const err = ensureError(error)
 
-      logger.error({
-        event: LogEvent.RequestFailed,
-        page: 'sign-your-report',
-        reportId,
-        errorType: classifyError(err as HttpError),
-        err,
-      }, 'Failed to submit report after retries, rolled back submittedAt')
+      logger.error(
+        {
+          event: LogEvent.RequestFailed,
+          page: 'sign-your-report',
+          reportId,
+          errorType: classifyError(err as HttpError),
+          err,
+        },
+        'Failed to submit report after retries, rolled back submittedAt'
+      )
 
       this.renderSubmissionFailure(res, reportId, data)
       return

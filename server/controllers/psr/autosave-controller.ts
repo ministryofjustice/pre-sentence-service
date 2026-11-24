@@ -71,15 +71,18 @@ export default class AutosaveController extends BaseController {
     } catch (e) {
       const error = e as HttpError
 
-      logger.error({
-        event: LogEvent.RequestFailed,
-        page: 'autosave',
-        reportId: req.params.reportId,
-        statusCode: error.status || 500,
-        environment: extractEnvironment(req.originalUrl),
-        errorType: classifyError(error),
-        err: error,
-      }, 'Autosave operation failed')
+      logger.error(
+        {
+          event: LogEvent.RequestFailed,
+          page: 'autosave',
+          reportId: req.params.reportId,
+          statusCode: error.status || 500,
+          environment: extractEnvironment(req.originalUrl),
+          errorType: classifyError(error),
+          err: error,
+        },
+        'Autosave operation failed'
+      )
 
       res.status(error.status || 500).json({ error: error.message || 'Failed to save report' })
     }

@@ -58,12 +58,15 @@ export default class RestClient {
         .agent(this.agent)
         .retry(2, (err, res) => {
           if (err) {
-            logger.info({
-              event: LogEvent.DependencyRetry,
-              dependency: this.name,
-              errorCode: err.code,
-              httpMethod: LogHttpMethod.Get,
-            }, `Retry handler found API error when calling ${this.name}`)
+            logger.info(
+              {
+                event: LogEvent.DependencyRetry,
+                dependency: this.name,
+                errorCode: err.code,
+                httpMethod: LogHttpMethod.Get,
+              },
+              `Retry handler found API error when calling ${this.name}`
+            )
           }
 
           return undefined // retry handler only for logging retries, not to influence retry logic
@@ -111,12 +114,15 @@ export default class RestClient {
         .agent(this.agent)
         .retry(2, (err, res) => {
           if (err) {
-            logger.info({
-              event: LogEvent.DependencyRetry,
-              dependency: this.name,
-              errorCode: err.code,
-              httpMethod: LogHttpMethod.Post
-            }, `Retry handler found API error when calling ${this.name}`)
+            logger.info(
+              {
+                event: LogEvent.DependencyRetry,
+                dependency: this.name,
+                errorCode: err.code,
+                httpMethod: LogHttpMethod.Post,
+              },
+              `Retry handler found API error when calling ${this.name}`
+            )
           }
 
           return undefined // retry handler only for logging retries, not to influence retry logic

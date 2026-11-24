@@ -158,17 +158,20 @@ export default class SharedController {
         apiDefendantDetailsAvailable: true,
       }
     } catch (error) {
-        const err = ensureError(error)
+      const err = ensureError(error)
 
-        logger.warn({
+      logger.warn(
+        {
           event: LogEvent.DependencyFailed,
           dependency: LogDependency.PreSentenceToDelius,
           page: this.templatePath,
           reportId,
           err,
-        }, 'Failed to fetch defendant details from Pre-Sentence to Delius API, using fallback')
-        
-        this.data = { ...this.data, crn, apiDefendantDetailsAvailable: false }
+        },
+        'Failed to fetch defendant details from Pre-Sentence to Delius API, using fallback'
+      )
+
+      this.data = { ...this.data, crn, apiDefendantDetailsAvailable: false }
     }
   }
 
@@ -393,7 +396,7 @@ export default class SharedController {
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
       const environment = extractEnvironment(req.originalUrl)
-      
+
       logger.warn(
         {
           event: LogEvent.ValidationFailed,
@@ -456,14 +459,17 @@ export default class SharedController {
 
     const environment = extractEnvironment(req.originalUrl)
 
-    logger.info({
-      event: LogEvent.ValidationFailed,
-      page: this.templatePath,
-      reportId,
-      persisted: result.persisted,
-      dropped: result.dropped,
-      environment,
-    }, 'Persisted partial fields after validation failure')
+    logger.info(
+      {
+        event: LogEvent.ValidationFailed,
+        page: this.templatePath,
+        reportId,
+        persisted: result.persisted,
+        dropped: result.dropped,
+        environment,
+      },
+      'Persisted partial fields after validation failure'
+    )
   }
 
   private structurallyInvalidFields = (body: Record<string, unknown>): string[] => {
