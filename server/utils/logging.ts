@@ -1,4 +1,7 @@
-// This file is used for defining constants use for log events
+import config from '../config'
+
+// This file is used for defining constants and utility functions for logging purposes
+
 export const LogEvent = {
   RequestFailed: 'request_failed',
   ValidationFailed: 'validation_failed',
@@ -46,11 +49,11 @@ export function classifyError(error: { status?: number }): string {
   return ErrorType.Unknown
 }
 
-export function extractEnvironment(url?: string): string {
-  const targetUrl = url || process.env.APP_URL || ''
+export function extractEnvironment(): string {
+  const targetUrl = config.domain
   if (targetUrl.includes('localhost')) return 'local'
   if (targetUrl.includes('-dev.')) return 'dev'
   if (targetUrl.includes('-preprod.')) return 'preprod'
   if (targetUrl.includes('.hmpps.service.justice.gov.uk')) return 'prod'
-  return 'unknown'
+  return 'local-fallback'
 }

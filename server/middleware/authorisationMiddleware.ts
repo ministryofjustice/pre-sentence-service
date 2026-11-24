@@ -19,7 +19,7 @@ export default function authorisationMiddleware(authorisedRoles: string[] = []):
           {
             event: LogEvent.AccessDenied,
             reason: AccessDeniedReason.AuthSourceOrRoleNotAllowed,
-            environment: extractEnvironment(req.originalUrl),
+            environment: extractEnvironment(),
           },
           'Access denied: user is not signed in through Delius or does not have a required role. User is not authorised to access this service'
         )

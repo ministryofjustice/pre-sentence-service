@@ -29,7 +29,7 @@ const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
           {
             event: LogEvent.AccessDenied,
             reason: AccessDeniedReason.AuthSourceNotAllowed,
-            environment: extractEnvironment(req.originalUrl),
+            environment: extractEnvironment(),
           },
           'Access denied: authentication source is not delius'
         )

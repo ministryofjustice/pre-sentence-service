@@ -6,7 +6,7 @@ import { LogEvent, classifyError, extractEnvironment } from './utils/logging'
 export default function createErrorHandler(production: boolean) {
   return (error: HTTPError, req: Request, res: Response, next: NextFunction): void => {
     const errorType = classifyError(error)
-    const environment = extractEnvironment(req.originalUrl)
+    const environment = extractEnvironment()
 
     logger.error(
       {

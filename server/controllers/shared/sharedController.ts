@@ -395,16 +395,14 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
-      const environment = extractEnvironment(req.originalUrl)
+      const environment = extractEnvironment()
 
       logger.warn(
         {
           event: LogEvent.ValidationFailed,
           page: this.templatePath,
-          endpoint: `${req.method} /psr/{id}/${this.templatePath}`,
           reportId,
           reportStatus: this.report?.status,
-          action: req.body.action,
           errorCount: Object.keys(validatedForm.errors ?? {}).length,
           fieldErrors: validatedForm.errors,
           environment,
@@ -457,7 +455,7 @@ export default class SharedController {
 
     const result = await this.reportService.persistPartialFieldValues(reportId, body, this.templatePath, dropKeys)
 
-    const environment = extractEnvironment(req.originalUrl)
+    const environment = extractEnvironment()
 
     logger.info(
       {

@@ -77,7 +77,7 @@ export default class AutosaveController extends BaseController {
           page: 'autosave',
           reportId: req.params.reportId,
           statusCode: error.status || 500,
-          environment: extractEnvironment(req.originalUrl),
+          environment: extractEnvironment(),
           errorType: classifyError(error),
           err: error,
         },
