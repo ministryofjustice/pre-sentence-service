@@ -1,0 +1,18 @@
+{% extends "../partials/sharedPageLayout.njk" %}
+
+{% set pageTitle = "This report is locked" %}
+
+{% block pageTitle %}
+  {{ pageTitle }}
+{% endblock %}
+
+{% block content %}
+  <main class="govuk-body">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">This report is locked</h1>
+        <p class="govuk-body">This pre-sentence report has been locked in NDelius and can no longer be edited.</p>
+      </div>
+    </div>
+  </main>
+{% endblock %}

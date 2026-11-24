@@ -6,6 +6,17 @@ import EventService from '../../services/eventService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
 import type { DefendantDetails as DefendantDetailsApiResponse } from '../../@types/preSentenceToDelius'
 import { mockedReportData } from '../../services/__mocks__/reportService'
+import config from '../../config'
+
+jest.mock('../../config', () => ({
+  __esModule: true,
+  default: {
+    domain: 'https://example.test',
+    features: {
+      unlockedSigning: false,
+    },
+  },
+}))
 
 describe('SignYourReportController', () => {
   let controller: SignYourReportController
@@ -81,6 +92,7 @@ describe('SignYourReportController', () => {
         await es.sendReportEvent({ ...eventData, reportId })
         return mockedReportData
       }),
+      hasReportBeenSigned: jest.fn().mockResolvedValue(false),
     } as unknown as ReportService
 
     preSentenceToDeliusService = {
@@ -240,5 +252,200 @@ describe('SignYourReportController', () => {
       })
     )
     expect(res.redirect).not.toHaveBeenCalled()
+  })
+
+  describe('data.previouslySigned', () => {
+    const getReq = {
+      params: { reportId: '123' },
+      session: {},
+    } as unknown as Request<{ reportId: string }>
+
+    beforeEach(() => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        id: '123',
+        pages: completePages,
+      })
+    })
+
+    it('is not supplied when the flag is off, even if the report has been signed before', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+      ;(reportService.hasReportBeenSigned as jest.Mock).mockResolvedValue(true)
+
+      await controller.get(getReq, res)
+
+      expect(reportService.hasReportBeenSigned).not.toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.not.objectContaining({ previouslySigned: expect.anything() }),
+        })
+      )
+    })
+
+    it('is true (flag on) when history shows a prior COMPLETED', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = true
+      ;(reportService.hasReportBeenSigned as jest.Mock).mockResolvedValue(true)
+
+      await controller.get(getReq, res)
+
+      expect(reportService.hasReportBeenSigned).toHaveBeenCalledWith('123')
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.objectContaining({ previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is false (flag on) when the report has never been COMPLETED', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = true
+      ;(reportService.hasReportBeenSigned as jest.Mock).mockResolvedValue(false)
+
+      await controller.get(getReq, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.objectContaining({ previouslySigned: false }),
+        })
+      )
+    })
+
+    afterEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+    })
+  })
+
+  describe('data.previouslySigned on POST error renders', () => {
+    beforeEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = true
+      ;(reportService.hasReportBeenSigned as jest.Mock).mockResolvedValue(true)
+    })
+
+    afterEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+    })
+
+    it('is supplied when review sections are incomplete', async () => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.objectContaining({ reviewProgressBlocked: true, previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is supplied when form validation fails', async () => {
+      req.body = { signReportName: 'Officer Name' }
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        id: '123',
+        pages: completePages,
+      })
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({ isValid: false }),
+          data: expect.objectContaining({ previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is supplied when submitReport fails', async () => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        id: '123',
+        pages: completePages,
+      })
+      ;(reportService.submitReport as jest.Mock).mockRejectedValue(new Error('SNS down'))
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({
+            errors: expect.objectContaining({ submission: expect.any(String) }),
+          }),
+          data: expect.objectContaining({ previouslySigned: true }),
+        })
+      )
+    })
+
+    it('is not supplied on error renders when the flag is off', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+
+      await controller.post(req, res)
+
+      expect(reportService.hasReportBeenSigned).not.toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          data: expect.not.objectContaining({ previouslySigned: expect.anything() }),
+        })
+      )
+    })
+  })
+
+  describe('error copy for incomplete review progress', () => {
+    beforeEach(() => {
+      ;(reportService.getReportById as jest.Mock).mockResolvedValue({
+        ...mockedReportData,
+        pages: [],
+      })
+    })
+
+    afterEach(() => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+    })
+
+    it('reads "before signing and locking this report" when the flag is off', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = false
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({
+            errors: expect.objectContaining({
+              reviewProgress: 'Complete all sections in Review your progress before signing and locking this report',
+            }),
+          }),
+        })
+      )
+    })
+
+    it('drops "and locking" when the flag is on', async () => {
+      ;(config.features as { unlockedSigning: boolean }).unlockedSigning = true
+
+      await controller.post(req, res)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'psr/sign-your-report',
+        expect.objectContaining({
+          formValidation: expect.objectContaining({
+            errors: expect.objectContaining({
+              reviewProgress: 'Complete all sections in Review your progress before signing this report',
+            }),
+          }),
+        })
+      )
+    })
   })
 })

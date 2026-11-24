@@ -11,6 +11,43 @@
   <main class="govuk-body">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
+        {% if featureUnlockedSigning %}
+          {% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+          {{ govukPanel({
+            titleText: "Pre-sentence report completed",
+            html: (data.name | e) + "<br>CRN: " + (data.crn | e) + "<br>" + (data.submittedAt | formatDateLong | e)
+          }) }}
+
+          <p class="govuk-body">
+            This PSR is now available on NDelius.
+          </p>
+
+          <section class="govuk-!-margin-top-7">
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-3">If you need to upload your report to other systems</h2>
+
+            <ul class="govuk-list">
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="/psr/{{ reportId }}/pdf" target="_blank" rel="noreferrer noopener">
+                  Download the completed PSR
+                </a>
+                to share with the court.
+              </li>
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ data.commonPlatformUrl }}" target="_blank" rel="noreferrer noopener">
+                  Go to Common Platform
+                </a>
+                (opens in new tab).
+              </li>
+              <li>
+                <a class="govuk-link govuk-link--no-visited-state" href="{{ data.digitalCaseSystemUrl }}" target="_blank" rel="noreferrer noopener">
+                  Go to Digital Case System
+                </a>
+                (opens in new tab).
+              </li>
+            </ul>
+          </section>
+        {% else %}
         <section class="psr-complete-card">
           <h1 class="govuk-heading-m psr-complete-card__title">
             Pre-sentence report completed
@@ -47,6 +84,7 @@
             </li>
           </ul>
         </section>
+        {% endif %}
       </div>
     </div>
   </main>

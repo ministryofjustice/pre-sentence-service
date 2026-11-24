@@ -59,6 +59,22 @@ export default class SignYourReportController extends BaseController {
     }
   }
 
+  private loadSigningHistory = async (reportId: string): Promise<void> => {
+    if (!config.features.unlockedSigning) {
+      return
+    }
+
+    const previouslySigned = await this.reportService.hasReportBeenSigned(reportId)
+    this.data = {
+      ...this.data,
+      previouslySigned,
+    }
+  }
+
+  protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
+    await this.loadSigningHistory(req.params.reportId)
+  }
+
   override post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
     const reportId = req.params.reportId
     const username = (res.locals?.user?.username as string | undefined) || 'system'
@@ -94,6 +110,8 @@ export default class SignYourReportController extends BaseController {
 
     this.report = rep
 
+    await this.loadSigningHistory(reportId)
+
     const validatedForm = validateForm(req.body, this.model)
     if (!validatedForm.isValid) {
       logger.warn('Form validation failed for sign and lock', {
@@ -118,6 +136,7 @@ export default class SignYourReportController extends BaseController {
       ...this.report,
       ...apiDefendantData,
       ...req.body,
+      ...(config.features.unlockedSigning ? { previouslySigned: this.data.previouslySigned } : {}),
     }
 
     // Fetch sources of information to determine if all sections are complete before signing and locking
@@ -146,7 +165,9 @@ export default class SignYourReportController extends BaseController {
         formValidation: {
           isValid: false,
           errors: {
-            reviewProgress: 'Complete all sections in Review your progress before signing and locking this report',
+            reviewProgress: config.features.unlockedSigning
+              ? 'Complete all sections in Review your progress before signing this report'
+              : 'Complete all sections in Review your progress before signing and locking this report',
           },
         },
       })
@@ -157,7 +178,7 @@ export default class SignYourReportController extends BaseController {
 
     logger.info('Updating report actions (signing and locking)', { reportId })
     try {
-      await this.updateReportActions(req)
+      await this.updateReportActions(req, username)
       logger.info('Report actions updated successfully', { reportId })
     } catch (error) {
       logger.error('Failed to update report actions', {

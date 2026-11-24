@@ -80,7 +80,7 @@ describe('AutosaveController', () => {
 
     await controller.post(req, res)
 
-    expect(updateReportSpy).toHaveBeenCalledWith('123', { status: ReportStatus.STARTED })
+    expect(updateReportSpy).toHaveBeenCalledWith('123', { status: ReportStatus.STARTED }, undefined, 'system')
     expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith('123', req.body, 'psr-defendant-behaviour')
     expect(status).toHaveBeenCalledWith(200)
     expect(statusJson).toHaveBeenCalledWith(
@@ -221,5 +221,22 @@ describe('AutosaveController', () => {
     expect(updateReportSpy).toHaveBeenCalledWith('123', {})
     expect(persistPartialFieldValuesSpy).toHaveBeenCalledWith('123', req.body, 'offence-analysis')
     expect(status).toHaveBeenCalledWith(200)
+  })
+
+  it('passes the session username when promoting NOT_STARTED to STARTED', async () => {
+    getReportByIdSpy.mockResolvedValueOnce({
+      ...mockReportDetails,
+      status: ReportStatus.NOT_STARTED,
+    })
+    res = {
+      status,
+      locals: { user: { username: 'user1' } },
+    } as unknown as Response
+
+    req.body = { someField: 'value', pageName: 'offence-analysis' }
+
+    await controller.post(req, res)
+
+    expect(updateReportSpy).toHaveBeenCalledWith('123', { status: ReportStatus.STARTED }, undefined, 'user1')
   })
 })

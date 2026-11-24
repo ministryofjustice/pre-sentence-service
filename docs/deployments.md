@@ -5,11 +5,12 @@ in dev while a fixed candidate is tested in preprod, then promoted to production
 
 ## Environments
 
-| Environment | Branch / source | Trigger | Approval | Purpose |
-| --- | --- | --- | --- | --- |
-| dev | `main` | Automatic. Deployed after the pipeline succeeds on `main`. | On PRs | Completed development work awaiting testing. |
-| preprod | `preprod/*`, cut from `main` | Automatic. Built and deployed when **Cut preprod** creates the candidate branch, normally after a production release. | None | A fixed release candidate for testing, isolated from further changes to `main`. |
-| prod | The existing image from the current `preprod/*` candidate | Manual. Start the **Release** workflow. After deployment succeeds, it cuts the next preprod candidate by default. | None | The tested release promoted from preprod. |
+| Environment | Branch / source                           | Trigger                                                                                                               | Approval   | Purpose                                                                         |
+|-------------|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------|
+| dev         | `main`                                    | Automatic. Deployed after the pipeline succeeds on `main`.                                                            | On PRs     | Completed development work awaiting testing.                                    |
+| qa          | `*`                                       | Manual. Start the **Deploy to QA (manual)** workflow.                                                                 | On Deploys | QA Testing.                                                                     |
+| preprod     | `preprod/*`, cut from `main`              | Automatic. Built and deployed when **Cut preprod** creates the candidate branch, normally after a production release. | None       | A fixed release candidate for testing, isolated from further changes to `main`. |
+| prod        | Existing image from `preprod/*` candidate | Manual. Start the **Release** workflow. After deployment succeeds, it cuts the next preprod candidate by default.     | None       | The tested release promoted from preprod.                                       |
 
 ## Release candidate branches
 
@@ -53,6 +54,15 @@ the latest development baseline into preprod for the next testing cycle.
   instead of using the latest `main`.
 - Running **Cut preprod** deletes existing `preprod/*` candidate branches before
   creating a replacement.
+
+## QA Release
+
+- The **Deploy to QA (manual)** workflow can be run on any branch.
+- The workflow will prompt for approval before deploying to QA. The deployment
+  uses the latest successful build of the selected branch.
+- QA releases are not part of the normal release cycle. They are intended for
+  testing a specific commit or branch in a QA environment, without affecting the
+  current preprod candidate.
 
 ## Workflow definitions
 

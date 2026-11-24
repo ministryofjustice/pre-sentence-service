@@ -108,4 +108,8 @@ export default class ReportService {
   public saveSourcesOfInformation() {
     return Promise.resolve()
   }
+
+  public hasReportBeenSigned(_id: string) {
+    return Promise.resolve(false)
+  }
 }
