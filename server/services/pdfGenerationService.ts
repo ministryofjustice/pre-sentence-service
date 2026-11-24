@@ -137,7 +137,7 @@ export default class PdfGenerationService {
 
       res.renderPDF(
         'reports/psr',
-        { preSentenceUrl, data: pdfData },
+        { preSentenceUrl, featureUnlockedSigning: config.features.unlockedSigning, data: pdfData },
         {
           filename,
           pdfOptions: {
