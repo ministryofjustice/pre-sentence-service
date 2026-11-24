@@ -25,8 +25,11 @@ export interface IReportDetails {
 }
 
 export default class ReportDetailsService {
-  public async createReportDetails(reportData: IReportDetails): Promise<ReportDetails> {
-    const reportRepository = dataSource.getRepository(ReportDetails)
+  public async createReportDetails(
+    reportData: IReportDetails,
+    manager: EntityManager = dataSource.manager
+  ): Promise<ReportDetails> {
+    const reportRepository = manager.getRepository(ReportDetails)
     const report = reportRepository.create({
       ...reportData,
       status: reportData.status || ReportStatus.NOT_STARTED,
@@ -50,6 +53,25 @@ export default class ReportDetailsService {
         isDeleted: false,
       },
       relations: { person: true },
+    })
+  }
+
+  public async getReportDetailsByIdIncludingDeleted(
+    id: string,
+    manager: EntityManager = dataSource.manager
+  ): Promise<ReportDetails | null> {
+    return manager.getRepository(ReportDetails).findOne({
+      where: {
+        id,
+      },
+      relations: { person: true },
+    })
+  }
+
+  public async getReportDetailsByIdForUpdate(id: string, manager: EntityManager): Promise<ReportDetails | null> {
+    return manager.getRepository(ReportDetails).findOne({
+      where: { id },
+      lock: { mode: 'pessimistic_write' },
     })
   }
 
@@ -161,8 +183,8 @@ export default class ReportDetailsService {
     return this.updateReportPages(id, pages)
   }
 
-  public async deleteReportDetails(id: string): Promise<boolean> {
-    const reportRepository = dataSource.getRepository(ReportDetails)
+  public async deleteReportDetails(id: string, manager: EntityManager = dataSource.manager): Promise<boolean> {
+    const reportRepository = manager.getRepository(ReportDetails)
     const report = await reportRepository.findOne({ where: { id } })
 
     if (!report) {

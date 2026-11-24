@@ -52,6 +52,10 @@ const mockReportsData = [
   },
 ]
 
+const mockLockReport = jest.fn()
+const mockUnlockReport = jest.fn()
+const mockDeleteCompletedReport = jest.fn()
+
 jest.mock('../../services/reportService', () => {
   return jest.fn().mockImplementation(() => {
     return {
@@ -88,6 +92,9 @@ jest.mock('../../services/reportService', () => {
           )
         })
       },
+      lockReport: (...args: unknown[]) => mockLockReport(...args),
+      unlockReport: (...args: unknown[]) => mockUnlockReport(...args),
+      deleteCompletedReport: (...args: unknown[]) => mockDeleteCompletedReport(...args),
     }
   })
 })
@@ -104,6 +111,8 @@ jest.mock('../../services/eventService', () => {
   })
 })
 
+const validUuid = '11111111-1111-1111-1111-111111111111'
+
 describe('Route Handlers - API', () => {
   let app: Express
 
@@ -113,6 +122,12 @@ describe('Route Handlers - API', () => {
 
   afterAll(() => {
     jest.resetAllMocks()
+  })
+
+  beforeEach(() => {
+    mockLockReport.mockReset()
+    mockUnlockReport.mockReset()
+    mockDeleteCompletedReport.mockReset()
   })
 
   it('should create a report', () => {
@@ -175,5 +190,106 @@ describe('Route Handlers - API', () => {
           ]),
         })
       })
+  })
+
+  it('PUT /v1/report/:id/lock returns 200 { id, status: LOCKED }', () => {
+    mockLockReport.mockResolvedValue({ id: validUuid, status: 'LOCKED' })
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/lock`)
+      .expect(200)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ id: validUuid, status: 'LOCKED' })
+      })
+  })
+
+  it('PUT /v1/report/:id/unlock returns 200 { id, status: COMPLETED }', () => {
+    mockUnlockReport.mockResolvedValue({ id: validUuid, status: 'COMPLETED' })
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/unlock`)
+      .expect(200)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ id: validUuid, status: 'COMPLETED' })
+      })
+  })
+
+  it('PUT /v1/report/:id/unlock echoes the restored status when unlock returns STARTED', () => {
+    mockUnlockReport.mockResolvedValue({ id: validUuid, status: 'STARTED' })
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/unlock`)
+      .expect(200)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ id: validUuid, status: 'STARTED' })
+      })
+  })
+
+  it('DELETE /v1/report/:id returns 200 { id, status: DELETED }', () => {
+    mockDeleteCompletedReport.mockResolvedValue(undefined)
+
+    return request(app)
+      .delete(`/api/v1/report/${validUuid}`)
+      .expect(200)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ id: validUuid, status: 'DELETED' })
+      })
+  })
+
+  it('returns 400 { message } for a malformed uuid on all three routes', async () => {
+    const malformedId = 'not-a-uuid'
+
+    await request(app)
+      .put(`/api/v1/report/${malformedId}/lock`)
+      .expect(400)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ message: 'Invalid report id' })
+      })
+
+    await request(app)
+      .put(`/api/v1/report/${malformedId}/unlock`)
+      .expect(400)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ message: 'Invalid report id' })
+      })
+
+    await request(app)
+      .delete(`/api/v1/report/${malformedId}`)
+      .expect(400)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ message: 'Invalid report id' })
+      })
+  })
+
+  it('returns 409 { message } when the service rejects with status 409 (e.g. lock on an already-LOCKED report)', () => {
+    const error = Object.assign(new Error(`Report ${validUuid} is not in a COMPLETED state`), { status: 409 })
+    mockLockReport.mockRejectedValue(error)
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/lock`)
+      .expect(409)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ message: `Report ${validUuid} is not in a COMPLETED state` })
+      })
+  })
+
+  it('returns 404 { message } when the service rejects with status 404', () => {
+    const error = Object.assign(new Error(`Report ${validUuid} not found`), { status: 404 })
+    mockUnlockReport.mockRejectedValue(error)
+
+    return request(app)
+      .put(`/api/v1/report/${validUuid}/unlock`)
+      .expect(404)
+      .expect(res => {
+        expect(JSON.parse(res.text)).toEqual({ message: `Report ${validUuid} not found` })
+      })
+  })
+
+  it('passes the authenticated username from res.locals to the service', async () => {
+    mockLockReport.mockResolvedValue({ id: validUuid, status: 'LOCKED' })
+
+    await request(app).put(`/api/v1/report/${validUuid}/lock`).expect(200)
+
+    expect(mockLockReport).toHaveBeenCalledWith(validUuid, 'user1')
   })
 })

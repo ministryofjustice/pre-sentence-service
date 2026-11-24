@@ -6,6 +6,9 @@
 
     <p class="govuk-body-s pdf-secondary-text">This is a pre-sentence report as defined in Section 31 of the Sentencing Act 2020.</p>
     <p class="govuk-body-s pdf-secondary-text">This report is not binding upon the court's sentencing decision.</p>
+    {%- if featureUnlockedSigning and data.reportSubmittedAt %}
+    <p class="govuk-body-s pdf-secondary-text">Date and time completed: {{ data.reportSubmittedAt | formatDateLong }} at {{ data.reportSubmittedAt | formatTimeHM }}</p>
+    {%- endif %}
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
     <h2 class="govuk-heading-m">Defendant details</h2>
@@ -138,7 +141,9 @@
     <h2 class="govuk-heading-m">Completion details</h2>
 
     <h3 class="govuk-heading-s">Report author and professional status:</h3>
-    <p class="govuk-body-s"> {{ data.signReportName }}, {{ data.professionalStatus }}</p>
+    {% set author = (data.signReportName or "") | trim %}
+    {% set status = (data.professionalStatus or "") | trim %}
+    <p class="govuk-body-s">{{ author }}{% if author and status %}, {% endif %}{{ status }}</p>
 
     <h3 class="govuk-heading-s">Date submitted:</h3>
     {% if data.reportSubmittedAt %}

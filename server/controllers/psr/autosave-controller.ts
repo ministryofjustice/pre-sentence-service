@@ -17,8 +17,10 @@ export default class AutosaveController extends BaseController {
         return
       }
 
+      const username = (res.locals?.user?.username as string | undefined) || 'system'
+
       if (report.status === ReportStatus.NOT_STARTED) {
-        await this.reportService.updateReport(reportId, { status: ReportStatus.STARTED })
+        await this.reportService.updateReport(reportId, { status: ReportStatus.STARTED }, undefined, username)
       } else {
         await this.reportService.updateReport(reportId, {})
       }

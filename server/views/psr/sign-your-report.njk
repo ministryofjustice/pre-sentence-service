@@ -1,10 +1,13 @@
 {% extends "../partials/psrPageLayout.njk" %}
 
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
-{% set currentPage = "Sign and lock your report" %}
+{% set currentPage = "Sign your report" if featureUnlockedSigning else "Sign and lock your report" %}
 {% set pageTitle = preSentenceType + " - " + currentPage %}
+{% set reviewProgressErrorText = "before signing this report" if featureUnlockedSigning else "before signing and locking this report" %}
+{% set submitButtonText = "Sign and complete" if featureUnlockedSigning else "Submit" %}
 {% block reportForm %}
     <form method="post"
           data-autosave="true"
@@ -20,14 +23,27 @@
             {% if data.reviewProgressBlocked %}
                 <p class="govuk-error-message" id="reviewProgress">
                     <span class="govuk-visually-hidden">Error:</span>
-                    Complete all sections in <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/preview-report">Review your progress</a> before signing and locking this report.
+                    Complete all sections in <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/preview-report">Review your progress</a> {{ reviewProgressErrorText }}.
                 </p>
             {% endif %}
-            
-            {{ govukWarningText({
-                "text": "Submitting your report will lock the PSR and you will no longer be able to make any further edits.",
-                "iconFallbackText": "Warning"
-            }) }}
+
+            {% if featureUnlockedSigning %}
+                {% if data.previouslySigned %}
+                    {{ govukWarningText({
+                        "text": "A previous version of this report has been signed and made available on NDelius. Signing your report will replace that version on NDelius.",
+                        "iconFallbackText": "Warning"
+                    }) }}
+                {% else %}
+                    {{ govukInsetText({
+                        "text": "After you sign your report it will be available on NDelius. You'll be able to reopen, edit and resign the report until it is locked in NDelius."
+                    }) }}
+                {% endif %}
+            {% else %}
+                {{ govukWarningText({
+                    "text": "Submitting your report will lock the PSR and you will no longer be able to make any further edits.",
+                    "iconFallbackText": "Warning"
+                }) }}
+            {% endif %}
 
             {{ govukInput({
                 hint: {
@@ -89,32 +105,63 @@
         <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
         <input type="hidden" name="reportId" value="{{ reportId }}">
         <input type="hidden" name="pageName" value="{{ pageName }}">
-        <button class="govuk-button">Submit</button>
+        <button class="govuk-button">{{ submitButtonText }}</button>
     </form>
 
-    <div class="govuk-modal" id="confirm-modal" hidden>
-        <div class="govuk-modal__overlay"></div>
-        <div class="govuk-modal__content govuk-width-container"
-            tabindex="-1"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="confirm-title"
-            aria-describedby="confirm-message">
-            <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
-            <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
-            <div class="govuk-button-group">
-                <button
-                    id="confirm-submit"
-                    type="button"
-                    class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6"
-                >
-                    Sign and lock
+    {% if featureUnlockedSigning %}
+        <div class="govuk-modal" id="confirm-modal" hidden>
+            <div class="govuk-modal__overlay"></div>
+            <div class="govuk-modal__content govuk-width-container"
+                tabindex="-1"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="confirm-title"
+                aria-describedby="confirm-message">
+                <button type="button" id="close-modal" class="govuk-modal__close button-as-link" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
+                <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign your report?</h2>
+                <p id="confirm-message" class="govuk-body">Your report will be available on NDelius. You can reopen and edit it until it is locked in NDelius.</p>
+                <div class="govuk-button-group">
+                    <button
+                        id="confirm-submit"
+                        type="button"
+                        class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6"
+                    >
+                        Sign
+                    </button>
 
-                <button type="button" id="cancel-submit" class="govuk-link button-as-link">
-                    Cancel
-                </button>
+                    <button type="button" id="cancel-submit" class="govuk-link button-as-link">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        <div class="govuk-modal" id="confirm-modal" hidden>
+            <div class="govuk-modal__overlay"></div>
+            <div class="govuk-modal__content govuk-width-container"
+                tabindex="-1"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="confirm-title"
+                aria-describedby="confirm-message">
+                <h2 id="confirm-title" class="govuk-heading-m">Are you ready to sign and lock your report?</h2>
+                <p id="confirm-message" class="govuk-body">You will not be able to edit your report after submitting.</p>
+                <div class="govuk-button-group">
+                    <button
+                        id="confirm-submit"
+                        type="button"
+                        class="govuk-button govuk-!-margin-bottom-0 govuk-!-margin-right-6"
+                    >
+                        Sign and lock
+                    </button>
+
+                    <button type="button" id="cancel-submit" class="govuk-link button-as-link">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

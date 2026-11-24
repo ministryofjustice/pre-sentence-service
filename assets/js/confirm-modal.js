@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const confirmBtn = document.getElementById('confirm-submit')
   const cancelBtn = document.getElementById('cancel-submit')
+  const closeBtn = document.getElementById('close-modal')
   const modalContent = modal.querySelector('.govuk-modal__content')
 
   let allowSubmit = false
@@ -28,8 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const professionalStatus = form.querySelector('input[name="professionalStatus"]:checked')
 
     if (!signReportName?.value.trim()) return true
-    return !professionalStatus?.value;
-
+    return !professionalStatus?.value
   }
 
   // This is required when errors are cleared and the page is now valid
@@ -87,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   cancelBtn.addEventListener('click', closeModal)
 
+  closeBtn?.addEventListener('click', closeModal)
+
   document.addEventListener('keydown', function (event) {
     if (modal.hidden) return
 
@@ -99,12 +101,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (event.key !== 'Tab') return
 
     // Trap focus within the modal when tabbing
-    if (event.shiftKey && (document.activeElement === confirmBtn || document.activeElement === modalContent)) {
+    const firstTrapElement = closeBtn || confirmBtn
+
+    if (event.shiftKey && (document.activeElement === firstTrapElement || document.activeElement === modalContent)) {
       event.preventDefault()
       cancelBtn.focus()
     } else if (!event.shiftKey && document.activeElement === cancelBtn) {
       event.preventDefault()
-      confirmBtn.focus()
+      firstTrapElement.focus()
     }
   })
 })
