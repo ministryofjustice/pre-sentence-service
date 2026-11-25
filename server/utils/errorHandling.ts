@@ -12,10 +12,11 @@
 export function ensureError(value: unknown): Error & { status?: number } {
   const error = value instanceof Error ? value : new Error(String(value))
   const errorWithStatus = error as Error & { status?: number }
-  
-  if (typeof (value as any)?.status === 'number') {
-    errorWithStatus.status = (value as any).status
+
+  const { status } = value as { status?: unknown }
+  if (typeof status === 'number') {
+    errorWithStatus.status = status
   }
-  
+
   return errorWithStatus
 }
