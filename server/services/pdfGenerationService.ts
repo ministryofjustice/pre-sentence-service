@@ -80,15 +80,17 @@ export default class PdfGenerationService {
       offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
     } catch (error) {
       const err = ensureError(error)
+      const errorType = classifyError(err)
       const sanitisedError = sanitise(err)
 
       logger.error(
         {
-          sanitisedError,
           event: LogEvent.DependencyFailed,
           dependency: LogDependency.Delius,
           operation: LogOperation.GetDefendantDetails,
-          errorType: classifyError(err),
+          statusCode: sanitisedError.status,
+          errorType,
+          errorName: err.name,
           reportId,
         },
         'Failed to fetch defendant details from Delius'
@@ -107,17 +109,20 @@ export default class PdfGenerationService {
       )
     } catch (error) {
       const err = ensureError(error)
+      const errorType = classifyError(err)
       const sanitisedError = sanitise(err)
 
       logger.error(
         {
-          sanitisedError,
           event: LogEvent.DependencyFailed,
+          dependency: LogDependency.Delius,
           operation: LogOperation.GetSourcesOfInformation,
-          errorType: classifyError(err),
+          statusCode: sanitisedError.status,
+          errorType,
+          errorName: err.name,
           reportId,
         },
-        'Failed to fetch sources of information'
+        'Failed to fetch defendant details from Delius'
       )
 
       throw err
@@ -193,14 +198,17 @@ export default class PdfGenerationService {
       )
     } catch (error) {
       const err = ensureError(error)
+      const errorType = classifyError(err)
       const sanitisedError = sanitise(err)
 
       logger.error(
         {
-          sanitisedError,
           event: LogEvent.DependencyFailed,
           dependency: LogDependency.Gotenberg,
           operation: LogOperation.RenderPdf,
+          statusCode: sanitisedError.status,
+          errorType,
+          errorName: err.name,
           reportId,
         },
         'PDF generation failed'
