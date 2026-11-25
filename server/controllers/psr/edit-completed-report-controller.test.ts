@@ -199,7 +199,14 @@ describe('EditCompletedReportController', () => {
 
       await new EditCompletedReportController(reportService).post(makeReq('r1'), res)
 
-      expect(logger.warn).toHaveBeenCalledWith({ reportId: 'r1', error }, expect.any(String))
+      expect(logger.warn).toHaveBeenCalledWith(
+        {
+          reportId: 'r1',
+          errorName: 'ConflictError',
+          errorType: 'client_error',
+        },
+        'Failed to reopen completed report'
+      )
     })
 
     it('redirects to /psr/:reportId without crashing when reopenReport throws 404', async () => {
