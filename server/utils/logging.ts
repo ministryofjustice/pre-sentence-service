@@ -18,6 +18,7 @@ export const LogDependency = {
   HmppsAuth: 'hmpps_auth',
   PreSentenceToDelius: 'pre_sentence_to_delius',
   Delius: 'delius',
+  SourcesOfInformation: 'sources_of_information',
 } as const
 
 export const LogOperation = {

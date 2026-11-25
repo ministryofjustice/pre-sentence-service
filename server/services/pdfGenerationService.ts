@@ -73,11 +73,10 @@ export default class PdfGenerationService {
 
     const reportData = configureReportData(report)
 
-    // BLOCK 1: Delius Service
-    let defendant, offenceData
+    // BLOCK 1: Delius Service - Defendant Details
+    let defendant
     try {
       defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
-      offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
     } catch (error) {
       const err = ensureError(error)
       const errorType = classifyError(err)
@@ -99,7 +98,32 @@ export default class PdfGenerationService {
       throw err
     }
 
-    // BLOCK 2: Sources of Information Service
+    // BLOCK 2: Delius Service - Offences
+    let offenceData
+    try {
+      offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
+    } catch (error) {
+      const err = ensureError(error)
+      const errorType = classifyError(err)
+      const sanitisedError = sanitise(err)
+
+      logger.error(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: LogDependency.Delius,
+          operation: LogOperation.GetOffences,
+          statusCode: sanitisedError.status,
+          errorType,
+          errorName: err.name,
+          reportId,
+        },
+        'Failed to fetch offences from Delius'
+      )
+
+      throw err
+    }
+
+    // BLOCK 3: Sources of Information Service
     let sources, sourcesOfInformationList
     try {
       sources = await this.sourcesOfInformationService.getSourcesOfInformation(reportId)
@@ -115,14 +139,14 @@ export default class PdfGenerationService {
       logger.error(
         {
           event: LogEvent.DependencyFailed,
-          dependency: LogDependency.Delius,
+          dependency: LogDependency.SourcesOfInformation,
           operation: LogOperation.GetSourcesOfInformation,
           statusCode: sanitisedError.status,
           errorType,
           errorName: err.name,
           reportId,
         },
-        'Failed to fetch defendant details from Delius'
+        'Failed to fetch sources of information'
       )
 
       throw err
@@ -181,7 +205,7 @@ export default class PdfGenerationService {
     const headerHtml = draft ? getDraftHeader(armsB64, purpleB64) : getHeader(armsB64, purpleB64)
     const footerHtml = draft ? getDraftFooter() : getFooter()
 
-    // BLOCK 3: Gotenberg Service
+    // BLOCK 4: Gotenberg Service
     try {
       res.renderPDF(
         'reports/psr',
