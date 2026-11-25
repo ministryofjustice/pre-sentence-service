@@ -81,7 +81,7 @@ export default class PdfGenerationService {
     } catch (error) {
       const err = ensureError(error)
       const sanitisedError = sanitise(err)
-      
+
       logger.error(
         {
           sanitisedError,
@@ -108,7 +108,7 @@ export default class PdfGenerationService {
     } catch (error) {
       const err = ensureError(error)
       const sanitisedError = sanitise(err)
-      
+
       logger.error(
         {
           sanitisedError,
@@ -194,7 +194,7 @@ export default class PdfGenerationService {
     } catch (error) {
       const err = ensureError(error)
       const sanitisedError = sanitise(err)
-      
+
       logger.error(
         {
           sanitisedError,
@@ -205,7 +205,7 @@ export default class PdfGenerationService {
         },
         'PDF generation failed'
       )
-  
+
       throw err
     }
   }

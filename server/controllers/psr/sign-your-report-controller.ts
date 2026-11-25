@@ -59,12 +59,15 @@ export default class SignYourReportController extends BaseController {
     } catch (error) {
       const err = ensureError(error)
       const errorType = classifyError(err)
-      
-      logger.warn({ 
-        reportId, 
-        errorName: err.name,
-        errorType,
-      }, 'Failed to fetch defendant details from Pre-Sentence to Delius API')
+
+      logger.warn(
+        {
+          reportId,
+          errorName: err.name,
+          errorType,
+        },
+        'Failed to fetch defendant details from Pre-Sentence to Delius API'
+      )
 
       return { crn: this.report.person.crn, apiDefendantDetailsAvailable: false }
     }

@@ -38,14 +38,17 @@ export default class EditCompletedReportController {
     } catch (error) {
       const err = ensureError(error)
       const errorType = classifyError(err)
-      
-      logger.warn({ 
-        reportId, 
-        errorName: err.name,
-        errorType,
-      }, 'Failed to reopen completed report')
-  
-    res.redirect(`/psr/${reportId}`)
+
+      logger.warn(
+        {
+          reportId,
+          errorName: err.name,
+          errorType,
+        },
+        'Failed to reopen completed report'
+      )
+
+      res.redirect(`/psr/${reportId}`)
       return
     }
 

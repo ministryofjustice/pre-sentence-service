@@ -3,7 +3,7 @@ import Agent, { HttpsAgent } from 'agentkeepalive'
 import logger from '../../logger'
 import { AgentConfig } from '../config'
 import sanitise from '../sanitisedError'
-import { LogEvent, LogOperation, LogDependency } from '../utils/logging'
+import { LogEvent, LogOperation } from '../utils/logging'
 
 export type ServiceCheck = () => Promise<string>
 

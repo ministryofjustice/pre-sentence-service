@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import BaseController from './baseController'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
-import { HttpError } from '../../@types/httpError'
 import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
 import logger from '../../../logger'
 import { classifyError, extractEnvironment, LogEvent } from '../../utils/logging'

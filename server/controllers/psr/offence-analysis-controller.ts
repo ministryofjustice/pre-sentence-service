@@ -45,13 +45,16 @@ export default class OffenceAnalysisController extends BaseController {
       } catch (error) {
         const err = ensureError(error)
         const errorType = classifyError(err)
-        
-        logger.warn({ 
-          reportId, 
-          errorName: err.name,
-          errorType,
-        }, 'Failed to fetch offence details from API, using database data')
-        
+
+        logger.warn(
+          {
+            reportId,
+            errorName: err.name,
+            errorType,
+          },
+          'Failed to fetch offence details from API, using database data'
+        )
+
         this.data = {
           ...this.data,
           apiOffencesAvailable: false,

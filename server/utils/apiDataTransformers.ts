@@ -79,12 +79,15 @@ export function formatOffenceDate(isoDate: string): string {
   } catch (error) {
     const err = ensureError(error)
 
-    logger.warn({ 
-      isoDate, 
-      errorName: err.name,
-      message: err.message 
-    }, 'Failed to format offence date')
-    
+    logger.warn(
+      {
+        isoDate,
+        errorName: err.name,
+        message: err.message,
+      },
+      'Failed to format offence date'
+    )
+
     return isoDate
   }
 }
