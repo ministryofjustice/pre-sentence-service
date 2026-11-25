@@ -5,6 +5,7 @@ import { HttpError } from '../../@types/httpError'
 import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
 import logger from '../../../logger'
 import { classifyError, extractEnvironment, LogEvent } from '../../utils/logging'
+import { ensureError } from '../../utils/errorHandling'
 
 export default class AutosaveController extends BaseController {
   public post = async (req: Request<{ reportId: string }>, res: Response): Promise<void> => {
@@ -69,7 +70,9 @@ export default class AutosaveController extends BaseController {
         ...(result.dropped.length > 0 ? { droppedFields: result.dropped } : {}),
       })
     } catch (e) {
-      const error = e as HttpError
+      const error = ensureError(e)
+      const errorType = classifyError(error)
+      const environment = extractEnvironment()
 
       logger.error(
         {
@@ -77,9 +80,9 @@ export default class AutosaveController extends BaseController {
           page: 'autosave',
           reportId: req.params.reportId,
           statusCode: error.status || 500,
-          environment: extractEnvironment(),
-          errorType: classifyError(error),
-          err: error,
+          environment,
+          errorType,
+          errorName: error.name,
         },
         'Autosave operation failed'
       )

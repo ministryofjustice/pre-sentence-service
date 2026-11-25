@@ -3,6 +3,8 @@ import ReportService from '../../services/reportService'
 import { ReportStatus } from '../../repositories/entities/reportDetails'
 import config from '../../config'
 import logger from '../../../logger'
+import { ensureError } from '../../utils/errorHandling'
+import { classifyError } from '../../utils/logging'
 
 export default class EditCompletedReportController {
   constructor(private readonly reportService: ReportService) {}
@@ -34,8 +36,16 @@ export default class EditCompletedReportController {
     try {
       await this.reportService.reopenReport(reportId, username)
     } catch (error) {
-      logger.warn({ reportId, error }, 'Failed to reopen completed report')
-      res.redirect(`/psr/${reportId}`)
+      const err = ensureError(error)
+      const errorType = classifyError(err)
+      
+      logger.warn({ 
+        reportId, 
+        errorName: err.name,
+        errorType,
+      }, 'Failed to reopen completed report')
+  
+    res.redirect(`/psr/${reportId}`)
       return
     }
 

@@ -2,6 +2,8 @@ import superagent from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 import logger from '../../logger'
 import { AgentConfig } from '../config'
+import sanitise from '../sanitisedError'
+import { LogEvent, LogOperation, LogDependency } from '../utils/logging'
 
 export type ServiceCheck = () => Promise<string>
 
@@ -31,7 +33,17 @@ export function serviceCheckFactory(
         .timeout(serviceTimeout)
         .end((error, result) => {
           if (error) {
-            logger.error(error.stack, `Error calling ${name}`)
+            const sanitisedError = sanitise(error)
+
+            logger.error(
+              {
+                event: LogEvent.DependencyFailed,
+                operation: LogOperation.Connect,
+                dependency: name,
+                sanitisedError,
+              },
+              `Health check failed for: ${name}`
+            )
             reject(error)
           } else if (result.status === 200) {
             resolve('OK')

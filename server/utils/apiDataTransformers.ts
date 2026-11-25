@@ -7,6 +7,7 @@ import {
 } from '../@types/preSentenceToDelius'
 import logger from '../../logger'
 import config from '../config'
+import { ensureError } from './errorHandling'
 
 /**
  * Transform API Name format to application format
@@ -76,7 +77,14 @@ export function formatOffenceDate(isoDate: string): string {
     const year = date.getFullYear()
     return `${day}/${month}/${year}`
   } catch (error) {
-    logger.warn({ isoDate, error }, 'Failed to format offence date')
+    const err = ensureError(error)
+
+    logger.warn({ 
+      isoDate, 
+      errorName: err.name,
+      message: err.message 
+    }, 'Failed to format offence date')
+    
     return isoDate
   }
 }

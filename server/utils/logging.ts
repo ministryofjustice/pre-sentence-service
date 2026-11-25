@@ -17,12 +17,16 @@ export const LogDependency = {
   Sns: 'sns',
   HmppsAuth: 'hmpps_auth',
   PreSentenceToDelius: 'pre_sentence_to_delius',
+  Delius: 'delius',
 } as const
 
 export const LogOperation = {
   Connect: 'connect',
   RenderPdf: 'render_pdf',
   Publish: 'publish',
+  GetDefendantDetails: 'get_defendant_details',
+  GetOffences: 'get_offences',
+  GetSourcesOfInformation: 'get_sources_of_information',
 } as const
 
 export const AccessDeniedReason = {

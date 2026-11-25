@@ -1,6 +1,8 @@
 import { RequestHandler } from 'express'
 import logger from '../../logger'
+import { LogEvent, classifyError } from '../utils/logging'
 import UserService from '../services/userService'
+import { ensureError } from '../utils/errorHandling'
 
 export default function populateCurrentUser(userService: UserService): RequestHandler {
   return async (req, res, next) => {
@@ -21,8 +23,19 @@ export default function populateCurrentUser(userService: UserService): RequestHa
       }
       next()
     } catch (error) {
-      logger.error(error, `Failed to retrieve user for: ${res.locals.user && res.locals.user.username}`)
-      next(error)
+      const err = ensureError(error)
+
+      logger.warn(
+        {
+          event: LogEvent.RequestFailed,
+          errorName: err.name,
+          errorType: classifyError(err),
+          statusCode: err.status,
+        },
+        'Failed to retrieve user details'
+      )
+
+      next(err)
     }
   }
 }

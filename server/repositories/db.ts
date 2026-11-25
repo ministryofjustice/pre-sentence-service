@@ -53,10 +53,11 @@ export default async function getDatabaseConnection(): Promise<ConnectionResult>
 
     logger.error(
       {
-        err: error,
         event: LogEvent.DependencyFailed,
         dependency: LogDependency.Postgres,
         operation: LogOperation.Connect,
+        errorName: error.name,
+        message: error.message,
       },
       `Failed to get database connection`
     )
