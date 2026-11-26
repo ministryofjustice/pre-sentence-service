@@ -43,7 +43,8 @@ createApplication()
               stack: err.stack,
             },
             'Failed to close HTTP server'
-          )        }
+          )
+        }
 
         try {
           await flushTelemetry()
