@@ -28,7 +28,7 @@ export default function standardRouter(userService: UserService): Router {
   logger.info('StandardRouter: Initializing services for PSR routes')
 
   // Initialize PreSentenceToDeliusService
-  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient()))
   const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
   // Initialize EventService
