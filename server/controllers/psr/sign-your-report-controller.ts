@@ -205,7 +205,8 @@ export default class SignYourReportController extends BaseController {
           reportId,
           statusCode: error.status || 500,
           errorType,
-          err: error,
+          errorName: error.name,
+          message: error.message,
         },
         'Failed to update report actions'
       )

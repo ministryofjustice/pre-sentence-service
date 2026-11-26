@@ -12,10 +12,11 @@ export default function setUpWebSession(): Router {
   client.connect().catch((error: Error) => {
     logger.error(
       {
-        err: error,
         event: LogEvent.DependencyFailed,
         dependency: LogDependency.Redis,
         operation: LogOperation.Connect,
+        errorName: error.name,
+        message: error.message,
       },
       'Error connecting to Redis'
     )

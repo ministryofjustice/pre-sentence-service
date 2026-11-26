@@ -90,7 +90,6 @@ export default class RestClient {
           httpMethod: LogHttpMethod.Get,
           statusCode: sanitisedError.status,
           errorType,
-          err: error,
         },
         'HTTP dependency request failed'
       )
@@ -144,6 +143,7 @@ export default class RestClient {
           httpMethod: LogHttpMethod.Post,
           statusCode: sanitisedError.status,
           errorName: error.name,
+          message: error.message,
         },
         'HTTP dependency request failed'
       )

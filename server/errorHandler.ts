@@ -10,7 +10,7 @@ export default function createErrorHandler(production: boolean) {
 
     logger.error(
       {
-        err: error,
+        err: error, // Safe here, typically a custom Error, not an HTTP response
         event: LogEvent.RequestFailed,
         errorType,
         httpMethod: req.method,
