@@ -73,6 +73,12 @@ describe('reports/psr.njk completed timestamp', () => {
     expect(res).toContain('28 October 2026 at 14:02')
   })
 
+  it('includes the case reference number when provided', () => {
+    const res = render({ ...baseData, crn: 'X123456' })
+
+    expect(res).toContain('Case reference number (CRN): </strong>X123456')
+  })
+
   it('omits the heading when reportSubmittedAt is null (reopened/unsigned) even if the flag is on', () => {
     mockConfig.features.unlockedSigning = true
 

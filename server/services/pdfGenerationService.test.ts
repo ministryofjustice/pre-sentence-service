@@ -11,6 +11,7 @@ jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('image'))
 const report = {
   id: 'report-1',
   reportType: 'PSR',
+  person: { crn: 'X123456' },
   pages: [
     {
       questions: [
@@ -62,6 +63,7 @@ describe('PdfGenerationService', () => {
       'reports/psr',
       expect.objectContaining({
         data: expect.objectContaining({
+          crn: 'X123456',
           sourcesOfInformationList: {
             predefined: [
               { label: 'CPS summary', used: true },
