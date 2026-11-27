@@ -48,7 +48,7 @@ export default function apiRouter(): Router {
   const reportService = new ReportService()
 
   // Initialize PreSentenceToDeliusService for API routes
-  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false })))
+  const hmppsAuthClient = new HmppsAuthClient(new TokenStore(createRedisClient()))
   const preSentenceToDeliusService = new PreSentenceToDeliusService(hmppsAuthClient)
 
   if (!testMode) {
