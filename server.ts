@@ -5,7 +5,6 @@ import fs from 'fs'
 import createApplication from './server/index'
 import logger from './logger'
 import config from './server/config'
-import sanitise from './server/sanitisedError'
 import { ensureError } from './server/utils/errorHandling'
 
 createApplication()
