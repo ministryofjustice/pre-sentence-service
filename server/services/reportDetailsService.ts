@@ -71,6 +71,7 @@ export default class ReportDetailsService {
   public async getReportDetailsByIdForUpdate(id: string, manager: EntityManager): Promise<ReportDetails | null> {
     return manager.getRepository(ReportDetails).findOne({
       where: { id },
+      loadEagerRelations: false,
       lock: { mode: 'pessimistic_write' },
     })
   }
