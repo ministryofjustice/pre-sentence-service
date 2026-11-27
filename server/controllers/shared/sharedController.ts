@@ -14,6 +14,8 @@ import { ReportStatus } from '../../repositories/entities/reportDetails'
 import { getReportProgress, areReviewSectionsComplete } from '../../utils/reportProgress'
 import { htmlToPlainText } from '../../utils/htmlToPlainText'
 import { normalizeSourcesToArray } from '../../schemas/sources-of-information'
+import { extractEnvironment, LogDependency, LogEvent } from '../../utils/logging'
+import { ensureError } from '../../utils/errorHandling'
 
 enum RiskLevel {
   Low = 'low',
@@ -156,7 +158,19 @@ export default class SharedController {
         apiDefendantDetailsAvailable: true,
       }
     } catch (error) {
-      logger.warn({ reportId, error }, 'Failed to fetch defendant details from Pre-Sentence to Delius API')
+      const err = ensureError(error)
+
+      logger.warn(
+        {
+          event: LogEvent.DependencyFailed,
+          dependency: LogDependency.PreSentenceToDelius,
+          page: this.templatePath,
+          reportId,
+          err,
+        },
+        'Failed to fetch defendant details from Pre-Sentence to Delius API, using fallback'
+      )
+
       this.data = { ...this.data, crn, apiDefendantDetailsAvailable: false }
     }
   }
@@ -381,6 +395,21 @@ export default class SharedController {
       }
       res.redirect(`/${this.path}/${reportIdParam}/${redirectPath || this.redirectPath}`)
     } else {
+      const environment = extractEnvironment()
+
+      logger.warn(
+        {
+          event: LogEvent.ValidationFailed,
+          page: this.templatePath,
+          reportId,
+          reportStatus: this.report?.status,
+          errorCount: Object.keys(validatedForm.errors ?? {}).length,
+          fieldErrors: validatedForm.errors,
+          environment,
+        },
+        'Form validation failed'
+      )
+
       if (this.templatePath !== 'sources-of-information') {
         await this.persistOnInvalid(req, reportId, username)
       }
@@ -426,9 +455,18 @@ export default class SharedController {
 
     const result = await this.reportService.persistPartialFieldValues(reportId, body, this.templatePath, dropKeys)
 
+    const environment = extractEnvironment()
+
     logger.info(
-      { reportId, pageName: this.templatePath, persisted: result.persisted, dropped: result.dropped },
-      'persisted partial field values after validation failure'
+      {
+        event: LogEvent.ValidationFailed,
+        page: this.templatePath,
+        reportId,
+        persisted: result.persisted,
+        dropped: result.dropped,
+        environment,
+      },
+      'Persisted partial fields after validation failure'
     )
   }
 

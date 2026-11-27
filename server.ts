@@ -5,6 +5,7 @@ import fs from 'fs'
 import createApplication from './server/index'
 import logger from './logger'
 import config from './server/config'
+import { ensureError } from './server/utils/errorHandling'
 
 createApplication()
   .then(app => {
@@ -32,7 +33,16 @@ createApplication()
 
       server.close(async error => {
         if (error) {
-          logger.error({ err: error }, 'Failed to close HTTP server')
+          const err = ensureError(error)
+
+          logger.error(
+            {
+              errorName: err.name,
+              message: err.message,
+              stack: err.stack,
+            },
+            'Failed to close HTTP server'
+          )
         }
 
         try {

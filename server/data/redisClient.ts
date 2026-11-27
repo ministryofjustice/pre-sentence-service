@@ -37,9 +37,12 @@ export const createRedisClient = (): RedisClient => {
   client.on('error', (error: Error) => {
     logger.error(
       {
-        err: error,
         event: LogEvent.DependencyFailed,
         dependency: LogDependency.Redis,
+        operation: LogOperation.Connect,
+        errorName: error.name,
+        errorCode: (error as Error & { code?: string }).code,
+        message: error.message,
       },
       'Redis client error'
     )

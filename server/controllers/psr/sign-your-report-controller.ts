@@ -9,6 +9,9 @@ import { transformDefendantDetails } from '../../utils/apiDataTransformers'
 import logger from '../../../logger'
 import config from '../../config'
 import { signYourReportModel } from '../../schemas/sign-your-report'
+import { classifyError, LogEvent } from '../../utils/logging'
+import { ensureError } from '../../utils/errorHandling'
+import { HttpError } from '../../@types/httpError'
 
 export { signYourReportModel } from '../../schemas/sign-your-report'
 
@@ -54,7 +57,18 @@ export default class SignYourReportController extends BaseController {
       const apiData = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
       return { ...transformDefendantDetails(apiData), apiDefendantDetailsAvailable: true }
     } catch (error) {
-      logger.warn({ reportId, error }, 'Failed to fetch defendant details from Pre-Sentence to Delius API')
+      const err = ensureError(error)
+      const errorType = classifyError(err)
+
+      logger.warn(
+        {
+          reportId,
+          errorName: err.name,
+          errorType,
+        },
+        'Failed to fetch defendant details from Pre-Sentence to Delius API'
+      )
+
       return { crn: this.report.person.crn, apiDefendantDetailsAvailable: false }
     }
   }
@@ -180,12 +194,23 @@ export default class SignYourReportController extends BaseController {
     try {
       await this.updateReportActions(req, username)
       logger.info('Report actions updated successfully', { reportId })
-    } catch (error) {
-      logger.error('Failed to update report actions', {
-        reportId,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      })
+    } catch (e) {
+      const error = e as HttpError
+      const errorType = classifyError(error)
+
+      logger.error(
+        {
+          event: LogEvent.RequestFailed,
+          page: 'sign-your-report',
+          reportId,
+          statusCode: error.status || 500,
+          errorType,
+          errorName: error.name,
+          message: error.message,
+        },
+        'Failed to update report actions'
+      )
+
       throw error
     }
 
@@ -204,11 +229,19 @@ export default class SignYourReportController extends BaseController {
         pdfUrl: `${config.domain}/api/v1/report/${this.report.id}/pdf`,
       })
     } catch (error) {
-      logger.error('Failed to submit report after retries, rolled back submittedAt', {
-        reportId,
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-      })
+      const err = ensureError(error)
+
+      logger.error(
+        {
+          event: LogEvent.RequestFailed,
+          page: 'sign-your-report',
+          reportId,
+          errorType: classifyError(err as HttpError),
+          err,
+        },
+        'Failed to submit report after retries, rolled back submittedAt'
+      )
+
       this.renderSubmissionFailure(res, reportId, data)
       return
     }

@@ -105,7 +105,6 @@ Pass structured fields before the message:
 ```ts
 logger.error(
   {
-    err: error,
     event: LogEvent.DependencyFailed,
     dependency: LogDependency.Redis,
     operation: LogOperation.Connect,

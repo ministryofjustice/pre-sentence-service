@@ -127,7 +127,7 @@ describe('AutosaveController', () => {
   })
 
   it('falls back to 500 and default error message on unexpected errors', async () => {
-    persistPartialFieldValuesSpy.mockRejectedValueOnce({})
+    persistPartialFieldValuesSpy.mockRejectedValueOnce(new Error())
     req.body = { someField: 'someValue' }
 
     await controller.post(req, res)

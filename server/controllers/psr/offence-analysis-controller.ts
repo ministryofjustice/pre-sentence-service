@@ -4,6 +4,8 @@ import PreSentenceToDeliusService from '../../services/preSentenceToDeliusServic
 import { transformOffenceDetails } from '../../utils/apiDataTransformers'
 import { offenceAnalysisModel } from '../../schemas/offence-analysis'
 import logger from '../../../logger'
+import { ensureError } from '../../utils/errorHandling'
+import { classifyError } from '../../utils/logging'
 
 export const pageFields: Array<string> = ['pnc', 'offencesUnderConsideration', 'offencesPattern']
 
@@ -41,7 +43,18 @@ export default class OffenceAnalysisController extends BaseController {
 
         logger.info({ reportId }, 'Successfully fetched offence details from API')
       } catch (error) {
-        logger.warn({ reportId, error }, 'Failed to fetch offence details from API, using database data')
+        const err = ensureError(error)
+        const errorType = classifyError(err)
+
+        logger.warn(
+          {
+            reportId,
+            errorName: err.name,
+            errorType,
+          },
+          'Failed to fetch offence details from API, using database data'
+        )
+
         this.data = {
           ...this.data,
           apiOffencesAvailable: false,

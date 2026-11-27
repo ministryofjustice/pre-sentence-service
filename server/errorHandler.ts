@@ -1,17 +1,21 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { HTTPError } from 'superagent'
 import logger from '../logger'
-import { LogEvent } from './utils/logging'
+import { LogEvent, classifyError, extractEnvironment } from './utils/logging'
 
 export default function createErrorHandler(production: boolean) {
   return (error: HTTPError, req: Request, res: Response, next: NextFunction): void => {
+    const errorType = classifyError(error)
+    const environment = extractEnvironment()
+
     logger.error(
       {
-        err: error,
+        err: error, // Safe here, typically a custom Error, not an HTTP response
         event: LogEvent.RequestFailed,
+        errorType,
         httpMethod: req.method,
         statusCode: error.status || 500,
-        originalUrl: req.originalUrl,
+        environment,
       },
       'Request handling failed'
     )
