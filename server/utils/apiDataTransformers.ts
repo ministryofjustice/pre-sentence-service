@@ -7,6 +7,7 @@ import {
 } from '../@types/preSentenceToDelius'
 import logger from '../../logger'
 import config from '../config'
+import { ReportOffence, ReportOffences } from '../@types/reportOffences'
 
 /**
  * Transform API Name format to application format
@@ -82,25 +83,6 @@ export function formatOffenceDate(isoDate: string): string {
 }
 
 /**
- * Transform API Offence to template format
- */
-export interface TransformedOffence {
-  description: string
-  code: string
-  date: string
-  isMainOffence?: boolean
-}
-
-export function transformOffence(offence: Offence, isMainOffence = false): TransformedOffence {
-  return {
-    description: offence.subCategory.description,
-    code: offence.subCategory.code,
-    date: formatOffenceDate(offence.date),
-    isMainOffence,
-  }
-}
-
-/**
  * Generate fake additional offences for development purposes
  */
 function generateFakeAdditionalOffences(count: number): Offence[] {
@@ -141,15 +123,15 @@ function generateFakeAdditionalOffences(count: number): Offence[] {
   return generatedOffences
 }
 
-/**
- * Transform API OffenceDetails to application format
- */
-export interface TransformedOffences {
-  mainOffence: TransformedOffence
-  additionalOffences: TransformedOffence[]
+function toReportOffence(offence: Offence): ReportOffence {
+  return {
+    description: offence.subCategory.description,
+    code: offence.subCategory.code,
+    date: offence.date,
+  }
 }
 
-export function transformOffenceDetails(apiData: OffenceDetails): TransformedOffences {
+export function toReportOffences(apiData: OffenceDetails): ReportOffences {
   logger.debug({ apiData }, 'Transforming offence details from API')
 
   let additionalOffences = apiData.additionalOffences
@@ -162,7 +144,31 @@ export function transformOffenceDetails(apiData: OffenceDetails): TransformedOff
   }
 
   return {
-    mainOffence: transformOffence(apiData.mainOffence, true),
-    additionalOffences: additionalOffences.map(offence => transformOffence(offence, false)),
+    mainOffence: toReportOffence(apiData.mainOffence),
+    additionalOffences: additionalOffences.map(toReportOffence),
+  }
+}
+
+export interface OffenceViewModel {
+  description: string
+  date?: string
+}
+
+export interface OffencesViewModel {
+  mainOffence: OffenceViewModel
+  additionalOffences: OffenceViewModel[]
+}
+
+function toOffenceViewModel(offence: ReportOffence): OffenceViewModel {
+  return {
+    description: offence.description,
+    ...(offence.date ? { date: formatOffenceDate(offence.date) } : {}),
+  }
+}
+
+export function toOffencesViewModel(offences: ReportOffences): OffencesViewModel {
+  return {
+    mainOffence: toOffenceViewModel(offences.mainOffence),
+    additionalOffences: (offences.additionalOffences ?? []).map(toOffenceViewModel),
   }
 }

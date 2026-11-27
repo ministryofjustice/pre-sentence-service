@@ -140,7 +140,7 @@ export default class SharedController {
     }
   }
 
-  private fetchDefendantDetails = async (reportId: string): Promise<void> => {
+  protected fetchDefendantDetails = async (reportId: string): Promise<void> => {
     const crn = this.report?.person?.crn
 
     if (!this.preSentenceToDeliusService) {

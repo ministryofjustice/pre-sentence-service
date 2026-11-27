@@ -40,15 +40,15 @@
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
             <td class="govuk-table__cell govuk-body-s">
-                <strong>{{ data.offenceData.mainOffence.subCategory.description }}</strong>
+                <strong>{{ data.offenceData.mainOffence.description }}</strong>
             </td>
-            <td class="govuk-table__cell govuk-body-s">{{ data.offenceData.mainOffence.date | formatDate }}</td>
+            <td class="govuk-table__cell govuk-body-s">{% if data.offenceData.mainOffence.date %}{{ data.offenceData.mainOffence.date | formatDate }}{% endif %}</td>
             </tr>
 
             {% for offence in data.offenceData.additionalOffences %}
                 <tr class="govuk-table__row">
-                <td class="govuk-table__cell govuk-body-s">{{ offence.subCategory.description }}</td>
-                <td class="govuk-table__cell govuk-body-s">{{ offence.date | formatDate }}</td>
+                <td class="govuk-table__cell govuk-body-s">{{ offence.description }}</td>
+                <td class="govuk-table__cell govuk-body-s">{% if offence.date %}{{ offence.date | formatDate }}{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

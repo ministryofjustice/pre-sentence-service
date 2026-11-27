@@ -1,7 +1,8 @@
 import BaseController from './baseController'
 import { Request, Response } from 'express'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
-import { transformOffenceDetails } from '../../utils/apiDataTransformers'
+import { toOffencesViewModel } from '../../utils/apiDataTransformers'
+import { ensureStoredOffences } from '../../utils/offenceSnapshot'
 import { offenceAnalysisModel } from '../../schemas/offence-analysis'
 import logger from '../../../logger'
 
@@ -26,25 +27,20 @@ export default class OffenceAnalysisController extends BaseController {
   protected override async beforeRender(req: Request<{ reportId: string }>, _res: Response): Promise<void> {
     const reportId = req.params.reportId
 
-    if (this.preSentenceToDeliusService && reportId && this.report) {
-      try {
-        logger.info({ reportId }, 'Fetching offence details from Pre-Sentence to Delius API')
-        const apiData = await this.preSentenceToDeliusService.getOffences(reportId)
+    if (reportId && this.report) {
+      const offences = await ensureStoredOffences(this.report, this.reportService, this.preSentenceToDeliusService)
 
-        const transformedOffences = transformOffenceDetails(apiData)
-
+      if (offences) {
         this.data = {
           ...this.data,
-          offencesData: transformedOffences,
-          apiOffencesAvailable: true,
+          offencesData: toOffencesViewModel(offences),
+          offencesAvailable: true,
         }
-
-        logger.info({ reportId }, 'Successfully fetched offence details from API')
-      } catch (error) {
-        logger.warn({ reportId, error }, 'Failed to fetch offence details from API, using database data')
+      } else {
+        logger.warn({ reportId }, 'Offences not available for offence analysis page')
         this.data = {
           ...this.data,
-          apiOffencesAvailable: false,
+          offencesAvailable: false,
         }
       }
     }

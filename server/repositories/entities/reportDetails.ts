@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Generated } from 'typeorm'
 import PersonDetails from './personDetails'
+import { ReportOffences } from '../../@types/reportOffences'
 
 export enum ReportStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -40,6 +41,9 @@ export default class ReportDetails {
 
   @Column({ type: 'jsonb', nullable: true })
   pages?: Page[]
+
+  @Column({ type: 'jsonb', nullable: true })
+  offences?: ReportOffences | null
 
   @Column()
   reportType!: string

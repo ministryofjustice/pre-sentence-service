@@ -36,7 +36,7 @@ describe('reports/psr.njk completed timestamp', () => {
       postcode: 'TE1 1ST',
     },
     offenceData: {
-      mainOffence: { subCategory: { description: 'Test main offence' }, date: '01/01/2026' },
+      mainOffence: { description: 'Test main offence', date: '2026-01-01' },
       additionalOffences: [],
     },
     sourcesOfInformationList: { predefined: [], custom: [] },
@@ -122,5 +122,70 @@ describe('reports/psr.njk completed timestamp', () => {
     expect(renderSource(source, { ...baseData, reportSubmittedAt: null })).toBe(
       renderSource(baselineSource, { ...baseData, reportSubmittedAt: null })
     )
+  })
+
+  describe('offence analysis', () => {
+    it('renders the main offence description and formatted date from the stored offence shape', () => {
+      const res = render({
+        ...baseData,
+        offenceData: {
+          mainOffence: { description: 'Burglary', date: '2026-01-15' },
+          additionalOffences: [],
+        },
+      })
+
+      expect(res).toContain('Burglary')
+      expect(res).toContain('15/01/2026')
+    })
+
+    it('renders an empty date cell when the main offence has no date', () => {
+      const withDate = render({
+        ...baseData,
+        offenceData: {
+          mainOffence: { description: 'Burglary', date: '2026-01-15' },
+          additionalOffences: [],
+        },
+      })
+      const withoutDate = render({
+        ...baseData,
+        offenceData: {
+          mainOffence: { description: 'Burglary' },
+          additionalOffences: [],
+        },
+      })
+
+      expect(withDate).toContain('15/01/2026')
+      expect(withoutDate).not.toContain('15/01/2026')
+      expect(withoutDate).toContain('Burglary')
+    })
+
+    it('renders additional offence descriptions and dates, with an empty cell when a date is absent', () => {
+      const res = render({
+        ...baseData,
+        offenceData: {
+          mainOffence: { description: 'Burglary', date: '2026-01-15' },
+          additionalOffences: [
+            { description: 'Theft from a shop', date: '2026-02-10' },
+            { description: 'Common assault' },
+          ],
+        },
+      })
+
+      expect(res).toContain('Theft from a shop')
+      expect(res).toContain('10/02/2026')
+      expect(res).toContain('Common assault')
+    })
+
+    it('does not render "No additional offences" or extra rows when additionalOffences is empty', () => {
+      const res = render({
+        ...baseData,
+        offenceData: {
+          mainOffence: { description: 'Burglary', date: '2026-01-15' },
+          additionalOffences: [],
+        },
+      })
+
+      expect(res).not.toContain('No additional offences')
+    })
   })
 })

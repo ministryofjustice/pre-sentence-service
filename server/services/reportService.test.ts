@@ -1068,6 +1068,31 @@ describe('reopenReport', () => {
   })
 })
 
+describe('updateReportOffences', () => {
+  let reportService: ReportService
+  let reportDetailsService: jest.Mocked<ReportDetailsService>
+
+  beforeEach(() => {
+    reportService = new ReportService()
+    reportDetailsService = (reportService as unknown as { reportDetailsService: jest.Mocked<ReportDetailsService> })
+      .reportDetailsService
+  })
+
+  it('passes the offences patch to reportDetailsService.updateReportDetails', async () => {
+    const offences = {
+      mainOffence: { description: 'Theft', code: 'TH68001', date: '2026-01-01' },
+      additionalOffences: [],
+    }
+    const updated = { id: 'r1', offences } as never
+    reportDetailsService.updateReportDetails = jest.fn().mockResolvedValue(updated)
+
+    const result = await reportService.updateReportOffences('r1', offences)
+
+    expect(reportDetailsService.updateReportDetails).toHaveBeenCalledWith('r1', { offences })
+    expect(result).toBe(updated)
+  })
+})
+
 describe('hasReportBeenSigned', () => {
   let reportService: ReportService
   let reportStatusHistoryService: jest.Mocked<ReportStatusHistoryService>

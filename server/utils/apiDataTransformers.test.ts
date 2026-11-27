@@ -3,10 +3,11 @@ import {
   transformAddress,
   transformDefendantDetails,
   formatOffenceDate,
-  transformOffence,
-  transformOffenceDetails,
+  toReportOffences,
+  toOffencesViewModel,
 } from './apiDataTransformers'
-import type { Name, Address, DefendantDetails, Offence, OffenceDetails } from '../@types/preSentenceToDelius'
+import type { Name, Address, DefendantDetails, OffenceDetails } from '../@types/preSentenceToDelius'
+import type { ReportOffences } from '../@types/reportOffences'
 import config from '../config'
 
 // Mock the config to disable fake offences during tests
@@ -179,56 +180,8 @@ describe('apiDataTransformers', () => {
     })
   })
 
-  describe('transformOffence', () => {
-    it('should transform main offence', () => {
-      const offence: Offence = {
-        date: '2024-04-12',
-        mainCategory: {
-          code: '030',
-          description: 'Criminal damage',
-        },
-        subCategory: {
-          code: '03001',
-          description: 'Criminal damage to property',
-        },
-      }
-
-      const result = transformOffence(offence, true)
-
-      expect(result).toEqual({
-        description: 'Criminal damage to property',
-        code: '03001',
-        date: '12/04/2024',
-        isMainOffence: true,
-      })
-    })
-
-    it('should transform additional offence', () => {
-      const offence: Offence = {
-        date: '2024-04-12',
-        mainCategory: {
-          code: '020',
-          description: 'Violence',
-        },
-        subCategory: {
-          code: '02004',
-          description: 'Assault on emergency worker',
-        },
-      }
-
-      const result = transformOffence(offence, false)
-
-      expect(result).toEqual({
-        description: 'Assault on emergency worker',
-        code: '02004',
-        date: '12/04/2024',
-        isMainOffence: false,
-      })
-    })
-  })
-
-  describe('transformOffenceDetails', () => {
-    it('should transform complete offence details', () => {
+  describe('toReportOffences', () => {
+    it('maps description, code and ISO date for main and additional offences', () => {
       const apiData: OffenceDetails = {
         mainOffence: {
           date: '2024-04-12',
@@ -243,7 +196,7 @@ describe('apiDataTransformers', () => {
         },
         additionalOffences: [
           {
-            date: '2024-04-12',
+            date: '2024-05-01',
             mainCategory: {
               code: '020',
               description: 'Violence',
@@ -253,143 +206,113 @@ describe('apiDataTransformers', () => {
               description: 'Assault on emergency worker',
             },
           },
-          {
-            date: '2024-04-12',
-            mainCategory: {
-              code: '060',
-              description: 'Drug offences',
-            },
-            subCategory: {
-              code: '06001',
-              description: 'Possession of class A drugs',
-            },
-          },
         ],
       }
 
-      const result = transformOffenceDetails(apiData)
+      const result = toReportOffences(apiData)
 
       expect(result.mainOffence).toEqual({
         description: 'Criminal damage to property',
         code: '03001',
-        date: '12/04/2024',
-        isMainOffence: true,
+        date: '2024-04-12',
       })
-
-      expect(result.additionalOffences).toHaveLength(2)
+      expect(result.additionalOffences).toHaveLength(1)
       expect(result.additionalOffences[0]).toEqual({
         description: 'Assault on emergency worker',
         code: '02004',
-        date: '12/04/2024',
-        isMainOffence: false,
-      })
-      expect(result.additionalOffences[1]).toEqual({
-        description: 'Possession of class A drugs',
-        code: '06001',
-        date: '12/04/2024',
-        isMainOffence: false,
+        date: '2024-05-01',
       })
     })
 
-    it('should handle empty additional offences', () => {
+    it('preserves additional offence order', () => {
       const apiData: OffenceDetails = {
         mainOffence: {
           date: '2024-01-01',
-          mainCategory: {
-            code: '010',
-            description: 'Theft',
-          },
-          subCategory: {
-            code: '01001',
-            description: 'Theft from shop',
-          },
-        },
-        additionalOffences: [],
-      }
-
-      const result = transformOffenceDetails(apiData)
-
-      expect(result.mainOffence.description).toBe('Theft from shop')
-      expect(result.additionalOffences).toHaveLength(0)
-    })
-
-    it('should generate fake additional offences when enabled and no offences exist', () => {
-      // Temporarily enable the feature for this test
-      const originalValue = config.dev.fakeAdditionalOffences
-      config.dev.fakeAdditionalOffences = true
-
-      const apiData: OffenceDetails = {
-        mainOffence: {
-          date: '2024-01-01',
-          mainCategory: {
-            code: '010',
-            description: 'Theft',
-          },
-          subCategory: {
-            code: '01001',
-            description: 'Theft from shop',
-          },
-        },
-        additionalOffences: [],
-      }
-
-      const result = transformOffenceDetails(apiData)
-
-      expect(result.mainOffence.description).toBe('Theft from shop')
-      expect(result.additionalOffences.length).toBeGreaterThan(0)
-      expect(result.additionalOffences.length).toBeLessThanOrEqual(3)
-      // Verify the generated offences have the correct structure
-      result.additionalOffences.forEach(offence => {
-        expect(offence).toHaveProperty('description')
-        expect(offence).toHaveProperty('code')
-        expect(offence).toHaveProperty('date')
-        expect(offence.isMainOffence).toBe(false)
-      })
-
-      // Restore original value
-      config.dev.fakeAdditionalOffences = originalValue
-    })
-
-    it('should not generate fake offences when additional offences already exist', () => {
-      // Temporarily enable the feature for this test
-      const originalValue = config.dev.fakeAdditionalOffences
-      config.dev.fakeAdditionalOffences = true
-
-      const apiData: OffenceDetails = {
-        mainOffence: {
-          date: '2024-04-12',
-          mainCategory: {
-            code: '030',
-            description: 'Criminal damage',
-          },
-          subCategory: {
-            code: '03001',
-            description: 'Criminal damage to property',
-          },
+          mainCategory: { code: '010', description: 'Theft' },
+          subCategory: { code: '01001', description: 'Theft from shop' },
         },
         additionalOffences: [
           {
-            date: '2024-04-12',
-            mainCategory: {
-              code: '020',
-              description: 'Violence',
-            },
-            subCategory: {
-              code: '02004',
-              description: 'Assault on emergency worker',
-            },
+            date: '2024-02-01',
+            mainCategory: { code: '020', description: 'Violence' },
+            subCategory: { code: '02004', description: 'Assault on emergency worker' },
+          },
+          {
+            date: '2024-03-01',
+            mainCategory: { code: '060', description: 'Drug offences' },
+            subCategory: { code: '06001', description: 'Possession of class A drugs' },
           },
         ],
       }
 
-      const result = transformOffenceDetails(apiData)
+      const result = toReportOffences(apiData)
 
-      // Should have exactly 1 additional offence (not generate fake ones)
-      expect(result.additionalOffences).toHaveLength(1)
-      expect(result.additionalOffences[0].description).toBe('Assault on emergency worker')
+      expect(result.additionalOffences.map(offence => offence.description)).toEqual([
+        'Assault on emergency worker',
+        'Possession of class A drugs',
+      ])
+    })
 
-      // Restore original value
+    it('generates fake additional offences when dev flag is set and none exist', () => {
+      const originalValue = config.dev.fakeAdditionalOffences
+      config.dev.fakeAdditionalOffences = true
+
+      const apiData: OffenceDetails = {
+        mainOffence: {
+          date: '2024-01-01',
+          mainCategory: { code: '010', description: 'Theft' },
+          subCategory: { code: '01001', description: 'Theft from shop' },
+        },
+        additionalOffences: [],
+      }
+
+      const result = toReportOffences(apiData)
+
+      expect(result.additionalOffences.length).toBeGreaterThan(0)
+      expect(result.additionalOffences.length).toBeLessThanOrEqual(3)
+      result.additionalOffences.forEach(offence => {
+        expect(offence).toHaveProperty('description')
+        expect(offence).toHaveProperty('code')
+        expect(offence).toHaveProperty('date')
+      })
+
       config.dev.fakeAdditionalOffences = originalValue
+    })
+  })
+
+  describe('toOffencesViewModel', () => {
+    it('formats dates as DD/MM/YYYY and omits date when absent', () => {
+      const offences: ReportOffences = {
+        mainOffence: {
+          description: 'Criminal damage to property',
+          code: '03001',
+          date: '2024-04-12',
+        },
+        additionalOffences: [
+          {
+            description: 'Assault on emergency worker',
+            code: '02004',
+          },
+        ],
+      }
+
+      const result = toOffencesViewModel(offences)
+
+      expect(result.mainOffence).toEqual({
+        description: 'Criminal damage to property',
+        date: '12/04/2024',
+      })
+      expect(result.additionalOffences).toEqual([
+        {
+          description: 'Assault on emergency worker',
+        },
+      ])
+    })
+
+    it('defaults missing additionalOffences to an empty array', () => {
+      const result = toOffencesViewModel({ mainOffence: { description: 'x' } } as ReportOffences)
+
+      expect(result.additionalOffences).toEqual([])
     })
   })
 })
