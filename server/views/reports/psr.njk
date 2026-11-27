@@ -14,6 +14,9 @@
     <h2 class="govuk-heading-m">Defendant details</h2>
 
     <div class="govuk-body-s"><strong>Full name: </strong>{{ data.name }}</div>
+    {% if data.crn %}
+    <div class="govuk-body-s"><strong>Case reference number (CRN): </strong>{{ data.crn }}</div>
+    {% endif %}
     <div class="govuk-body-s"><strong>Date of birth: </strong>{{ data.dateOfBirth.toLocaleDateString("en-GB")}} ({{data.ageInYears}} years old)</div>
     <div class="govuk-body-s address-row govuk-!-margin-bottom-0"><strong>Current address: </strong>
         <div class='address-lines'>
