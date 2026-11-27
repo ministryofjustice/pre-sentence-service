@@ -1,0 +1,101 @@
+{% extends "../partials/psrPageLayout.njk" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set currentPage = 'Offence analysis' %}
+{% set pageTitle = preSentenceType + " - Edit offences" %}
+
+{% block reportForm %}
+
+<form method="post" novalidate>
+  <div class="govuk-!-margin-bottom-7">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">Edit offences</h1>
+    <p class="govuk-body">Any edits you make in PSR will not be shown in nDelius.</p>
+  </div>
+
+  <button type="submit" class="govuk-visually-hidden" data-default-submit>Save and continue</button>
+
+  {% if data.editOffences and data.offencesAvailable %}
+    <section class="section-wrapper">
+      <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Main offence</h2>
+
+      {{ govukInput({
+        label: { text: "Main offence" },
+        id: "mainOffenceDescription",
+        name: "mainOffenceDescription",
+        value: data.editOffences.mainOffenceDescription,
+        errorMessage: {
+          text: formValidation.errors.mainOffenceDescription
+        } if 'mainOffenceDescription' in elementsWithError
+      }) }}
+
+      <input type="hidden" name="mainOffenceDate" value="{{ data.editOffences.mainOffenceDate }}">
+      <input type="hidden" name="mainOffenceCode" value="{{ data.editOffences.mainOffenceCode }}">
+    </section>
+
+    <section class="section-wrapper">
+      <h2 class="govuk-heading-l govuk-!-margin-bottom-6">Additional offences</h2>
+
+      {% for offence in data.editOffences.additionalOffences %}
+        <div class="govuk-!-margin-bottom-4">
+          {{ govukInput({
+            label: { text: "Additional offence " + loop.index },
+            id: "additionalOffenceDescription-" + loop.index0,
+            name: "additionalOffenceDescription",
+            value: offence.description
+          }) }}
+
+          <input type="hidden" name="additionalOffenceDate" value="{{ offence.date }}">
+          <input type="hidden" name="additionalOffenceCode" value="{{ offence.code }}">
+
+          <button
+            type="submit"
+            name="removeOffence"
+            value="{{ loop.index0 }}"
+            class="govuk-button govuk-button--secondary"
+            data-module="govuk-button"
+          >
+            Remove<span class="govuk-visually-hidden"> additional offence {{ loop.index }}</span>
+          </button>
+        </div>
+      {% endfor %}
+
+      <button
+        type="submit"
+        name="action"
+        value="addOffence"
+        class="govuk-button govuk-button--secondary"
+        data-module="govuk-button"
+      >
+        Add another offence
+      </button>
+    </section>
+
+    <input type="hidden" name="CSRFToken" value="{{ csrfToken }}">
+    <input type="hidden" name="reportId" value="{{ reportId }}">
+    <input type="hidden" name="pageName" value="{{ pageName }}">
+
+    {{ govukButton({
+      text: "Save and continue"
+    }) }}
+
+    <p class="govuk-body">
+      <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/offence-analysis">Cancel</a>
+    </p>
+  {% else %}
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-visually-hidden">Warning</span>
+        Unable to fetch offence details from NDelius. Please refresh the page or check NDelius directly.
+      </strong>
+    </div>
+
+    <p class="govuk-body">
+      <a class="govuk-link" href="/{{ reportPath }}/{{ reportId }}/offence-analysis">Cancel</a>
+    </p>
+  {% endif %}
+</form>
+
+{% endblock %}

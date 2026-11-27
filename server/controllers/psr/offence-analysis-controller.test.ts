@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 import OffenceAnalysisController from './offence-analysis-controller'
 import ReportService from '../../services/reportService'
 import PreSentenceToDeliusService from '../../services/preSentenceToDeliusService'
-import type { OffenceDetails } from '../../@types/preSentenceToDelius'
+import { ReportOffences } from '../../@types/reportOffences'
+import * as offenceSnapshot from '../../utils/offenceSnapshot'
 
 jest.mock('../../services/reportService')
 jest.mock('../../services/preSentenceToDeliusService')
 jest.mock('../../../logger')
+jest.mock('../../utils/offenceSnapshot')
 
 describe('OffenceAnalysisController', () => {
   let controller: OffenceAnalysisController
@@ -14,6 +16,7 @@ describe('OffenceAnalysisController', () => {
   let mockPreSentenceToDeliusService: jest.Mocked<PreSentenceToDeliusService>
   let mockRequest: Partial<Request>
   let mockResponse: Partial<Response>
+  let mockEnsureStoredOffences: jest.MockedFunction<typeof offenceSnapshot.ensureStoredOffences>
 
   const mockReport = {
     id: 'report-123',
@@ -36,41 +39,11 @@ describe('OffenceAnalysisController', () => {
     },
   }
 
-  const mockApiOffenceDetails: OffenceDetails = {
-    mainOffence: {
-      date: '2024-04-12',
-      mainCategory: {
-        code: '030',
-        description: 'Criminal damage',
-      },
-      subCategory: {
-        code: '03001',
-        description: 'Criminal damage to property',
-      },
-    },
+  const storedOffences: ReportOffences = {
+    mainOffence: { description: 'Criminal damage to property', code: '03001', date: '2024-04-12' },
     additionalOffences: [
-      {
-        date: '2024-04-12',
-        mainCategory: {
-          code: '020',
-          description: 'Violence',
-        },
-        subCategory: {
-          code: '02004',
-          description: 'Assault on emergency worker',
-        },
-      },
-      {
-        date: '2024-04-12',
-        mainCategory: {
-          code: '060',
-          description: 'Drug offences',
-        },
-        subCategory: {
-          code: '06001',
-          description: 'Possession of class A drugs',
-        },
-      },
+      { description: 'Assault on emergency worker', code: '02004', date: '2024-04-12' },
+      { description: 'Possession of class A drugs', code: '06001', date: '2024-04-12' },
     ],
   }
 
@@ -82,6 +55,10 @@ describe('OffenceAnalysisController', () => {
       getDefendantDetails: jest.fn(),
       getOffences: jest.fn(),
     } as unknown as jest.Mocked<PreSentenceToDeliusService>
+
+    mockEnsureStoredOffences = offenceSnapshot.ensureStoredOffences as jest.MockedFunction<
+      typeof offenceSnapshot.ensureStoredOffences
+    >
 
     mockRequest = {
       params: { reportId: 'report-123' },
@@ -103,12 +80,17 @@ describe('OffenceAnalysisController', () => {
   })
 
   describe('beforeRender hook', () => {
-    it('should fetch offence details from API and transform data', async () => {
-      mockPreSentenceToDeliusService.getOffences.mockResolvedValue(mockApiOffenceDetails)
+    it('should build offencesData view model from stored offences and mark them available', async () => {
+      mockEnsureStoredOffences.mockResolvedValue(storedOffences)
 
       await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
+      expect(mockEnsureStoredOffences).toHaveBeenCalledWith(
+        mockReport,
+        mockReportService,
+        mockPreSentenceToDeliusService
+      )
+      expect(mockPreSentenceToDeliusService.getOffences).not.toHaveBeenCalled()
       expect(mockResponse.render).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -116,48 +98,50 @@ describe('OffenceAnalysisController', () => {
             offencesData: {
               mainOffence: {
                 description: 'Criminal damage to property',
-                code: '03001',
                 date: '12/04/2024',
-                isMainOffence: true,
               },
               additionalOffences: [
                 {
                   description: 'Assault on emergency worker',
-                  code: '02004',
                   date: '12/04/2024',
-                  isMainOffence: false,
                 },
                 {
                   description: 'Possession of class A drugs',
-                  code: '06001',
                   date: '12/04/2024',
-                  isMainOffence: false,
                 },
               ],
             },
-            apiOffencesAvailable: true,
+            offencesAvailable: true,
           }),
         })
       )
     })
 
-    it('should handle API errors gracefully', async () => {
-      mockPreSentenceToDeliusService.getOffences.mockRejectedValue(new Error('API Error'))
+    it('should not call the Delius service directly when offences are already stored', async () => {
+      mockEnsureStoredOffences.mockResolvedValue(storedOffences)
 
       await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
 
-      expect(mockPreSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-123')
+      expect(mockPreSentenceToDeliusService.getOffences).not.toHaveBeenCalled()
+    })
+
+    it('should mark offences unavailable when ensureStoredOffences returns null', async () => {
+      mockEnsureStoredOffences.mockResolvedValue(null)
+
+      await controller.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)
+
       expect(mockResponse.render).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           data: expect.objectContaining({
-            apiOffencesAvailable: false,
+            offencesAvailable: false,
           }),
         })
       )
     })
 
     it('should work without PreSentenceToDeliusService injected', async () => {
+      mockEnsureStoredOffences.mockResolvedValue(null)
       const controllerWithoutService = new OffenceAnalysisController(mockReportService)
 
       await controllerWithoutService.get(mockRequest as Request<{ reportId: string }>, mockResponse as Response)

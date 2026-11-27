@@ -8,6 +8,7 @@ import PreSentenceToDeliusService from './preSentenceToDeliusService'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import type { Address, DefendantDetails } from '../@types/preSentenceToDelius'
 import { buildPdfSourcesOfInformation } from '../utils/sourcesOfInformationHelpers'
+import { toReportOffences } from '../utils/apiDataTransformers'
 import {
   configureReportData,
   getDraftHeader,
@@ -71,7 +72,7 @@ export default class PdfGenerationService {
     const reportData = configureReportData(report)
 
     const defendant = await this.preSentenceToDeliusService.getDefendantDetails(reportId)
-    const offenceData = await this.preSentenceToDeliusService.getOffences(reportId)
+    const offenceData = report.offences ?? toReportOffences(await this.preSentenceToDeliusService.getOffences(reportId))
 
     const sources = await this.sourcesOfInformationService.getSourcesOfInformation(reportId)
     const sourcesOfInformationList = buildPdfSourcesOfInformation(

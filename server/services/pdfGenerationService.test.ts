@@ -5,12 +5,20 @@ import PreSentenceToDeliusService from './preSentenceToDeliusService'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import ReportDetails from '../repositories/entities/reportDetails'
 import config from '../config'
+import { toReportOffences } from '../utils/apiDataTransformers'
+import { ReportOffences } from '../@types/reportOffences'
 
 jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('image'))
+
+const storedOffences: ReportOffences = {
+  mainOffence: { description: 'Stored main offence', code: 'ABC123', date: '2026-01-15' },
+  additionalOffences: [{ description: 'Stored additional offence', code: 'DEF456', date: '2026-02-01' }],
+}
 
 const report = {
   id: 'report-1',
   reportType: 'PSR',
+  offences: storedOffences,
   pages: [
     {
       questions: [
@@ -25,6 +33,15 @@ const report = {
   ],
 } as unknown as ReportDetails
 
+const legacyOffenceDetails = {
+  mainOffence: {
+    date: '2026-03-01',
+    mainCategory: { code: 'XY', description: 'Legacy main category' },
+    subCategory: { code: 'XYZ789', description: 'Legacy main offence' },
+  },
+  additionalOffences: [],
+}
+
 const legacyReport = {
   ...report,
   pages: report.pages!.map(page => ({
@@ -38,7 +55,7 @@ const preSentenceToDeliusService = {
     name: { forename: 'Test', surname: 'Defendant' },
     dateOfBirth: '1990-01-15',
   }),
-  getOffences: jest.fn().mockResolvedValue({}),
+  getOffences: jest.fn().mockResolvedValue(legacyOffenceDetails),
 } as unknown as PreSentenceToDeliusService
 
 const sourcesOfInformationService = {
@@ -110,6 +127,52 @@ describe('PdfGenerationService', () => {
       )
     } finally {
       config.features.unlockedSigning = originalFlag
+    }
+  })
+
+  it('uses stored offences and does not call getOffences when report.offences is present', async () => {
+    const renderPDF = jest.fn()
+    const res = { renderPDF } as unknown as Response
+    const service = new PdfGenerationService(preSentenceToDeliusService, sourcesOfInformationService)
+
+    await service.generatePdf(report, res)
+
+    expect(preSentenceToDeliusService.getOffences).not.toHaveBeenCalled()
+    expect(renderPDF).toHaveBeenCalledWith(
+      'reports/psr',
+      expect.objectContaining({
+        data: expect.objectContaining({
+          offenceData: storedOffences,
+        }),
+      }),
+      expect.anything()
+    )
+  })
+
+  it('falls back to fetching and mapping legacy offences when report.offences is absent', async () => {
+    const renderPDF = jest.fn()
+    const res = { renderPDF } as unknown as Response
+    const service = new PdfGenerationService(preSentenceToDeliusService, sourcesOfInformationService)
+    const reportWithoutStoredOffences = { ...report, offences: undefined } as unknown as ReportDetails
+    const originalFakeAdditionalOffences = config.dev.fakeAdditionalOffences
+
+    try {
+      config.dev.fakeAdditionalOffences = false
+
+      await service.generatePdf(reportWithoutStoredOffences, res)
+
+      expect(preSentenceToDeliusService.getOffences).toHaveBeenCalledWith('report-1')
+      expect(renderPDF).toHaveBeenCalledWith(
+        'reports/psr',
+        expect.objectContaining({
+          data: expect.objectContaining({
+            offenceData: toReportOffences(legacyOffenceDetails),
+          }),
+        }),
+        expect.anything()
+      )
+    } finally {
+      config.dev.fakeAdditionalOffences = originalFakeAdditionalOffences
     }
   })
 })

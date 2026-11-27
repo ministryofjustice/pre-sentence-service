@@ -1,5 +1,6 @@
 import PersonDetailsService from './personDetailsService'
 import ReportDetailsService, { IReportDetails, IReportPage } from './reportDetailsService'
+import { ReportOffences } from '../@types/reportOffences'
 import SourcesOfInformationService from './sourcesOfInformationService'
 import ReportStatusHistoryService, { DELETED_STATUS } from './reportStatusHistoryService'
 import { SourceOfInformation } from '../utils/sourcesOfInformationHelpers'
@@ -505,6 +506,10 @@ export default class ReportService {
 
   public async updateReportStatus(reportId: string, status: ReportStatus): Promise<ReportDetails | null> {
     return this.reportDetailsService.updateReportStatus(reportId, status)
+  }
+
+  public async updateReportOffences(reportId: string, offences: ReportOffences): Promise<ReportDetails | null> {
+    return this.reportDetailsService.updateReportDetails(reportId, { offences })
   }
 
   public async hasReportBeenSigned(id: string): Promise<boolean> {

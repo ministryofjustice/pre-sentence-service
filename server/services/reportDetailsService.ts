@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm'
 import { dataSource } from '../repositories/db'
 import ReportDetails, { ReportStatus } from '../repositories/entities/reportDetails'
+import { ReportOffences } from '../@types/reportOffences'
 
 export interface IReportPage {
   name: string
@@ -22,6 +23,7 @@ export interface IReportDetails {
   isDeleted?: boolean
   version?: number
   submittedAt?: Date | null
+  offences?: ReportOffences | null
 }
 
 export default class ReportDetailsService {
